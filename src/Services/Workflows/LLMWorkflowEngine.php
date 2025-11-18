@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Services\Workflows;
 
 use Bithoven\LLMManager\Models\LLMAgentWorkflow;
 use Bithoven\LLMManager\Services\LLMManager;
-use Bithoven\LLMManager\Services\RAG\LLMRAGService;
+use Bithoven\LLMManager\Services\LLMRAGService;
 
 class LLMWorkflowEngine
 {

@@ -3,7 +3,7 @@
 namespace Bithoven\LLMManager\Console\Commands;
 
 use Illuminate\Console\Command;
-use Bithoven\LLMManager\Services\RAG\LLMRAGService;
+use Bithoven\LLMManager\Services\LLMRAGService;
 use Bithoven\LLMManager\Models\LLMDocumentKnowledgeBase;
 
 class LLMIndexDocumentsCommand extends Command

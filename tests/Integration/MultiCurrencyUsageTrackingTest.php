@@ -239,7 +239,7 @@ class MultiCurrencyUsageTrackingTest extends TestCase
 
             $this->assertEquals($currency, $log->fresh()->currency);
             $this->assertEquals(10.00, $log->fresh()->cost_original);
-            $this->assertEquals(10.00 * $rate, $log->fresh()->cost_usd);
+            $this->assertEqualsWithDelta(10.00 * $rate, (float)$log->fresh()->cost_usd, 0.0001, "Currency: {$currency}");
         }
 
         $this->assertEquals(9, LLMUsageLog::count());

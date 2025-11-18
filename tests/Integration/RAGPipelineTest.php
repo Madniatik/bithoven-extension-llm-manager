@@ -8,6 +8,12 @@ use Bithoven\LLMManager\Services\LLMRAGService;
 use Bithoven\LLMManager\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+/**
+ * RAG Pipeline Integration Tests
+ * 
+ * @group integration
+ * @group rag
+ */
 class RAGPipelineTest extends TestCase
 {
     use RefreshDatabase;

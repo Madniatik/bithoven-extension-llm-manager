@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Bithoven\LLMManager\Services\RAG\LLMRAGService;
+use Bithoven\LLMManager\Services\LLMRAGService;
 
 class LLMRAGController extends Controller
 {

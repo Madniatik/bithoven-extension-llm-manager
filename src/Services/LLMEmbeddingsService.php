@@ -29,6 +29,17 @@ class LLMEmbeddingsService
     }
 
     /**
+     * Alias for generateEmbedding() to match RAG usage
+     * 
+     * @param string $text Text to generate embedding for
+     * @return array Vector embedding
+     */
+    public function generate(string $text): array
+    {
+        return $this->generateEmbedding($text);
+    }
+
+    /**
      * Generate embeddings for multiple texts in batch
      * 
      * @param array $texts Array of texts to generate embeddings for

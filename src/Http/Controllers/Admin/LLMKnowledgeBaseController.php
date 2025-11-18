@@ -5,7 +5,7 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Models\LLMDocumentKnowledgeBase;
-use Bithoven\LLMManager\Services\RAG\LLMRAGService;
+use Bithoven\LLMManager\Services\LLMRAGService;
 
 class LLMKnowledgeBaseController extends Controller
 {

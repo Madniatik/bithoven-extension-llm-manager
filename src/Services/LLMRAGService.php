@@ -1,8 +1,9 @@
 <?php
 
-namespace Bithoven\LLMManager\Services\RAG;
+namespace Bithoven\LLMManager\Services;
 
 use Bithoven\LLMManager\Models\LLMDocumentKnowledgeBase;
+use Bithoven\LLMManager\Services\LLMEmbeddingsService;
 
 class LLMRAGService
 {
