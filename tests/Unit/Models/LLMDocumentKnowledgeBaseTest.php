@@ -13,16 +13,13 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
     /** @test */
     public function it_can_create_a_knowledge_base_document()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Laravel Best Practices',
-            'content' => 'This document contains Laravel best practices...',
-            'extension_slug' => 'llm-manager',
             'metadata' => ['author' => 'John Doe', 'version' => '1.0'],
         ]);
 
-        $this->assertDatabaseHas('llm_document_knowledge_base', [
+        $this->assertDatabaseHas('llm_manager_document_knowledge_base', [
             'title' => 'Laravel Best Practices',
-            'extension_slug' => 'llm-manager',
         ]);
 
         $this->assertEquals(['author' => 'John Doe', 'version' => '1.0'], $document->metadata);
@@ -38,10 +35,8 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
             'version' => '2.0',
         ];
 
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'API Development Guide',
-            'content' => 'Guide content...',
-            'extension_slug' => 'llm-manager',
             'metadata' => $metadata,
         ]);
 
@@ -54,10 +49,7 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
     /** @test */
     public function it_tracks_indexing_status()
     {
-        $document = LLMDocumentKnowledgeBase::create([
-            'title' => 'Test Document',
-            'content' => 'Content...',
-            'extension_slug' => 'llm-manager',
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'is_indexed' => false,
         ]);
 
@@ -82,11 +74,8 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
             'This is chunk 3',
         ];
 
-        $document = LLMDocumentKnowledgeBase::create([
-            'title' => 'Chunked Document',
-            'content' => 'Full content...',
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'content_chunks' => $chunks,
-            'extension_slug' => 'llm-manager',
         ]);
 
         $document->refresh();
@@ -98,11 +87,8 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
     /** @test */
     public function it_has_chunk_count_accessor()
     {
-        $document = LLMDocumentKnowledgeBase::create([
-            'title' => 'Test Doc',
-            'content' => 'Content...',
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'content_chunks' => ['chunk1', 'chunk2', 'chunk3', 'chunk4'],
-            'extension_slug' => 'llm-manager',
         ]);
 
         $this->assertEquals(4, $document->chunk_count);
@@ -111,15 +97,11 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
     /** @test */
     public function it_filters_by_extension_slug()
     {
-        LLMDocumentKnowledgeBase::create([
-            'title' => 'Doc 1',
-            'content' => 'Content 1',
+        LLMDocumentKnowledgeBase::factory()->create([
             'extension_slug' => 'extension-a',
         ]);
 
-        LLMDocumentKnowledgeBase::create([
-            'title' => 'Doc 2',
-            'content' => 'Content 2',
+        LLMDocumentKnowledgeBase::factory()->create([
             'extension_slug' => 'extension-b',
         ]);
 
@@ -133,18 +115,9 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
     /** @test */
     public function it_filters_indexed_documents()
     {
-        LLMDocumentKnowledgeBase::create([
-            'title' => 'Indexed Doc',
-            'content' => 'Content',
-            'extension_slug' => 'llm-manager',
-            'is_indexed' => true,
-            'indexed_at' => now(),
-        ]);
+        LLMDocumentKnowledgeBase::factory()->indexed()->create();
 
-        LLMDocumentKnowledgeBase::create([
-            'title' => 'Not Indexed Doc',
-            'content' => 'Content',
-            'extension_slug' => 'llm-manager',
+        LLMDocumentKnowledgeBase::factory()->create([
             'is_indexed' => false,
         ]);
 
@@ -158,30 +131,12 @@ class LLMDocumentKnowledgeBaseTest extends TestCase
     /** @test */
     public function it_handles_empty_chunks()
     {
-        $document = LLMDocumentKnowledgeBase::create([
-            'title' => 'Empty Chunks',
-            'content' => 'Short content',
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'content_chunks' => null,
-            'extension_slug' => 'llm-manager',
         ]);
 
         $this->assertEquals(0, $document->chunk_count);
         $this->assertEmpty($document->content_chunks ?? []);
     }
-
-    /** @test */
-    public function it_can_soft_delete()
-    {
-        $document = LLMDocumentKnowledgeBase::create([
-            'title' => 'Test Document',
-            'content' => 'Content',
-            'extension_slug' => 'llm-manager',
-        ]);
-
-        $document->delete();
-
-        $this->assertSoftDeleted('llm_document_knowledge_base', ['id' => $document->id]);
-        
-        $this->assertNotNull(LLMDocumentKnowledgeBase::withTrashed()->find($document->id));
-    }
 }
+

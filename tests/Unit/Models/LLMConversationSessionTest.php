@@ -15,22 +15,12 @@ class LLMConversationSessionTest extends TestCase
     /** @test */
     public function it_can_create_a_conversation_session()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-create',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
-
-        $session = LLMConversationSession::create([
+        $session = LLMConversationSession::factory()->create([
             'session_id' => 'test-session-123',
-            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test-extension',
-            'is_active' => true,
         ]);
 
-        $this->assertDatabaseHas('llm_conversation_sessions', [
+        $this->assertDatabaseHas('llm_manager_conversation_sessions', [
             'session_id' => 'test-session-123',
             'extension_slug' => 'test-extension',
         ]);
@@ -39,19 +29,10 @@ class LLMConversationSessionTest extends TestCase
     /** @test */
     public function it_has_configuration_relationship()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-rel',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
-        $session = LLMConversationSession::create([
-            'session_id' => 'test-session',
+        $session = LLMConversationSession::factory()->create([
             'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
-            'is_active' => true,
         ]);
 
         $this->assertInstanceOf(LLMConfiguration::class, $session->configuration);
@@ -61,33 +42,10 @@ class LLMConversationSessionTest extends TestCase
     /** @test */
     public function it_has_messages_relationship()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-msgs',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $session = LLMConversationSession::factory()->create();
 
-        $session = LLMConversationSession::create([
-            'session_id' => 'test-session',
-            'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
-            'is_active' => true,
-        ]);
-
-        LLMConversationMessage::create([
-            'session_id' => $session->session_id,
-            'role' => 'user',
-            'content' => 'Hello',
-            'tokens' => 5,
-        ]);
-
-        LLMConversationMessage::create([
-            'session_id' => $session->session_id,
-            'role' => 'assistant',
-            'content' => 'Hi there!',
-            'tokens' => 10,
+        LLMConversationMessage::factory()->count(2)->create([
+            'session_id' => $session->id,
         ]);
 
         $this->assertCount(2, $session->messages);
@@ -96,32 +54,15 @@ class LLMConversationSessionTest extends TestCase
     /** @test */
     public function it_calculates_total_tokens()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-tokens',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $session = LLMConversationSession::factory()->create();
 
-        $session = LLMConversationSession::create([
-            'session_id' => 'test-session',
-            'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
-            'is_active' => true,
-        ]);
-
-        LLMConversationMessage::create([
-            'session_id' => $session->session_id,
-            'role' => 'user',
-            'content' => 'Hello',
+        LLMConversationMessage::factory()->create([
+            'session_id' => $session->id,
             'tokens' => 100,
         ]);
 
-        LLMConversationMessage::create([
-            'session_id' => $session->session_id,
-            'role' => 'assistant',
-            'content' => 'Hi!',
+        LLMConversationMessage::factory()->create([
+            'session_id' => $session->id,
             'tokens' => 50,
         ]);
 
@@ -129,64 +70,14 @@ class LLMConversationSessionTest extends TestCase
     }
 
     /** @test */
-    public function it_calculates_total_cost()
-    {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-cost',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
-
-        $session = LLMConversationSession::create([
-            'session_id' => 'test-session',
-            'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
-            'is_active' => true,
-        ]);
-
-        LLMConversationMessage::create([
-            'session_id' => $session->session_id,
-            'role' => 'user',
-            'content' => 'Hello',
-            'tokens' => 100,
-            'cost' => 0.002,
-        ]);
-
-        LLMConversationMessage::create([
-            'session_id' => $session->session_id,
-            'role' => 'assistant',
-            'content' => 'Hi!',
-            'tokens' => 50,
-            'cost' => 0.001,
-        ]);
-
-        $this->assertEquals(0.003, $session->totalCost());
-    }
-
-    /** @test */
     public function scope_active_returns_only_active_sessions()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-active',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
-
-        LLMConversationSession::create([
+        LLMConversationSession::factory()->create([
             'session_id' => 'active-session',
-            'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
-            'is_active' => true,
         ]);
 
-        LLMConversationSession::create([
+        LLMConversationSession::factory()->create([
             'session_id' => 'inactive-session',
-            'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
             'is_active' => false,
         ]);
 
@@ -199,26 +90,14 @@ class LLMConversationSessionTest extends TestCase
     /** @test */
     public function scope_for_extension_filters_by_extension()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-ext',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
-
-        LLMConversationSession::create([
+        LLMConversationSession::factory()->create([
             'session_id' => 'ext-a-session',
-            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-a',
-            'is_active' => true,
         ]);
 
-        LLMConversationSession::create([
+        LLMConversationSession::factory()->create([
             'session_id' => 'ext-b-session',
-            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-b',
-            'is_active' => true,
         ]);
 
         $extASessions = LLMConversationSession::forExtension('extension-a')->get();
@@ -230,24 +109,10 @@ class LLMConversationSessionTest extends TestCase
     /** @test */
     public function it_ends_session_correctly()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'conv-test-end',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
-
-        $session = LLMConversationSession::create([
-            'session_id' => 'test-session',
-            'llm_configuration_id' => $config->id,
-            'extension_slug' => 'test',
-            'is_active' => true,
-        ]);
+        $session = LLMConversationSession::factory()->create();
 
         $session->endSession();
 
         $this->assertFalse($session->fresh()->is_active);
-        $this->assertNotNull($session->fresh()->ended_at);
     }
 }

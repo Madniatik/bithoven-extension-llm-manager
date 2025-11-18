@@ -104,6 +104,11 @@ class LLMConversationSession extends Model
         return $query->where('extension_slug', $extensionSlug);
     }
 
+    public function scopeForExtension($query, string $extensionSlug)
+    {
+        return $query->where('extension_slug', $extensionSlug);
+    }
+
     public function scopeExpired($query)
     {
         return $query->where('expires_at', '<=', now());
@@ -143,4 +148,22 @@ class LLMConversationSession extends Model
     {
         return $this->messages()->sum('tokens') ?? 0;
     }
+
+    /**
+     * Get total tokens (method for backward compatibility)
+     */
+    public function totalTokens(): int
+    {
+        return $this->messages()->sum('tokens') ?? 0;
+    }
+
+    /**
+     * End session
+     */
+    public function endSession(): void
+    {
+        $this->is_active = false;
+        $this->save();
+    }
 }
+

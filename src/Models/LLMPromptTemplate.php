@@ -54,6 +54,16 @@ class LLMPromptTemplate extends Model
         return $query->where('category', $category);
     }
 
+    public function scopeGlobal($query)
+    {
+        return $query->whereNull('extension_slug');
+    }
+
+    public function scopeForExtension($query, string $extensionSlug)
+    {
+        return $query->where('extension_slug', $extensionSlug);
+    }
+
     /**
      * Render template with variables
      */

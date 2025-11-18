@@ -63,4 +63,13 @@ class LLMToolDefinitionFactory extends Factory
             'is_active' => false,
         ]);
     }
+
+    public function mcp(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'mcp',
+            'handler_class' => null,
+            'handler_method' => null,
+        ]);
+    }
 }

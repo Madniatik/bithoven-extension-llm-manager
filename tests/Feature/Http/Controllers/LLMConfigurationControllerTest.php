@@ -63,7 +63,7 @@ class LLMConfigurationControllerTest extends TestCase
         $response->assertRedirect(route('admin.llm.configurations.index'));
         $response->assertSessionHas('success');
 
-        $this->assertDatabaseHas('llm_configurations', [
+        $this->assertDatabaseHas('llm_manager_configurations', [
             'name' => 'Test OpenAI Config',
             'provider' => 'openai',
             'model' => 'gpt-4',
@@ -144,7 +144,7 @@ class LLMConfigurationControllerTest extends TestCase
         $response->assertRedirect(route('admin.llm.configurations.index'));
         $response->assertSessionHas('success');
 
-        $this->assertDatabaseHas('llm_configurations', [
+        $this->assertDatabaseHas('llm_manager_configurations', [
             'id' => $config->id,
             'name' => 'Updated Name',
             'model' => 'gpt-4-turbo',

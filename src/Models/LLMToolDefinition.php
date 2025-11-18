@@ -70,6 +70,11 @@ class LLMToolDefinition extends Model
         return $query->where('type', 'mcp');
     }
 
+    public function scopeByType($query, string $type)
+    {
+        return $query->where('type', $type);
+    }
+
     /**
      * Check if tool uses function calling
      */
@@ -143,4 +148,53 @@ class LLMToolDefinition extends Model
 
         return true;
     }
+
+    /**
+     * Validate parameters against function schema
+     */
+    public function validateParameters(array $parameters): bool
+    {
+        // Support both schema formats:
+        // 1. {"parameters": {"required": [...]}} (standard)
+        // 2. {"param1": {"required": true}, ...} (legacy)
+        
+        $schema = $this->function_schema;
+        
+        if (isset($schema['parameters']['required'])) {
+            // Standard format
+            $required = $schema['parameters']['required'];
+            foreach ($required as $requiredParam) {
+                if (!isset($parameters[$requiredParam])) {
+                    return false;
+                }
+            }
+        } else {
+            // Legacy format - check each param
+            foreach ($schema as $paramName => $paramSchema) {
+                if (isset($paramSchema['required']) && $paramSchema['required'] === true) {
+                    if (!isset($parameters[$paramName])) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Format tool for function calling
+     */
+    public function toFunctionCallingFormat(): array
+    {
+        return [
+            'name' => $this->name,
+            'description' => $this->description ?? '',
+            'parameters' => $this->function_schema['parameters'] ?? [
+                'type' => 'object',
+                'properties' => [],
+            ],
+        ];
+    }
 }
+

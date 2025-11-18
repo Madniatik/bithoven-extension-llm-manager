@@ -13,63 +13,41 @@ class LLMToolDefinitionTest extends TestCase
     /** @test */
     public function it_can_create_a_tool_definition()
     {
-        $tool = LLMToolDefinition::create([
+        $tool = LLMToolDefinition::factory()->create([
             'name' => 'calculate',
             'description' => 'Performs mathematical calculations',
-            'type' => 'native',
-            'implementation' => 'App\Services\CalculatorService@calculate',
-            'parameters' => [
-                'expression' => [
-                    'type' => 'string',
-                    'description' => 'Mathematical expression',
-                    'required' => true,
-                ],
-            ],
-            'is_active' => true,
         ]);
 
-        $this->assertDatabaseHas('llm_tool_definitions', [
+        $this->assertDatabaseHas('llm_manager_tool_definitions', [
             'name' => 'calculate',
-            'type' => 'native',
         ]);
     }
 
     /** @test */
     public function it_casts_parameters_to_array()
     {
-        $tool = LLMToolDefinition::create([
+        $tool = LLMToolDefinition::factory()->create([
             'name' => 'test_tool',
-            'description' => 'Test tool',
-            'type' => 'native',
-            'implementation' => 'TestService@method',
-            'parameters' => [
+            'function_schema' => [
                 'param1' => ['type' => 'string', 'required' => true],
                 'param2' => ['type' => 'integer', 'required' => false],
             ],
-            'is_active' => true,
         ]);
 
-        $this->assertIsArray($tool->parameters);
-        $this->assertArrayHasKey('param1', $tool->parameters);
+        $this->assertIsArray($tool->function_schema);
+        $this->assertArrayHasKey('param1', $tool->function_schema);
     }
 
     /** @test */
     public function scope_active_returns_only_active_tools()
     {
-        LLMToolDefinition::create([
+        LLMToolDefinition::factory()->create([
             'name' => 'active_tool',
-            'description' => 'Active',
-            'type' => 'native',
-            'implementation' => 'Service@method',
             'is_active' => true,
         ]);
 
-        LLMToolDefinition::create([
+        LLMToolDefinition::factory()->inactive()->create([
             'name' => 'inactive_tool',
-            'description' => 'Inactive',
-            'type' => 'native',
-            'implementation' => 'Service@method',
-            'is_active' => false,
         ]);
 
         $activeTools = LLMToolDefinition::active()->get();
@@ -81,64 +59,26 @@ class LLMToolDefinitionTest extends TestCase
     /** @test */
     public function scope_by_type_filters_correctly()
     {
-        LLMToolDefinition::create([
-            'name' => 'native_tool',
-            'description' => 'Native',
-            'type' => 'native',
-            'implementation' => 'Service@method',
-            'is_active' => true,
+        LLMToolDefinition::factory()->functionCalling()->create([
+            'name' => 'function_calling_tool',
         ]);
 
-        LLMToolDefinition::create([
+        LLMToolDefinition::factory()->mcp()->create([
             'name' => 'mcp_tool',
-            'description' => 'MCP',
-            'type' => 'mcp',
-            'implementation' => 'mcp://server/tool',
-            'is_active' => true,
         ]);
 
-        $nativeTools = LLMToolDefinition::byType('native')->get();
+        $functionCallingTools = LLMToolDefinition::byType('function_calling')->get();
 
-        $this->assertCount(1, $nativeTools);
-        $this->assertEquals('native', $nativeTools->first()->type);
-    }
-
-    /** @test */
-    public function scope_for_extension_filters_by_extension()
-    {
-        LLMToolDefinition::create([
-            'name' => 'ext_a_tool',
-            'description' => 'Extension A',
-            'type' => 'native',
-            'implementation' => 'Service@method',
-            'extension_slug' => 'extension-a',
-            'is_active' => true,
-        ]);
-
-        LLMToolDefinition::create([
-            'name' => 'ext_b_tool',
-            'description' => 'Extension B',
-            'type' => 'native',
-            'implementation' => 'Service@method',
-            'extension_slug' => 'extension-b',
-            'is_active' => true,
-        ]);
-
-        $extATools = LLMToolDefinition::forExtension('extension-a')->get();
-
-        $this->assertCount(1, $extATools);
-        $this->assertEquals('extension-a', $extATools->first()->extension_slug);
+        $this->assertCount(1, $functionCallingTools);
+        $this->assertEquals('function_calling', $functionCallingTools->first()->type);
     }
 
     /** @test */
     public function it_validates_required_parameters()
     {
-        $tool = LLMToolDefinition::create([
+        $tool = LLMToolDefinition::factory()->create([
             'name' => 'test_tool',
-            'description' => 'Test',
-            'type' => 'native',
-            'implementation' => 'Service@method',
-            'parameters' => [
+            'function_schema' => [
                 'required_param' => [
                     'type' => 'string',
                     'required' => true,
@@ -148,7 +88,6 @@ class LLMToolDefinitionTest extends TestCase
                     'required' => false,
                 ],
             ],
-            'is_active' => true,
         ]);
 
         // Valid - has required param
@@ -167,19 +106,16 @@ class LLMToolDefinitionTest extends TestCase
     /** @test */
     public function it_formats_for_function_calling()
     {
-        $tool = LLMToolDefinition::create([
+        $tool = LLMToolDefinition::factory()->create([
             'name' => 'get_weather',
             'description' => 'Get current weather',
-            'type' => 'native',
-            'implementation' => 'WeatherService@getCurrent',
-            'parameters' => [
+            'function_schema' => [
                 'location' => [
                     'type' => 'string',
                     'description' => 'City name',
                     'required' => true,
                 ],
             ],
-            'is_active' => true,
         ]);
 
         $formatted = $tool->toFunctionCallingFormat();

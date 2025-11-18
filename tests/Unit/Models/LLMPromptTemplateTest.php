@@ -13,16 +13,13 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function it_can_create_a_prompt_template()
     {
-        $template = LLMPromptTemplate::create([
+        $template = LLMPromptTemplate::factory()->create([
             'name' => 'Code Review Template',
             'category' => 'code-review',
             'description' => 'Template for code review',
-            'template' => 'Review this code: {{code}}',
-            'variables' => ['code'],
-            'is_active' => true,
         ]);
 
-        $this->assertDatabaseHas('llm_prompt_templates', [
+        $this->assertDatabaseHas('llm_manager_prompt_templates', [
             'name' => 'Code Review Template',
             'category' => 'code-review',
         ]);
@@ -31,12 +28,9 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function it_casts_variables_to_array()
     {
-        $template = LLMPromptTemplate::create([
-            'name' => 'Test Template',
-            'category' => 'testing',
+        $template = LLMPromptTemplate::factory()->create([
             'template' => 'Hello {{name}}, your age is {{age}}',
             'variables' => ['name', 'age'],
-            'is_active' => true,
         ]);
 
         $this->assertIsArray($template->variables);
@@ -47,12 +41,9 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function it_interpolates_variables_correctly()
     {
-        $template = LLMPromptTemplate::create([
-            'name' => 'Greeting Template',
-            'category' => 'general',
+        $template = LLMPromptTemplate::factory()->create([
             'template' => 'Hello {{name}}, welcome to {{platform}}!',
             'variables' => ['name', 'platform'],
-            'is_active' => true,
         ]);
 
         $result = $template->render([
@@ -66,12 +57,9 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function it_throws_exception_for_missing_variables()
     {
-        $template = LLMPromptTemplate::create([
-            'name' => 'Test Template',
-            'category' => 'testing',
+        $template = LLMPromptTemplate::factory()->create([
             'template' => 'Hello {{name}}',
             'variables' => ['name'],
-            'is_active' => true,
         ]);
 
         // render() doesn't throw exception, just returns template with unfilled vars
@@ -86,17 +74,13 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function scope_active_returns_only_active_templates()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Active Template',
-            'category' => 'testing',
-            'template' => 'Test',
             'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Inactive Template',
-            'category' => 'testing',
-            'template' => 'Test',
             'is_active' => false,
         ]);
 
@@ -109,18 +93,14 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function scope_by_category_filters_correctly()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Code Template',
             'category' => 'code-generation',
-            'template' => 'Generate code',
-            'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Review Template',
             'category' => 'code-review',
-            'template' => 'Review code',
-            'is_active' => true,
         ]);
 
         $codeTemplates = LLMPromptTemplate::byCategory('code-generation')->get();
@@ -132,48 +112,32 @@ class LLMPromptTemplateTest extends TestCase
     /** @test */
     public function scope_global_returns_only_global_templates()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->global()->create([
             'name' => 'Global Template',
-            'category' => 'general',
-            'template' => 'Test',
-            'is_global' => true,
-            'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Extension Template',
-            'category' => 'general',
-            'template' => 'Test',
-            'is_global' => false,
             'extension_slug' => 'test-extension',
-            'is_active' => true,
         ]);
 
         $globalTemplates = LLMPromptTemplate::global()->get();
 
         $this->assertCount(1, $globalTemplates);
-        $this->assertTrue($globalTemplates->first()->is_global);
+        $this->assertNull($globalTemplates->first()->extension_slug);
     }
 
     /** @test */
     public function scope_for_extension_filters_by_extension()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Extension A Template',
-            'category' => 'general',
-            'template' => 'Test',
-            'is_global' => false,
             'extension_slug' => 'extension-a',
-            'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Extension B Template',
-            'category' => 'general',
-            'template' => 'Test',
-            'is_global' => false,
             'extension_slug' => 'extension-b',
-            'is_active' => true,
         ]);
 
         $extensionA = LLMPromptTemplate::forExtension('extension-a')->get();

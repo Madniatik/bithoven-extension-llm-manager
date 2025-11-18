@@ -24,9 +24,6 @@ class LLMConfigurationFactory extends Factory
                 'temperature' => 0.7,
                 'max_tokens' => 2048,
             ],
-            'cost_per_1k_input_tokens' => fake()->randomFloat(4, 0, 0.01),
-            'cost_per_1k_output_tokens' => fake()->randomFloat(4, 0, 0.03),
-            'currency' => 'USD',
             'is_default' => false,
             'is_active' => true,
         ];
@@ -95,6 +92,15 @@ class LLMConfigurationFactory extends Factory
             'model' => 'local-llama-7b',
             'api_endpoint' => 'http://localhost:5000',
             'api_key' => null,
+        ]);
+    }
+
+    public function anthropic(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'provider' => 'anthropic',
+            'model' => 'claude-3-sonnet',
+            'api_endpoint' => 'https://api.anthropic.com/v1',
         ]);
     }
 }

@@ -38,7 +38,8 @@
     "autoload": {
         "psr-4": {
             "Bithoven\\LLMManager\\": "src/",
-            "Bithoven\\LLMManager\\Database\\Seeders\\": "database/seeders/"
+            "Bithoven\\LLMManager\\Database\\Seeders\\": "database/seeders/",
+            "Bithoven\\LLMManager\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
@@ -57,5 +58,10 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        }
+    }
 }

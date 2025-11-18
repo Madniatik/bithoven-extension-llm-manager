@@ -63,7 +63,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
         $response->assertRedirect(route('admin.llm.knowledge-base.index'));
         $response->assertSessionHas('success');
 
-        $this->assertDatabaseHas('llm_document_knowledge_base', [
+        $this->assertDatabaseHas('llm_manager_document_knowledge_base', [
             'title' => 'Laravel Best Practices',
             'extension_slug' => 'llm-manager',
         ]);
@@ -129,7 +129,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
 
         $response->assertRedirect(route('admin.llm.knowledge-base.index'));
 
-        $this->assertDatabaseHas('llm_document_knowledge_base', [
+        $this->assertDatabaseHas('llm_manager_document_knowledge_base', [
             'id' => $document->id,
             'title' => 'Updated Title',
         ]);

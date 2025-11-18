@@ -83,6 +83,11 @@ class LLMConfiguration extends Model
         return $query->where('provider', $provider);
     }
 
+    public function scopeForProvider($query, string $provider)
+    {
+        return $query->where('provider', $provider);
+    }
+
     /**
      * Accessors & Mutators
      */
