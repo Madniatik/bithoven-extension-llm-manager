@@ -20,6 +20,9 @@ abstract class TestCase extends Orchestra
         
         // Load extension's migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        
+        // Override default-layout component with mock for testing
+        \Illuminate\Support\Facades\Blade::component('default-layout', \Tests\Stubs\DefaultLayout::class);
     }
 
     protected function getPackageProviders($app)
@@ -43,16 +46,13 @@ abstract class TestCase extends Orchestra
         // Disable ActivityLog in tests to avoid null user issues
         $app['config']->set('activitylog.enabled', false);
         
-        // Register view path for mock components
-        $app['config']->set('view.paths', array_merge(
-            $app['config']->get('view.paths', []),
-            [__DIR__ . '/stubs/views']
-        ));
+        // Register test components view namespace
+        $app['view']->addNamespace('test-components', __DIR__ . '/stubs/components');
         
-        // Add components namespace for mock default-layout
-        $app['config']->set('view.components', [
-            'default-layout' => \Illuminate\View\Component::class,
-        ]);
+        // Prepend test stubs path to views
+        $viewPaths = $app['config']->get('view.paths', []);
+        array_unshift($viewPaths, __DIR__ . '/stubs');
+        $app['config']->set('view.paths', $viewPaths);
 
         // Setup LLM Manager config
         $app['config']->set('llm-manager.default_provider', 'openai');

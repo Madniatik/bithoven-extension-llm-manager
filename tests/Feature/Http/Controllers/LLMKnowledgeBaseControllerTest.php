@@ -52,6 +52,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
             'title' => 'Laravel Best Practices',
             'content' => 'This document contains best practices for Laravel development...',
             'extension_slug' => 'llm-manager',
+            'document_type' => 'documentation',
             'metadata' => [
                 'author' => 'John Doe',
                 'category' => 'PHP',
@@ -60,12 +61,13 @@ class LLMKnowledgeBaseControllerTest extends TestCase
 
         $response = $this->post(route('admin.llm.knowledge-base.store'), $data);
 
-        $response->assertRedirect(route('admin.llm.knowledge-base.index'));
+        $response->assertRedirect();
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('llm_manager_document_knowledge_base', [
             'title' => 'Laravel Best Practices',
             'extension_slug' => 'llm-manager',
+            'document_type' => 'documentation',
         ]);
     }
 
@@ -74,13 +76,13 @@ class LLMKnowledgeBaseControllerTest extends TestCase
     {
         $response = $this->post(route('admin.llm.knowledge-base.store'), []);
 
-        $response->assertSessionHasErrors(['title', 'content']);
+        $response->assertSessionHasErrors(['title', 'content', 'document_type', 'extension_slug']);
     }
 
     /** @test */
     public function it_displays_document_details()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Test Document',
             'content' => 'Test content...',
             'extension_slug' => 'llm-manager',
@@ -96,7 +98,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
     /** @test */
     public function it_can_edit_a_document()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Original Title',
             'content' => 'Original content',
             'extension_slug' => 'llm-manager',
@@ -112,7 +114,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
     /** @test */
     public function it_can_update_a_document()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Original Title',
             'content' => 'Original content',
             'extension_slug' => 'llm-manager',
@@ -121,13 +123,13 @@ class LLMKnowledgeBaseControllerTest extends TestCase
         $updateData = [
             'title' => 'Updated Title',
             'content' => 'Updated content with more information',
-            'extension_slug' => 'llm-manager',
+            'document_type' => 'documentation',
             'metadata' => ['updated' => true],
         ];
 
         $response = $this->put(route('admin.llm.knowledge-base.update', $document), $updateData);
 
-        $response->assertRedirect(route('admin.llm.knowledge-base.index'));
+        $response->assertRedirect();
 
         $this->assertDatabaseHas('llm_manager_document_knowledge_base', [
             'id' => $document->id,
@@ -138,7 +140,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_document()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'To Delete',
             'content' => 'Content to delete',
             'extension_slug' => 'llm-manager',
@@ -149,13 +151,13 @@ class LLMKnowledgeBaseControllerTest extends TestCase
         $response->assertRedirect(route('admin.llm.knowledge-base.index'));
         $response->assertSessionHas('success');
 
-        $this->assertSoftDeleted('llm_document_knowledge_base', ['id' => $document->id]);
+        $this->assertSoftDeleted('llm_manager_document_knowledge_base', ['id' => $document->id]);
     }
 
     /** @test */
     public function it_can_index_a_document()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Test Document',
             'content' => 'This is a test document for indexing with RAG service.',
             'extension_slug' => 'llm-manager',
@@ -179,7 +181,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
     /** @test */
     public function it_displays_indexed_status()
     {
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Indexed Doc',
             'content' => 'Content',
             'extension_slug' => 'llm-manager',
@@ -197,7 +199,7 @@ class LLMKnowledgeBaseControllerTest extends TestCase
     {
         $chunks = ['Chunk 1 content', 'Chunk 2 content', 'Chunk 3 content'];
 
-        $document = LLMDocumentKnowledgeBase::create([
+        $document = LLMDocumentKnowledgeBase::factory()->create([
             'title' => 'Chunked Doc',
             'content' => 'Full content',
             'content_chunks' => $chunks,

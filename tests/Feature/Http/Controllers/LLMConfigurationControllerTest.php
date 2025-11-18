@@ -81,13 +81,9 @@ class LLMConfigurationControllerTest extends TestCase
     /** @test */
     public function it_displays_configuration_details()
     {
-        $config = LLMConfiguration::create([
+        $config = LLMConfiguration::factory()->openai()->create([
             'name' => 'Test Config',
             'slug' => 'controller-show-config',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'api_key' => encrypt('sk-test'),
-            'is_active' => true,
         ]);
 
         $response = $this->get(route('admin.llm.configurations.show', $config));
@@ -100,13 +96,9 @@ class LLMConfigurationControllerTest extends TestCase
     /** @test */
     public function it_displays_edit_configuration_form()
     {
-        $config = LLMConfiguration::create([
+        $config = LLMConfiguration::factory()->openai()->create([
             'name' => 'Test Config',
             'slug' => 'controller-edit-config',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'api_key' => encrypt('sk-test'),
-            'is_active' => true,
         ]);
 
         $response = $this->get(route('admin.llm.configurations.edit', $config));
@@ -119,13 +111,9 @@ class LLMConfigurationControllerTest extends TestCase
     /** @test */
     public function it_can_update_a_configuration()
     {
-        $config = LLMConfiguration::create([
+        $config = LLMConfiguration::factory()->openai()->create([
             'name' => 'Original Name',
             'slug' => 'controller-update-config',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'api_key' => encrypt('sk-test'),
-            'is_active' => true,
         ]);
 
         $updateData = [
@@ -155,13 +143,9 @@ class LLMConfigurationControllerTest extends TestCase
     /** @test */
     public function it_can_delete_a_configuration()
     {
-        $config = LLMConfiguration::create([
+        $config = LLMConfiguration::factory()->openai()->create([
             'name' => 'To Delete',
             'slug' => 'controller-delete-config',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'api_key' => encrypt('sk-test'),
-            'is_active' => true,
         ]);
 
         $response = $this->delete(route('admin.llm.configurations.destroy', $config));
@@ -169,20 +153,16 @@ class LLMConfigurationControllerTest extends TestCase
         $response->assertRedirect(route('admin.llm.configurations.index'));
         $response->assertSessionHas('success');
 
-        $this->assertSoftDeleted('llm_configurations', ['id' => $config->id]);
+        $this->assertSoftDeleted('llm_manager_configurations', ['id' => $config->id]);
     }
 
     /** @test */
     public function it_can_test_configuration_connection()
     {
-        $config = LLMConfiguration::create([
+        $config = LLMConfiguration::factory()->openai()->create([
             'name' => 'Test Config',
             'slug' => 'controller-test-connection',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'api_key' => encrypt('sk-test'),
             'endpoint_url' => 'https://api.openai.com/v1/chat/completions',
-            'is_active' => true,
         ]);
 
         $response = $this->post(route('admin.llm.configurations.test'), [
@@ -206,20 +186,14 @@ class LLMConfigurationControllerTest extends TestCase
     /** @test */
     public function it_displays_configurations_in_index()
     {
-        LLMConfiguration::create([
+        LLMConfiguration::factory()->openai()->create([
             'name' => 'Config 1',
             'slug' => 'controller-index-config-1',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
         ]);
 
-        LLMConfiguration::create([
+        LLMConfiguration::factory()->anthropic()->create([
             'name' => 'Config 2',
             'slug' => 'controller-index-config-2',
-            'provider' => 'anthropic',
-            'model' => 'claude-3',
-            'is_active' => true,
         ]);
 
         $response = $this->get(route('admin.llm.configurations.index'));
