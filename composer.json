@@ -37,7 +37,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Bithoven\\LLMManager\\": "src/"
+            "Bithoven\\LLMManager\\": "src/",
+            "Bithoven\\LLMManager\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
