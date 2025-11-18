@@ -1,0 +1,155 @@
+{
+    "slug": "llm",
+        "name": "llm-manager",
+    "display_name": "LLM Manager",
+    "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
+    "version": "1.0.0",
+    "author": "BITHOVEN Team",
+    "homepage": "https://github.com/bithoven/llm-manager",
+    "repository": {
+        "type": "vcs",
+        "url": "https://github.com/bithoven/llm-manager"
+    },
+    "system_tables": [
+        "users",
+        "permissions",
+        "roles"
+    ],
+    "permissions": [
+        "view-llm-configs",
+        "create-llm-configs",
+        "edit-llm-configs",
+        "delete-llm-configs",
+        "test-llm-connections",
+        "view-llm-stats",
+        "view-llm-metrics",
+        "manage-llm-prompts",
+        "view-llm-conversations",
+        "manage-llm-knowledge-base",
+        "manage-llm-workflows",
+        "manage-llm-mcp-servers",
+        "execute-llm-tools"
+    ],
+    "menu": {
+        "label": "LLM Manager",
+        "icon": "ki-abstract-41",
+        "route": "llm.admin.index",
+        "order": 85,
+        "parent": null,
+        "children": [
+            {
+                "label": "Configurations",
+                "route": "llm.admin.index"
+            },
+            {
+                "label": "Conversations",
+                "route": "llm.admin.conversations"
+            },
+            {
+                "label": "Knowledge Base",
+                "route": "llm.admin.knowledge-base"
+            },
+            {
+                "label": "Workflows",
+                "route": "llm.admin.workflows"
+            },
+            {
+                "label": "MCP Servers",
+                "route": "llm.admin.mcp-servers"
+            },
+            {
+                "label": "Statistics",
+                "route": "llm.admin.stats"
+            },
+            {
+                "label": "Reports",
+                "route": "llm.admin.reports"
+            }
+        ]
+    },
+    "migrations": {
+        "required": true,
+        "path": "database/migrations"
+    },
+    "seeders": {
+        "required": true,
+        "path": "database/seeders",
+        "order": [
+            "LLMConfigurationSeeder",
+            "LLMToolDefinitionsSeeder",
+            "LLMMCPConnectorsSeeder",
+            "LLMDemoSeeder"
+        ]
+    },
+    "post_install": {
+        "commands": [
+            "php artisan vendor:publish --tag=llm-config",
+            "php artisan vendor:publish --tag=llm-views",
+            "php artisan migrate",
+            "php artisan db:seed --class=Bithoven\\LLMManager\\Database\\Seeders\\DatabaseSeeder",
+            "bash scripts/install-mcp-servers.sh"
+        ],
+        "messages": [
+            "✅ LLM Manager installed successfully!",
+            "📦 MCP bundled servers installed (filesystem, database, laravel, code-generation)",
+            "🚀 Run 'php artisan llm-manager:mcp:start' to start MCP servers",
+            "📚 Documentation: vendor/bithoven/llm-manager/docs/",
+            "🎯 Admin panel: /admin/llm"
+        ]
+    },
+    "changelog": {
+        "v1.0.0": {
+            "date": "2025-11-18",
+            "changes": [
+                "Initial release v3.0: LLM Orchestration Platform",
+                "Core: Multi-provider support (Ollama, OpenAI, Anthropic, Custom)",
+                "Advanced: Custom metrics, prompt templates, parameter override",
+                "Orchestration: Conversations, RAG system, multi-agent workflows",
+                "Tools: Hybrid system (Function Calling + MCP bundled + external)",
+                "MCP Bundled: 4 servers (filesystem, database, laravel, code-generation)",
+                "Security: Path whitelisting, validation, execution tracking",
+                "UI: Admin dashboard, chat interface, workflow builder, MCP management"
+            ],
+            "migration_notes": "Creates 13 tables with llm_* prefix. Requires PHP 8.2+, Laravel 11+, Node.js 18+ for MCP servers.",
+            "breaking_changes": false,
+            "components": [
+                "code",
+                "database",
+                "mcp-servers",
+                "scripts"
+            ]
+        }
+    },
+    "requirements": {
+        "php": "^8.2",
+        "laravel": "^11.0",
+        "node": "^18.0",
+        "python": "^3.9"
+    },
+    "features": {
+        "llm-core": {
+            "multi-provider": true,
+            "budget-tracking": true,
+            "usage-logs": true,
+            "provider-cache": true
+        },
+        "advanced-features": {
+            "custom-metrics": true,
+            "prompt-templates": true,
+            "parameter-override": true
+        },
+        "orchestration": {
+            "conversations": true,
+            "rag-system": true,
+            "multi-agent": true,
+            "workflows": true
+        },
+        "tools": {
+            "function-calling": true,
+            "mcp-bundled": true,
+            "mcp-external": true,
+            "auto-selection": true,
+            "security-layer": true
+        }
+    }
+}

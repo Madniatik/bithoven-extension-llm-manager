@@ -1,0 +1,60 @@
+{
+    "name": "bithoven/llm-manager",
+    "description": "LLM Orchestration Platform with Hybrid Tools System for BITHOVEN",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "keywords": [
+        "laravel",
+        "llm",
+        "ai",
+        "openai",
+        "anthropic",
+        "ollama",
+        "mcp",
+        "function-calling",
+        "rag",
+        "multi-agent",
+        "orchestration"
+    ],
+    "authors": [
+        {
+            "name": "BITHOVEN Team",
+            "email": "dev@bithoven.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^11.0",
+        "openai-php/client": "^0.10",
+        "yajra/laravel-datatables-oracle": "^11.0",
+        "spatie/laravel-permission": "^6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "orchestra/testbench": "^9.0",
+        "mockery/mockery": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bithoven\\LLMManager\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bithoven\\LLMManager\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bithoven\\LLMManager\\LLMServiceProvider"
+            ],
+            "aliases": {
+                "LLM": "Bithoven\\LLMManager\\Facades\\LLM"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
