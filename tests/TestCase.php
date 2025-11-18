@@ -20,29 +20,6 @@ abstract class TestCase extends Orchestra
         
         // Load extension's migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        
-        // Register mock Blade components
-        $this->mockBladeComponents();
-    }
-    
-    /**
-     * Mock Blade components for testing (avoid CPANEL dependencies)
-     */
-    protected function mockBladeComponents(): void
-    {
-        // Register mock default-layout component
-        \Illuminate\Support\Facades\Blade::component('default-layout', function ($attributes = []) {
-            return function ($data) {
-                $slot = $data['slot'] ?? '';
-                return <<<HTML
-<!DOCTYPE html>
-<html>
-<head><title>Test Layout</title></head>
-<body>{$slot}</body>
-</html>
-HTML;
-            };
-        });
     }
 
     protected function getPackageProviders($app)

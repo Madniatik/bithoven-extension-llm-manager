@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 100)->unique()->nullable(); // Nullable for testing
-            $table->string('extension_slug', 100);
+            $table->string('extension_slug', 100)->nullable(); // Nullable for testing/global templates
             $table->string('category', 50)->nullable(); // e.g., 'analysis', 'generation', 'summarization'
             $table->text('template'); // With variables: "Analyze ticket: {{ticket_content}}"
             $table->json('variables'); // ["ticket_content", "user_name"]
