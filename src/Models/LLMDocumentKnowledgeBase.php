@@ -11,6 +11,11 @@ class LLMDocumentKnowledgeBase extends Model
 
     protected $table = 'llm_manager_document_knowledge_base';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMDocumentKnowledgeBaseFactory::new();
+    }
+
     protected $fillable = [
         'extension_slug',
         'document_type',

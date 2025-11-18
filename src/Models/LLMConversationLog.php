@@ -12,6 +12,11 @@ class LLMConversationLog extends Model
 
     protected $table = 'llm_manager_conversation_logs';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMConversationLogFactory::new();
+    }
+
     public $timestamps = false;
 
     protected $fillable = [

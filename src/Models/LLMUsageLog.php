@@ -14,6 +14,11 @@ class LLMUsageLog extends Model
 
     protected $table = 'llm_manager_usage_logs';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMUsageLogFactory::new();
+    }
+
     protected $fillable = [
         'llm_configuration_id',
         'user_id',

@@ -12,6 +12,11 @@ class LLMToolExecution extends Model
 
     protected $table = 'llm_manager_tool_executions';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMToolExecutionFactory::new();
+    }
+
     protected $fillable = [
         'tool_definition_id',
         'usage_log_id',

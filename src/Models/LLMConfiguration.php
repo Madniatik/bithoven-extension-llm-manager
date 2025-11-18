@@ -12,6 +12,11 @@ class LLMConfiguration extends Model
 
     protected $table = 'llm_manager_configurations';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMConfigurationFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'slug',

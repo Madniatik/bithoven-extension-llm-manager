@@ -13,6 +13,11 @@ class LLMToolDefinition extends Model
 
     protected $table = 'llm_manager_tool_definitions';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMToolDefinitionFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'slug',

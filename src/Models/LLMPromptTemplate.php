@@ -11,6 +11,11 @@ class LLMPromptTemplate extends Model
 
     protected $table = 'llm_manager_prompt_templates';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMPromptTemplateFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'slug',

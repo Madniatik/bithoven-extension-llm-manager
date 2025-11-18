@@ -12,6 +12,11 @@ class LLMMCPConnector extends Model
 
     protected $table = 'llm_manager_mcp_connectors';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMMCPConnectorFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'slug',

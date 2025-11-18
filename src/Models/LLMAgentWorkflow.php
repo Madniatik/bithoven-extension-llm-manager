@@ -12,6 +12,11 @@ class LLMAgentWorkflow extends Model
 
     protected $table = 'llm_manager_agent_workflows';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMAgentWorkflowFactory::new();
+    }
+
     protected $fillable = [
         'name',
         'slug',

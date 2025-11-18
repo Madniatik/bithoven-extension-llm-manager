@@ -12,6 +12,11 @@ class LLMCustomMetric extends Model
 
     protected $table = 'llm_manager_custom_metrics';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMCustomMetricFactory::new();
+    }
+
     protected $fillable = [
         'usage_log_id',
         'extension_slug',

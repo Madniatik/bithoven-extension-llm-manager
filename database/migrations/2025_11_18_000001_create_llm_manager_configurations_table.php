@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
-            $table->enum('provider', ['ollama', 'openai', 'anthropic', 'custom'])->default('ollama');
+            $table->enum('provider', ['ollama', 'openai', 'anthropic', 'local', 'custom'])->default('ollama');
             $table->string('model', 100);
             $table->string('api_endpoint')->nullable();
             $table->text('api_key')->nullable(); // Encrypted

@@ -15,6 +15,11 @@ class LLMConversationSession extends Model
 
     protected $table = 'llm_manager_conversation_sessions';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMConversationSessionFactory::new();
+    }
+
     protected $fillable = [
         'session_id',
         'user_id',

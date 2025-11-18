@@ -12,6 +12,11 @@ class LLMParameterOverride extends Model
 
     protected $table = 'llm_manager_parameter_overrides';
 
+    protected static function newFactory()
+    {
+        return \Bithoven\LLMManager\Database\Factories\LLMParameterOverrideFactory::new();
+    }
+
     protected $fillable = [
         'extension_slug',
         'llm_configuration_id',
