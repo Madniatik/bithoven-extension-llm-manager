@@ -84,6 +84,65 @@ class LLMBudgetManager
     }
 
     /**
+     * Get monthly spending (alias for getTotalSpent with month)
+     */
+    public function getMonthlySpending(?string $extensionSlug = null): float
+    {
+        return $this->getTotalSpent($extensionSlug, 'month');
+    }
+
+    /**
+     * Check if budget is exceeded
+     */
+    public function isBudgetExceeded(?string $extensionSlug = null): bool
+    {
+        $limit = config('llm-manager.budget.monthly_limit', 100);
+        $spent = $this->getMonthlySpending($extensionSlug);
+
+        return $spent > $limit;
+    }
+
+    /**
+     * Check if alert threshold is reached
+     */
+    public function isAlertThresholdReached(?string $extensionSlug = null): bool
+    {
+        $limit = config('llm-manager.budget.monthly_limit', 100);
+        $threshold = config('llm-manager.budget.alert_threshold', 80) / 100;
+        $spent = $this->getMonthlySpending($extensionSlug);
+
+        return ($spent / $limit) >= $threshold;
+    }
+
+    /**
+     * Get budget usage percentage
+     */
+    public function getBudgetUsagePercentage(?string $extensionSlug = null): float
+    {
+        $limit = config('llm-manager.budget.monthly_limit', 100);
+        $spent = $this->getMonthlySpending($extensionSlug);
+
+        return $limit > 0 ? ($spent / $limit) * 100 : 0;
+    }
+
+    /**
+     * Get spending grouped by extension
+     */
+    public function getSpendingByExtension(): array
+    {
+        $startDate = $this->getStartDate('month');
+
+        $logs = LLMUsageLog::query()
+            ->where('executed_at', '>=', $startDate)
+            ->whereNotNull('extension_slug')
+            ->get();
+
+        return $logs->groupBy('extension_slug')
+            ->map(fn($group) => $group->sum('cost_usd'))
+            ->toArray();
+    }
+
+    /**
      * Get start date for period
      */
     protected function getStartDate(string $period): \DateTime

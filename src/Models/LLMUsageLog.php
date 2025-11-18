@@ -26,6 +26,7 @@ class LLMUsageLog extends Model
         'prompt',
         'response',
         'parameters_used',
+        'metadata', // Alias for parameters_used
         'prompt_tokens',
         'completion_tokens',
         'total_tokens',
@@ -49,6 +50,24 @@ class LLMUsageLog extends Model
         'execution_time_ms' => 'integer',
         'executed_at' => 'datetime',
     ];
+
+    /**
+     * Accessors
+     */
+    public function getExecutionTimeSecondsAttribute(): ?float
+    {
+        return $this->execution_time_ms ? $this->execution_time_ms / 1000 : null;
+    }
+
+    public function getMetadataAttribute(): array
+    {
+        return $this->parameters_used ?? [];
+    }
+
+    public function setMetadataAttribute($value): void
+    {
+        $this->attributes['parameters_used'] = is_array($value) ? json_encode($value) : $value;
+    }
 
     /**
      * Relationships
@@ -137,10 +156,15 @@ class LLMUsageLog extends Model
         // TODO: Implement actual exchange rate API (e.g., exchangerate-api.com)
         // For now, return default rates from config
         $rates = config('llm-manager.exchange_rates', [
-            'EUR' => 1.10,
-            'GBP' => 1.27,
-            'MXN' => 0.059,
+            'USD' => 1.0,
+            'EUR' => 1.08,
+            'GBP' => 1.25,
+            'MXN' => 0.05,
             'CAD' => 0.73,
+            'JPY' => 0.0067,
+            'CNY' => 0.14,
+            'INR' => 0.012,
+            'BRL' => 0.20,
         ]);
 
         return $rates[$currency] ?? 1.0;

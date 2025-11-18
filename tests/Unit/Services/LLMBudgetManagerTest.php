@@ -26,47 +26,29 @@ class LLMBudgetManagerTest extends TestCase
     /** @test */
     public function it_calculates_monthly_spending_correctly()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'budget-monthly-spending',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
         // Create usage logs for current month
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 25.00,
-            'response_time' => 1.0,
-            'created_at' => now(),
+            'cost_usd' => 25.00,
+            'executed_at' => now(),
         ]);
 
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 30.00,
-            'response_time' => 1.0,
-            'created_at' => now(),
+            'cost_usd' => 30.00,
+            'executed_at' => now(),
         ]);
 
         // Create usage log for previous month (should not be counted)
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 100.00,
-            'response_time' => 1.0,
-            'created_at' => now()->subMonth(),
+            'cost_usd' => 100.00,
+            'executed_at' => now()->subMonth(),
         ]);
 
         $spending = $this->budgetManager->getMonthlySpending();
@@ -77,36 +59,22 @@ class LLMBudgetManagerTest extends TestCase
     /** @test */
     public function it_checks_if_budget_exceeded()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'budget-exceeded-check',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
         // Spending within budget
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 50.00,
-            'response_time' => 1.0,
+            'cost_usd' => 50.00,
         ]);
 
         $this->assertFalse($this->budgetManager->isBudgetExceeded());
 
         // Spending exceeds budget
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 60.00,
-            'response_time' => 1.0,
+            'cost_usd' => 60.00,
         ]);
 
         $this->assertTrue($this->budgetManager->isBudgetExceeded());
@@ -117,36 +85,22 @@ class LLMBudgetManagerTest extends TestCase
     {
         config(['llm-manager.budget.alert_threshold' => 80]);
 
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'budget-alert-threshold',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
         // Below threshold (79%)
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 79.00,
-            'response_time' => 1.0,
+            'cost_usd' => 79.00,
         ]);
 
         $this->assertFalse($this->budgetManager->isAlertThresholdReached());
 
         // At threshold (80%)
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 1.00,
-            'response_time' => 1.0,
+            'cost_usd' => 1.00,
         ]);
 
         $this->assertTrue($this->budgetManager->isAlertThresholdReached());
@@ -155,22 +109,12 @@ class LLMBudgetManagerTest extends TestCase
     /** @test */
     public function it_calculates_remaining_budget()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'budget-remaining',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 35.00,
-            'response_time' => 1.0,
+            'cost_usd' => 35.00,
         ]);
 
         $remaining = $this->budgetManager->getRemainingBudget();
@@ -181,22 +125,12 @@ class LLMBudgetManagerTest extends TestCase
     /** @test */
     public function it_calculates_budget_usage_percentage()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'budget-usage-percentage',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 45.00,
-            'response_time' => 1.0,
+            'cost_usd' => 45.00,
         ]);
 
         $percentage = $this->budgetManager->getBudgetUsagePercentage();
@@ -207,42 +141,24 @@ class LLMBudgetManagerTest extends TestCase
     /** @test */
     public function it_gets_spending_by_extension()
     {
-        $config = LLMConfiguration::create([
-            'name' => 'Test Config',
-            'slug' => 'budget-by-extension',
-            'provider' => 'openai',
-            'model' => 'gpt-4',
-            'is_active' => true,
-        ]);
+        $config = LLMConfiguration::factory()->create();
 
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-a',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 20.00,
-            'response_time' => 1.0,
+            'cost_usd' => 20.00,
         ]);
 
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-a',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 10.00,
-            'response_time' => 1.0,
+            'cost_usd' => 10.00,
         ]);
 
-        LLMUsageLog::create([
-            'configuration_id' => $config->id,
+        LLMUsageLog::factory()->create([
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-b',
-            'prompt_tokens' => 100,
-            'completion_tokens' => 50,
-            'total_tokens' => 150,
-            'cost' => 15.00,
-            'response_time' => 1.0,
+            'cost_usd' => 15.00,
         ]);
 
         $spendingByExtension = $this->budgetManager->getSpendingByExtension();
