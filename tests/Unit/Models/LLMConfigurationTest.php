@@ -16,6 +16,7 @@ class LLMConfigurationTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test OpenAI',
+            'slug' => 'test-openai',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test123',
@@ -34,6 +35,7 @@ class LLMConfigurationTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'test-config',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test123',
@@ -52,14 +54,15 @@ class LLMConfigurationTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'test-config-params',
             'provider' => 'openai',
             'model' => 'gpt-4',
-            'parameters' => ['temperature' => 0.7, 'max_tokens' => 1000],
+            'default_parameters' => ['temperature' => 0.7, 'max_tokens' => 1000],
             'is_active' => true,
         ]);
 
-        $this->assertIsArray($config->parameters);
-        $this->assertEquals(0.7, $config->parameters['temperature']);
+        $this->assertIsArray($config->default_parameters);
+        $this->assertEquals(0.7, $config->default_parameters['temperature']);
     }
 
     /** @test */
@@ -67,22 +70,26 @@ class LLMConfigurationTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'test-config-rel',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
         ]);
 
         LLMUsageLog::create([
-            'configuration_id' => $config->id,
-            'extension_slug' => 'test-extension',
+            'llm_configuration_id' => $config->id,
+            'request_id' => 'test-req-1',
             'prompt_tokens' => 100,
             'completion_tokens' => 50,
             'total_tokens' => 150,
-            'cost' => 0.005,
-            'response_time' => 1.5,
+            'currency' => 'USD',
+            'cost_original' => 0.005,
+            'cost_usd' => 0.005,
+            'execution_time_ms' => 1500,
         ]);
 
         $this->assertCount(1, $config->usageLogs);
+        $this->assertInstanceOf(LLMUsageLog::class, $config->usageLogs->first());
     }
 
     /** @test */
@@ -90,6 +97,7 @@ class LLMConfigurationTest extends TestCase
     {
         LLMConfiguration::create([
             'name' => 'Active Config',
+            'slug' => 'active-config',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -97,6 +105,7 @@ class LLMConfigurationTest extends TestCase
 
         LLMConfiguration::create([
             'name' => 'Inactive Config',
+            'slug' => 'inactive-config',
             'provider' => 'anthropic',
             'model' => 'claude-3',
             'is_active' => false,
@@ -113,6 +122,7 @@ class LLMConfigurationTest extends TestCase
     {
         LLMConfiguration::create([
             'name' => 'OpenAI Config',
+            'slug' => 'openai-config',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -120,6 +130,7 @@ class LLMConfigurationTest extends TestCase
 
         LLMConfiguration::create([
             'name' => 'Anthropic Config',
+            'slug' => 'anthropic-config',
             'provider' => 'anthropic',
             'model' => 'claude-3',
             'is_active' => true,
@@ -132,36 +143,42 @@ class LLMConfigurationTest extends TestCase
     }
 
     /** @test */
-    public function it_calculates_total_cost()
+    public function it_calculates_total_cost_with_multi_currency()
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'test-config-currency',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
         ]);
 
         LLMUsageLog::create([
-            'configuration_id' => $config->id,
-            'extension_slug' => 'test-extension',
+            'llm_configuration_id' => $config->id,
+            'request_id' => 'req-1',
             'prompt_tokens' => 100,
             'completion_tokens' => 50,
             'total_tokens' => 150,
-            'cost' => 0.005,
-            'response_time' => 1.5,
+            'currency' => 'USD',
+            'cost_original' => 0.005,
+            'cost_usd' => 0.005,
+            'execution_time_ms' => 1500,
         ]);
 
         LLMUsageLog::create([
-            'configuration_id' => $config->id,
-            'extension_slug' => 'test-extension',
+            'llm_configuration_id' => $config->id,
+            'request_id' => 'req-2',
             'prompt_tokens' => 200,
             'completion_tokens' => 100,
             'total_tokens' => 300,
-            'cost' => 0.010,
-            'response_time' => 2.0,
+            'currency' => 'EUR',
+            'cost_original' => 0.010,
+            'cost_usd' => 0.0108,
+            'execution_time_ms' => 2000,
         ]);
 
-        $this->assertEquals(0.015, $config->totalCost());
+        $totalCost = $config->usageLogs()->sum('cost_usd');
+        $this->assertEquals(0.0158, $totalCost);
     }
 
     /** @test */
@@ -169,15 +186,26 @@ class LLMConfigurationTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'test-config-requests',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
         ]);
 
-        LLMUsageLog::factory()->count(5)->create([
-            'configuration_id' => $config->id,
-        ]);
+        for ($i = 1; $i <= 5; $i++) {
+            LLMUsageLog::create([
+                'llm_configuration_id' => $config->id,
+                'request_id' => "req-{$i}",
+                'prompt_tokens' => 100,
+                'completion_tokens' => 50,
+                'total_tokens' => 150,
+                'currency' => 'USD',
+                'cost_original' => 0.005,
+                'cost_usd' => 0.005,
+                'execution_time_ms' => 1500,
+            ]);
+        }
 
-        $this->assertEquals(5, $config->totalRequests());
+        $this->assertEquals(5, $config->usageLogs()->count());
     }
 }

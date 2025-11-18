@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_agent_workflows', function (Blueprint $table) {
+        Schema::create('llm_manager_agent_workflows', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
             $table->string('extension_slug', 100)->nullable();
             $table->json('workflow_definition'); // State machine definition
             $table->json('agents_config'); // Multiple agent configurations
-            $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_configurations')->onDelete('set null');
+            $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_manager_configurations')->onDelete('set null');
             $table->integer('max_steps')->default(20);
             $table->integer('timeout_seconds')->default(120);
             $table->boolean('is_active')->default(true);
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_agent_workflows');
+        Schema::dropIfExists('llm_manager_agent_workflows');
     }
 };

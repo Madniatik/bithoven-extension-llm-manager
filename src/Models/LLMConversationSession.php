@@ -13,7 +13,7 @@ class LLMConversationSession extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_conversation_sessions';
+    protected $table = 'llm_manager_conversation_sessions';
 
     protected $fillable = [
         'session_id',

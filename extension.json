@@ -1,6 +1,6 @@
 {
-    "slug": "llm",
-        "name": "llm-manager",
+    "slug": "llm-manager",
+    "name": "LLM Manager",
     "display_name": "LLM Manager",
     "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
     "version": "1.0.0",
@@ -72,12 +72,12 @@
         "path": "database/migrations"
     },
     "seeders": {
-        "required": true,
-        "path": "database/seeders",
-        "order": [
+        "core": [
             "LLMConfigurationSeeder",
             "LLMToolDefinitionsSeeder",
-            "LLMMCPConnectorsSeeder",
+            "LLMMCPConnectorsSeeder"
+        ],
+        "demo": [
             "LLMDemoSeeder"
         ]
     },

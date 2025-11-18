@@ -26,6 +26,7 @@ class LLMManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Default OpenAI',
+            'slug' => 'manager-default-openai',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test',
@@ -44,6 +45,7 @@ class LLMManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'manager-test-config-by-id',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test',
@@ -69,6 +71,7 @@ class LLMManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Inactive Config',
+            'slug' => 'manager-inactive-config',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test',
@@ -86,6 +89,7 @@ class LLMManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'OpenAI Config',
+            'slug' => 'manager-openai-provider',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test',
@@ -102,6 +106,7 @@ class LLMManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Unknown Provider',
+            'slug' => 'manager-unknown-provider',
             'provider' => 'unknown-provider',
             'model' => 'test-model',
             'is_active' => true,
@@ -121,6 +126,7 @@ class LLMManagerTest extends TestCase
 
         $config = LLMConfiguration::create([
             'name' => 'Cached Config',
+            'slug' => 'manager-cached-config',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'api_key' => 'sk-test',
@@ -142,6 +148,7 @@ class LLMManagerTest extends TestCase
     {
         LLMConfiguration::create([
             'name' => 'Active 1',
+            'slug' => 'manager-active-1',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -149,6 +156,7 @@ class LLMManagerTest extends TestCase
 
         LLMConfiguration::create([
             'name' => 'Active 2',
+            'slug' => 'manager-active-2',
             'provider' => 'anthropic',
             'model' => 'claude-3',
             'is_active' => true,
@@ -156,6 +164,7 @@ class LLMManagerTest extends TestCase
 
         LLMConfiguration::create([
             'name' => 'Inactive',
+            'slug' => 'manager-inactive',
             'provider' => 'ollama',
             'model' => 'llama2',
             'is_active' => false,
@@ -171,6 +180,7 @@ class LLMManagerTest extends TestCase
     {
         LLMConfiguration::create([
             'name' => 'OpenAI 1',
+            'slug' => 'manager-openai-1',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -178,6 +188,7 @@ class LLMManagerTest extends TestCase
 
         LLMConfiguration::create([
             'name' => 'OpenAI 2',
+            'slug' => 'manager-openai-2',
             'provider' => 'openai',
             'model' => 'gpt-3.5-turbo',
             'is_active' => true,
@@ -185,6 +196,7 @@ class LLMManagerTest extends TestCase
 
         LLMConfiguration::create([
             'name' => 'Anthropic',
+            'slug' => 'manager-anthropic',
             'provider' => 'anthropic',
             'model' => 'claude-3',
             'is_active' => true,

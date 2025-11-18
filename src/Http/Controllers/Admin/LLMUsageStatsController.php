@@ -5,10 +5,18 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Models\LLMUsageLog;
-use Bithoven\LLMManager\Models\LLMBudgetAlert;
+// use Bithoven\LLMManager\Models\LLMBudgetAlert; // TODO: Create model
 
 class LLMUsageStatsController extends Controller
 {
+    public function dashboard()
+    {
+        $period = 'month';
+        $stats = $this->getStatistics($period, null);
+        
+        return view('llm-manager::admin.stats.dashboard', compact('stats', 'period'));
+    }
+
     public function index(Request $request)
     {
         $period = $request->get('period', 'month'); // day, week, month, year
@@ -68,9 +76,9 @@ class LLMUsageStatsController extends Controller
             });
 
         // Recent budget alerts
-        $recentAlerts = LLMBudgetAlert::latest()
-            ->limit(10)
-            ->get();
+        // TODO: Implement LLMBudgetAlert model and migration
+        // $recentAlerts = LLMBudgetAlert::latest()->limit(10)->get();
+        $recentAlerts = collect();
 
         return [
             'total_requests' => $totalRequests,

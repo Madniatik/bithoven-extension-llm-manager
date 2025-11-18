@@ -10,7 +10,7 @@ class LLMAgentWorkflow extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_agent_workflows';
+    protected $table = 'llm_manager_agent_workflows';
 
     protected $fillable = [
         'name',

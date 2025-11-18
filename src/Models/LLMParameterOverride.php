@@ -10,7 +10,7 @@ class LLMParameterOverride extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_parameter_overrides';
+    protected $table = 'llm_manager_parameter_overrides';
 
     protected $fillable = [
         'extension_slug',

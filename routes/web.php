@@ -27,6 +27,7 @@ Route::prefix('admin/llm')
         
         // Configurations
         Route::resource('configurations', LLMConfigurationController::class);
+        Route::post('configurations/test', [LLMConfigurationController::class, 'testConnection'])->name('configurations.test');
         Route::post('configurations/{configuration}/toggle', [LLMConfigurationController::class, 'toggleActive'])->name('configurations.toggle');
         
         // Usage Statistics
@@ -34,7 +35,9 @@ Route::prefix('admin/llm')
         Route::get('statistics/export', [LLMUsageStatsController::class, 'export'])->name('statistics.export');
         
         // Prompt Templates
-        Route::resource('prompts', LLMPromptTemplateController::class);
+        Route::resource('prompts', LLMPromptTemplateController::class)->parameters([
+            'prompts' => 'template'
+        ]);
         
         // Conversations
         Route::get('conversations', [LLMConversationController::class, 'index'])->name('conversations.index');
@@ -43,7 +46,9 @@ Route::prefix('admin/llm')
         Route::get('conversations/{sessionId}/export', [LLMConversationController::class, 'export'])->name('conversations.export');
         
         // Knowledge Base
-        Route::resource('knowledge-base', LLMKnowledgeBaseController::class);
+        Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([
+            'knowledge-base' => 'document'
+        ]);
         Route::post('knowledge-base/{document}/index', [LLMKnowledgeBaseController::class, 'indexDocument'])->name('knowledge-base.index-doc');
         
         // Tool Definitions

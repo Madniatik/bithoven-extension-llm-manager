@@ -10,7 +10,7 @@ class LLMConversationLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_conversation_logs';
+    protected $table = 'llm_manager_conversation_logs';
 
     public $timestamps = false;
 

@@ -10,7 +10,7 @@ class LLMMCPConnector extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_mcp_connectors';
+    protected $table = 'llm_manager_mcp_connectors';
 
     protected $fillable = [
         'name',

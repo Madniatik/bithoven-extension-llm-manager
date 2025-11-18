@@ -11,7 +11,7 @@ class LLMToolDefinition extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_tool_definitions';
+    protected $table = 'llm_manager_tool_definitions';
 
     protected $fillable = [
         'name',

@@ -30,7 +30,7 @@
                         <select name="provider" class="form-select form-select-solid @error('provider') is-invalid @enderror" required>
                             @foreach($providers as $key => $provider)
                                 <option value="{{ $key }}" {{ old('provider', $configuration->provider) == $key ? 'selected' : '' }}>
-                                    {{ $provider['name'] }}
+                                    {{ ucfirst($key) }}
                                 </option>
                             @endforeach
                         </select>
@@ -67,6 +67,20 @@
                         @error('api_endpoint')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                    </div>
+                </div>
+
+                <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label fw-semibold fs-6"></label>
+                    <div class="col-lg-8">
+                        <button type="button" class="btn btn-light-primary" id="test-connection">
+                            <i class="ki-duotone ki-verify fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            Test Connection
+                        </button>
+                        <span id="connection-status" class="ms-3"></span>
                     </div>
                 </div>
 
@@ -109,4 +123,48 @@
             </div>
         </form>
     </div>
+
+    @push('scripts')
+    <script>
+        document.getElementById('test-connection').addEventListener('click', function() {
+            const btn = this;
+            const status = document.getElementById('connection-status');
+            const provider = document.querySelector('select[name="provider"]').value;
+            const apiEndpoint = document.querySelector('input[name="api_endpoint"]').value;
+            const apiKey = document.querySelector('input[name="api_key"]').value || '{{ $configuration->api_key ? "***" : "" }}';
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
+            status.innerHTML = '';
+            
+            fetch('{{ route("admin.llm.configurations.test") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    provider: provider,
+                    api_endpoint: apiEndpoint,
+                    api_key: apiKey === '***' ? null : apiKey
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    status.innerHTML = '<span class="badge badge-light-success">✓ Connection successful</span>';
+                } else {
+                    status.innerHTML = '<span class="badge badge-light-danger">✗ ' + (data.message || 'Connection failed') + '</span>';
+                }
+            })
+            .catch(error => {
+                status.innerHTML = '<span class="badge badge-light-danger">✗ Error: ' + error.message + '</span>';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ki-duotone ki-verify fs-2"><span class="path1"></span><span class="path2"></span></i> Test Connection';
+            });
+        });
+    </script>
+    @endpush
 </x-default-layout>

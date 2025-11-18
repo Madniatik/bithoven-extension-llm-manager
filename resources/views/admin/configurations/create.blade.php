@@ -30,7 +30,7 @@
                             <option value="">Select Provider</option>
                             @foreach($providers as $key => $provider)
                                 <option value="{{ $key }}" {{ old('provider') == $key ? 'selected' : '' }}>
-                                    {{ $provider['name'] }}
+                                    {{ ucfirst($key) }}
                                 </option>
                             @endforeach
                         </select>

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_conversation_messages', function (Blueprint $table) {
+        Schema::create('llm_manager_conversation_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained('llm_conversation_sessions')->onDelete('cascade');
+            $table->foreignId('session_id')->constrained('llm_manager_conversation_sessions')->onDelete('cascade');
             $table->enum('role', ['system', 'user', 'assistant', 'tool'])->default('user');
             $table->longText('content');
             $table->json('metadata')->nullable(); // Tool calls, function results, etc.
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_conversation_messages');
+        Schema::dropIfExists('llm_manager_conversation_messages');
     }
 };

@@ -56,8 +56,8 @@
                 <div class="row mb-6">
                     <label class="col-lg-4 col-form-label required fw-semibold fs-6">Template</label>
                     <div class="col-lg-8">
-                        <textarea name="template" class="form-control form-control-lg form-control-solid font-monospace @error('template') is-invalid @enderror" rows="10" placeholder="You are a helpful assistant. {{variable_name}}" required>{{ old('template') }}</textarea>
-                        <div class="form-text">Use {{variable_name}} for placeholders</div>
+                        <textarea name="template" class="form-control form-control-lg form-control-solid font-monospace @error('template') is-invalid @enderror" rows="10" placeholder="You are a helpful assistant. @{{variable_name}}" required>{{ old('template') }}</textarea>
+                        <div class="form-text">Use @{{variable_name}} for placeholders</div>
                         @error('template')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

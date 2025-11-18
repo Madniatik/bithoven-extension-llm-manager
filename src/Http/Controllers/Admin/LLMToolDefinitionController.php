@@ -11,7 +11,7 @@ class LLMToolDefinitionController extends Controller
 {
     public function index()
     {
-        $tools = LLMToolDefinition::orderBy('tool_type')
+        $tools = LLMToolDefinition::orderBy('type')
             ->orderBy('name')
             ->get();
 
@@ -20,7 +20,7 @@ class LLMToolDefinitionController extends Controller
 
     public function create()
     {
-        $types = ['native', 'mcp', 'custom'];
+        $types = ['function_calling', 'mcp'];
         
         return view('llm-manager::admin.tools.create', compact('types'));
     }
@@ -29,7 +29,7 @@ class LLMToolDefinitionController extends Controller
     {
         $validated = $request->validate([
             'extension_slug' => 'required|string',
-            'tool_type' => 'required|in:native,mcp,custom',
+            'type' => 'required|in:function_calling,mcp',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'parameters_schema' => 'required|array',
@@ -39,7 +39,7 @@ class LLMToolDefinitionController extends Controller
 
         $tool = $toolService->register(
             $validated['extension_slug'],
-            $validated['tool_type'],
+            $validated['type'],
             $validated['name'],
             $validated['description'],
             $validated['parameters_schema'],
@@ -59,7 +59,7 @@ class LLMToolDefinitionController extends Controller
 
     public function edit(LLMToolDefinition $tool)
     {
-        $types = ['native', 'mcp', 'custom'];
+        $types = ['function_calling', 'mcp'];
         
         return view('llm-manager::admin.tools.edit', compact('tool', 'types'));
     }

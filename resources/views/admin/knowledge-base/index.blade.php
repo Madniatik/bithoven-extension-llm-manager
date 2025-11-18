@@ -69,7 +69,7 @@
                             @endif
                         </td>
                         <td>
-                            <span class="badge badge-light-primary">{{ $document->chunks()->count() }}</span>
+                            <span class="badge badge-light-primary">{{ $document->chunk_count }}</span>
                         </td>
                         <td>
                             @if($document->indexed_at)
@@ -93,7 +93,7 @@
                                     <a href="{{ route('admin.llm.knowledge-base.edit', $document) }}" class="menu-link px-3">Edit</a>
                                 </div>
                                 <div class="menu-item px-3">
-                                    <form action="{{ route('admin.llm.knowledge-base.index-document', $document) }}" method="POST">
+                                    <form action="{{ route('admin.llm.knowledge-base.index-doc', $document) }}" method="POST">
                                         @csrf
                                         <button type="submit" class="menu-link px-3 w-100 text-start">
                                             {{ $document->is_indexed ? 'Re-index' : 'Index Now' }}

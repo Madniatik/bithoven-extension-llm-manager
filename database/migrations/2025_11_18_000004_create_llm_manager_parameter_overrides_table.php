@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_parameter_overrides', function (Blueprint $table) {
+        Schema::create('llm_manager_parameter_overrides', function (Blueprint $table) {
             $table->id();
             $table->string('extension_slug', 100);
-            $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_configurations')->onDelete('cascade');
+            $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_manager_configurations')->onDelete('cascade');
             $table->string('context', 100)->nullable(); // e.g., 'ticket_summary', 'product_description'
             $table->json('override_parameters'); // {temperature: 0.7, max_tokens: 500}
             $table->enum('merge_strategy', ['replace', 'merge', 'deep_merge'])->default('merge');
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_parameter_overrides');
+        Schema::dropIfExists('llm_manager_parameter_overrides');
     }
 };

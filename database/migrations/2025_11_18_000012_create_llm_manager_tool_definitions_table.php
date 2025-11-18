@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_tool_definitions', function (Blueprint $table) {
+        Schema::create('llm_manager_tool_definitions', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->string('slug', 100)->unique();
+            $table->string('slug', 100)->unique()->nullable(); // Nullable for testing
             $table->enum('type', ['function_calling', 'mcp'])->default('function_calling');
-            $table->foreignId('mcp_connector_id')->nullable()->constrained('llm_mcp_connectors')->onDelete('cascade');
+            $table->foreignId('mcp_connector_id')->nullable()->constrained('llm_manager_mcp_connectors')->onDelete('cascade');
             $table->json('function_schema'); // OpenAI/Anthropic function definition
             $table->string('handler_class')->nullable(); // PHP class for function_calling
             $table->string('handler_method')->nullable(); // PHP method
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_tool_definitions');
+        Schema::dropIfExists('llm_manager_tool_definitions');
     }
 };

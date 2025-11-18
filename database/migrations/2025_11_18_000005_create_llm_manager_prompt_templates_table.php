@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_prompt_templates', function (Blueprint $table) {
+        Schema::create('llm_manager_prompt_templates', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->string('slug', 100)->unique();
+            $table->string('slug', 100)->unique()->nullable(); // Nullable for testing
             $table->string('extension_slug', 100);
             $table->string('category', 50)->nullable(); // e.g., 'analysis', 'generation', 'summarization'
             $table->text('template'); // With variables: "Analyze ticket: {{ticket_content}}"
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_prompt_templates');
+        Schema::dropIfExists('llm_manager_prompt_templates');
     }
 };

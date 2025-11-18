@@ -32,7 +32,7 @@
                         </div>
                         <div class="d-flex align-items-center mb-2">
                             <span class="text-gray-600 fw-semibold fs-7 me-2">Chunks:</span>
-                            <span class="fw-bold text-gray-800">{{ $document->chunks()->count() }}</span>
+                            <span class="fw-bold text-gray-800">{{ $document->chunk_count }}</span>
                         </div>
                     </div>
 
@@ -53,7 +53,7 @@
 
                     @if(!$document->is_indexed)
                     <div class="separator separator-dashed my-5"></div>
-                    <form action="{{ route('admin.llm.knowledge-base.index-document', $document) }}" method="POST">
+                    <form action="{{ route('admin.llm.knowledge-base.index-doc', $document) }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="ki-duotone ki-arrow-up fs-2"><span class="path1"></span><span class="path2"></span></i>
@@ -83,32 +83,26 @@
     </div>
 
     <!-- Chunks -->
-    @if($document->chunks()->count() > 0)
+    @if($document->chunk_count > 0)
     <div class="card">
         <div class="card-header pt-7">
             <h3 class="card-title align-items-start flex-column">
                 <span class="card-label fw-bold text-gray-800">Indexed Chunks</span>
-                <span class="text-gray-500 mt-1 fw-semibold fs-7">{{ $document->chunks()->count() }} chunks</span>
+                <span class="text-gray-500 mt-1 fw-semibold fs-7">{{ $document->chunk_count }} chunks</span>
             </h3>
         </div>
         <div class="card-body pt-5">
             <div class="accordion" id="chunksAccordion">
-                @foreach($document->chunks as $index => $chunk)
+                @foreach($document->content_chunks ?? [] as $index => $chunkText)
                 <div class="accordion-item mb-3">
                     <h2 class="accordion-header" id="heading{{ $index }}">
                         <button class="accordion-button {{ $index > 0 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $index }}">
                             <span class="fw-bold text-gray-800">Chunk #{{ $index + 1 }}</span>
-                            <span class="badge badge-light-primary ms-3">{{ $chunk->position }}</span>
                         </button>
                     </h2>
                     <div id="collapse{{ $index }}" class="accordion-collapse collapse {{ $index === 0 ? 'show' : '' }}" data-bs-parent="#chunksAccordion">
                         <div class="accordion-body">
-                            <div class="text-gray-700 mb-3">{{ $chunk->content }}</div>
-                            @if($chunk->embedding)
-                            <div class="text-gray-500 fs-7">
-                                Embedding: {{ count(json_decode($chunk->embedding, true)) }} dimensions
-                            </div>
-                            @endif
+                            <div class="text-gray-700">{{ $chunkText }}</div>
                         </div>
                     </div>
                 </div>

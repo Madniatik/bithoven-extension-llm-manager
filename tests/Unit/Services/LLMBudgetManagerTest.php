@@ -28,6 +28,7 @@ class LLMBudgetManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'budget-monthly-spending',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -78,6 +79,7 @@ class LLMBudgetManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'budget-exceeded-check',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -117,6 +119,7 @@ class LLMBudgetManagerTest extends TestCase
 
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'budget-alert-threshold',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -154,6 +157,7 @@ class LLMBudgetManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'budget-remaining',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -179,6 +183,7 @@ class LLMBudgetManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'budget-usage-percentage',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -204,6 +209,7 @@ class LLMBudgetManagerTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'budget-by-extension',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,

@@ -10,7 +10,7 @@ class LLMToolExecution extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_tool_executions';
+    protected $table = 'llm_manager_tool_executions';
 
     protected $fillable = [
         'tool_definition_id',

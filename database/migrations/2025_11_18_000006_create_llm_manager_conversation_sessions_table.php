@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_conversation_sessions', function (Blueprint $table) {
+        Schema::create('llm_manager_conversation_sessions', function (Blueprint $table) {
             $table->id();
             $table->string('session_id', 100)->unique();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('extension_slug', 100)->nullable();
-            $table->foreignId('llm_configuration_id')->constrained('llm_configurations')->onDelete('cascade');
+            $table->foreignId('llm_configuration_id')->constrained('llm_manager_configurations')->onDelete('cascade');
             $table->string('title', 255)->nullable();
             $table->json('metadata')->nullable(); // Context, tags, etc.
             $table->timestamp('started_at')->useCurrent();
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_conversation_sessions');
+        Schema::dropIfExists('llm_manager_conversation_sessions');
     }
 };

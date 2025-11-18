@@ -60,7 +60,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 fw-semibold">
-                    @foreach($conversations as $conversation)
+                    @forelse($sessions as $conversation)
                     <tr>
                         <td>
                             <a href="{{ route('admin.llm.conversations.show', $conversation) }}" class="text-gray-800 text-hover-primary">
@@ -110,7 +110,20 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-10">
+                            <div class="text-gray-600">
+                                <i class="ki-duotone ki-message-text-2 fs-3x mb-5">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                                <p class="fs-5 fw-bold">No conversations found</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

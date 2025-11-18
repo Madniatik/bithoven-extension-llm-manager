@@ -10,8 +10,7 @@ class LLMPromptTemplateController extends Controller
 {
     public function index()
     {
-        $templates = LLMPromptTemplate::with('configuration')
-            ->orderBy('category')
+        $templates = LLMPromptTemplate::orderBy('category')
             ->orderBy('name')
             ->get();
 
@@ -35,7 +34,6 @@ class LLMPromptTemplateController extends Controller
             'template' => 'required|string',
             'description' => 'nullable|string',
             'extension_slug' => 'nullable|string',
-            'llm_configuration_id' => 'nullable|exists:llm_configurations,id',
         ]);
 
         $validated['slug'] = \Str::slug($validated['name']);
@@ -69,7 +67,6 @@ class LLMPromptTemplateController extends Controller
             'template' => 'required|string',
             'description' => 'nullable|string',
             'extension_slug' => 'nullable|string',
-            'llm_configuration_id' => 'nullable|exists:llm_configurations,id',
         ]);
 
         $template->update($validated);

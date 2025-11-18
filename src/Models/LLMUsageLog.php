@@ -12,7 +12,7 @@ class LLMUsageLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_usage_logs';
+    protected $table = 'llm_manager_usage_logs';
 
     protected $fillable = [
         'llm_configuration_id',
@@ -25,6 +25,8 @@ class LLMUsageLog extends Model
         'completion_tokens',
         'total_tokens',
         'cost_usd',
+        'currency',
+        'cost_original',
         'execution_time_ms',
         'status',
         'error_message',
@@ -37,6 +39,8 @@ class LLMUsageLog extends Model
         'completion_tokens' => 'integer',
         'total_tokens' => 'integer',
         'cost_usd' => 'decimal:6',
+        'currency' => 'string',
+        'cost_original' => 'decimal:6',
         'execution_time_ms' => 'integer',
         'executed_at' => 'datetime',
     ];
@@ -96,5 +100,44 @@ class LLMUsageLog extends Model
             ->when($extensionSlug, fn($q) => $q->byExtension($extensionSlug))
             ->when($startDate && $endDate, fn($q) => $q->inPeriod($startDate, $endDate))
             ->sum('cost_usd');
+    }
+
+    /**
+     * Set cost with automatic USD conversion if needed
+     * 
+     * @param float $amount Cost amount
+     * @param string $currency Currency code (USD, EUR, GBP, etc.)
+     * @param float|null $exchangeRate Exchange rate to USD (if null, uses 1.0 for USD)
+     */
+    public function setCost(float $amount, string $currency = 'USD', ?float $exchangeRate = null): void
+    {
+        $this->currency = strtoupper($currency);
+        $this->cost_original = $amount;
+        
+        // If currency is USD, no conversion needed
+        if ($currency === 'USD') {
+            $this->cost_usd = $amount;
+        } else {
+            // Use provided exchange rate or fetch from config/API
+            $rate = $exchangeRate ?? $this->getExchangeRate($currency);
+            $this->cost_usd = $amount * $rate;
+        }
+    }
+
+    /**
+     * Get exchange rate for currency (placeholder - can be extended with API)
+     */
+    protected function getExchangeRate(string $currency): float
+    {
+        // TODO: Implement actual exchange rate API (e.g., exchangerate-api.com)
+        // For now, return default rates from config
+        $rates = config('llm-manager.exchange_rates', [
+            'EUR' => 1.10,
+            'GBP' => 1.27,
+            'MXN' => 0.059,
+            'CAD' => 0.73,
+        ]);
+
+        return $rates[$currency] ?? 1.0;
     }
 }

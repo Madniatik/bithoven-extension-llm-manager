@@ -10,7 +10,7 @@ class LLMConfiguration extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_configurations';
+    protected $table = 'llm_manager_configurations';
 
     protected $fillable = [
         'name',
@@ -42,22 +42,22 @@ class LLMConfiguration extends Model
      */
     public function usageLogs(): HasMany
     {
-        return $this->hasMany(LLMUsageLog::class);
+        return $this->hasMany(LLMUsageLog::class, 'llm_configuration_id');
     }
 
     public function parameterOverrides(): HasMany
     {
-        return $this->hasMany(LLMParameterOverride::class);
+        return $this->hasMany(LLMParameterOverride::class, 'llm_configuration_id');
     }
 
     public function conversationSessions(): HasMany
     {
-        return $this->hasMany(LLMConversationSession::class);
+        return $this->hasMany(LLMConversationSession::class, 'llm_configuration_id');
     }
 
     public function workflows(): HasMany
     {
-        return $this->hasMany(LLMAgentWorkflow::class);
+        return $this->hasMany(LLMAgentWorkflow::class, 'llm_configuration_id');
     }
 
     /**

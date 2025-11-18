@@ -9,7 +9,7 @@ class LLMDocumentKnowledgeBase extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_document_knowledge_base';
+    protected $table = 'llm_manager_document_knowledge_base';
 
     protected $fillable = [
         'extension_slug',

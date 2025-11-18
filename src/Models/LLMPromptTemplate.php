@@ -9,7 +9,7 @@ class LLMPromptTemplate extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_prompt_templates';
+    protected $table = 'llm_manager_prompt_templates';
 
     protected $fillable = [
         'name',

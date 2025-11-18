@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_custom_metrics', function (Blueprint $table) {
+        Schema::create('llm_manager_custom_metrics', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('usage_log_id')->constrained('llm_usage_logs')->onDelete('cascade');
+            $table->foreignId('usage_log_id')->constrained('llm_manager_usage_logs')->onDelete('cascade');
             $table->string('extension_slug', 100);
             $table->string('metric_key', 100); // e.g., 'ticket_category', 'sentiment_score'
             $table->string('metric_value', 255); // e.g., 'billing', '0.85'
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_custom_metrics');
+        Schema::dropIfExists('llm_manager_custom_metrics');
     }
 };

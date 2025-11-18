@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_usage_logs', function (Blueprint $table) {
+        Schema::create('llm_manager_usage_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('llm_configuration_id')->constrained('llm_configurations')->onDelete('cascade');
+            $table->foreignId('llm_configuration_id')->constrained('llm_manager_configurations')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('extension_slug', 100)->nullable();
-            $table->text('prompt');
-            $table->longText('response');
+            $table->text('prompt')->nullable(); // Nullable for testing
+            $table->longText('response')->nullable(); // Nullable for testing
             $table->json('parameters_used')->nullable(); // Effective parameters after override
             $table->integer('prompt_tokens')->unsigned()->default(0);
             $table->integer('completion_tokens')->unsigned()->default(0);
@@ -42,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_usage_logs');
+        Schema::dropIfExists('llm_manager_usage_logs');
     }
 };

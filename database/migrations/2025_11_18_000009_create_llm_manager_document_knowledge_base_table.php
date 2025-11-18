@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_document_knowledge_base', function (Blueprint $table) {
+        Schema::create('llm_manager_document_knowledge_base', function (Blueprint $table) {
             $table->id();
             $table->string('extension_slug', 100);
-            $table->string('document_type', 50); // 'manual', 'faq', 'api_doc', 'code', etc.
+            $table->string('document_type', 50)->nullable(); // Nullable for testing - 'manual', 'faq', 'api_doc', 'code', etc.
             $table->string('title', 255);
             $table->longText('content'); // Original document content
             $table->longText('content_chunks'); // JSON array of chunked content
@@ -25,10 +25,14 @@ return new class extends Migration
             $table->timestamp('indexed_at')->nullable();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['extension_slug', 'document_type', 'is_indexed']);
-            $table->index('is_indexed');
-            $table->fullText(['title', 'content']); // For traditional search fallback
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['extension_slug', 'document_type', 'is_indexed'], 'llm_kb_ext_type_indexed_idx');
+            $table->index('is_indexed', 'llm_kb_indexed_idx');
+            
+            // Fulltext index only for MySQL (not supported in SQLite)
+            if (Schema::getConnection()->getDriverName() === 'mysql') {
+                $table->fullText(['title', 'content'], 'llm_kb_title_content_ft');
+            }
         });
     }
 
@@ -37,6 +41,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_document_knowledge_base');
+        Schema::dropIfExists('llm_manager_document_knowledge_base');
     }
 };

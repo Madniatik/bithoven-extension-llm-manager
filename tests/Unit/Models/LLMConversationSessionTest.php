@@ -17,6 +17,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-create',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -24,7 +25,7 @@ class LLMConversationSessionTest extends TestCase
 
         $session = LLMConversationSession::create([
             'session_id' => 'test-session-123',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test-extension',
             'is_active' => true,
         ]);
@@ -40,6 +41,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-rel',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -47,7 +49,7 @@ class LLMConversationSessionTest extends TestCase
 
         $session = LLMConversationSession::create([
             'session_id' => 'test-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => true,
         ]);
@@ -61,6 +63,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-msgs',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -68,7 +71,7 @@ class LLMConversationSessionTest extends TestCase
 
         $session = LLMConversationSession::create([
             'session_id' => 'test-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => true,
         ]);
@@ -95,6 +98,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-tokens',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -102,7 +106,7 @@ class LLMConversationSessionTest extends TestCase
 
         $session = LLMConversationSession::create([
             'session_id' => 'test-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => true,
         ]);
@@ -129,6 +133,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-cost',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -136,7 +141,7 @@ class LLMConversationSessionTest extends TestCase
 
         $session = LLMConversationSession::create([
             'session_id' => 'test-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => true,
         ]);
@@ -165,6 +170,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-active',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -172,14 +178,14 @@ class LLMConversationSessionTest extends TestCase
 
         LLMConversationSession::create([
             'session_id' => 'active-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => true,
         ]);
 
         LLMConversationSession::create([
             'session_id' => 'inactive-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => false,
         ]);
@@ -195,6 +201,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-ext',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -202,14 +209,14 @@ class LLMConversationSessionTest extends TestCase
 
         LLMConversationSession::create([
             'session_id' => 'ext-a-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-a',
             'is_active' => true,
         ]);
 
         LLMConversationSession::create([
             'session_id' => 'ext-b-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'extension-b',
             'is_active' => true,
         ]);
@@ -225,6 +232,7 @@ class LLMConversationSessionTest extends TestCase
     {
         $config = LLMConfiguration::create([
             'name' => 'Test Config',
+            'slug' => 'conv-test-end',
             'provider' => 'openai',
             'model' => 'gpt-4',
             'is_active' => true,
@@ -232,7 +240,7 @@ class LLMConversationSessionTest extends TestCase
 
         $session = LLMConversationSession::create([
             'session_id' => 'test-session',
-            'configuration_id' => $config->id,
+            'llm_configuration_id' => $config->id,
             'extension_slug' => 'test',
             'is_active' => true,
         ]);

@@ -10,7 +10,7 @@ class LLMCustomMetric extends Model
 {
     use HasFactory;
 
-    protected $table = 'llm_custom_metrics';
+    protected $table = 'llm_manager_custom_metrics';
 
     protected $fillable = [
         'usage_log_id',

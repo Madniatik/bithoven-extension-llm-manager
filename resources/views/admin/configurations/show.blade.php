@@ -70,7 +70,7 @@
                             <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-md-50 mb-5 mb-xl-10" style="background-color: #F1416C;background-image:url('{{ metronicAsset('media/patterns/vector-1.png') }}')">
                                 <div class="card-header pt-5">
                                     <div class="card-title d-flex flex-column">
-                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{{ number_format($configuration->statistics->total_requests ?? 0) }}</span>
+                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{{ number_format($stats->total_requests) }}</span>
                                         <span class="text-white opacity-75 pt-1 fw-semibold fs-6">Total Requests</span>
                                     </div>
                                 </div>
@@ -81,7 +81,7 @@
                             <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-md-50 mb-5 mb-xl-10" style="background-color: #7239EA;background-image:url('{{ metronicAsset('media/patterns/vector-1.png') }}')">
                                 <div class="card-header pt-5">
                                     <div class="card-title d-flex flex-column">
-                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">${{ number_format($configuration->statistics->total_cost ?? 0, 4) }}</span>
+                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">${{ number_format($stats->total_cost, 4) }}</span>
                                         <span class="text-white opacity-75 pt-1 fw-semibold fs-6">Total Cost</span>
                                     </div>
                                 </div>
@@ -92,7 +92,7 @@
                             <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-md-50 mb-5 mb-xl-10" style="background-color: #17C653;background-image:url('{{ metronicAsset('media/patterns/vector-1.png') }}')">
                                 <div class="card-header pt-5">
                                     <div class="card-title d-flex flex-column">
-                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{{ number_format($configuration->statistics->total_tokens ?? 0) }}</span>
+                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{{ number_format($stats->total_tokens) }}</span>
                                         <span class="text-white opacity-75 pt-1 fw-semibold fs-6">Total Tokens</span>
                                     </div>
                                 </div>
@@ -103,7 +103,7 @@
                             <div class="card card-flush bgi-no-repeat bgi-size-contain bgi-position-x-end h-md-50 mb-5 mb-xl-10" style="background-color: #FFA621;background-image:url('{{ metronicAsset('media/patterns/vector-1.png') }}')">
                                 <div class="card-header pt-5">
                                     <div class="card-title d-flex flex-column">
-                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{{ number_format($configuration->statistics->avg_execution_time ?? 0) }}ms</span>
+                                        <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2">{{ number_format($stats->avg_execution_time) }}ms</span>
                                         <span class="text-white opacity-75 pt-1 fw-semibold fs-6">Avg Response Time</span>
                                     </div>
                                 </div>
@@ -140,7 +140,15 @@
                         <td>{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
                         <td><span class="badge badge-light-info">{{ $log->extension_slug ?? 'N/A' }}</span></td>
                         <td>{{ number_format($log->total_tokens) }}</td>
-                        <td>${{ number_format($log->cost_usd, 6) }}</td>
+                        <td>
+                            @if($log->cost_original && $log->currency !== 'USD')
+                                <span class="text-muted" data-bs-toggle="tooltip" title="Original: {{ number_format($log->cost_original, 6) }} {{ $log->currency }}">
+                                    ${{ number_format($log->cost_usd, 6) }} USD
+                                </span>
+                            @else
+                                ${{ number_format($log->cost_usd, 6) }}
+                            @endif
+                        </td>
                         <td>{{ $log->execution_time_ms }}ms</td>
                     </tr>
                     @empty

@@ -256,6 +256,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Exchange Rates
+    |--------------------------------------------------------------------------
+    |
+    | Exchange rates for currency conversion to USD.
+    | These are static rates - for production, integrate with a live API.
+    | Rates updated: November 2025
+    |
+    */
+
+    'exchange_rates' => [
+        'EUR' => 1.10,      // Euro
+        'GBP' => 1.27,      // British Pound
+        'MXN' => 0.059,     // Mexican Peso
+        'CAD' => 0.73,      // Canadian Dollar
+        'JPY' => 0.0067,    // Japanese Yen
+        'CNY' => 0.14,      // Chinese Yuan
+        'INR' => 0.012,     // Indian Rupee
+        'BRL' => 0.20,      // Brazilian Real
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Performance
     |--------------------------------------------------------------------------
     |

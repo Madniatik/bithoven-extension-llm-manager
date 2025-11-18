@@ -69,8 +69,8 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <span class="text-gray-800 fw-bold">{{ number_format($config->statistics->total_requests ?? 0) }}</span>
-                                <span class="text-muted fs-7">${{ number_format($config->statistics->total_cost ?? 0, 4) }}</span>
+                                <span class="text-gray-800 fw-bold">{{ number_format($config->usage_logs_count ?? 0) }}</span>
+                                <span class="text-muted fs-7">requests</span>
                             </div>
                         </td>
                         <td class="text-end">

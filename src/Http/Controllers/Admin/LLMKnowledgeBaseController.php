@@ -93,8 +93,11 @@ class LLMKnowledgeBaseController extends Controller
 
     public function indexDocument(LLMDocumentKnowledgeBase $document, LLMRAGService $ragService)
     {
-        $ragService->indexDocument($document->id);
-
-        return back()->with('success', 'Document indexed successfully');
+        try {
+            $ragService->indexDocument($document->id);
+            return back()->with('success', 'Document indexed successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to index document: ' . $e->getMessage());
+        }
     }
 }

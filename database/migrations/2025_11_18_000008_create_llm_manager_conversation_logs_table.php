@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_conversation_logs', function (Blueprint $table) {
+        Schema::create('llm_manager_conversation_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained('llm_conversation_sessions')->onDelete('cascade');
+            $table->foreignId('session_id')->constrained('llm_manager_conversation_sessions')->onDelete('cascade');
             $table->enum('event_type', ['started', 'message_sent', 'response_received', 'error', 'summarized', 'ended'])->default('message_sent');
             $table->text('event_data')->nullable(); // JSON with event details
             $table->integer('tokens_used')->unsigned()->nullable();
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_conversation_logs');
+        Schema::dropIfExists('llm_manager_conversation_logs');
     }
 };

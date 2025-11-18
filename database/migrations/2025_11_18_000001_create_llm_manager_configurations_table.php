@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('llm_configurations', function (Blueprint $table) {
+        Schema::create('llm_manager_configurations', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
             $table->string('slug', 100)->unique();
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_configurations');
+        Schema::dropIfExists('llm_manager_configurations');
     }
 };
