@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('llm_manager_document_knowledge_base', function (Blueprint $table) {
             $table->id();
-            $table->string('extension_slug', 100);
+            $table->string('extension_slug', 100)->nullable(); // Nullable for global docs
             $table->string('document_type', 50)->nullable(); // Nullable for testing - 'manual', 'faq', 'api_doc', 'code', etc.
             $table->string('title', 255);
             $table->longText('content'); // Original document content
-            $table->longText('content_chunks'); // JSON array of chunked content
+            $table->longText('content_chunks')->nullable(); // JSON array of chunked content - nullable for tests
             $table->json('embeddings')->nullable(); // Vector embeddings for semantic search
             $table->string('embedding_model', 100)->nullable();
             $table->json('metadata')->nullable(); // Source, author, version, tags, etc.

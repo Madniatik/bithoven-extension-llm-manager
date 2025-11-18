@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('extension_slug', 100)->nullable(); // Nullable for testing/global templates
             $table->string('category', 50)->nullable(); // e.g., 'analysis', 'generation', 'summarization'
             $table->text('template'); // With variables: "Analyze ticket: {{ticket_content}}"
-            $table->json('variables'); // ["ticket_content", "user_name"]
+            $table->json('variables')->nullable(); // ["ticket_content", "user_name"] - auto-extracted if not provided
             $table->json('example_values')->nullable(); // {"ticket_content": "My printer...", "user_name": "John"}
             $table->json('default_parameters')->nullable(); // Optional parameters for this template
             $table->boolean('is_active')->default(true);

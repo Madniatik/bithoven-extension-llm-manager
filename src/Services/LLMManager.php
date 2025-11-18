@@ -210,4 +210,28 @@ class LLMManager
     {
         return $this->configuration;
     }
+
+    /**
+     * Get all active configurations
+     */
+    public function activeConfigurations(): \Illuminate\Database\Eloquent\Collection
+    {
+        return LLMConfiguration::active()->get();
+    }
+
+    /**
+     * Get configurations by provider
+     */
+    public function configurationsByProvider(string $provider): \Illuminate\Database\Eloquent\Collection
+    {
+        return LLMConfiguration::forProvider($provider)->active()->get();
+    }
+
+    /**
+     * Get provider instance (public for testing)
+     */
+    public function provider(): LLMProviderInterface
+    {
+        return $this->getProvider();
+    }
 }

@@ -34,6 +34,23 @@ class LLMPromptService
     }
 
     /**
+     * Alias for get() - used by tests
+     */
+    public function getTemplate(string $slug): LLMPromptTemplate
+    {
+        return $this->get($slug);
+    }
+
+    /**
+     * Validate template variables
+     */
+    public function validateVariables(string $slug, array $variables): bool
+    {
+        $template = $this->get($slug);
+        return $template->validateVariables($variables);
+    }
+
+    /**
      * Get all templates for an extension
      */
     public function getByExtension(string $extensionSlug): \Illuminate\Database\Eloquent\Collection

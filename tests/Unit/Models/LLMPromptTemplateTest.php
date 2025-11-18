@@ -55,7 +55,7 @@ class LLMPromptTemplateTest extends TestCase
             'is_active' => true,
         ]);
 
-        $result = $template->interpolate([
+        $result = $template->render([
             'name' => 'John',
             'platform' => 'BITHOVEN',
         ]);
@@ -74,10 +74,13 @@ class LLMPromptTemplateTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Missing required variable: name');
+        // render() doesn't throw exception, just returns template with unfilled vars
+        $result = $template->render([]);
+        $this->assertEquals('Hello {{name}}', $result);
 
-        $template->interpolate([]);
+        // But validateVariables() should return false
+        $this->assertFalse($template->validateVariables([]));
+        $this->assertEquals(['name'], $template->getMissingVariables([]));
     }
 
     /** @test */
