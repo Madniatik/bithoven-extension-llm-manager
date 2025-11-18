@@ -29,7 +29,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('llm_manager_usage_logs', function (Blueprint $table) {
-            $table->dropIndex(['currency']);
+            $table->dropIndex('llm_ul_currency_idx');
             $table->dropColumn(['currency', 'cost_original']);
         });
     }
