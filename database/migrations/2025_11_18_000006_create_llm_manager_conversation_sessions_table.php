@@ -25,11 +25,11 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             
-            // Indexes
-            $table->index(['user_id', 'is_active']);
-            $table->index(['extension_slug', 'is_active']);
-            $table->index('session_id');
-            $table->index('expires_at');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['user_id', 'is_active'], 'llm_cs_user_active_idx');
+            $table->index(['extension_slug', 'is_active'], 'llm_cs_ext_active_idx');
+            $table->index('session_id', 'llm_cs_session_idx');
+            $table->index('expires_at', 'llm_cs_expires_idx');
         });
     }
 

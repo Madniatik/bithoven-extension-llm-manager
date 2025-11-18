@@ -29,11 +29,11 @@ return new class extends Migration
             $table->timestamp('executed_at')->useCurrent();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['llm_configuration_id', 'executed_at']);
-            $table->index(['user_id', 'executed_at']);
-            $table->index(['extension_slug', 'executed_at']);
-            $table->index('status');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['llm_configuration_id', 'executed_at'], 'llm_ul_cfg_exec_idx');
+            $table->index(['user_id', 'executed_at'], 'llm_ul_user_exec_idx');
+            $table->index(['extension_slug', 'executed_at'], 'llm_ul_ext_exec_idx');
+            $table->index('status', 'llm_ul_status_idx');
         });
     }
 

@@ -21,9 +21,9 @@ return new class extends Migration
             $table->integer('execution_time_ms')->unsigned()->nullable();
             $table->timestamp('created_at')->useCurrent();
             
-            // Indexes
-            $table->index(['session_id', 'event_type']);
-            $table->index('created_at');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['session_id', 'event_type'], 'llm_cl_session_event_idx');
+            $table->index('created_at', 'llm_cl_created_idx');
         });
     }
 

@@ -27,10 +27,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['type', 'is_active']);
-            $table->index('slug');
-            $table->index('priority');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['type', 'is_active'], 'llm_mcp_type_active_idx');
+            $table->index('slug', 'llm_mcp_slug_idx');
+            $table->index('priority', 'llm_mcp_priority_idx');
         });
     }
 

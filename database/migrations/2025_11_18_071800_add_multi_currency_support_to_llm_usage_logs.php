@@ -18,8 +18,8 @@ return new class extends Migration
             // Add original cost in original currency
             $table->decimal('cost_original', 10, 6)->nullable()->after('currency');
             
-            // Add index for currency queries
-            $table->index('currency');
+                        // Index for currency filtering (shortened name for MySQL 64-char limit)
+            $table->index('currency', 'llm_ul_currency_idx');
         });
     }
 

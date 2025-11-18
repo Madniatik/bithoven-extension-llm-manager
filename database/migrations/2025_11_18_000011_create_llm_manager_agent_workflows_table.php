@@ -25,9 +25,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['extension_slug', 'is_active']);
-            $table->index('slug');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['extension_slug', 'is_active'], 'llm_aw_ext_active_idx');
+            $table->index('slug', 'llm_aw_slug_idx');
         });
     }
 

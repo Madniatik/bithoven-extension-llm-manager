@@ -24,11 +24,11 @@ return new class extends Migration
             $table->timestamp('executed_at')->useCurrent();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['tool_definition_id', 'status']);
-            $table->index(['usage_log_id', 'executed_at']);
-            $table->index(['session_id', 'executed_at']);
-            $table->index('status');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['tool_definition_id', 'status'], 'llm_te_tool_status_idx');
+            $table->index(['usage_log_id', 'executed_at'], 'llm_te_log_exec_idx');
+            $table->index(['session_id', 'executed_at'], 'llm_te_session_exec_idx');
+            $table->index('status', 'llm_te_status_idx');
         });
     }
 

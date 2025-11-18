@@ -23,10 +23,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['extension_slug', 'context', 'is_active']);
-            $table->index(['llm_configuration_id', 'is_active']);
-            $table->index('priority');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['extension_slug', 'context', 'is_active'], 'llm_po_ext_ctx_active_idx');
+            $table->index(['llm_configuration_id', 'is_active'], 'llm_po_cfg_active_idx');
+            $table->index('priority', 'llm_po_priority_idx');
         });
     }
 

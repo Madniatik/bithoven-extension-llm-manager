@@ -26,9 +26,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             
-            // Indexes
-            $table->index(['provider', 'is_active']);
-            $table->index('is_default');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['provider', 'is_active'], 'llm_cfg_provider_active_idx');
+            $table->index('is_default', 'llm_cfg_default_idx');
         });
     }
 

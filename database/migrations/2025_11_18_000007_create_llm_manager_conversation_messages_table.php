@@ -20,9 +20,9 @@ return new class extends Migration
             $table->integer('tokens')->unsigned()->nullable();
             $table->timestamp('created_at')->useCurrent();
             
-            // Indexes
-            $table->index(['session_id', 'created_at']);
-            $table->index('role');
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['session_id', 'created_at'], 'llm_cm_session_created_idx');
+            $table->index('role', 'llm_cm_role_idx');
         });
     }
 

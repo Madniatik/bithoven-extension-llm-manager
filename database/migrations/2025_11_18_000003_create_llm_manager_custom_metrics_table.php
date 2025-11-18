@@ -21,9 +21,9 @@ return new class extends Migration
             $table->json('metadata')->nullable(); // Additional context
             $table->timestamps();
             
-            // Indexes
-            $table->index(['extension_slug', 'metric_key']);
-            $table->index(['usage_log_id', 'metric_key']);
+            // Indexes (shortened names for MySQL 64-char limit)
+            $table->index(['extension_slug', 'metric_key'], 'llm_cm_ext_key_idx');
+            $table->index(['usage_log_id', 'metric_key'], 'llm_cm_log_key_idx');
         });
     }
 
