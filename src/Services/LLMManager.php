@@ -204,11 +204,49 @@ class LLMManager
     }
 
     /**
-     * Get current configuration
+     * Get current configuration or configuration by ID
      */
-    public function getConfiguration(): ?LLMConfiguration
+    public function getConfiguration(?int $id = null): ?LLMConfiguration
     {
-        return $this->configuration;
+        // If no ID provided, return current configuration
+        if ($id === null) {
+            // Try default from config if no configuration set
+            if (!$this->configuration) {
+                $defaultId = config('llm-manager.default_configuration_id');
+                if ($defaultId) {
+                    $this->configuration = LLMConfiguration::find($defaultId);
+                }
+            }
+            return $this->configuration;
+        }
+        
+        // Check cache first if enabled
+        if (config('llm-manager.cache.enabled', false)) {
+            $cacheKey = "llm_config_{$id}";
+            $cached = \Illuminate\Support\Facades\Cache::get($cacheKey);
+            if ($cached) {
+                return $cached;
+            }
+        }
+        
+        // Load configuration by ID
+        $config = LLMConfiguration::find($id);
+        
+        if (!$config) {
+            throw new \RuntimeException('LLM configuration not found');
+        }
+        
+        if (!$config->is_active) {
+            throw new \RuntimeException('LLM configuration is not active');
+        }
+        
+        // Cache if enabled
+        if (config('llm-manager.cache.enabled', false)) {
+            $ttl = config('llm-manager.cache.ttl', 3600);
+            \Illuminate\Support\Facades\Cache::put("llm_config_{$id}", $config, $ttl);
+        }
+        
+        return $config;
     }
 
     /**
@@ -230,8 +268,20 @@ class LLMManager
     /**
      * Get provider instance (public for testing)
      */
-    public function provider(): LLMProviderInterface
+    public function provider($configOrNull = null): LLMProviderInterface
     {
-        return $this->getProvider();
+        $config = $configOrNull ?? $this->configuration;
+        
+        if (!$config) {
+            throw new \RuntimeException('No LLM configuration set');
+        }
+        
+        return match ($config->provider) {
+            'ollama' => new OllamaProvider($config),
+            'openai' => new OpenAIProvider($config),
+            'anthropic' => new AnthropicProvider($config),
+            'custom' => new CustomProvider($config),
+            default => throw new \RuntimeException("Unsupported LLM provider: {$config->provider}"),
+        };
     }
 }
