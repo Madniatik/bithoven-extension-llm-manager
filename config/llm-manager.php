@@ -20,32 +20,132 @@ return [
     |--------------------------------------------------------------------------
     |
     | Supported LLM providers and their default settings.
+    | 
+    | Structure:
+    | - endpoint: Base URL for API
+    | - endpoints: Standardized paths (chat, embeddings, models)
+    | - default_model: Default model to use
+    | - available_models: Hardcoded list (empty if dynamic via API)
+    | - supports_dynamic_models: Whether provider has models list endpoint
+    | - requires_api_key: Whether API key is required
+    | - default_temperature: Default temperature parameter
+    | - default_max_tokens: Default max tokens limit
     |
     */
 
     'providers' => [
         'openai' => [
             'endpoint' => 'https://api.openai.com/v1',
+            'endpoints' => [
+                'chat' => '/chat/completions',
+                'embeddings' => '/embeddings',
+                'models' => '/models',
+            ],
+            'test_connection' => [
+                'endpoint' => '/models',
+                'method' => 'GET',
+                'headers' => ['Authorization' => 'Bearer {api_key}'],
+            ],
             'default_model' => 'gpt-4o',
+            'available_models' => [], // Dynamic via API
+            'supports_dynamic_models' => true,
+            'requires_api_key' => true,
             'default_temperature' => 0.3,
             'default_max_tokens' => 2000,
         ],
         'anthropic' => [
             'endpoint' => 'https://api.anthropic.com/v1',
+            'endpoints' => [
+                'chat' => '/messages',
+                'embeddings' => null,
+                'models' => null,
+            ],
+            'test_connection' => [
+                'endpoint' => '/messages',
+                'method' => 'POST',
+                'headers' => [
+                    'x-api-key' => '{api_key}',
+                    'anthropic-version' => '2023-06-01',
+                    'content-type' => 'application/json',
+                ],
+                'body' => [
+                    'model' => 'claude-3-5-sonnet-20241022',
+                    'max_tokens' => 1,
+                    'messages' => [['role' => 'user', 'content' => 'test']],
+                ],
+            ],
             'default_model' => 'claude-3-5-sonnet-20241022',
+            'available_models' => [
+                'claude-3-5-sonnet-20241022',
+                'claude-3-5-haiku-20241022',
+                'claude-3-opus-20240229',
+                'claude-3-sonnet-20240229',
+                'claude-3-haiku-20240307',
+            ],
+            'supports_dynamic_models' => false,
+            'requires_api_key' => true,
             'default_temperature' => 0.3,
             'default_max_tokens' => 2000,
         ],
         'ollama' => [
             'endpoint' => env('OLLAMA_ENDPOINT', 'http://localhost:11434'),
+            'endpoints' => [
+                'chat' => '/api/generate',
+                'embeddings' => '/api/embeddings',
+                'models' => '/api/tags',
+            ],
+            'test_connection' => [
+                'endpoint' => '/api/tags',
+                'method' => 'GET',
+                'headers' => [],
+            ],
             'default_model' => 'llama3.2',
+            'available_models' => [], // Dynamic via /api/tags
+            'supports_dynamic_models' => true,
+            'requires_api_key' => false,
             'default_temperature' => 0.3,
             'default_max_tokens' => 2000,
             'cache_ttl' => 600, // 10 minutes
         ],
-        'custom' => [
+        'openrouter' => [
+            'endpoint' => 'https://openrouter.ai/api/v1',
+            'endpoints' => [
+                'chat' => '/chat/completions',
+                'embeddings' => null, // Not supported
+                'models' => '/models',
+            ],
+            'test_connection' => [
+                'endpoint' => '/models',
+                'method' => 'GET',
+                'headers' => ['Authorization' => 'Bearer {api_key}'],
+            ],
+            'default_model' => 'anthropic/claude-3.5-sonnet',
+            'available_models' => [], // Dynamic via API
+            'supports_dynamic_models' => true,
+            'requires_api_key' => true,
             'default_temperature' => 0.3,
             'default_max_tokens' => 2000,
+            'note' => 'Unified access to multiple LLM providers (OpenAI-compatible API)',
+        ],
+        'custom' => [
+            'endpoint' => null, // User-defined
+            'endpoints' => [
+                'chat' => '/generate',
+                'embeddings' => '/embed',
+                'models' => null,
+            ],
+            'test_connection' => [
+                'endpoint' => '/', // Root endpoint
+                'method' => 'GET',
+                'headers' => [],
+            ],
+            'default_model' => null,
+            'available_models' => [],
+            'supports_dynamic_models' => false,
+            'requires_api_key' => true, // Optional
+            'default_temperature' => 0.3,
+            'default_max_tokens' => 2000,
+            'note' => 'For Ollama-compatible APIs only',
         ],
     ],
 

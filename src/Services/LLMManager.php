@@ -7,6 +7,7 @@ use Bithoven\LLMManager\Models\LLMConfiguration;
 use Bithoven\LLMManager\Services\Providers\OllamaProvider;
 use Bithoven\LLMManager\Services\Providers\OpenAIProvider;
 use Bithoven\LLMManager\Services\Providers\AnthropicProvider;
+use Bithoven\LLMManager\Services\Providers\OpenRouterProvider;
 use Bithoven\LLMManager\Services\Providers\CustomProvider;
 use Bithoven\LLMManager\Contracts\LLMProviderInterface;
 
@@ -198,6 +199,7 @@ class LLMManager
             'ollama' => new OllamaProvider($this->configuration),
             'openai' => new OpenAIProvider($this->configuration),
             'anthropic' => new AnthropicProvider($this->configuration),
+            'openrouter' => new OpenRouterProvider($this->configuration),
             'custom' => new CustomProvider($this->configuration),
             default => throw new \Exception("Unsupported provider: {$this->configuration->provider}"),
         };
@@ -280,6 +282,7 @@ class LLMManager
             'ollama' => new OllamaProvider($config),
             'openai' => new OpenAIProvider($config),
             'anthropic' => new AnthropicProvider($config),
+            'openrouter' => new OpenRouterProvider($config),
             'custom' => new CustomProvider($config),
             default => throw new \RuntimeException("Unsupported LLM provider: {$config->provider}"),
         };

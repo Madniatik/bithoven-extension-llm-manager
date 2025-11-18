@@ -32,7 +32,6 @@ class LLMConfigurationController extends Controller
             'provider' => 'required|string',
             'model' => 'required|string',
             'api_key' => 'nullable|string',
-            'api_endpoint' => 'nullable|url',
             'parameters' => 'nullable|array',
             'max_tokens' => 'nullable|integer|min:1',
             'temperature' => 'nullable|numeric|min:0|max:2',
@@ -79,7 +78,6 @@ class LLMConfigurationController extends Controller
             'name' => 'required|string|max:255',
             'model' => 'required|string',
             'api_key' => 'nullable|string',
-            'api_endpoint' => 'nullable|url',
             'parameters' => 'nullable|array',
             'max_tokens' => 'nullable|integer|min:1',
             'temperature' => 'nullable|numeric|min:0|max:2',
@@ -113,49 +111,143 @@ class LLMConfigurationController extends Controller
     public function testConnection(Request $request)
     {
         $validated = $request->validate([
-            'provider' => 'required|string',
-            'api_endpoint' => 'nullable|url',
-            'api_key' => 'nullable|string',
+            'configuration_id' => 'required|exists:ai_llm_configurations,id',
         ]);
 
         try {
-            // Basic connectivity test based on provider
-            $provider = $validated['provider'];
-            $endpoint = $validated['api_endpoint'] ?? config("llm-manager.providers.{$provider}.endpoint");
+            $startTime = microtime(true);
             
-            if (!$endpoint) {
+            $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
+            $provider = $configuration->provider;
+            $providerConfig = config("llm-manager.providers.{$provider}");
+            
+            if (!$providerConfig) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No endpoint configured for this provider'
+                    'message' => 'Provider configuration not found',
+                    'metadata' => [
+                        'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2),
+                    ]
                 ]);
             }
 
-            // Simple HTTP check
-            $ch = curl_init($endpoint);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            curl_setopt($ch, CURLOPT_NOBODY, true);
-            curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+            $testConfig = $providerConfig['test_connection'] ?? null;
+            
+            if (!$testConfig) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Test connection not configured for this provider',
+                    'metadata' => [
+                        'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2),
+                    ]
+                ]);
+            }
 
-            // Accept 200-499 as reachable (401/403 means endpoint exists but needs auth)
-            if ($httpCode >= 200 && $httpCode < 500) {
+            // Build full URL
+            $baseEndpoint = $configuration->api_endpoint ?? $providerConfig['endpoint'];
+            $testEndpoint = $testConfig['endpoint'];
+            $fullUrl = rtrim($baseEndpoint, '/') . $testEndpoint;
+
+            // Prepare headers
+            $headers = [];
+            foreach ($testConfig['headers'] as $key => $value) {
+                // Replace {api_key} placeholder
+                $value = str_replace('{api_key}', $configuration->api_key, $value);
+                $headers[] = "{$key}: {$value}";
+            }
+
+            // Prepare request body
+            $requestBody = null;
+            if (!empty($testConfig['body'])) {
+                $requestBody = json_encode($testConfig['body']);
+            }
+
+            // Initialize cURL
+            $curlStartTime = microtime(true);
+            $ch = curl_init($fullUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+            // Set method and body
+            if (strtoupper($testConfig['method']) === 'POST') {
+                curl_setopt($ch, CURLOPT_POST, true);
+                if ($requestBody) {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+                }
+            }
+
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlInfo = curl_getinfo($ch);
+            $error = curl_error($ch);
+            curl_close($ch);
+            
+            $curlExecutionTime = round((microtime(true) - $curlStartTime) * 1000, 2);
+
+            // Parse response
+            $responseData = json_decode($response, true);
+            $responsePreview = is_array($responseData) 
+                ? json_encode($responseData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+                : substr($response, 0, 500);
+
+            $metadata = [
+                'url' => $fullUrl,
+                'method' => strtoupper($testConfig['method']),
+                'http_code' => $httpCode,
+                'request_time_ms' => $curlExecutionTime,
+                'total_time_ms' => round((microtime(true) - $startTime) * 1000, 2),
+                'request_size_bytes' => $requestBody ? strlen($requestBody) : 0,
+                'response_size_bytes' => strlen($response),
+            ];
+
+            if ($error) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Connection error: {$error}",
+                    'metadata' => $metadata,
+                    'response' => null,
+                    'request_body' => $requestBody,
+                ]);
+            }
+
+            // Success codes: 200-299 (and 400-499 for Anthropic validation errors which confirm connection)
+            if ($httpCode >= 200 && $httpCode < 300) {
                 return response()->json([
                     'success' => true,
-                    'message' => "Endpoint reachable (HTTP {$httpCode})"
+                    'message' => "Connection successful! (HTTP {$httpCode})",
+                    'metadata' => $metadata,
+                    'response' => $responsePreview,
+                    'request_body' => $requestBody,
+                ]);
+            } elseif ($httpCode >= 400 && $httpCode < 500) {
+                // 4xx means endpoint is reachable but there's an auth/validation issue
+                $errorMsg = $responseData['error']['message'] ?? $responseData['message'] ?? 'Authentication or validation error';
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => "Endpoint reachable (HTTP {$httpCode}). Note: {$errorMsg}",
+                    'metadata' => $metadata,
+                    'response' => $responsePreview,
+                    'request_body' => $requestBody,
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => "Endpoint returned HTTP {$httpCode}"
+                'message' => "Connection failed with HTTP {$httpCode}",
+                'metadata' => $metadata,
+                'response' => $responsePreview,
+                'request_body' => $requestBody,
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => "Error: {$e->getMessage()}",
+                'metadata' => [
+                    'execution_time_ms' => round((microtime(true) - $startTime) * 1000, 2),
+                ],
             ]);
         }
     }

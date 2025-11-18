@@ -140,6 +140,11 @@ class LLMServiceProvider extends ServiceProvider
         // Load routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        
+        // Load breadcrumbs
+        if (file_exists(__DIR__ . '/../routes/breadcrumbs.php')) {
+            require __DIR__ . '/../routes/breadcrumbs.php';
+        }
 
         // Register commands
         if ($this->app->runningInConsole()) {

@@ -53,4 +53,9 @@ Route::prefix('admin/llm')
         
         // Tool Definitions
         Route::resource('tools', LLMToolDefinitionController::class);
+        
+        // New model-based routes (tab interface)
+        Route::get('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'show'])->name('models.show');
+        Route::put('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'update'])->name('models.update');
+        Route::put('models/{model}/advanced', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'updateAdvanced'])->name('models.update-advanced');
     });
