@@ -22,8 +22,9 @@ class LLMPromptServiceTest extends TestCase
     /** @test */
     public function it_can_get_template_by_name()
     {
-        $template = LLMPromptTemplate::create([
+        $template = LLMPromptTemplate::factory()->create([
             'name' => 'Test Template',
+            'slug' => 'test-template',
             'category' => 'testing',
             'template' => 'Hello {{name}}',
             'variables' => ['name'],
@@ -47,8 +48,9 @@ class LLMPromptServiceTest extends TestCase
     /** @test */
     public function it_throws_exception_for_inactive_template()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Inactive Template',
+            'slug' => 'inactive-template',
             'category' => 'testing',
             'template' => 'Test',
             'is_active' => false,
@@ -63,15 +65,16 @@ class LLMPromptServiceTest extends TestCase
     /** @test */
     public function it_renders_template_with_variables()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Greeting',
+            'slug' => 'greeting',
             'category' => 'general',
             'template' => 'Hello {{name}}, you are {{age}} years old.',
             'variables' => ['name', 'age'],
             'is_active' => true,
         ]);
 
-        $result = $this->promptService->render('Greeting', [
+        $result = $this->promptService->render('greeting', [
             'name' => 'John',
             'age' => '30',
         ]);
@@ -82,21 +85,21 @@ class LLMPromptServiceTest extends TestCase
     /** @test */
     public function it_gets_templates_by_category()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Code Template 1',
             'category' => 'code-generation',
             'template' => 'Generate code',
             'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Code Template 2',
             'category' => 'code-generation',
             'template' => 'Generate more code',
             'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Review Template',
             'category' => 'code-review',
             'template' => 'Review code',
@@ -111,19 +114,18 @@ class LLMPromptServiceTest extends TestCase
     /** @test */
     public function it_gets_global_templates()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Global Template',
             'category' => 'general',
             'template' => 'Global',
-            'is_global' => true,
+            'extension_slug' => null, // Global = null
             'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Extension Template',
             'category' => 'general',
             'template' => 'Extension specific',
-            'is_global' => false,
             'extension_slug' => 'test-ext',
             'is_active' => true,
         ]);
@@ -131,26 +133,24 @@ class LLMPromptServiceTest extends TestCase
         $globalTemplates = $this->promptService->getGlobalTemplates();
 
         $this->assertCount(1, $globalTemplates);
-        $this->assertTrue($globalTemplates->first()->is_global);
+        $this->assertNull($globalTemplates->first()->extension_slug);
     }
 
     /** @test */
     public function it_gets_templates_for_extension()
     {
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Extension A Template',
             'category' => 'general',
             'template' => 'Ext A',
-            'is_global' => false,
             'extension_slug' => 'extension-a',
             'is_active' => true,
         ]);
 
-        LLMPromptTemplate::create([
+        LLMPromptTemplate::factory()->create([
             'name' => 'Extension B Template',
             'category' => 'general',
             'template' => 'Ext B',
-            'is_global' => false,
             'extension_slug' => 'extension-b',
             'is_active' => true,
         ]);
@@ -164,8 +164,9 @@ class LLMPromptServiceTest extends TestCase
     /** @test */
     public function it_validates_template_variables()
     {
-        $template = LLMPromptTemplate::create([
+        $template = LLMPromptTemplate::factory()->create([
             'name' => 'Test Template',
+            'slug' => 'test-template-vars',
             'category' => 'testing',
             'template' => 'Hello {{name}}, your role is {{role}}',
             'variables' => ['name', 'role'],

@@ -24,13 +24,27 @@ class LLMPromptService
     }
 
     /**
-     * Get template by slug
+     * Get template by slug or name
      */
-    public function get(string $slug): LLMPromptTemplate
+    public function get(string $slugOrName): LLMPromptTemplate
     {
-        return LLMPromptTemplate::where('slug', $slug)
-            ->active()
-            ->firstOrFail();
+        // Try by slug first
+        $template = LLMPromptTemplate::where('slug', $slugOrName)->first();
+        
+        // If not found, try by name
+        if (!$template) {
+            $template = LLMPromptTemplate::where('name', $slugOrName)->first();
+        }
+        
+        if (!$template) {
+            throw new \RuntimeException("Prompt template not found: {$slugOrName}");
+        }
+        
+        if (!$template->is_active) {
+            throw new \RuntimeException('Prompt template is not active');
+        }
+        
+        return $template;
     }
 
     /**
@@ -44,9 +58,9 @@ class LLMPromptService
     /**
      * Validate template variables
      */
-    public function validateVariables(string $slug, array $variables): bool
+    public function validateVariables($slugOrTemplate, array $variables): bool
     {
-        $template = $this->get($slug);
+        $template = is_string($slugOrTemplate) ? $this->get($slugOrTemplate) : $slugOrTemplate;
         return $template->validateVariables($variables);
     }
 
@@ -69,6 +83,32 @@ class LLMPromptService
             ->when($extensionSlug, fn($q) => $q->byExtension($extensionSlug))
             ->active()
             ->get();
+    }
+
+    /**
+     * Alias for getByCategory() - used by tests
+     */
+    public function getTemplatesByCategory(string $category, ?string $extensionSlug = null): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getByCategory($category, $extensionSlug);
+    }
+
+    /**
+     * Get global templates (extension_slug = null)
+     */
+    public function getGlobalTemplates(): \Illuminate\Database\Eloquent\Collection
+    {
+        return LLMPromptTemplate::whereNull('extension_slug')
+            ->where('is_active', true)
+            ->get();
+    }
+
+    /**
+     * Get templates for a specific extension (alias for getByExtension)
+     */
+    public function getExtensionTemplates(string $extensionSlug): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getByExtension($extensionSlug);
     }
 
     /**
