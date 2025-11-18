@@ -9,6 +9,13 @@ use Bithoven\LLMManager\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 
+/**
+ * @group integration
+ * @group requires-cpanel
+ * 
+ * These tests require full CPANEL context including Core System (App\Core\Theme)
+ * and DefaultLayout component. They should only run in integration environment.
+ */
 class LLMKnowledgeBaseControllerTest extends TestCase
 {
     use RefreshDatabase;
