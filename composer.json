@@ -44,7 +44,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Bithoven\\LLMManager\\Tests\\": "tests/"
+            "Bithoven\\LLMManager\\Tests\\": "tests/",
+            "Tests\\Stubs\\": "tests/stubs/"
         }
     },
     "extra": {

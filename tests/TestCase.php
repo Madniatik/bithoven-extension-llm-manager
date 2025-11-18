@@ -21,8 +21,9 @@ abstract class TestCase extends Orchestra
         // Load extension's migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         
-        // Override default-layout component with mock for testing
+        // Override CPANEL's DefaultLayout component with test stub
         \Illuminate\Support\Facades\Blade::component('default-layout', \Tests\Stubs\DefaultLayout::class);
+        \Illuminate\Support\Facades\Blade::anonymousComponentPath(__DIR__ . '/stubs/components');
     }
 
     protected function getPackageProviders($app)
@@ -53,6 +54,15 @@ abstract class TestCase extends Orchestra
         $viewPaths = $app['config']->get('view.paths', []);
         array_unshift($viewPaths, __DIR__ . '/stubs');
         $app['config']->set('view.paths', $viewPaths);
+        
+        // Configure CPANEL settings (required for DefaultLayout component)
+        $app['config']->set('settings.KT_THEME_BOOTSTRAP', [
+            'default' => \Tests\Stubs\Bootstrap\BootstrapDefault::class,
+            'auth' => \Tests\Stubs\Bootstrap\BootstrapAuth::class,
+            'system' => \Tests\Stubs\Bootstrap\BootstrapSystem::class,
+            'metronic' => \Tests\Stubs\Bootstrap\BootstrapMetronic::class,
+        ]);
+        $app['config']->set('settings.KT_THEME_LAYOUT_DIR', 'layouts');
 
         // Setup LLM Manager config
         $app['config']->set('llm-manager.default_provider', 'openai');
