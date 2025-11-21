@@ -9,3 +9,9 @@ Breadcrumbs::for('admin.llm.models.show', function (BreadcrumbTrail $trail, LLMC
     $trail->parent('admin.llm.configurations.index');
     $trail->push($model->name, route('admin.llm.models.show', $model));
 });
+
+// Admin > LLM > Streaming Test
+Breadcrumbs::for('admin.llm.stream.test', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.llm.dashboard');
+    $trail->push('Streaming Test', route('admin.llm.stream.test'));
+});

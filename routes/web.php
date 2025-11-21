@@ -7,6 +7,7 @@ use Bithoven\LLMManager\Http\Controllers\Admin\LLMPromptTemplateController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMConversationController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMKnowledgeBaseController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMToolDefinitionController;
+use Bithoven\LLMManager\Http\Controllers\Admin\LLMStreamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,11 @@ Route::prefix('admin/llm')
         
         // Tool Definitions
         Route::resource('tools', LLMToolDefinitionController::class);
+        
+        // Streaming Test & Endpoints
+        Route::get('stream/test', [LLMStreamController::class, 'test'])->name('stream.test');
+        Route::get('stream/stream', [LLMStreamController::class, 'stream'])->name('stream.stream');
+        Route::get('stream/conversation', [LLMStreamController::class, 'conversationStream'])->name('stream.conversation');
         
         // New model-based routes (tab interface)
         Route::get('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'show'])->name('models.show');
