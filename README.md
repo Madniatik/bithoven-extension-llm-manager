@@ -42,6 +42,28 @@ Enterprise-grade LLM management platform for Laravel applications with multi-age
 
 ---
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+### Getting Started
+- **[Installation Guide](docs/INSTALLATION.md)** - Complete installation instructions, requirements, and setup
+- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup, budget controls, RAG, MCP servers
+- **[Usage Guide](docs/USAGE-GUIDE.md)** - How to use all features with practical examples
+- **[FAQ](docs/FAQ.md)** - Frequently asked questions and troubleshooting
+
+### Advanced Documentation
+- **[API Reference](docs/API-REFERENCE.md)** - Complete API documentation for facades, services, and models
+- **[Code Examples](docs/EXAMPLES.md)** - Practical code examples for all features
+- **[Contributing Guide](docs/CONTRIBUTING.md)** - How to contribute to the project
+
+### Quick Links
+- **[Testing Status](#testing-status)** - Complete testing coverage report (100%)
+- **[Changelog](CHANGELOG.md)** - Version history and changes
+- **[License](LICENSE)** - MIT License
+
+---
+
 ## 🎯 Unique Selling Points
 
 1. **🚀 Hybrid Tools** - Only LLM manager with Function Calling + MCP hybrid system
