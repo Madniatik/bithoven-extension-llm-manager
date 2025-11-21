@@ -18,17 +18,17 @@ class LLMConversationController extends Controller
         return view('llm-manager::admin.conversations.index', compact('sessions'));
     }
 
-    public function show(string $sessionId, LLMConversationManager $manager)
+    public function show(int $id)
     {
-        $session = $manager->getSession($sessionId);
-        $session->load(['user', 'configuration', 'messages']);
+        $conversation = LLMConversationSession::with(['user', 'configuration', 'messages', 'logs'])
+            ->findOrFail($id);
 
-        return view('llm-manager::admin.conversations.show', compact('session'));
+        return view('llm-manager::admin.conversations.show', compact('conversation'));
     }
 
-    public function destroy(string $sessionId, LLMConversationManager $manager)
+    public function destroy(int $id)
     {
-        $session = $manager->getSession($sessionId);
+        $session = LLMConversationSession::findOrFail($id);
         $session->delete();
 
         return redirect()
@@ -36,9 +36,10 @@ class LLMConversationController extends Controller
             ->with('success', 'Conversation deleted successfully');
     }
 
-    public function export(string $sessionId, LLMConversationManager $manager)
+    public function export(int $id, LLMConversationManager $manager)
     {
-        $export = $manager->export($sessionId);
+        $session = LLMConversationSession::findOrFail($id);
+        $export = $manager->export($session->session_id);
 
         return response()->json($export);
     }

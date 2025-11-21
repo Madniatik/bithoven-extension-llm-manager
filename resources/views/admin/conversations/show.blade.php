@@ -1,7 +1,7 @@
 <x-default-layout>
     @section('title', 'Conversation Details')
     @section('breadcrumbs')
-        {{ Breadcrumbs::render('admin.llm.conversations.show', $conversation) }}
+        {!! Breadcrumbs::render('admin.llm.conversations.show', $conversation) !!}
     @endsection
 
     <div class="row g-5 g-xl-10 mb-5">

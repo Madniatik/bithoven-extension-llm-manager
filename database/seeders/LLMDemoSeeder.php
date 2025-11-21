@@ -178,5 +178,8 @@ class LLMDemoSeeder extends Seeder
         }
 
         $this->command->info('✅ LLM Demo Data seeded');
+        
+        // Seed demo conversations for testing
+        $this->call(DemoConversationsSeeder::class);
     }
 }
