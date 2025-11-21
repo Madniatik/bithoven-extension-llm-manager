@@ -33,7 +33,7 @@ class LLMStreamController extends Controller
     {
         $validated = $request->validate([
             'prompt' => 'required|string|max:5000',
-            'configuration_id' => 'required|exists:llm_configurations,id',
+            'configuration_id' => 'required|exists:llm_manager_configurations,id',
             'temperature' => 'nullable|numeric|min:0|max:2',
             'max_tokens' => 'nullable|integer|min:1|max:4000',
         ]);
