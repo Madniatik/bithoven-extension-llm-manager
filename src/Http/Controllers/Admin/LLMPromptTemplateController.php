@@ -61,15 +61,37 @@ class LLMPromptTemplateController extends Controller
 
     public function update(Request $request, LLMPromptTemplate $template)
     {
+        // Convert is_global from string to boolean
+        if ($request->has('is_global')) {
+            $request->merge(['is_global' => filter_var($request->is_global, FILTER_VALIDATE_BOOLEAN)]);
+        }
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:100',
             'template' => 'required|string',
             'description' => 'nullable|string',
             'extension_slug' => 'nullable|string',
+            'variables' => 'nullable|array',
+            'is_global' => 'nullable|boolean',
+            'is_active' => 'nullable|boolean',
         ]);
 
+        // Process variables array (remove empty values)
+        if (isset($validated['variables'])) {
+            $validated['variables'] = array_filter($validated['variables'], fn($v) => !empty($v));
+        }
+
         $template->update($validated);
+
+        // Return JSON for AJAX requests
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Template updated successfully',
+                'template' => $template
+            ]);
+        }
 
         return redirect()
             ->route('admin.llm.prompts.show', $template)

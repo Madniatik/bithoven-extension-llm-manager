@@ -38,123 +38,6 @@
     @push('scripts')
     <script>
         // ============================================
-        // Monitor Panel - Sistema de logs reutilizable
-        // ============================================
-        const Monitor = {
-            log(monitorId, message, type = 'info', timestamp = null) {
-                const container = document.getElementById(monitorId);
-                if (!container) {
-                    console.error(`Monitor container with id "${monitorId}" not found`);
-                    return;
-                }
-
-                if (container.querySelector('.text-center')) {
-                    container.innerHTML = '';
-                }
-
-                const time = timestamp || new Date().toLocaleTimeString('es-ES');
-                const colors = {
-                    'info': 'text-gray-700',
-                    'success': 'text-success',
-                    'warning': 'text-warning',
-                    'error': 'text-danger',
-                    'debug': 'text-muted',
-                };
-
-                const entry = document.createElement('div');
-                entry.className = `mb-1 ${colors[type] || colors.info}`;
-                entry.innerHTML = `<span class="text-muted">[${time}]</span> ${message}`;
-
-                container.appendChild(entry);
-                container.scrollTop = container.scrollHeight;
-            },
-
-            clear(monitorId) {
-                const container = document.getElementById(monitorId);
-                if (!container) return;
-
-                container.innerHTML = `
-                    <div class="text-muted text-center py-5">
-                        <i class="ki-duotone ki-information-2 fs-3x mb-3">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                            <span class="path3"></span>
-                        </i>
-                        <div>Waiting for events...</div>
-                    </div>
-                `;
-            },
-
-            success(monitorId, message) {
-                this.log(monitorId, '✅ ' + message, 'success');
-            },
-
-            error(monitorId, message) {
-                this.log(monitorId, '❌ ' + message, 'error');
-            },
-
-            warning(monitorId, message) {
-                this.log(monitorId, '⚠️ ' + message, 'warning');
-            },
-
-            info(monitorId, message) {
-                this.log(monitorId, 'ℹ️ ' + message, 'info');
-            },
-
-            debug(monitorId, message) {
-                this.log(monitorId, '🔍 ' + message, 'debug');
-            }
-        };
-
-        function clearMonitor(id) {
-            Monitor.clear(id);
-        }
-
-        function copyMonitorLogs(id) {
-            const container = document.getElementById(id);
-            if (!container) {
-                console.error(`Monitor container with id "${id}" not found`);
-                return;
-            }
-
-            // Get all log entries
-            const logEntries = container.querySelectorAll('div.mb-1');
-            if (logEntries.length === 0) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'No Logs',
-                    text: 'No hay logs para copiar',
-                    timer: 2000
-                });
-                return;
-            }
-
-            // Extract text from each log entry
-            let logsText = '';
-            logEntries.forEach(entry => {
-                logsText += entry.innerText + '\n';
-            });
-
-            // Copy to clipboard
-            navigator.clipboard.writeText(logsText).then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Copied!',
-                    text: `${logEntries.length} logs copiados al portapapeles`,
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            }).catch(err => {
-                console.error('Error copying logs:', err);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudo copiar al portapapeles'
-                });
-            });
-        }
-
-        // ============================================
         // Tab switching without changing URL with localStorage persistence
         document.addEventListener('DOMContentLoaded', function() {
             // Only select tabs within the model tab content
@@ -221,24 +104,48 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message || 'Configuration status updated',
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
                 } else {
-                    alert('Error: ' + (data.message || 'Unknown error'));
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Unknown error'
+                    });
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to toggle model status');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to toggle configuration status'
+                });
             });
         }
 
         // Test connection
         function testModelConnection() {
-            const modelId = {{ $model->id }};
             const url = "{{ route('admin.llm.configurations.test') }}";
+            
+            // Get current values from model
+            const provider = '{{ $model->provider }}';
+            const apiEndpoint = '{{ $model->api_endpoint ?? '' }}';
+            const apiKey = '{{ $model->api_key ? "***" : "" }}';
             
             const testButton = document.getElementById('test-connection-btn');
             const originalText = testButton.innerHTML;
@@ -259,7 +166,11 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ configuration_id: modelId })
+                body: JSON.stringify({
+                    provider: provider,
+                    api_endpoint: apiEndpoint || null,
+                    api_key: apiKey === '***' ? null : apiKey
+                })
             })
             .then(response => {
                 Monitor.debug('llm-monitor', '📥 Respuesta recibida del servidor');
@@ -394,6 +305,21 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             
+            // Determinar qué campo de modelo usar (select o input)
+            const modelSelect = document.getElementById('model-select');
+            const modelInput = document.getElementById('model-input');
+            
+            if (modelSelect.style.display !== 'none' && modelSelect.value) {
+                // Si el select está visible y tiene valor, usar ese
+                data.model = modelSelect.value;
+            } else if (modelInput.style.display !== 'none' && modelInput.value) {
+                // Si el input está visible y tiene valor, usar ese
+                data.model = modelInput.value;
+            }
+            
+            // Remover campos auxiliares que no deben enviarse
+            delete data.model_input;
+            
             const saveButton = document.getElementById('save-model-btn');
             const originalText = saveButton.innerHTML;
             saveButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
@@ -440,6 +366,41 @@
                     title: 'Error',
                     text: 'An error occurred while saving'
                 });
+            });
+        }
+
+        // Delete model
+        function deleteModel() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This configuration will be permanently deleted!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "{{ route('admin.llm.configurations.destroy', $model) }}";
+                    
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+                    
+                    const methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'DELETE';
+                    form.appendChild(methodField);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
             });
         }
     </script>

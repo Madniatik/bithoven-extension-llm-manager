@@ -9,7 +9,7 @@
             <h3 class="card-title">Edit Template: {{ $template->name }}</h3>
         </div>
 
-        <form action="{{ route('admin.llm.prompts.update', $template) }}" method="POST">
+        <form id="edit-template-form" action="{{ route('admin.llm.prompts.update', $template) }}" method="POST">
             @csrf
             @method('PUT')
             
@@ -90,11 +90,11 @@
                     <label class="col-lg-4 col-form-label fw-semibold fs-6">Scope</label>
                     <div class="col-lg-8">
                         <div class="form-check form-check-custom form-check-solid mb-2">
-                            <input class="form-check-input" type="radio" name="is_global" value="1" id="global" {{ old('is_global', $template->is_global) == '1' ? 'checked' : '' }}/>
+                            <input class="form-check-input" type="radio" name="is_global" value="1" id="global" {{ old('is_global', $template->is_global ? '1' : '0') == '1' ? 'checked' : '' }}/>
                             <label class="form-check-label" for="global">Global</label>
                         </div>
                         <div class="form-check form-check-custom form-check-solid">
-                            <input class="form-check-input" type="radio" name="is_global" value="0" id="extension" {{ old('is_global', $template->is_global) == '0' ? 'checked' : '' }}/>
+                            <input class="form-check-input" type="radio" name="is_global" value="0" id="extension" {{ old('is_global', $template->is_global ? '1' : '0') == '0' ? 'checked' : '' }}/>
                             <label class="form-check-label" for="extension">Extension-specific</label>
                         </div>
                     </div>
@@ -111,8 +111,8 @@
                     <label class="col-lg-4 col-form-label fw-semibold fs-6">Status</label>
                     <div class="col-lg-8">
                         <div class="form-check form-switch form-check-custom form-check-solid">
-                            <input class="form-check-input" type="checkbox" name="is_active" value="1" {{ old('is_active', $template->is_active) ? 'checked' : '' }}/>
-                            <label class="form-check-label">Active</label>
+                            <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" {{ old('is_active', $template->is_active) ? 'checked' : '' }}/>
+                            <label class="form-check-label" for="is_active">Active</label>
                         </div>
                     </div>
                 </div>
@@ -129,21 +129,100 @@
     <script>
         function addVariable() {
             const container = document.getElementById('variables-container');
+            const addButtonRow = container.querySelector('.input-group:last-child');
+            const addInput = addButtonRow.querySelector('input');
+            const inputValue = addInput.value.trim();
+            
+            // Si el input está vacío, no agregar
+            if (!inputValue) {
+                return;
+            }
+            
             const div = document.createElement('div');
             div.className = 'input-group mb-3';
             div.innerHTML = `
-                <input type="text" name="variables[]" class="form-control form-control-solid" placeholder="variable_name"/>
+                <input type="text" name="variables[]" class="form-control form-control-solid" value="${inputValue}"/>
                 <button class="btn btn-icon btn-light-danger" type="button" onclick="this.parentElement.remove()">
                     <i class="ki-duotone ki-trash fs-2"></i>
                 </button>
             `;
-            container.appendChild(div);
+            
+            // Insertar ANTES del último elemento (el input con botón +)
+            container.insertBefore(div, addButtonRow);
+            
+            // Limpiar el input+
+            addInput.value = '';
         }
 
         document.querySelectorAll('input[name="is_global"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 document.getElementById('extension-select').style.display = 
                     this.value === '0' ? 'flex' : 'none';
+            });
+        });
+
+        // AJAX form submission
+        document.getElementById('edit-template-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const submitBtn = form.querySelector('[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
+            
+            const formData = new FormData(form);
+            
+            // Ensure is_active is always sent (0 if unchecked)
+            if (!formData.has('is_active')) {
+                formData.append('is_active', '0');
+            }
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message || 'Template updated successfully',
+                        timer: 2000
+                    });
+                } else if (data.errors) {
+                    const errorMessages = Object.values(data.errors).flat().join('<br>');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        html: errorMessages
+                    });
+                } else if (data.message) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'An error occurred while updating the template'
+                });
             });
         });
     </script>

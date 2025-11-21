@@ -22,7 +22,7 @@ class LLMConfigurationSeeder extends Seeder
                 'slug' => 'ollama-llama32',
                 'provider' => 'ollama',
                 'model' => 'llama3.2',
-                'api_endpoint' => 'http://localhost:11434/api/generate',
+                'api_endpoint' => 'http://localhost:11434',
                 'api_key' => null,
                 'default_parameters' => [
                     'temperature' => 0.7,
@@ -46,7 +46,7 @@ class LLMConfigurationSeeder extends Seeder
                 'slug' => 'ollama-llama32-vision',
                 'provider' => 'ollama',
                 'model' => 'llama3.2-vision',
-                'api_endpoint' => 'http://localhost:11434/api/generate',
+                'api_endpoint' => 'http://localhost:11434',
                 'api_key' => null,
                 'default_parameters' => [
                     'temperature' => 0.7,
@@ -70,7 +70,7 @@ class LLMConfigurationSeeder extends Seeder
                 'slug' => 'openai-gpt4o',
                 'provider' => 'openai',
                 'model' => 'gpt-4o',
-                'api_endpoint' => 'https://api.openai.com/v1/chat/completions',
+                'api_endpoint' => 'https://api.openai.com/v1',
                 'api_key' => env('OPENAI_API_KEY'),
                 'default_parameters' => [
                     'temperature' => 0.7,
@@ -95,7 +95,7 @@ class LLMConfigurationSeeder extends Seeder
                 'slug' => 'anthropic-claude35-sonnet',
                 'provider' => 'anthropic',
                 'model' => 'claude-3-5-sonnet-20241022',
-                'api_endpoint' => 'https://api.anthropic.com/v1/messages',
+                'api_endpoint' => 'https://api.anthropic.com/v1',
                 'api_key' => env('ANTHROPIC_API_KEY'),
                 'default_parameters' => [
                     'temperature' => 1.0,

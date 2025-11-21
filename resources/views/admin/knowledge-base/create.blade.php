@@ -11,6 +11,7 @@
 
         <form action="{{ route('admin.llm.knowledge-base.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="document_type" value="documentation">
             
             <div class="card-body">
                 <div class="row mb-6">

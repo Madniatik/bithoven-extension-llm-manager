@@ -17,10 +17,10 @@
                 </div>
             </div>
             <div class="card-toolbar">
-                <a href="{{ route('admin.llm.configurations.create') }}" class="btn btn-primary">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#create-config-modal">
                     <i class="ki-duotone ki-plus fs-2"></i>
                     New Configuration
-                </a>
+                </button>
             </div>
         </div>
 
@@ -89,11 +89,7 @@
                                     data-kt-menu="true">
                                     <div class="menu-item px-3">
                                         <a href="{{ route('admin.llm.models.show', $config) }}"
-                                            class="menu-link px-3">View</a>
-                                    </div>
-                                    <div class="menu-item px-3">
-                                        <a href="{{ route('admin.llm.configurations.edit', $config) }}"
-                                            class="menu-link px-3">Edit</a>
+                                            class="menu-link px-3">View/Edit</a>
                                     </div>
                                     <div class="menu-item px-3">
                                         <form action="{{ route('admin.llm.configurations.toggle', $config) }}"
@@ -122,6 +118,63 @@
         </div>
     </div>
 
+    <!--begin::Create Configuration Modal-->
+    <div class="modal fade" id="create-config-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered mw-650px">
+            <div class="modal-content">
+                <form id="create-config-form" method="POST" action="{{ route('admin.llm.models.store') }}">
+                    @csrf
+                    <div class="modal-header">
+                        <h2 class="fw-bold">Create New LLM Configuration</h2>
+                        <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+                            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                        </div>
+                    </div>
+
+                    <div class="modal-body py-10 px-lg-17">
+                        <div class="scroll-y me-n7 pe-7" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}"
+                            data-kt-scroll-max-height="auto" data-kt-scroll-offset="300px">
+                            
+                            <!--begin::Input group-->
+                            <div class="mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Name</label>
+                                <input type="text" name="name" class="form-control form-control-solid" 
+                                    placeholder="e.g., GPT-4 Production" required />
+                                <div class="form-text">Must be unique</div>
+                            </div>
+                            <!--end::Input group-->
+
+                            <!--begin::Input group-->
+                            <div class="mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Provider</label>
+                                <select name="provider" class="form-select form-select-solid" required>
+                                    <option value="">Select provider...</option>
+                                    <option value="ollama">Ollama (Local)</option>
+                                    <option value="openai">OpenAI</option>
+                                    <option value="anthropic">Anthropic (Claude)</option>
+                                    <option value="openrouter">OpenRouter</option>
+                                    <option value="local">Local Model</option>
+                                    <option value="custom">Custom Provider</option>
+                                </select>
+                                <div class="form-text">You can configure model and API key after creation</div>
+                            </div>
+                            <!--end::Input group-->
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer flex-center">
+                        <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="indicator-label">Create Configuration</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--end::Create Configuration Modal-->
+
     @push('scripts')
         <script>
             const filterSearch = document.querySelector('[data-kt-filter="search"]');
@@ -133,6 +186,61 @@
                 rows.forEach(row => {
                     const text = row.textContent.toLowerCase();
                     row.style.display = text.includes(searchText) ? '' : 'none';
+                });
+            });
+
+            // Handle modal form submission with validation
+            document.getElementById('create-config-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+                
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else if (data.errors) {
+                        // Show validation errors
+                        const errorMessages = Object.values(data.errors).flat().join('<br>');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validation Error',
+                            html: errorMessages,
+                            confirmButtonText: 'OK'
+                        });
+                    } else if (data.message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while creating the configuration'
+                    });
                 });
             });
         </script>

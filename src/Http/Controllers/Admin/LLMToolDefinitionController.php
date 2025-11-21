@@ -32,19 +32,23 @@ class LLMToolDefinitionController extends Controller
             'type' => 'required|in:function_calling,mcp',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'parameters_schema' => 'required|array',
+            'parameters' => 'required|json',  // Changed from parameters_schema|array to parameters|json
             'implementation' => 'required|string',
-            'metadata' => 'nullable|array',
+            'metadata' => 'nullable|json',  // Changed from array to json
         ]);
+
+        // Parse JSON strings to arrays
+        $parametersSchema = json_decode($validated['parameters'], true);
+        $metadata = !empty($validated['metadata']) ? json_decode($validated['metadata'], true) : null;
 
         $tool = $toolService->register(
             $validated['extension_slug'],
             $validated['type'],
             $validated['name'],
             $validated['description'],
-            $validated['parameters_schema'],
+            $parametersSchema,
             $validated['implementation'],
-            $validated['metadata'] ?? null
+            $metadata
         );
 
         return redirect()
@@ -69,11 +73,16 @@ class LLMToolDefinitionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'parameters_schema' => 'required|array',
+            'parameters' => 'required|json',
             'implementation' => 'required|string',
-            'metadata' => 'nullable|array',
+            'metadata' => 'nullable|json',
             'is_active' => 'boolean',
         ]);
+
+        // Parse JSON to arrays
+        $validated['parameters_schema'] = json_decode($validated['parameters'], true);
+        $validated['metadata'] = !empty($validated['metadata']) ? json_decode($validated['metadata'], true) : null;
+        unset($validated['parameters']); // Remove the JSON string version
 
         $toolService->update($tool->slug, $validated);
 

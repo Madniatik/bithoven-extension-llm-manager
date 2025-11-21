@@ -22,20 +22,27 @@ class LLMToolDefinition extends Model
         'name',
         'slug',
         'type',
+        'extension_slug',
+        'tool_type',
         'mcp_connector_id',
         'function_schema',
+        'parameters_schema',
         'handler_class',
         'handler_method',
+        'implementation',
         'validation_rules',
         'security_policy',
+        'metadata',
         'is_active',
         'description',
     ];
 
     protected $casts = [
         'function_schema' => 'array',
+        'parameters_schema' => 'array',
         'validation_rules' => 'array',
         'security_policy' => 'array',
+        'metadata' => 'array',
         'is_active' => 'boolean',
     ];
 

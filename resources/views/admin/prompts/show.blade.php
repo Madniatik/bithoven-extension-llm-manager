@@ -13,7 +13,8 @@
                         <span class="card-label fw-bold text-gray-800">Template Info</span>
                     </h3>
                     <div class="card-toolbar">
-                        <a href="{{ route('admin.llm.prompts.edit', $template) }}" class="btn btn-sm btn-light">Edit</a>
+                        <a href="{{ route('admin.llm.prompts.edit', $template) }}" class="btn btn-sm btn-light me-2">Edit</a>
+                        <button type="button" class="btn btn-sm btn-light-danger" onclick="deleteTemplate()">Delete</button>
                     </div>
                 </div>
                 <div class="card-body pt-5">
@@ -114,4 +115,42 @@ $response = LLM::template('{{ $template->slug }}', [
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function deleteTemplate() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Template \"{{ $template->name }}\" will be permanently deleted!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "{{ route('admin.llm.prompts.destroy', $template) }}";
+                    
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+                    
+                    const methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'DELETE';
+                    form.appendChild(methodField);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+    @endpush
 </x-default-layout>

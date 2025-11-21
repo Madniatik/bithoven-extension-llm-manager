@@ -38,9 +38,8 @@
                     <div class="col-lg-8">
                         <select name="type" class="form-select form-select-solid @error('type') is-invalid @enderror" id="tool-type" required>
                             <option value="">Select Type</option>
-                            <option value="native" {{ old('type') == 'native' ? 'selected' : '' }}>Native PHP Function/Class</option>
+                            <option value="function_calling" {{ old('type') == 'function_calling' ? 'selected' : '' }}>Native PHP Function/Class</option>
                             <option value="mcp" {{ old('type') == 'mcp' ? 'selected' : '' }}>MCP Server</option>
-                            <option value="custom" {{ old('type') == 'custom' ? 'selected' : '' }}>Custom Script</option>
                         </select>
                         @error('type')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -55,7 +54,6 @@
                         <div class="form-text" id="implementation-help">
                             <span class="native-help" style="display:none">Format: <code>function_name</code> or <code>ClassName@method</code></span>
                             <span class="mcp-help" style="display:none">Format: <code>server_name:tool_name</code></span>
-                            <span class="custom-help" style="display:none">Absolute path to script (must be whitelisted)</span>
                         </div>
                         @error('implementation')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -111,12 +109,10 @@
             const helpers = document.querySelectorAll('#implementation-help span');
             helpers.forEach(h => h.style.display = 'none');
             
-            if (type === 'native') {
+            if (type === 'function_calling') {
                 document.querySelector('.native-help').style.display = 'inline';
             } else if (type === 'mcp') {
                 document.querySelector('.mcp-help').style.display = 'inline';
-            } else if (type === 'custom') {
-                document.querySelector('.custom-help').style.display = 'inline';
             }
         });
     </script>

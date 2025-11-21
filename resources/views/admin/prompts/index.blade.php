@@ -44,7 +44,15 @@
 
                         <div class="card-body p-9">
                             <div class="fs-3 fw-bold text-gray-900">{{ $template->name }}</div>
-                            <p class="text-gray-500 fw-semibold fs-5 mt-1 mb-7">{{ Str::limit($template->description, 100) }}</p>
+                            <p class="text-gray-500 fw-semibold fs-5 mt-1 mb-3">{{ Str::limit($template->description, 100) }}</p>
+                            
+                            <div class="text-gray-400 fw-semibold fs-7 mb-5">
+                                <i class="ki-duotone ki-calendar fs-6 me-1">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                                Created {{ $template->created_at->diffForHumans() }}
+                            </div>
 
                             <div class="d-flex flex-wrap mb-5">
                                 @if($template->is_active)
@@ -64,11 +72,16 @@
                                 <div class="bg-success rounded h-4px" role="progressbar" style="width: {{ $template->usage_count > 0 ? min(($template->usage_count / 100) * 100, 100) : 0 }}%"></div>
                             </div>
 
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
                                 <div class="text-gray-500 fw-semibold fs-7">
                                     Used {{ $template->usage_count ?? 0 }} times
                                 </div>
-                                <a href="{{ route('admin.llm.prompts.show', $template) }}" class="btn btn-sm btn-light-primary">View</a>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ route('admin.llm.prompts.show', $template) }}" class="btn btn-sm btn-light-primary">View</a>
+                                    <a href="#" class="btn btn-sm btn-icon btn-light-danger" onclick="deleteTemplate({{ $template->id }}, '{{ $template->name }}'); return false;">
+                                        <i class="ki-duotone ki-trash fs-2"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -77,4 +90,42 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function deleteTemplate(id, name) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `Template "${name}" will be permanently deleted!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/llm/prompts/${id}`;
+                    
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+                    
+                    const methodField = document.createElement('input');
+                    methodField.type = 'hidden';
+                    methodField.name = '_method';
+                    methodField.value = 'DELETE';
+                    form.appendChild(methodField);
+                    
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+    @endpush
 </x-default-layout>

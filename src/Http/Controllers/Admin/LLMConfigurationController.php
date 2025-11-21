@@ -8,6 +8,10 @@ use Bithoven\LLMManager\Models\LLMConfiguration;
 
 class LLMConfigurationController extends Controller
 {
+    /**
+     * Display a listing of configurations.
+     * Used by /admin/llm/configurations (index page)
+     */
     public function index()
     {
         $configurations = LLMConfiguration::withCount('usageLogs')
@@ -18,79 +22,9 @@ class LLMConfigurationController extends Controller
         return view('llm-manager::admin.configurations.index', compact('configurations'));
     }
 
-    public function create()
-    {
-        $providers = config('llm-manager.providers', []);
-        
-        return view('llm-manager::admin.configurations.create', compact('providers'));
-    }
-
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'provider' => 'required|string',
-            'model' => 'required|string',
-            'api_key' => 'nullable|string',
-            'parameters' => 'nullable|array',
-            'max_tokens' => 'nullable|integer|min:1',
-            'temperature' => 'nullable|numeric|min:0|max:2',
-            'is_active' => 'boolean',
-        ]);
-
-        $validated['slug'] = \Str::slug($validated['name']);
-
-        $configuration = LLMConfiguration::create($validated);
-
-        return redirect()
-            ->route('admin.llm.configurations.show', $configuration)
-            ->with('success', 'Configuration created successfully');
-    }
-
-    public function show(LLMConfiguration $configuration)
-    {
-        $configuration->loadCount('usageLogs');
-        $configuration->load(['usageLogs' => function($q) {
-            $q->latest()->limit(50);
-        }]);
-
-        // Calculate statistics from usage logs
-        $stats = (object) [
-            'total_requests' => $configuration->usageLogs()->count(),
-            'total_cost' => $configuration->usageLogs()->sum('cost_usd'),
-            'total_tokens' => $configuration->usageLogs()->sum('total_tokens'),
-            'avg_execution_time' => $configuration->usageLogs()->avg('execution_time_ms') ?? 0,
-        ];
-
-        return view('llm-manager::admin.configurations.show', compact('configuration', 'stats'));
-    }
-
-    public function edit(LLMConfiguration $configuration)
-    {
-        $providers = config('llm-manager.providers', []);
-        
-        return view('llm-manager::admin.configurations.edit', compact('configuration', 'providers'));
-    }
-
-    public function update(Request $request, LLMConfiguration $configuration)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'model' => 'required|string',
-            'api_key' => 'nullable|string',
-            'parameters' => 'nullable|array',
-            'max_tokens' => 'nullable|integer|min:1',
-            'temperature' => 'nullable|numeric|min:0|max:2',
-            'is_active' => 'boolean',
-        ]);
-
-        $configuration->update($validated);
-
-        return redirect()
-            ->route('admin.llm.configurations.show', $configuration)
-            ->with('success', 'Configuration updated successfully');
-    }
-
+    /**
+     * Remove the specified configuration.
+     */
     public function destroy(LLMConfiguration $configuration)
     {
         $configuration->delete();
@@ -105,20 +39,30 @@ class LLMConfigurationController extends Controller
         $configuration->is_active = !$configuration->is_active;
         $configuration->save();
 
+        // Return JSON for AJAX requests
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Configuration status updated successfully',
+                'is_active' => $configuration->is_active
+            ]);
+        }
+
         return back()->with('success', 'Configuration status updated');
     }
 
     public function testConnection(Request $request)
     {
         $validated = $request->validate([
-            'configuration_id' => 'required|exists:ai_llm_configurations,id',
+            'provider' => 'required|string',
+            'api_endpoint' => 'nullable|string',
+            'api_key' => 'nullable|string',
         ]);
 
         try {
             $startTime = microtime(true);
             
-            $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
-            $provider = $configuration->provider;
+            $provider = $validated['provider'];
             $providerConfig = config("llm-manager.providers.{$provider}");
             
             if (!$providerConfig) {
@@ -143,16 +87,19 @@ class LLMConfigurationController extends Controller
                 ]);
             }
 
-            // Build full URL
-            $baseEndpoint = $configuration->api_endpoint ?? $providerConfig['endpoint'];
+            // Use provided endpoint or fallback to config
+            $baseEndpoint = $validated['api_endpoint'] ?? $providerConfig['endpoint'];
             $testEndpoint = $testConfig['endpoint'];
             $fullUrl = rtrim($baseEndpoint, '/') . $testEndpoint;
+
+            // Use provided API key or empty for local providers
+            $apiKey = $validated['api_key'] ?? '';
 
             // Prepare headers
             $headers = [];
             foreach ($testConfig['headers'] as $key => $value) {
                 // Replace {api_key} placeholder
-                $value = str_replace('{api_key}', $configuration->api_key, $value);
+                $value = str_replace('{api_key}', $apiKey, $value);
                 $headers[] = "{$key}: {$value}";
             }
 

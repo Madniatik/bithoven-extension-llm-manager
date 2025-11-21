@@ -40,7 +40,7 @@
                 <span class="path4"></span>
                 <span class="path5"></span>
             </i>
-            Delete Configuration
+            Delete Provider
         </button>
         <!--end::Action-->
     </div>
@@ -49,42 +49,17 @@
 <!--end::Sidebar Actions-->
 
 <!--begin::Activity Monitor-->
-<div class="card mb-5 mb-xl-8">
-    <div class="card-header">
-        <h3 class="card-title">📡 Activity Monitor</h3>
-        <div class="card-toolbar">
-            <button type="button" class="btn btn-sm btn-icon btn-light-primary me-2" onclick="copyMonitorLogs('llm-monitor')" title="Copy logs">
-                <i class="ki-duotone ki-copy fs-2">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-            </button>
-            <button type="button" class="btn btn-sm btn-icon btn-light-primary" onclick="clearMonitor('llm-monitor')" title="Clear logs">
-                <i class="ki-duotone ki-trash fs-2">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                    <span class="path3"></span>
-                    <span class="path4"></span>
-                    <span class="path5"></span>
-                </i>
-            </button>
-        </div>
-    </div>
-    <div class="card-body p-0">
-        <div id="llm-monitor" 
-             class="monitor-container bg-light-dark rounded p-4" 
-             style="min-height: 250px; max-height: 400px; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.5;">
-            <div class="text-muted text-center py-5">
-                <i class="ki-duotone ki-information-2 fs-3x mb-3">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                    <span class="path3"></span>
-                </i>
-                <div>Waiting for events...</div>
-            </div>
-        </div>
-    </div>
-</div>
+<x-monitor-panel 
+    id="llm-monitor"
+    title="📡 Activity Monitor"
+    height="250px"
+    maxHeight="400px"
+    enableRecording="true"
+    enableDownload="true"
+    enableCopy="true"
+    enableClear="true"
+    class="mb-5 mb-xl-8"
+/>
 <!--end::Activity Monitor-->
 
 <!--begin::Sidebar Info-->

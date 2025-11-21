@@ -25,10 +25,11 @@ Route::prefix('admin/llm')
         // Dashboard
         Route::get('/', [LLMUsageStatsController::class, 'dashboard'])->name('dashboard');
         
-        // Configurations
-        Route::resource('configurations', LLMConfigurationController::class);
+        // Configurations (Legacy routes - only keeping necessary ones)
+        Route::get('configurations', [LLMConfigurationController::class, 'index'])->name('configurations.index');
         Route::post('configurations/test', [LLMConfigurationController::class, 'testConnection'])->name('configurations.test');
         Route::post('configurations/{configuration}/toggle', [LLMConfigurationController::class, 'toggleActive'])->name('configurations.toggle');
+        Route::delete('configurations/{configuration}', [LLMConfigurationController::class, 'destroy'])->name('configurations.destroy');
         
         // Usage Statistics
         Route::get('statistics', [LLMUsageStatsController::class, 'index'])->name('statistics.index');
@@ -56,6 +57,7 @@ Route::prefix('admin/llm')
         
         // New model-based routes (tab interface)
         Route::get('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'show'])->name('models.show');
+        Route::post('models', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'store'])->name('models.store');
         Route::put('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'update'])->name('models.update');
         Route::put('models/{model}/advanced', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'updateAdvanced'])->name('models.update-advanced');
     });

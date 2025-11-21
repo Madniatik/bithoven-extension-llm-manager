@@ -8,6 +8,33 @@ use Bithoven\LLMManager\Models\LLMConfiguration;
 
 class LLMModelController extends Controller
 {
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:llm_manager_configurations,name',
+            'provider' => 'required|string|in:ollama,openai,anthropic,openrouter,local,custom',
+        ]);
+
+        $validated['slug'] = \Str::slug($validated['name']);
+        $validated['is_active'] = false; // Inactive until configured
+        $validated['model'] = 'pending-configuration'; // Placeholder until user configures
+
+        $configuration = LLMConfiguration::create($validated);
+
+        // Return JSON for AJAX requests
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Configuration created successfully. Please configure model and API key.',
+                'redirect' => route('admin.llm.models.show', $configuration)
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.llm.models.show', $configuration)
+            ->with('success', 'Configuration created successfully. Please configure model and API key.');
+    }
+    
     public function show(LLMConfiguration $model)
     {
         $model->loadCount('usageLogs');
@@ -33,7 +60,7 @@ class LLMModelController extends Controller
     public function update(Request $request, LLMConfiguration $model)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:llm_manager_configurations,name,' . $model->id,
             'model' => 'required|string',
             'api_key' => 'nullable|string',
             'parameters' => 'nullable|array',

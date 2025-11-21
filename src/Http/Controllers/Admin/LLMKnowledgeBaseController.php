@@ -29,19 +29,35 @@ class LLMKnowledgeBaseController extends Controller
     {
         $validated = $request->validate([
             'extension_slug' => 'required|string',
-            'document_type' => 'required|string',
+            'document_type' => 'nullable|string',
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'metadata' => 'nullable|array',
+            'metadata' => 'nullable|json',
+            'auto_index' => 'nullable|boolean',
         ]);
+
+        // Parse metadata JSON string to array
+        $metadata = null;
+        if (!empty($validated['metadata'])) {
+            $metadata = json_decode($validated['metadata'], true);
+        }
 
         $document = $ragService->addDocument(
             $validated['extension_slug'],
-            $validated['document_type'],
+            $validated['document_type'] ?? 'documentation',
             $validated['title'],
             $validated['content'],
-            $validated['metadata'] ?? null
+            $metadata
         );
+
+        // Auto-index if requested
+        if ($request->input('auto_index', false)) {
+            try {
+                $ragService->indexDocument($document->id);
+            } catch (\Exception $e) {
+                // Continue even if indexing fails
+            }
+        }
 
         return redirect()
             ->route('admin.llm.knowledge-base.show', $document)
@@ -66,8 +82,13 @@ class LLMKnowledgeBaseController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'document_type' => 'required|string',
-            'metadata' => 'nullable|array',
+            'metadata' => 'nullable|json',
         ]);
+
+        // Parse metadata JSON string to array
+        if (!empty($validated['metadata'])) {
+            $validated['metadata'] = json_decode($validated['metadata'], true);
+        }
 
         $document->update($validated);
 

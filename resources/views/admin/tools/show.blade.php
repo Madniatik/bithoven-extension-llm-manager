@@ -20,7 +20,7 @@
                     <div class="mb-7">
                         <div class="d-flex align-items-center mb-2">
                             <span class="text-gray-600 fw-semibold fs-7 me-2">Type:</span>
-                            @if($tool->type === 'native')
+                            @if($tool->type === 'function_calling')
                                 <span class="badge badge-light-success">Native PHP</span>
                             @elseif($tool->type === 'mcp')
                                 <span class="badge badge-light-primary">MCP Server</span>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="card-body pt-5">
                     <div class="bg-light-primary p-5 rounded">
-                        <pre class="mb-0 font-monospace text-gray-800">{{ json_encode($tool->parameters, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
+                        <pre class="mb-0 font-monospace text-gray-800">{{ json_encode($tool->parameters_schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
                     </div>
                 </div>
             </div>

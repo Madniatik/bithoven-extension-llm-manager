@@ -16,7 +16,7 @@ class LLMAdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user has permission to access LLM admin
-        if (!$request->user() || !$request->user()->can('llm.view-configurations')) {
+        if (! $request->user() || ! $request->user()->can('view-llm-configs')) {
             abort(403, 'Unauthorized access to LLM Manager admin panel');
         }
 

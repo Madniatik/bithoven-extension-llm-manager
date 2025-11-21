@@ -38,9 +38,8 @@
                     <label class="col-lg-4 col-form-label required fw-semibold fs-6">Tool Type</label>
                     <div class="col-lg-8">
                         <select name="type" class="form-select form-select-solid @error('type') is-invalid @enderror" id="tool-type" required>
-                            <option value="native" {{ old('type', $tool->type) == 'native' ? 'selected' : '' }}>Native PHP Function/Class</option>
+                            <option value="function_calling" {{ old('type', $tool->type) == 'function_calling' ? 'selected' : '' }}>Native PHP Function/Class</option>
                             <option value="mcp" {{ old('type', $tool->type) == 'mcp' ? 'selected' : '' }}>MCP Server</option>
-                            <option value="custom" {{ old('type', $tool->type) == 'custom' ? 'selected' : '' }}>Custom Script</option>
                         </select>
                         @error('type')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -72,8 +71,8 @@
 
                 <div class="row mb-6">
                     <label class="col-lg-4 col-form-label fw-semibold fs-6">Parameters Schema (JSON)</label>
-                    <div class="col-lg-8">
-                        <textarea name="parameters" class="form-control form-control-lg form-control-solid font-monospace @error('parameters') is-invalid @enderror" rows="8">{!! old('parameters', json_encode($tool->parameters, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) !!}</textarea>
+                    <div class="col-lg-8 fv-row">
+                        <textarea name="parameters" class="form-control form-control-lg form-control-solid font-monospace @error('parameters') is-invalid @enderror" rows="8">{!! old('parameters', json_encode($tool->parameters_schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) !!}</textarea>
                         @error('parameters')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

@@ -330,7 +330,11 @@
         }
         
         const inputField = document.getElementById('model-input');
+        const selectField = document.getElementById('model-select');
         const hintDiv = document.getElementById('model-hint');
+        
+        // Guardar el modelo actual para pre-seleccionarlo después
+        const currentModel = inputField.value || selectField.value || '{{ $model->model }}';
         
         hintDiv.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading models...';
         
@@ -364,14 +368,21 @@
             }
             
             // Convert to select
-            const selectField = document.getElementById('model-select');
             selectField.innerHTML = '<option value="">Select a model...</option>';
             
+            let modelFound = false;
             models.forEach(model => {
                 const option = document.createElement('option');
                 const modelId = model.id || model.name || model;
                 option.value = modelId;
                 option.textContent = modelId;
+                
+                // Pre-seleccionar el modelo actual si existe en la lista
+                if (modelId === currentModel) {
+                    option.selected = true;
+                    modelFound = true;
+                }
+                
                 selectField.appendChild(option);
             });
             
@@ -381,7 +392,13 @@
             selectField.required = true;
             inputField.required = false;
             
-            hintDiv.textContent = `${models.length} models loaded`;
+            if (modelFound) {
+                hintDiv.innerHTML = `${models.length} models loaded <span class="badge badge-success ms-2">Current model found</span>`;
+            } else if (currentModel) {
+                hintDiv.innerHTML = `${models.length} models loaded <span class="badge badge-warning ms-2">Current model "${currentModel}" not found in list</span>`;
+            } else {
+                hintDiv.textContent = `${models.length} models loaded`;
+            }
         })
         .catch(error => {
             console.error('Error loading models:', error);

@@ -26,6 +26,7 @@ class LLMPromptTemplate extends Model
         'example_values',
         'default_parameters',
         'is_active',
+        'is_global',
         'description',
     ];
 
@@ -34,6 +35,7 @@ class LLMPromptTemplate extends Model
         'example_values' => 'array',
         'default_parameters' => 'array',
         'is_active' => 'boolean',
+        'is_global' => 'boolean',
     ];
 
     /**
