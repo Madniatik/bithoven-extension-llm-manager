@@ -18,10 +18,10 @@ class LLMConfigurationSeeder extends Seeder
         $configurations = [
             [
                 'id' => 1,
-                'name' => 'Ollama Llama 3.2',
-                'slug' => 'ollama-llama32',
+                'name' => 'Ollama Qwen 3',
+                'slug' => 'ollama-qwen3',
                 'provider' => 'ollama',
-                'model' => 'llama3.2',
+                'model' => 'qwen3:4b',
                 'api_endpoint' => 'http://localhost:11434',
                 'api_key' => null,
                 'default_parameters' => [
@@ -38,14 +38,14 @@ class LLMConfigurationSeeder extends Seeder
                 ],
                 'is_active' => true,
                 'is_default' => true,
-                'description' => 'Local Llama 3.2 model via Ollama',
+                'description' => 'Local Qwen 3 4B model via Ollama',
             ],
             [
                 'id' => 2,
-                'name' => 'Ollama Llama 3.2 Vision',
-                'slug' => 'ollama-llama32-vision',
+                'name' => 'Ollama DeepSeek Coder',
+                'slug' => 'ollama-deepseek-coder',
                 'provider' => 'ollama',
-                'model' => 'llama3.2-vision',
+                'model' => 'deepseek-coder:6.7b',
                 'api_endpoint' => 'http://localhost:11434',
                 'api_key' => null,
                 'default_parameters' => [
@@ -55,14 +55,14 @@ class LLMConfigurationSeeder extends Seeder
                     'stream' => false,
                 ],
                 'capabilities' => [
-                    'vision' => true,
+                    'vision' => false,
                     'function_calling' => false,
                     'streaming' => true,
                     'json_mode' => true,
                 ],
                 'is_active' => true,
                 'is_default' => false,
-                'description' => 'Local Llama 3.2 Vision model via Ollama',
+                'description' => 'Local DeepSeek Coder 6.7B model via Ollama',
             ],
             [
                 'id' => 3,
