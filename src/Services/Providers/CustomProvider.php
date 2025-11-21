@@ -66,7 +66,7 @@ class CustomProvider implements LLMProviderInterface
         return is_array($text) ? $embeddings : ($embeddings[0] ?? []);
     }
 
-    public function stream(string $prompt, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
     {
         // Custom streaming implementation
         // This is a basic example - adapt to your custom API
@@ -77,6 +77,12 @@ class CustomProvider implements LLMProviderInterface
     {
         $capabilities = $this->configuration->capabilities ?? [];
 
-        return $capabilities[$feature] ?? false;
+        return match ($feature) {
+            'streaming' => $capabilities['streaming'] ?? false,
+            'vision' => $capabilities['vision'] ?? false,
+            'function_calling' => $capabilities['function_calling'] ?? false,
+            'json_mode' => $capabilities['json_mode'] ?? false,
+            default => $capabilities[$feature] ?? false,
+        };
     }
 }

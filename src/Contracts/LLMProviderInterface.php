@@ -22,14 +22,15 @@ interface LLMProviderInterface
     public function embed(string|array $text): array;
 
     /**
-     * Stream response (optional)
+     * Stream response with optional conversation context
      *
-     * @param string $prompt
-     * @param array $parameters
-     * @param callable $callback
+     * @param string $prompt The user's message/prompt
+     * @param array $context Previous conversation messages [{role: string, content: string}, ...]
+     * @param array $parameters Generation parameters (temperature, max_tokens, etc.)
+     * @param callable $callback Function to call for each chunk: function(string $chunk): void
      * @return void
      */
-    public function stream(string $prompt, array $parameters, callable $callback): void;
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): void;
 
     /**
      * Check if provider supports feature

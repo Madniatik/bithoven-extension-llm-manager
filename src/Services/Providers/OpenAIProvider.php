@@ -55,17 +55,39 @@ class OpenAIProvider implements LLMProviderInterface
         return $response->embeddings[0]->embedding;
     }
 
-    public function stream(string $prompt, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
     {
+        // Build messages array with context
+        $messages = [];
+
+        // Add conversation context if provided
+        if (!empty($context)) {
+            foreach ($context as $msg) {
+                $messages[] = [
+                    'role' => $msg['role'],
+                    'content' => $msg['content'],
+                ];
+            }
+        }
+
+        // Add current user message
+        $messages[] = [
+            'role' => 'user',
+            'content' => $prompt,
+        ];
+
+        // Create streaming request
         $stream = $this->client->chat()->createStreamed([
             'model' => $this->configuration->model,
-            'messages' => [
-                ['role' => 'user', 'content' => $prompt],
-            ],
-            'temperature' => $parameters['temperature'] ?? 0.7,
-            'max_tokens' => $parameters['max_tokens'] ?? 4096,
+            'messages' => $messages,
+            'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
+            'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
+            'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
+            'frequency_penalty' => $parameters['frequency_penalty'] ?? $this->configuration->default_parameters['frequency_penalty'] ?? 0,
+            'presence_penalty' => $parameters['presence_penalty'] ?? $this->configuration->default_parameters['presence_penalty'] ?? 0,
         ]);
 
+        // Process stream chunks
         foreach ($stream as $response) {
             if (isset($response->choices[0]->delta->content)) {
                 $callback($response->choices[0]->delta->content);

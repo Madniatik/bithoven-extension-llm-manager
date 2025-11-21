@@ -58,26 +58,65 @@ class OllamaProvider implements LLMProviderInterface
         return $response->json('embedding', []);
     }
 
-    public function stream(string $prompt, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
     {
+        // Ollama streaming endpoint
+        $endpoint = rtrim($this->configuration->api_endpoint, '/') . '/api/generate';
+
+        // Build context if provided (for multi-turn conversations)
+        $systemPrompt = '';
+        if (!empty($context)) {
+            $contextText = collect($context)
+                ->map(fn($msg) => "{$msg['role']}: {$msg['content']}")
+                ->join("\n");
+            $systemPrompt = "Previous conversation:\n{$contextText}\n\n";
+        }
+
+        $fullPrompt = $systemPrompt . "user: {$prompt}";
+
+        // Create streaming request
         $response = Http::timeout(120)
-            ->withOptions(['stream' => true])
-            ->post($this->configuration->api_endpoint, [
+            ->withBody(json_encode([
                 'model' => $this->configuration->model,
-                'prompt' => $prompt,
+                'prompt' => $fullPrompt,
                 'stream' => true,
                 'options' => [
-                    'temperature' => $parameters['temperature'] ?? 0.7,
-                    'num_predict' => $parameters['max_tokens'] ?? 2000,
+                    'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
+                    'num_predict' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 2000,
+                    'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 0.9,
                 ],
-            ]);
+            ]), 'application/json')
+            ->post($endpoint);
 
-        $response->onBody(function ($chunk) use ($callback) {
-            $data = json_decode($chunk, true);
-            if (isset($data['response'])) {
+        if (!$response->successful()) {
+            throw new \Exception("Ollama streaming error: {$response->status()} - {$response->body()}");
+        }
+
+        // Process NDJSON stream (one JSON object per line)
+        $body = $response->body();
+        $lines = explode("\n", $body);
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) {
+                continue;
+            }
+
+            $data = json_decode($line, true);
+            if (!$data) {
+                continue;
+            }
+
+            // Send response chunk to callback
+            if (isset($data['response']) && !empty($data['response'])) {
                 $callback($data['response']);
             }
-        });
+
+            // Check if done
+            if (isset($data['done']) && $data['done'] === true) {
+                break;
+            }
+        }
     }
 
     public function supports(string $feature): bool

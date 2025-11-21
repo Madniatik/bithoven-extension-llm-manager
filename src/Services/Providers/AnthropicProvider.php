@@ -77,12 +77,17 @@ class AnthropicProvider implements LLMProviderInterface
         });
     }
 
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+    {
+        throw new \Exception('Streaming not yet implemented for Anthropic provider');
+    }
+
     public function supports(string $feature): bool
     {
         $capabilities = $this->configuration->capabilities ?? [];
 
         return match ($feature) {
-            'streaming' => $capabilities['streaming'] ?? true,
+            'streaming' => $capabilities['streaming'] ?? false, // Disabled until implemented
             'vision' => $capabilities['vision'] ?? true,
             'function_calling' => $capabilities['function_calling'] ?? true,
             'json_mode' => $capabilities['json_mode'] ?? false,
