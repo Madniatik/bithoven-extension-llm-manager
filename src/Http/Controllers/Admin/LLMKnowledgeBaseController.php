@@ -76,13 +76,14 @@ class LLMKnowledgeBaseController extends Controller
         return view('llm-manager::admin.knowledge-base.edit', compact('document', 'types'));
     }
 
-    public function update(Request $request, LLMDocumentKnowledgeBase $document)
+    public function update(Request $request, LLMDocumentKnowledgeBase $document, LLMRAGService $ragService)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'document_type' => 'required|string',
             'metadata' => 'nullable|json',
+            'reindex' => 'nullable|boolean',
         ]);
 
         // Parse metadata JSON string to array
@@ -92,8 +93,15 @@ class LLMKnowledgeBaseController extends Controller
 
         $document->update($validated);
 
-        // Re-index if content changed
-        if ($document->wasChanged('content')) {
+        // Re-index if requested
+        if ($request->input('reindex', false)) {
+            try {
+                $ragService->indexDocument($document->id);
+            } catch (\Exception $e) {
+                // Continue even if indexing fails
+            }
+        } elseif ($document->wasChanged('content')) {
+            // Mark as not indexed if content changed but reindex not requested
             $document->is_indexed = false;
             $document->save();
         }

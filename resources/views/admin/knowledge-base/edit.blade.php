@@ -35,6 +35,22 @@
                 </div>
 
                 <div class="row mb-6">
+                    <label class="col-lg-4 col-form-label required fw-semibold fs-6">Document Type</label>
+                    <div class="col-lg-8">
+                        <select name="document_type" class="form-select form-select-solid @error('document_type') is-invalid @enderror" required>
+                            @foreach($types as $type)
+                                <option value="{{ $type }}" {{ old('document_type', $document->document_type) == $type ? 'selected' : '' }}>
+                                    {{ ucfirst($type) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('document_type')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="row mb-6">
                     <label class="col-lg-4 col-form-label required fw-semibold fs-6">Content</label>
                     <div class="col-lg-8">
                         <textarea name="content" class="form-control form-control-lg form-control-solid @error('content') is-invalid @enderror" rows="15" required>{{ old('content', $document->content) }}</textarea>
