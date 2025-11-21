@@ -181,5 +181,8 @@ class LLMDemoSeeder extends Seeder
         
         // Seed demo conversations for testing
         $this->call(DemoConversationsSeeder::class);
+        
+        // Seed demo usage statistics for testing
+        $this->call(DemoUsageStatsSeeder::class);
     }
 }
