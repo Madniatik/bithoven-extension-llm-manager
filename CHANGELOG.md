@@ -7,7 +7,84 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [Unreleased] - v1.1.0
+
+### Added - Real-Time Streaming Support
+
+#### Streaming Infrastructure
+- **SSE (Server-Sent Events) Controller**
+  - `LLMStreamController` with 3 endpoints:
+    - `test()` - Interactive test page for streaming
+    - `stream()` - Simple streaming endpoint with validation
+    - `conversationStream()` - Streaming with session history context
+  - Response headers: `text/event-stream`, `no-cache`, `X-Accel-Buffering: no`
+  - Real-time token counting and statistics tracking
+  - Event types: `chunk`, `done`, `error`
+
+- **Provider Streaming Implementation**
+  - `LLMProviderInterface::stream()` method (BREAKING CHANGE)
+    - Signature: `stream(string $prompt, array $context, array $parameters, callable $callback): void`
+    - Context format: `[{role: 'user|assistant', content: 'text'}]`
+    - Feature detection: `supports(string $feature): bool`
+  
+  - `OllamaProvider` full NDJSON streaming
+    - Line-by-line JSON parsing with `fgets()`
+    - Context conversion to formatted prompt
+    - Chunk extraction from `response` field
+    - Completion detection via `done` flag
+    - Parameters: `temperature`, `num_predict`, `top_p`
+  
+  - `OpenAIProvider` enhanced streaming
+    - Message array construction from context
+    - Uses SDK `createStreamed()` method
+    - Delta content extraction
+    - Multi-turn conversation support
+
+#### Frontend Components
+- **Interactive Test UI** (`resources/views/admin/llm/stream/test.blade.php`)
+  - EventSource JavaScript client
+  - Configuration selector (streaming-capable providers only)
+  - Real-time statistics panel (tokens, chunks, duration)
+  - Parameter controls (temperature: 0-2, max_tokens: 1-4000)
+  - Auto-scroll and animated cursor
+  - SweetAlert2 notifications for status
+  - Clear Response and Start Streaming buttons
+
+#### Routes & Configuration
+- Routes registered in `routes/web.php`:
+  - `GET /admin/llm/stream/test` - Streaming test page
+  - `GET /admin/llm/stream/stream` - SSE endpoint
+  - `GET /admin/llm/stream/conversation` - SSE with history
+- Breadcrumbs configured for navigation
+- CSRF exceptions added for SSE endpoints (`admin/llm/stream/*`)
+
+#### Database Updates
+- Updated seeders with streaming-ready configurations:
+  - Ollama Qwen 3 (qwen3:4b) - ID 1
+  - Ollama DeepSeek Coder (deepseek-coder:6.7b) - ID 2
+  - Base endpoint: `http://localhost:11434` (provider appends `/api/generate`)
+
+### Changed
+- **BREAKING:** `LLMProviderInterface` now requires `stream()` method
+- Provider implementations updated to support `$context` parameter
+- Ollama endpoint configuration simplified (no duplicate `/api/generate`)
+
+### Fixed
+- Validation table name corrected (`llm_manager_configurations`)
+- Ollama endpoint duplication issue resolved
+- CSRF verification properly excluded for streaming routes
+
+### In Progress
+- Integration with Conversations UI (streaming toggle, stop button)
+- Testing suite for streaming functionality
+- Documentation for streaming API
+
+### Notes
+- Requires active Ollama instance on `localhost:11434`
+- Browser must support EventSource API (all modern browsers)
+- Streaming disabled for Anthropic, OpenRouter, Custom providers (stubs implemented)
+
+---
 
 ## [1.0.0] - 2025-11-18
 
