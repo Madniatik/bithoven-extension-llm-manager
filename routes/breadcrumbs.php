@@ -15,3 +15,15 @@ Breadcrumbs::for('admin.llm.stream.test', function (BreadcrumbTrail $trail) {
     $trail->parent('admin.llm.dashboard');
     $trail->push('Streaming Test', route('admin.llm.stream.test'));
 });
+
+// Admin > LLM > Activity
+Breadcrumbs::for('admin.llm.activity', function (BreadcrumbTrail $trail) {
+    $trail->parent('admin.llm.dashboard');
+    $trail->push('Activity Logs', route('admin.llm.activity.index'));
+});
+
+// Admin > LLM > Activity > Show
+Breadcrumbs::for('admin.llm.activity.show', function (BreadcrumbTrail $trail, $log) {
+    $trail->parent('admin.llm.activity');
+    $trail->push('Log #' . $log->id, route('admin.llm.activity.show', $log));
+});

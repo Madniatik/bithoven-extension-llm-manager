@@ -102,18 +102,32 @@
 
             <!--begin::Stats-->
             <div class="mt-10 p-5 bg-light rounded" id="stats" style="display: none;">
-                <div class="row text-center">
-                    <div class="col-md-4">
+                <div class="row text-center g-5">
+                    <div class="col-md-2">
                         <div class="fs-2 fw-bold text-primary" id="tokenCount">0</div>
-                        <div class="text-muted fs-7">Tokens Received</div>
+                        <div class="text-muted fs-7">Tokens</div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="fs-2 fw-bold text-success" id="chunkCount">0</div>
                         <div class="text-muted fs-7">Chunks</div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="fs-2 fw-bold text-info" id="duration">0s</div>
                         <div class="text-muted fs-7">Duration</div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="fs-2 fw-bold text-warning" id="cost">$0.00</div>
+                        <div class="text-muted fs-7">Cost</div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="fs-6 fw-bold text-dark" id="logId">-</div>
+                        <div class="text-muted fs-7">Log ID</div>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-sm btn-light-primary d-none" id="viewLogBtn">
+                            <i class="ki-outline ki-eye fs-4"></i>
+                            View Log
+                        </button>
                     </div>
                 </div>
             </div>
@@ -141,6 +155,56 @@
     </div>
     <!--end::Card-->
 
+    <!--begin::Activity Card-->
+    <div class="card mt-10">
+        <!--begin::Card header-->
+        <div class="card-header">
+            <h3 class="card-title">Recent Activity</h3>
+            <div class="card-toolbar">
+                <button type="button" class="btn btn-sm btn-light-primary me-2" id="refreshActivityBtn">
+                    <i class="ki-outline ki-arrows-circle fs-4"></i>
+                    Refresh
+                </button>
+                <button type="button" class="btn btn-sm btn-light-danger" id="clearActivityBtn">
+                    <i class="ki-outline ki-trash fs-4"></i>
+                    Clear History
+                </button>
+            </div>
+        </div>
+        <!--end::Card header-->
+
+        <!--begin::Card body-->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4" id="activityTable">
+                    <thead>
+                        <tr class="fw-bold text-muted">
+                            <th class="w-25px">#</th>
+                            <th class="min-w-150px">Time</th>
+                            <th class="min-w-120px">Provider</th>
+                            <th class="min-w-100px">Model</th>
+                            <th class="min-w-80px text-end">Tokens</th>
+                            <th class="min-w-80px text-end">Cost</th>
+                            <th class="min-w-80px text-end">Duration</th>
+                            <th class="min-w-100px">Status</th>
+                            <th class="min-w-100px text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activityTableBody">
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-10">
+                                <i class="ki-outline ki-information-5 fs-3x mb-3"></i>
+                                <p class="mb-0">No activity yet. Start a streaming test above.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--end::Card body-->
+    </div>
+    <!--end::Activity Card-->
+
     @push('scripts')
     <style>
         @keyframes blink {
@@ -162,12 +226,24 @@
         const tokenCountEl = document.getElementById('tokenCount');
         const chunkCountEl = document.getElementById('chunkCount');
         const durationEl = document.getElementById('duration');
+        const costEl = document.getElementById('cost');
+        const logIdEl = document.getElementById('logId');
+        const viewLogBtn = document.getElementById('viewLogBtn');
+        const activityTableBody = document.getElementById('activityTableBody');
+        const refreshActivityBtn = document.getElementById('refreshActivityBtn');
+        const clearActivityBtn = document.getElementById('clearActivityBtn');
 
         let eventSource = null;
         let startTime = null;
         let durationInterval = null;
         let tokenCount = 0;
         let chunkCount = 0;
+        let currentLogId = null;
+        let finalMetrics = null;
+        let activityHistory = JSON.parse(localStorage.getItem('llm_activity_history') || '[]');
+
+        // Load activity history on page load
+        renderActivityTable();
 
         // Start streaming
         form.addEventListener('submit', function(e) {
@@ -177,9 +253,14 @@
             responseDiv.textContent = '';
             tokenCount = 0;
             chunkCount = 0;
+            currentLogId = null;
+            finalMetrics = null;
             tokenCountEl.textContent = '0';
             chunkCountEl.textContent = '0';
             durationEl.textContent = '0s';
+            costEl.textContent = '$0.00';
+            logIdEl.textContent = '-';
+            viewLogBtn.classList.add('d-none');
             stats.style.display = 'block';
             streamingIndicator.classList.remove('d-none');
             cursorDiv.classList.remove('d-none');
@@ -219,21 +300,80 @@
                     responseDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
                 } else if (data.type === 'done') {
+                    // Store final metrics
+                    finalMetrics = {
+                        usage: data.usage || {},
+                        cost: data.cost || 0,
+                        execution_time_ms: data.execution_time_ms || 0,
+                        log_id: data.log_id || null
+                    };
+                    
+                    // Update UI with final metrics
+                    if (data.usage) {
+                        tokenCountEl.textContent = data.usage.total_tokens || tokenCount;
+                        tokenCount = data.usage.total_tokens || tokenCount;
+                    }
+                    
+                    if (data.cost !== undefined) {
+                        costEl.textContent = '$' + parseFloat(data.cost).toFixed(6);
+                    }
+                    
+                    if (data.log_id) {
+                        currentLogId = data.log_id;
+                        logIdEl.textContent = '#' + data.log_id;
+                        viewLogBtn.classList.remove('d-none');
+                    }
+                    
                     // Streaming complete
-                    stopStreaming();
-                    tokenCountEl.textContent = data.total_tokens;
+                    stopStreaming(false); // false = don't reset metrics
+                    
+                    // Add to activity history
+                    addToActivityHistory({
+                        timestamp: new Date().toISOString(),
+                        provider: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[0],
+                        model: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[1],
+                        tokens: tokenCount,
+                        cost: parseFloat(data.cost || 0),
+                        duration: (data.execution_time_ms / 1000).toFixed(2),
+                        status: 'completed',
+                        log_id: data.log_id,
+                        prompt: document.getElementById('prompt').value.substring(0, 100),
+                        response: responseDiv.textContent.substring(0, 100)
+                    });
                     
                     Swal.fire({
                         icon: 'success',
                         title: 'Streaming Complete!',
-                        text: `Received ${data.total_tokens} tokens in ${chunkCount} chunks`,
-                        timer: 3000,
-                        showConfirmButton: false
+                        html: `
+                            <div class="text-start">
+                                <p><strong>Tokens:</strong> ${tokenCount}</p>
+                                <p><strong>Chunks:</strong> ${chunkCount}</p>
+                                <p><strong>Cost:</strong> $${parseFloat(data.cost || 0).toFixed(6)}</p>
+                                <p><strong>Duration:</strong> ${(data.execution_time_ms / 1000).toFixed(2)}s</p>
+                                ${data.log_id ? `<p><strong>Log ID:</strong> #${data.log_id}</p>` : ''}
+                            </div>
+                        `,
+                        showConfirmButton: true,
+                        confirmButtonText: 'OK'
                     });
 
                 } else if (data.type === 'error') {
                     // Handle error
-                    stopStreaming();
+                    stopStreaming(true);
+                    
+                    // Add error to activity history
+                    addToActivityHistory({
+                        timestamp: new Date().toISOString(),
+                        provider: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[0],
+                        model: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[1],
+                        tokens: 0,
+                        cost: 0,
+                        duration: 0,
+                        status: 'error',
+                        log_id: null,
+                        prompt: document.getElementById('prompt').value.substring(0, 100),
+                        response: data.message
+                    });
                     
                     Swal.fire({
                         icon: 'error',
@@ -245,7 +385,7 @@
 
             eventSource.onerror = function(error) {
                 console.error('EventSource error:', error);
-                stopStreaming();
+                stopStreaming(true); // true = reset on error
                 
                 Swal.fire({
                     icon: 'error',
@@ -257,7 +397,24 @@
 
         // Stop streaming
         stopBtn.addEventListener('click', function() {
-            stopStreaming();
+            // User manually stopped - keep current metrics
+            stopStreaming(false);
+            
+            // Show what we got so far
+            if (chunkCount > 0) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Streaming Stopped',
+                    html: `
+                        <div class="text-start">
+                            <p><strong>Tokens received:</strong> ${tokenCount}</p>
+                            <p><strong>Chunks received:</strong> ${chunkCount}</p>
+                            <p class="text-muted"><small>Note: Partial streaming data (stopped manually)</small></p>
+                        </div>
+                    `,
+                    confirmButtonText: 'OK'
+                });
+            }
         });
 
         // Clear response
@@ -266,9 +423,50 @@
             stats.style.display = 'none';
             tokenCount = 0;
             chunkCount = 0;
+            currentLogId = null;
+            finalMetrics = null;
+            tokenCountEl.textContent = '0';
+            chunkCountEl.textContent = '0';
+            costEl.textContent = '$0.00';
+            logIdEl.textContent = '-';
+            viewLogBtn.classList.add('d-none');
         });
 
-        function stopStreaming() {
+        // View log button
+        viewLogBtn.addEventListener('click', function() {
+            if (currentLogId) {
+                // TODO: Open log details in modal or new tab
+                // For now, open stats page (will be implemented in Point 3)
+                window.open('/admin/llm/stats?log_id=' + currentLogId, '_blank');
+            }
+        });
+
+        // Refresh activity table
+        refreshActivityBtn.addEventListener('click', function() {
+            renderActivityTable();
+            toastr.success('Activity table refreshed');
+        });
+
+        // Clear activity history
+        clearActivityBtn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Clear Activity History?',
+                text: "This will delete all local activity records. This action cannot be undone.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, clear it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    activityHistory = [];
+                    localStorage.setItem('llm_activity_history', JSON.stringify(activityHistory));
+                    renderActivityTable();
+                    toastr.success('Activity history cleared');
+                }
+            });
+        });
+
+        function stopStreaming(resetMetrics = false) {
             if (eventSource) {
                 eventSource.close();
                 eventSource = null;
@@ -284,6 +482,19 @@
             startBtn.classList.remove('d-none');
             stopBtn.classList.add('d-none');
             form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
+            
+            // Only reset metrics if explicitly requested (e.g., on error)
+            if (resetMetrics) {
+                tokenCount = 0;
+                chunkCount = 0;
+                currentLogId = null;
+                finalMetrics = null;
+                tokenCountEl.textContent = '0';
+                chunkCountEl.textContent = '0';
+                costEl.textContent = '$0.00';
+                logIdEl.textContent = '-';
+                viewLogBtn.classList.add('d-none');
+            }
         }
 
         function updateDuration() {
@@ -291,6 +502,113 @@
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 durationEl.textContent = elapsed + 's';
             }
+        }
+
+        // Add to activity history
+        function addToActivityHistory(activity) {
+            // Add to beginning of array (most recent first)
+            activityHistory.unshift(activity);
+            
+            // Keep only last 10 items
+            if (activityHistory.length > 10) {
+                activityHistory = activityHistory.slice(0, 10);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('llm_activity_history', JSON.stringify(activityHistory));
+            
+            // Update table
+            renderActivityTable();
+        }
+
+        // Render activity table
+        function renderActivityTable() {
+            if (activityHistory.length === 0) {
+                activityTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-10">
+                            <i class="ki-outline ki-information-5 fs-3x mb-3"></i>
+                            <p class="mb-0">No activity yet. Start a streaming test above.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            activityHistory.forEach((activity, index) => {
+                const date = new Date(activity.timestamp);
+                const timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                
+                const statusBadge = activity.status === 'completed' 
+                    ? '<span class="badge badge-light-success">Completed</span>'
+                    : '<span class="badge badge-light-danger">Error</span>';
+
+                const rowId = `activity-row-${index}`;
+                const detailsId = `activity-details-${index}`;
+
+                html += `
+                    <tr id="${rowId}" class="cursor-pointer" data-index="${index}">
+                        <td>${activityHistory.length - index}</td>
+                        <td>
+                            <span class="text-dark fw-bold">${timeStr}</span>
+                            <span class="text-muted d-block fs-7">${date.toLocaleDateString('es-ES')}</span>
+                        </td>
+                        <td><span class="badge badge-light-primary">${activity.provider}</span></td>
+                        <td><span class="text-gray-800 fs-7">${activity.model}</span></td>
+                        <td class="text-end fw-bold">${activity.tokens.toLocaleString()}</td>
+                        <td class="text-end fw-bold ${activity.cost > 0 ? 'text-warning' : 'text-success'}">$${activity.cost.toFixed(6)}</td>
+                        <td class="text-end">${activity.duration}s</td>
+                        <td>${statusBadge}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-light-primary btn-icon toggle-details-btn" data-index="${index}">
+                                <i class="ki-outline ki-down fs-3"></i>
+                            </button>
+                            ${activity.log_id ? `
+                                <button type="button" class="btn btn-sm btn-light-info btn-icon ms-2" onclick="window.open('/admin/llm/stats?log_id=${activity.log_id}', '_blank')">
+                                    <i class="ki-outline ki-eye fs-3"></i>
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                    <tr id="${detailsId}" class="d-none bg-light-primary">
+                        <td colspan="9" class="p-5">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-dark fw-bold mb-3">Prompt:</h6>
+                                    <p class="text-gray-700 fs-7 mb-0">${activity.prompt}${activity.prompt.length >= 100 ? '...' : ''}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-dark fw-bold mb-3">Response:</h6>
+                                    <p class="text-gray-700 fs-7 mb-0">${activity.response}${activity.response.length >= 100 ? '...' : ''}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            activityTableBody.innerHTML = html;
+
+            // Add click handlers for toggle buttons
+            document.querySelectorAll('.toggle-details-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const index = this.getAttribute('data-index');
+                    const detailsRow = document.getElementById(`activity-details-${index}`);
+                    const icon = this.querySelector('i');
+                    
+                    if (detailsRow.classList.contains('d-none')) {
+                        detailsRow.classList.remove('d-none');
+                        icon.classList.remove('ki-down');
+                        icon.classList.add('ki-up');
+                    } else {
+                        detailsRow.classList.add('d-none');
+                        icon.classList.remove('ki-up');
+                        icon.classList.add('ki-down');
+                    }
+                });
+            });
         }
     });
     </script>

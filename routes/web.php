@@ -8,6 +8,7 @@ use Bithoven\LLMManager\Http\Controllers\Admin\LLMConversationController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMKnowledgeBaseController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMToolDefinitionController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMStreamController;
+use Bithoven\LLMManager\Http\Controllers\Admin\LLMActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,12 @@ Route::prefix('admin/llm')
         Route::get('stream/test', [LLMStreamController::class, 'test'])->name('stream.test');
         Route::get('stream/stream', [LLMStreamController::class, 'stream'])->name('stream.stream');
         Route::get('stream/conversation', [LLMStreamController::class, 'conversationStream'])->name('stream.conversation');
+        
+        // Activity Logs
+        Route::get('activity', [LLMActivityController::class, 'index'])->name('activity.index');
+        Route::get('activity/{id}', [LLMActivityController::class, 'show'])->name('activity.show');
+        Route::get('activity-export/csv', [LLMActivityController::class, 'export'])->name('activity.export');
+        Route::get('activity-export/json', [LLMActivityController::class, 'exportJson'])->name('activity.export-json');
         
         // New model-based routes (tab interface)
         Route::get('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'show'])->name('models.show');
