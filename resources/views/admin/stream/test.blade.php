@@ -155,6 +155,51 @@
     </div>
     <!--end::Card-->
 
+    <!--begin::Connection Monitor Card-->
+    <div class="card mt-10">
+        <!--begin::Card header-->
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="ki-outline ki-technology-2 fs-2 me-2"></i>
+                Connection Monitor
+            </h3>
+            <div class="card-toolbar">
+                <button type="button" class="btn btn-sm btn-light-primary me-2" id="testConnectionBtn">
+                    <i class="ki-outline ki-shield-tick fs-4"></i>
+                    Test Connection
+                </button>
+                <button type="button" class="btn btn-sm btn-light-danger" id="clearMonitorBtn">
+                    <i class="ki-outline ki-trash fs-4"></i>
+                    Clear Monitor
+                </button>
+            </div>
+        </div>
+        <!--end::Card header-->
+
+        <!--begin::Card body-->
+        <div class="card-body">
+            <div class="alert alert-info d-flex align-items-center mb-5">
+                <i class="ki-outline ki-information-5 fs-2x me-3"></i>
+                <div class="d-flex flex-column">
+                    <h5 class="mb-1">Test Connection to Selected Provider</h5>
+                    <span>This will test the connection to the selected LLM provider without performing streaming. Useful for debugging configuration issues.</span>
+                </div>
+            </div>
+
+            <!--begin::Monitor Console-->
+            <div class="card bg-dark" style="min-height: 300px; max-height: 500px; overflow-y: auto;" id="monitorConsole">
+                <div class="card-body p-5">
+                    <div id="monitorLogs" class="text-light font-monospace fs-7" style="white-space: pre-wrap; word-wrap: break-word;">
+                        <span class="text-muted">Monitor ready. Click "Test Connection" to start...</span>
+                    </div>
+                </div>
+            </div>
+            <!--end::Monitor Console-->
+        </div>
+        <!--end::Card body-->
+    </div>
+    <!--end::Connection Monitor Card-->
+
     <!--begin::Activity Card-->
     <div class="card mt-10">
         <!--begin::Card header-->
@@ -232,6 +277,10 @@
         const activityTableBody = document.getElementById('activityTableBody');
         const refreshActivityBtn = document.getElementById('refreshActivityBtn');
         const clearActivityBtn = document.getElementById('clearActivityBtn');
+        const testConnectionBtn = document.getElementById('testConnectionBtn');
+        const clearMonitorBtn = document.getElementById('clearMonitorBtn');
+        const monitorLogs = document.getElementById('monitorLogs');
+        const monitorConsole = document.getElementById('monitorConsole');
 
         let eventSource = null;
         let startTime = null;
@@ -465,6 +514,219 @@
                 }
             });
         });
+
+        // Test Connection
+        testConnectionBtn.addEventListener('click', function() {
+            const configSelect = document.getElementById('configuration_id');
+            
+            if (!configSelect.value) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Configuration Selected',
+                    text: 'Please select an LLM configuration first.'
+                });
+                return;
+            }
+
+            // Get selected configuration details
+            const selectedOption = configSelect.selectedOptions[0];
+            const configText = selectedOption.text;
+            const matches = configText.match(/\(([^)]+)\)/);
+            
+            if (!matches) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Configuration',
+                    text: 'Could not parse provider information.'
+                });
+                return;
+            }
+
+            const [provider, model] = matches[1].split(' - ');
+            
+            // Get configuration data via AJAX first
+            const configId = configSelect.value;
+            
+            // Show loading state
+            const originalText = testConnectionBtn.innerHTML;
+            testConnectionBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
+            testConnectionBtn.disabled = true;
+            
+            // Clear and prepare monitor
+            addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            addMonitorLog('🧪 Iniciando Test de Conexión', 'info');
+            addMonitorLog(`Provider: ${provider}`, 'debug');
+            addMonitorLog(`Model: ${model}`, 'debug');
+            addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+            
+            // Fetch configuration details
+            fetch(`/admin/llm/configurations`)
+                .then(response => response.text())
+                .then(html => {
+                    // Parse HTML to extract configuration data (simplified approach)
+                    // In production, you'd have a dedicated API endpoint
+                    
+                    // For now, test with basic provider info
+                    return testConnection(provider.toLowerCase(), null, null);
+                })
+                .catch(error => {
+                    // Fallback: test with basic info
+                    testConnection(provider.toLowerCase(), null, null);
+                });
+            
+            function testConnection(provider, apiEndpoint, apiKey) {
+                fetch('{{ route('admin.llm.configurations.test') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        provider: provider,
+                        api_endpoint: apiEndpoint,
+                        api_key: apiKey
+                    })
+                })
+                .then(response => {
+                    addMonitorLog('📥 Respuesta recibida del servidor', 'debug');
+                    return response.json();
+                })
+                .then(data => {
+                    testConnectionBtn.innerHTML = originalText;
+                    testConnectionBtn.disabled = false;
+                    
+                    // Display metadata
+                    if (data.metadata) {
+                        addMonitorLog('', 'info');
+                        addMonitorLog('📊 METADATA:', 'info');
+                        addMonitorLog(`   URL: ${data.metadata.url || 'N/A'}`, 'debug');
+                        addMonitorLog(`   Method: ${data.metadata.method || 'N/A'}`, 'debug');
+                        addMonitorLog(`   HTTP Code: ${data.metadata.http_code || 'N/A'}`, 'debug');
+                        addMonitorLog(`   Request Time: ${data.metadata.request_time_ms || 0}ms`, 'debug');
+                        addMonitorLog(`   Total Time: ${data.metadata.total_time_ms || 0}ms`, 'debug');
+                        addMonitorLog(`   Request Size: ${data.metadata.request_size_bytes || 0} bytes`, 'debug');
+                        addMonitorLog(`   Response Size: ${data.metadata.response_size_bytes || 0} bytes`, 'debug');
+                    }
+
+                    // Display request body
+                    if (data.request_body) {
+                        addMonitorLog('', 'info');
+                        addMonitorLog('📤 REQUEST BODY:', 'info');
+                        const requestLines = data.request_body.split('\n');
+                        requestLines.forEach(line => {
+                            if (line.trim()) addMonitorLog(`   ${line}`, 'debug');
+                        });
+                    }
+
+                    // Display response
+                    if (data.response) {
+                        addMonitorLog('', 'info');
+                        addMonitorLog('📥 RESPONSE:', 'info');
+                        const responseLines = data.response.split('\n');
+                        responseLines.slice(0, 10).forEach(line => {
+                            if (line.trim()) addMonitorLog(`   ${line}`, 'debug');
+                        });
+                        if (responseLines.length > 10) {
+                            addMonitorLog(`   ... (${responseLines.length - 10} more lines)`, 'debug');
+                        }
+                    }
+
+                    addMonitorLog('', 'info');
+                    if (data.success) {
+                        addMonitorLog('✅ ' + (data.message || 'Test de conexión exitoso'), 'success');
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Connection Successful',
+                            html: `<div class="text-start">
+                                <p>${data.message || 'Connection test passed'}</p>
+                                ${data.metadata ? `<hr><small class="text-muted">
+                                    <strong>Request Time:</strong> ${data.metadata.request_time_ms}ms<br>
+                                    <strong>HTTP Code:</strong> ${data.metadata.http_code}
+                                </small>` : ''}
+                            </div>`,
+                            timer: 5000
+                        });
+                    } else {
+                        addMonitorLog('❌ ' + (data.message || 'Test de conexión falló'), 'error');
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Connection Failed',
+                            html: `<div class="text-start">
+                                <p>${data.message || 'Connection test failed'}</p>
+                                ${data.metadata ? `<hr><small class="text-muted">
+                                    <strong>HTTP Code:</strong> ${data.metadata.http_code || 'N/A'}
+                                </small>` : ''}
+                            </div>`
+                        });
+                    }
+                    
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+                })
+                .catch(error => {
+                    testConnectionBtn.innerHTML = originalText;
+                    testConnectionBtn.disabled = false;
+                    
+                    addMonitorLog('❌ Error de red: ' + error.message, 'error');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
+                    
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Test Failed',
+                        text: 'An error occurred during connection test'
+                    });
+                });
+            }
+        });
+
+        // Clear Monitor
+        clearMonitorBtn.addEventListener('click', function() {
+            monitorLogs.innerHTML = '<span class="text-muted">Monitor cleared. Ready for next test...</span>';
+        });
+
+        // Add log to monitor
+        function addMonitorLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('es-ES');
+            let colorClass = 'text-light';
+            
+            switch(type) {
+                case 'success':
+                    colorClass = 'text-success';
+                    break;
+                case 'error':
+                    colorClass = 'text-danger';
+                    break;
+                case 'debug':
+                    colorClass = 'text-muted';
+                    break;
+                case 'info':
+                    colorClass = 'text-info';
+                    break;
+            }
+            
+            const logLine = document.createElement('div');
+            logLine.className = colorClass;
+            
+            // Don't show timestamp for separator lines or empty lines
+            if (message.startsWith('━') || message === '') {
+                logLine.textContent = message;
+            } else {
+                logLine.textContent = `[${timestamp}] ${message}`;
+            }
+            
+            // Clear "ready" message if it's the first log
+            if (monitorLogs.querySelector('.text-muted')) {
+                monitorLogs.innerHTML = '';
+            }
+            
+            monitorLogs.appendChild(logLine);
+            
+            // Auto-scroll to bottom
+            monitorConsole.scrollTop = monitorConsole.scrollHeight;
+        }
 
         function stopStreaming(resetMetrics = false) {
             if (eventSource) {
