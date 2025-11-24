@@ -19,9 +19,8 @@ class LLMStreamController extends Controller
      */
     public function test()
     {
-        $configurations = LLMConfiguration::active()
-            ->whereIn('provider', ['ollama', 'openai'])
-            ->get();
+        // Get all active configurations
+        $configurations = LLMConfiguration::active()->get();
 
         return view('llm-manager::admin.stream.test', compact('configurations'));
     }
@@ -33,20 +32,20 @@ class LLMStreamController extends Controller
     {
         $validated = $request->validate([
             'prompt' => 'required|string|max:5000',
-            'configuration_id' => 'required|exists:llm_manager_configurations,id',
-            'temperature' => 'nullable|numeric|min:0|max:2',
-            'max_tokens' => 'nullable|integer|min:1|max:4000',
+            'configuration_id' => 'required|integer|exists:llm_manager_configurations,id',
+            'temperature' => 'nullable|string',
+            'max_tokens' => 'nullable|string',
         ]);
+        
+        // Convert string values to appropriate types
+        $validated['temperature'] = isset($validated['temperature']) ? (float) $validated['temperature'] : null;
+        $validated['max_tokens'] = isset($validated['max_tokens']) ? (int) $validated['max_tokens'] : null;
 
         $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
 
-        // Verify provider supports streaming
-        if (!in_array($configuration->provider, ['ollama', 'openai'])) {
-            return response()->json([
-                'error' => 'Provider does not support streaming'
-            ], 400);
-        }
-
+        // Increase PHP execution time for streaming (can take a while)
+        set_time_limit(300); // 5 minutes
+        
         // Set up SSE headers
         return Response::stream(function () use ($validated, $configuration) {
             // Disable output buffering
@@ -138,6 +137,9 @@ class LLMStreamController extends Controller
         $session = \Bithoven\LLMManager\Models\LLMConversationSession::findOrFail($validated['session_id']);
         $configuration = $session->configuration;
 
+        // Increase PHP execution time for streaming
+        set_time_limit(300); // 5 minutes
+        
         // Verify provider supports streaming
         if (!in_array($configuration->provider, ['ollama', 'openai'])) {
             return response()->json([

@@ -31,7 +31,7 @@
                             </option>
                         @endforeach
                     </select>
-                    <div class="form-text">Only Ollama and OpenAI support streaming</div>
+                    <div class="form-text">Select an active LLM configuration for streaming</div>
                 </div>
                 <!--end::Configuration-->
 

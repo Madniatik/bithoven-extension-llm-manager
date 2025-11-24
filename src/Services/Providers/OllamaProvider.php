@@ -74,29 +74,41 @@ class OllamaProvider implements LLMProviderInterface
 
         $fullPrompt = $systemPrompt . "user: {$prompt}";
 
-        // Create streaming request
-        $response = Http::timeout(120)
-            ->withBody(json_encode([
-                'model' => $this->configuration->model,
-                'prompt' => $fullPrompt,
-                'stream' => true,
-                'options' => [
-                    'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
-                    'num_predict' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 2000,
-                    'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 0.9,
-                ],
-            ]), 'application/json')
-            ->post($endpoint);
+        // Prepare request payload
+        $payload = json_encode([
+            'model' => $this->configuration->model,
+            'prompt' => $fullPrompt,
+            'stream' => true,
+            'options' => [
+                'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
+                'num_predict' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 2000,
+                'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 0.9,
+            ],
+        ]);
 
-        if (!$response->successful()) {
-            throw new \Exception("Ollama streaming error: {$response->status()} - {$response->body()}");
+        // Use native PHP streams for real streaming (Laravel Http waits for full response)
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Content-Type: application/json\r\n",
+                'content' => $payload,
+                'timeout' => 120,
+            ],
+        ]);
+
+        $stream = @fopen($endpoint, 'r', false, $context);
+        
+        if (!$stream) {
+            throw new \Exception("Failed to connect to Ollama at {$endpoint}");
         }
 
-        // Process NDJSON stream (one JSON object per line)
-        $body = $response->body();
-        $lines = explode("\n", $body);
+        // Read NDJSON stream line by line
+        while (!feof($stream)) {
+            $line = fgets($stream);
+            if ($line === false) {
+                continue;
+            }
 
-        foreach ($lines as $line) {
             $line = trim($line);
             if (empty($line)) {
                 continue;
@@ -108,8 +120,10 @@ class OllamaProvider implements LLMProviderInterface
             }
 
             // Send response chunk to callback
-            if (isset($data['response']) && !empty($data['response'])) {
-                $callback($data['response']);
+            // Some models (like qwen3) may use 'thinking' field instead of 'response'
+            $chunk = $data['response'] ?? $data['thinking'] ?? null;
+            if ($chunk !== null && $chunk !== '') {
+                $callback($chunk);
             }
 
             // Check if done
@@ -117,6 +131,8 @@ class OllamaProvider implements LLMProviderInterface
                 break;
             }
         }
+
+        fclose($stream);
     }
 
     public function supports(string $feature): bool

@@ -28,13 +28,23 @@ class LLMManager
     }
 
     /**
-     * Set configuration by slug
+     * Set configuration by ID or slug
+     * 
+     * @param int|string $identifier Configuration ID (int) or slug (string)
      */
-    public function config(string $slug): self
+    public function config(int|string $identifier): self
     {
-        $config = LLMConfiguration::where('slug', $slug)
-            ->active()
-            ->firstOrFail();
+        // If identifier is numeric, treat as ID (preferred for immutability)
+        if (is_int($identifier)) {
+            $config = LLMConfiguration::where('id', $identifier)
+                ->active()
+                ->firstOrFail();
+        } else {
+            // Otherwise treat as slug (for backward compatibility)
+            $config = LLMConfiguration::where('slug', $identifier)
+                ->active()
+                ->firstOrFail();
+        }
 
         $this->configuration = $config;
 
@@ -193,8 +203,12 @@ class LLMManager
     /**
      * Get provider instance
      */
-    protected function getProvider(): LLMProviderInterface
+    public function getProvider(): LLMProviderInterface
     {
+        if (!$this->configuration) {
+            throw new \Exception('No LLM configuration set. Call config() first.');
+        }
+        
         return match ($this->configuration->provider) {
             'ollama' => new OllamaProvider($this->configuration),
             'openai' => new OpenAIProvider($this->configuration),

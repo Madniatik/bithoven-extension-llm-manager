@@ -47,15 +47,29 @@ class OpenRouterProvider implements LLMProviderInterface
         throw new \Exception('OpenRouter does not support embeddings. Use OpenAI or local provider.');
     }
 
-    public function stream(string $prompt, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
     {
+        // Build messages array with context
+        $messages = [];
+        
+        // Add context messages if provided
+        foreach ($context as $msg) {
+            $messages[] = [
+                'role' => $msg['role'],
+                'content' => $msg['content'],
+            ];
+        }
+        
+        // Add current user prompt
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
+        // Stream using OpenAI-compatible API
         $stream = $this->client->chat()->createStreamed([
             'model' => $this->configuration->model,
-            'messages' => [
-                ['role' => 'user', 'content' => $prompt],
-            ],
-            'temperature' => $parameters['temperature'] ?? 0.7,
-            'max_tokens' => $parameters['max_tokens'] ?? 4096,
+            'messages' => $messages,
+            'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
+            'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
+            'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
         ]);
 
         foreach ($stream as $response) {
@@ -65,17 +79,12 @@ class OpenRouterProvider implements LLMProviderInterface
         }
     }
 
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
-    {
-        throw new \Exception('Streaming not yet implemented for OpenRouter provider');
-    }
-
     public function supports(string $feature): bool
     {
         $capabilities = $this->configuration->capabilities ?? [];
 
         return match ($feature) {
-            'streaming' => $capabilities['streaming'] ?? false, // Disabled until implemented
+            'streaming' => $capabilities['streaming'] ?? true, // Now implemented
             'vision' => $capabilities['vision'] ?? true,
             'function_calling' => $capabilities['function_calling'] ?? false,
             'json_mode' => $capabilities['json_mode'] ?? true,
