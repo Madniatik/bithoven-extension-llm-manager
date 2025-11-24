@@ -136,8 +136,8 @@
             <!--begin::Response-->
             <div class="mt-10">
                 <label class="form-label">Response (Real-time)</label>
-                <div class="card">
-                    <div class="card-body bg-light-dark min-h-300px max-h-500px position-relative" style="overflow-y: auto;">
+                <div class="card" style="max-height: 500px; overflow-y: auto;">
+                    <div class="card-body bg-light-dark min-h-300px position-relative">
                         <div id="streamingIndicator" class="d-none">
                             <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -388,9 +388,6 @@
                             addMonitorLog(`📊 Tokens received so far: ${tokenCount}`, 'info');
                         }
                     }
-
-                    // Auto-scroll to bottom
-                    responseDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
                 } else if (data.type === 'done') {
                     addMonitorLog('', 'info');
