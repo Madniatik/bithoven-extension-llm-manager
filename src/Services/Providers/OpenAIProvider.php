@@ -76,21 +76,31 @@ class OpenAIProvider implements LLMProviderInterface
             'content' => $prompt,
         ];
 
-        // Create streaming request
-        $stream = $this->client->chat()->createStreamed([
-            'model' => $this->configuration->model,
-            'messages' => $messages,
-            'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
-            'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
-            'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
-            'frequency_penalty' => $parameters['frequency_penalty'] ?? $this->configuration->default_parameters['frequency_penalty'] ?? 0,
-            'presence_penalty' => $parameters['presence_penalty'] ?? $this->configuration->default_parameters['presence_penalty'] ?? 0,
-        ]);
+        try {
+            // Create streaming request
+            $stream = $this->client->chat()->createStreamed([
+                'model' => $this->configuration->model,
+                'messages' => $messages,
+                'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
+                'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
+                'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
+                'frequency_penalty' => $parameters['frequency_penalty'] ?? $this->configuration->default_parameters['frequency_penalty'] ?? 0,
+                'presence_penalty' => $parameters['presence_penalty'] ?? $this->configuration->default_parameters['presence_penalty'] ?? 0,
+            ]);
 
-        // Process stream chunks
-        foreach ($stream as $response) {
-            if (isset($response->choices[0]->delta->content)) {
-                $callback($response->choices[0]->delta->content);
+            // Process stream chunks
+            foreach ($stream as $response) {
+                if (isset($response->choices[0]->delta->content)) {
+                    $callback($response->choices[0]->delta->content);
+                }
+            }
+        } catch (\ErrorException $e) {
+            // Some OpenAI-compatible providers don't send all token detail fields
+            // Silently ignore these cosmetic errors if streaming completed
+            if (!str_contains($e->getMessage(), 'accepted_prediction_tokens') && 
+                !str_contains($e->getMessage(), 'rejected_prediction_tokens') &&
+                !str_contains($e->getMessage(), 'reasoning_tokens')) {
+                throw $e;
             }
         }
     }

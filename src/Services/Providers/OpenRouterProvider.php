@@ -63,19 +63,32 @@ class OpenRouterProvider implements LLMProviderInterface
         // Add current user prompt
         $messages[] = ['role' => 'user', 'content' => $prompt];
 
-        // Stream using OpenAI-compatible API
-        $stream = $this->client->chat()->createStreamed([
-            'model' => $this->configuration->model,
-            'messages' => $messages,
-            'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
-            'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
-            'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
-        ]);
+        try {
+            // Stream using OpenAI-compatible API
+            $stream = $this->client->chat()->createStreamed([
+                'model' => $this->configuration->model,
+                'messages' => $messages,
+                'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
+                'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
+                'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
+            ]);
 
-        foreach ($stream as $response) {
-            if (isset($response->choices[0]->delta->content)) {
-                $callback($response->choices[0]->delta->content);
+            foreach ($stream as $response) {
+                if (isset($response->choices[0]->delta->content)) {
+                    $callback($response->choices[0]->delta->content);
+                }
             }
+        } catch (\ErrorException $e) {
+            // OpenRouter doesn't send completion_tokens_details fields that OpenAI SDK expects
+            // This causes "Undefined array key 'accepted_prediction_tokens'" errors
+            // These are cosmetic - streaming already completed successfully
+            if (!str_contains($e->getMessage(), 'accepted_prediction_tokens') && 
+                !str_contains($e->getMessage(), 'rejected_prediction_tokens') &&
+                !str_contains($e->getMessage(), 'reasoning_tokens')) {
+                // If it's a different error, re-throw it
+                throw $e;
+            }
+            // Otherwise, silently ignore the cosmetic error
         }
     }
 
