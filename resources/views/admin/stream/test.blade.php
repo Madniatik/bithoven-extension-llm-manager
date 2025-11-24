@@ -160,14 +160,11 @@
         <!--begin::Card header-->
         <div class="card-header">
             <h3 class="card-title">
-                <i class="ki-outline ki-technology-2 fs-2 me-2"></i>
-                Connection Monitor
+                <i class="ki-outline ki-monitor fs-2 me-2"></i>
+                Streaming Monitor
+                <span class="badge badge-light-primary ms-2" id="monitorStatus">Inactive</span>
             </h3>
             <div class="card-toolbar">
-                <button type="button" class="btn btn-sm btn-light-primary me-2" id="testConnectionBtn">
-                    <i class="ki-outline ki-shield-tick fs-4"></i>
-                    Test Connection
-                </button>
                 <button type="button" class="btn btn-sm btn-light-danger" id="clearMonitorBtn">
                     <i class="ki-outline ki-trash fs-4"></i>
                     Clear Monitor
@@ -181,8 +178,8 @@
             <div class="alert alert-info d-flex align-items-center mb-5">
                 <i class="ki-outline ki-information-5 fs-2x me-3"></i>
                 <div class="d-flex flex-column">
-                    <h5 class="mb-1">Test Connection to Selected Provider</h5>
-                    <span>This will test the connection to the selected LLM provider without performing streaming. Useful for debugging configuration issues.</span>
+                    <h5 class="mb-1">Real-Time Streaming Monitor</h5>
+                    <span>This monitor shows all backend activity during streaming: requests sent, chunks received, events, tokens, and final metrics. Automatically activates when you start streaming.</span>
                 </div>
             </div>
 
@@ -190,7 +187,7 @@
             <div class="card bg-dark" style="min-height: 300px; max-height: 500px; overflow-y: auto;" id="monitorConsole">
                 <div class="card-body p-5">
                     <div id="monitorLogs" class="text-light font-monospace fs-7" style="white-space: pre-wrap; word-wrap: break-word;">
-                        <span class="text-muted">Monitor ready. Click "Test Connection" to start...</span>
+                        <span class="text-muted">Monitor ready. Start a streaming request to see real-time activity...</span>
                     </div>
                 </div>
             </div>
@@ -277,10 +274,10 @@
         const activityTableBody = document.getElementById('activityTableBody');
         const refreshActivityBtn = document.getElementById('refreshActivityBtn');
         const clearActivityBtn = document.getElementById('clearActivityBtn');
-        const testConnectionBtn = document.getElementById('testConnectionBtn');
         const clearMonitorBtn = document.getElementById('clearMonitorBtn');
         const monitorLogs = document.getElementById('monitorLogs');
         const monitorConsole = document.getElementById('monitorConsole');
+        const monitorStatus = document.getElementById('monitorStatus');
 
         let eventSource = null;
         let startTime = null;
@@ -317,6 +314,35 @@
             // Get form data
             const formData = new FormData(form);
             const params = new URLSearchParams(formData);
+            
+            // Get configuration details for monitor
+            const configSelect = document.getElementById('configuration_id');
+            const selectedOption = configSelect.selectedOptions[0];
+            const configText = selectedOption.text;
+            const matches = configText.match(/\(([^)]+)\)/);
+            const [provider, model] = matches ? matches[1].split(' - ') : ['Unknown', 'Unknown'];
+            
+            const prompt = document.getElementById('prompt').value;
+            const temperature = document.getElementById('temperature').value;
+            const maxTokens = document.getElementById('max_tokens').value;
+
+            // Activate monitor
+            monitorStatus.textContent = 'Active';
+            monitorStatus.className = 'badge badge-success ms-2';
+            addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+            addMonitorLog('🚀 STARTING STREAMING REQUEST', 'header');
+            addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+            addMonitorLog('', 'info');
+            addMonitorLog('📤 REQUEST DETAILS:', 'info');
+            addMonitorLog(`   Provider: ${provider}`, 'debug');
+            addMonitorLog(`   Model: ${model}`, 'debug');
+            addMonitorLog(`   Temperature: ${temperature}`, 'debug');
+            addMonitorLog(`   Max Tokens: ${maxTokens}`, 'debug');
+            addMonitorLog(`   Prompt: "${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}"`, 'debug');
+            addMonitorLog('', 'info');
+            addMonitorLog('🔌 Opening SSE connection...', 'info');
+            addMonitorLog(`   URL: ${window.location.origin}/admin/llm/stream/stream`, 'debug');
+            addMonitorLog(`   Method: GET with query params`, 'debug');
 
             // Start timer
             startTime = Date.now();
@@ -329,6 +355,11 @@
             startBtn.classList.add('d-none');
             stopBtn.classList.remove('d-none');
             form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+            
+            addMonitorLog('', 'info');
+            addMonitorLog('✅ SSE connection established', 'success');
+            addMonitorLog('⏳ Waiting for response chunks...', 'info');
+            addMonitorLog('', 'info');
 
             // Handle messages
             eventSource.onmessage = function(event) {
@@ -340,15 +371,34 @@
                     chunkCount++;
                     chunkCountEl.textContent = chunkCount;
                     
+                    // Monitor log (show first 10 chunks, then only milestones)
+                    if (chunkCount <= 10 || chunkCount % 10 === 0) {
+                        const preview = data.content.length > 30 
+                            ? data.content.substring(0, 30) + '...' 
+                            : data.content;
+                        addMonitorLog(`📥 CHUNK #${chunkCount}: "${preview}"`, 'chunk');
+                    }
+                    
                     if (data.tokens) {
                         tokenCount = data.tokens;
                         tokenCountEl.textContent = tokenCount;
+                        
+                        // Log token updates every 50 tokens
+                        if (tokenCount % 50 === 0) {
+                            addMonitorLog(`📊 Tokens received so far: ${tokenCount}`, 'info');
+                        }
                     }
 
                     // Auto-scroll to bottom
                     responseDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
                 } else if (data.type === 'done') {
+                    addMonitorLog('', 'info');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    addMonitorLog('✅ STREAMING COMPLETED', 'header');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    addMonitorLog('', 'info');
+                    
                     // Store final metrics
                     finalMetrics = {
                         usage: data.usage || {},
@@ -357,21 +407,40 @@
                         log_id: data.log_id || null
                     };
                     
-                    // Update UI with final metrics
+                    // Log final metrics
+                    addMonitorLog('📊 FINAL METRICS:', 'info');
                     if (data.usage) {
+                        addMonitorLog(`   Prompt Tokens: ${data.usage.prompt_tokens || 0}`, 'debug');
+                        addMonitorLog(`   Completion Tokens: ${data.usage.completion_tokens || 0}`, 'debug');
+                        addMonitorLog(`   Total Tokens: ${data.usage.total_tokens || 0}`, 'debug');
                         tokenCountEl.textContent = data.usage.total_tokens || tokenCount;
                         tokenCount = data.usage.total_tokens || tokenCount;
                     }
                     
                     if (data.cost !== undefined) {
+                        addMonitorLog(`   Cost USD: $${parseFloat(data.cost).toFixed(6)}`, 'debug');
                         costEl.textContent = '$' + parseFloat(data.cost).toFixed(6);
                     }
                     
+                    if (data.execution_time_ms) {
+                        addMonitorLog(`   Execution Time: ${data.execution_time_ms}ms (${(data.execution_time_ms / 1000).toFixed(2)}s)`, 'debug');
+                    }
+                    
+                    addMonitorLog(`   Total Chunks: ${chunkCount}`, 'debug');
+                    
                     if (data.log_id) {
+                        addMonitorLog(`   Log ID: #${data.log_id}`, 'debug');
                         currentLogId = data.log_id;
                         logIdEl.textContent = '#' + data.log_id;
                         viewLogBtn.classList.remove('d-none');
                     }
+                    
+                    addMonitorLog('', 'info');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    
+                    // Deactivate monitor
+                    monitorStatus.textContent = 'Completed';
+                    monitorStatus.className = 'badge badge-light-success ms-2';
                     
                     // Streaming complete
                     stopStreaming(false); // false = don't reset metrics
@@ -379,14 +448,14 @@
                     // Add to activity history
                     addToActivityHistory({
                         timestamp: new Date().toISOString(),
-                        provider: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[0],
-                        model: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[1],
+                        provider: provider,
+                        model: model,
                         tokens: tokenCount,
                         cost: parseFloat(data.cost || 0),
                         duration: (data.execution_time_ms / 1000).toFixed(2),
                         status: 'completed',
                         log_id: data.log_id,
-                        prompt: document.getElementById('prompt').value.substring(0, 100),
+                        prompt: prompt.substring(0, 100),
                         response: responseDiv.textContent.substring(0, 100)
                     });
                     
@@ -407,20 +476,33 @@
                     });
 
                 } else if (data.type === 'error') {
+                    addMonitorLog('', 'info');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    addMonitorLog('❌ ERROR OCCURRED', 'header');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    addMonitorLog('', 'info');
+                    addMonitorLog(`Error: ${data.message}`, 'error');
+                    addMonitorLog('', 'info');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    
+                    // Deactivate monitor
+                    monitorStatus.textContent = 'Error';
+                    monitorStatus.className = 'badge badge-danger ms-2';
+                    
                     // Handle error
                     stopStreaming(true);
                     
                     // Add error to activity history
                     addToActivityHistory({
                         timestamp: new Date().toISOString(),
-                        provider: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[0],
-                        model: document.getElementById('configuration_id').selectedOptions[0].text.match(/\(([^)]+)\)/)[1].split(' - ')[1],
+                        provider: provider,
+                        model: model,
                         tokens: 0,
                         cost: 0,
                         duration: 0,
                         status: 'error',
                         log_id: null,
-                        prompt: document.getElementById('prompt').value.substring(0, 100),
+                        prompt: prompt.substring(0, 100),
                         response: data.message
                     });
                     
@@ -434,6 +516,21 @@
 
             eventSource.onerror = function(error) {
                 console.error('EventSource error:', error);
+                
+                addMonitorLog('', 'info');
+                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                addMonitorLog('❌ CONNECTION ERROR', 'header');
+                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                addMonitorLog('', 'info');
+                addMonitorLog('Lost connection to server', 'error');
+                addMonitorLog('EventSource readyState: ' + eventSource.readyState, 'debug');
+                addMonitorLog('', 'info');
+                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                
+                // Deactivate monitor
+                monitorStatus.textContent = 'Error';
+                monitorStatus.className = 'badge badge-danger ms-2';
+                
                 stopStreaming(true); // true = reset on error
                 
                 Swal.fire({
@@ -446,8 +543,18 @@
 
         // Stop streaming
         stopBtn.addEventListener('click', function() {
+            addMonitorLog('', 'info');
+            addMonitorLog('⏸️  User stopped streaming manually', 'info');
+            addMonitorLog(`   Chunks received: ${chunkCount}`, 'debug');
+            addMonitorLog(`   Tokens received: ${tokenCount}`, 'debug');
+            addMonitorLog('', 'info');
+            
             // User manually stopped - keep current metrics
             stopStreaming(false);
+            
+            // Deactivate monitor
+            monitorStatus.textContent = 'Stopped';
+            monitorStatus.className = 'badge badge-warning ms-2';
             
             // Show what we got so far
             if (chunkCount > 0) {
@@ -515,176 +622,11 @@
             });
         });
 
-        // Test Connection
-        testConnectionBtn.addEventListener('click', function() {
-            const configSelect = document.getElementById('configuration_id');
-            
-            if (!configSelect.value) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No Configuration Selected',
-                    text: 'Please select an LLM configuration first.'
-                });
-                return;
-            }
-
-            // Get selected configuration details
-            const selectedOption = configSelect.selectedOptions[0];
-            const configText = selectedOption.text;
-            const matches = configText.match(/\(([^)]+)\)/);
-            
-            if (!matches) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Invalid Configuration',
-                    text: 'Could not parse provider information.'
-                });
-                return;
-            }
-
-            const [provider, model] = matches[1].split(' - ');
-            
-            // Get configuration data via AJAX first
-            const configId = configSelect.value;
-            
-            // Show loading state
-            const originalText = testConnectionBtn.innerHTML;
-            testConnectionBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Testing...';
-            testConnectionBtn.disabled = true;
-            
-            // Clear and prepare monitor
-            addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
-            addMonitorLog('🧪 Iniciando Test de Conexión', 'info');
-            addMonitorLog(`Provider: ${provider}`, 'debug');
-            addMonitorLog(`Model: ${model}`, 'debug');
-            addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
-            
-            // Fetch configuration details
-            fetch(`/admin/llm/configurations`)
-                .then(response => response.text())
-                .then(html => {
-                    // Parse HTML to extract configuration data (simplified approach)
-                    // In production, you'd have a dedicated API endpoint
-                    
-                    // For now, test with basic provider info
-                    return testConnection(provider.toLowerCase(), null, null);
-                })
-                .catch(error => {
-                    // Fallback: test with basic info
-                    testConnection(provider.toLowerCase(), null, null);
-                });
-            
-            function testConnection(provider, apiEndpoint, apiKey) {
-                fetch('{{ route('admin.llm.configurations.test') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        provider: provider,
-                        api_endpoint: apiEndpoint,
-                        api_key: apiKey
-                    })
-                })
-                .then(response => {
-                    addMonitorLog('📥 Respuesta recibida del servidor', 'debug');
-                    return response.json();
-                })
-                .then(data => {
-                    testConnectionBtn.innerHTML = originalText;
-                    testConnectionBtn.disabled = false;
-                    
-                    // Display metadata
-                    if (data.metadata) {
-                        addMonitorLog('', 'info');
-                        addMonitorLog('📊 METADATA:', 'info');
-                        addMonitorLog(`   URL: ${data.metadata.url || 'N/A'}`, 'debug');
-                        addMonitorLog(`   Method: ${data.metadata.method || 'N/A'}`, 'debug');
-                        addMonitorLog(`   HTTP Code: ${data.metadata.http_code || 'N/A'}`, 'debug');
-                        addMonitorLog(`   Request Time: ${data.metadata.request_time_ms || 0}ms`, 'debug');
-                        addMonitorLog(`   Total Time: ${data.metadata.total_time_ms || 0}ms`, 'debug');
-                        addMonitorLog(`   Request Size: ${data.metadata.request_size_bytes || 0} bytes`, 'debug');
-                        addMonitorLog(`   Response Size: ${data.metadata.response_size_bytes || 0} bytes`, 'debug');
-                    }
-
-                    // Display request body
-                    if (data.request_body) {
-                        addMonitorLog('', 'info');
-                        addMonitorLog('📤 REQUEST BODY:', 'info');
-                        const requestLines = data.request_body.split('\n');
-                        requestLines.forEach(line => {
-                            if (line.trim()) addMonitorLog(`   ${line}`, 'debug');
-                        });
-                    }
-
-                    // Display response
-                    if (data.response) {
-                        addMonitorLog('', 'info');
-                        addMonitorLog('📥 RESPONSE:', 'info');
-                        const responseLines = data.response.split('\n');
-                        responseLines.slice(0, 10).forEach(line => {
-                            if (line.trim()) addMonitorLog(`   ${line}`, 'debug');
-                        });
-                        if (responseLines.length > 10) {
-                            addMonitorLog(`   ... (${responseLines.length - 10} more lines)`, 'debug');
-                        }
-                    }
-
-                    addMonitorLog('', 'info');
-                    if (data.success) {
-                        addMonitorLog('✅ ' + (data.message || 'Test de conexión exitoso'), 'success');
-                        
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Connection Successful',
-                            html: `<div class="text-start">
-                                <p>${data.message || 'Connection test passed'}</p>
-                                ${data.metadata ? `<hr><small class="text-muted">
-                                    <strong>Request Time:</strong> ${data.metadata.request_time_ms}ms<br>
-                                    <strong>HTTP Code:</strong> ${data.metadata.http_code}
-                                </small>` : ''}
-                            </div>`,
-                            timer: 5000
-                        });
-                    } else {
-                        addMonitorLog('❌ ' + (data.message || 'Test de conexión falló'), 'error');
-                        
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Connection Failed',
-                            html: `<div class="text-start">
-                                <p>${data.message || 'Connection test failed'}</p>
-                                ${data.metadata ? `<hr><small class="text-muted">
-                                    <strong>HTTP Code:</strong> ${data.metadata.http_code || 'N/A'}
-                                </small>` : ''}
-                            </div>`
-                        });
-                    }
-                    
-                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
-                })
-                .catch(error => {
-                    testConnectionBtn.innerHTML = originalText;
-                    testConnectionBtn.disabled = false;
-                    
-                    addMonitorLog('❌ Error de red: ' + error.message, 'error');
-                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'info');
-                    
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Test Failed',
-                        text: 'An error occurred during connection test'
-                    });
-                });
-            }
-        });
-
         // Clear Monitor
         clearMonitorBtn.addEventListener('click', function() {
-            monitorLogs.innerHTML = '<span class="text-muted">Monitor cleared. Ready for next test...</span>';
+            monitorLogs.innerHTML = '<span class="text-muted">Monitor cleared. Start a streaming request to see real-time activity...</span>';
+            monitorStatus.textContent = 'Inactive';
+            monitorStatus.className = 'badge badge-light-primary ms-2';
         });
 
         // Add log to monitor
@@ -694,10 +636,10 @@
             
             switch(type) {
                 case 'success':
-                    colorClass = 'text-success';
+                    colorClass = 'text-success fw-bold';
                     break;
                 case 'error':
-                    colorClass = 'text-danger';
+                    colorClass = 'text-danger fw-bold';
                     break;
                 case 'debug':
                     colorClass = 'text-muted';
@@ -705,20 +647,29 @@
                 case 'info':
                     colorClass = 'text-info';
                     break;
+                case 'chunk':
+                    colorClass = 'text-primary';
+                    break;
+                case 'header':
+                    colorClass = 'text-warning fw-bold';
+                    break;
+                case 'separator':
+                    colorClass = 'text-secondary';
+                    break;
             }
             
             const logLine = document.createElement('div');
             logLine.className = colorClass;
             
-            // Don't show timestamp for separator lines or empty lines
-            if (message.startsWith('━') || message === '') {
+            // Don't show timestamp for separator lines, empty lines, or headers
+            if (message.startsWith('━') || message === '' || type === 'header') {
                 logLine.textContent = message;
             } else {
                 logLine.textContent = `[${timestamp}] ${message}`;
             }
             
             // Clear "ready" message if it's the first log
-            if (monitorLogs.querySelector('.text-muted')) {
+            if (monitorLogs.querySelector('.text-muted') && message !== '') {
                 monitorLogs.innerHTML = '';
             }
             
