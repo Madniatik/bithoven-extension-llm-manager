@@ -137,7 +137,7 @@
             <div class="mt-10">
                 <label class="form-label">Response (Real-time)</label>
                 <div class="card">
-                    <div class="card-body bg-light-dark min-h-300px position-relative">
+                    <div class="card-body bg-light-dark min-h-300px max-h-500px position-relative" style="overflow-y: auto;">
                         <div id="streamingIndicator" class="d-none">
                             <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -184,9 +184,9 @@
             </div>
 
             <!--begin::Monitor Console-->
-            <div class="card bg-dark" style="min-height: 300px; max-height: 500px; overflow-y: auto;" id="monitorConsole">
-                <div class="card-body p-5">
-                    <div id="monitorLogs" class="text-light font-monospace fs-7" style="white-space: pre-wrap; word-wrap: break-word;">
+            <div class="card" style="min-height: 300px; max-height: 500px; overflow-y: auto;" id="monitorConsole">
+                <div class="card-body p-5 bg-light-dark">
+                    <div id="monitorLogs" class="text-gray-800 font-monospace fs-7" style="white-space: pre-wrap; word-wrap: break-word;">
                         <span class="text-muted">Monitor ready. Start a streaming request to see real-time activity...</span>
                     </div>
                 </div>
@@ -632,7 +632,7 @@
         // Add log to monitor
         function addMonitorLog(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString('es-ES');
-            let colorClass = 'text-light';
+            let colorClass = 'text-gray-800';
             
             switch(type) {
                 case 'success':
@@ -645,16 +645,16 @@
                     colorClass = 'text-muted';
                     break;
                 case 'info':
-                    colorClass = 'text-info';
-                    break;
-                case 'chunk':
                     colorClass = 'text-primary';
                     break;
+                case 'chunk':
+                    colorClass = 'text-gray-700';
+                    break;
                 case 'header':
-                    colorClass = 'text-warning fw-bold';
+                    colorClass = 'text-dark fw-bold fs-6';
                     break;
                 case 'separator':
-                    colorClass = 'text-secondary';
+                    colorClass = 'text-gray-400';
                     break;
             }
             
@@ -668,9 +668,14 @@
                 logLine.textContent = `[${timestamp}] ${message}`;
             }
             
-            // Clear "ready" message if it's the first log
-            if (monitorLogs.querySelector('.text-muted') && message !== '') {
-                monitorLogs.innerHTML = '';
+            // Only clear "ready" message on first real log (check if only has one child with "Monitor ready")
+            if (monitorLogs.children.length === 1) {
+                const firstChild = monitorLogs.children[0];
+                if (firstChild.querySelector && firstChild.querySelector('.text-muted')) {
+                    monitorLogs.innerHTML = '';
+                } else if (firstChild.textContent && firstChild.textContent.includes('Monitor ready')) {
+                    monitorLogs.innerHTML = '';
+                }
             }
             
             monitorLogs.appendChild(logLine);
