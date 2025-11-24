@@ -58,7 +58,7 @@ class OllamaProvider implements LLMProviderInterface
         return $response->json('embedding', []);
     }
 
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): array
     {
         // Ollama streaming endpoint
         $endpoint = rtrim($this->configuration->api_endpoint, '/') . '/api/generate';
@@ -102,6 +102,9 @@ class OllamaProvider implements LLMProviderInterface
             throw new \Exception("Failed to connect to Ollama at {$endpoint}");
         }
 
+        // Storage for final metrics
+        $finalData = null;
+
         // Read NDJSON stream line by line
         while (!feof($stream)) {
             $line = fgets($stream);
@@ -126,13 +129,25 @@ class OllamaProvider implements LLMProviderInterface
                 $callback($chunk);
             }
 
-            // Check if done
+            // Check if done and capture final metrics
             if (isset($data['done']) && $data['done'] === true) {
+                $finalData = $data;
                 break;
             }
         }
 
         fclose($stream);
+
+        // Extract usage metrics from final response
+        return [
+            'usage' => [
+                'prompt_tokens' => $finalData['prompt_eval_count'] ?? 0,
+                'completion_tokens' => $finalData['eval_count'] ?? 0,
+                'total_tokens' => ($finalData['prompt_eval_count'] ?? 0) + ($finalData['eval_count'] ?? 0),
+            ],
+            'model' => $this->configuration->model,
+            'finish_reason' => $finalData['done_reason'] ?? 'stop',
+        ];
     }
 
     public function supports(string $feature): bool

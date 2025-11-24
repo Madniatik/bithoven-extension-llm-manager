@@ -378,6 +378,50 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Pricing
+    |--------------------------------------------------------------------------
+    |
+    | Token pricing per million tokens (USD).
+    | Format: 'provider' => ['model' => ['prompt' => x, 'completion' => y]]
+    | Updated: November 2025
+    |
+    */
+
+    'pricing' => [
+        'openai' => [
+            'gpt-4o' => ['prompt' => 2.50, 'completion' => 10.00],
+            'gpt-4o-mini' => ['prompt' => 0.15, 'completion' => 0.60],
+            'gpt-4-turbo' => ['prompt' => 10.00, 'completion' => 30.00],
+            'gpt-3.5-turbo' => ['prompt' => 0.50, 'completion' => 1.50],
+            'default' => ['prompt' => 1.00, 'completion' => 2.00],
+        ],
+        'anthropic' => [
+            'claude-3-5-sonnet-20241022' => ['prompt' => 3.00, 'completion' => 15.00],
+            'claude-3-opus-20240229' => ['prompt' => 15.00, 'completion' => 75.00],
+            'claude-3-sonnet-20240229' => ['prompt' => 3.00, 'completion' => 15.00],
+            'claude-3-haiku-20240307' => ['prompt' => 0.25, 'completion' => 1.25],
+            'default' => ['prompt' => 3.00, 'completion' => 15.00],
+        ],
+        'openrouter' => [
+            // OpenRouter uses dynamic pricing, these are examples
+            'openai/gpt-4o' => ['prompt' => 2.50, 'completion' => 10.00],
+            'openai/gpt-5.1' => ['prompt' => 5.00, 'completion' => 15.00],
+            'anthropic/claude-3-5-sonnet' => ['prompt' => 3.00, 'completion' => 15.00],
+            'default' => ['prompt' => 1.00, 'completion' => 3.00],
+        ],
+        'ollama' => [
+            'default' => ['prompt' => 0.00, 'completion' => 0.00], // Free (local)
+        ],
+        'local' => [
+            'default' => ['prompt' => 0.00, 'completion' => 0.00], // Free (local)
+        ],
+        'custom' => [
+            'default' => ['prompt' => 0.00, 'completion' => 0.00], // Free unless specified
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Performance
     |--------------------------------------------------------------------------
     |

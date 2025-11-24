@@ -66,7 +66,7 @@ class CustomProvider implements LLMProviderInterface
         return is_array($text) ? $embeddings : ($embeddings[0] ?? []);
     }
 
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): array
     {
         // Custom streaming implementation
         // This is a basic example - adapt to your custom API

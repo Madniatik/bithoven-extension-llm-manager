@@ -28,9 +28,9 @@ interface LLMProviderInterface
      * @param array $context Previous conversation messages [{role: string, content: string}, ...]
      * @param array $parameters Generation parameters (temperature, max_tokens, etc.)
      * @param callable $callback Function to call for each chunk: function(string $chunk): void
-     * @return void
+     * @return array Usage metrics: ['usage' => ['prompt_tokens' => int, 'completion_tokens' => int, 'total_tokens' => int], 'model' => string, 'finish_reason' => string|null]
      */
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void;
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): array;
 
     /**
      * Check if provider supports feature

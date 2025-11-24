@@ -55,7 +55,7 @@ class OpenAIProvider implements LLMProviderInterface
         return $response->embeddings[0]->embedding;
     }
 
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): array
     {
         // Build messages array with context
         $messages = [];
@@ -76,6 +76,9 @@ class OpenAIProvider implements LLMProviderInterface
             'content' => $prompt,
         ];
 
+        // Storage for last response (contains usage metrics)
+        $lastResponse = null;
+
         try {
             // Create streaming request
             $stream = $this->client->chat()->createStreamed([
@@ -90,6 +93,7 @@ class OpenAIProvider implements LLMProviderInterface
 
             // Process stream chunks
             foreach ($stream as $response) {
+                $lastResponse = $response;
                 if (isset($response->choices[0]->delta->content)) {
                     $callback($response->choices[0]->delta->content);
                 }
@@ -103,6 +107,17 @@ class OpenAIProvider implements LLMProviderInterface
                 throw $e;
             }
         }
+
+        // Extract usage metrics from last response
+        return [
+            'usage' => [
+                'prompt_tokens' => $lastResponse->usage->promptTokens ?? 0,
+                'completion_tokens' => $lastResponse->usage->completionTokens ?? 0,
+                'total_tokens' => $lastResponse->usage->totalTokens ?? 0,
+            ],
+            'model' => $lastResponse->model ?? $this->configuration->model,
+            'finish_reason' => $lastResponse->choices[0]->finishReason ?? 'stop',
+        ];
     }
 
     public function supports(string $feature): bool

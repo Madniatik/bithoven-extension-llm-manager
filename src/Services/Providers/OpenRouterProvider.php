@@ -47,7 +47,7 @@ class OpenRouterProvider implements LLMProviderInterface
         throw new \Exception('OpenRouter does not support embeddings. Use OpenAI or local provider.');
     }
 
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): array
     {
         // Build messages array with context
         $messages = [];
@@ -63,6 +63,9 @@ class OpenRouterProvider implements LLMProviderInterface
         // Add current user prompt
         $messages[] = ['role' => 'user', 'content' => $prompt];
 
+        // Storage for last response (contains usage metrics)
+        $lastResponse = null;
+
         try {
             // Stream using OpenAI-compatible API
             $stream = $this->client->chat()->createStreamed([
@@ -74,6 +77,7 @@ class OpenRouterProvider implements LLMProviderInterface
             ]);
 
             foreach ($stream as $response) {
+                $lastResponse = $response;
                 if (isset($response->choices[0]->delta->content)) {
                     $callback($response->choices[0]->delta->content);
                 }
@@ -90,6 +94,17 @@ class OpenRouterProvider implements LLMProviderInterface
             }
             // Otherwise, silently ignore the cosmetic error
         }
+
+        // Extract usage metrics from last response
+        return [
+            'usage' => [
+                'prompt_tokens' => $lastResponse->usage->promptTokens ?? 0,
+                'completion_tokens' => $lastResponse->usage->completionTokens ?? 0,
+                'total_tokens' => $lastResponse->usage->totalTokens ?? 0,
+            ],
+            'model' => $lastResponse->model ?? $this->configuration->model,
+            'finish_reason' => $lastResponse->choices[0]->finishReason ?? 'stop',
+        ];
     }
 
     public function supports(string $feature): bool

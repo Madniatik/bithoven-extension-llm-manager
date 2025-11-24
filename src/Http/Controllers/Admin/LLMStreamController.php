@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Response;
 use Bithoven\LLMManager\Services\LLMManager;
+use Bithoven\LLMManager\Services\LLMStreamLogger;
 
 class LLMStreamController extends Controller
 {
     public function __construct(
-        private readonly LLMManager $llmManager
+        private readonly LLMManager $llmManager,
+        private readonly LLMStreamLogger $streamLogger
     ) {}
 
     /**
@@ -53,23 +55,29 @@ class LLMStreamController extends Controller
                 ob_end_clean();
             }
 
+            // Start logging session
+            $params = [
+                'temperature' => $validated['temperature'] ?? $configuration->temperature,
+                'max_tokens' => $validated['max_tokens'] ?? $configuration->max_tokens,
+            ];
+            
+            $session = $this->streamLogger->startSession(
+                $configuration,
+                $validated['prompt'],
+                $params
+            );
+
             // Get provider instance
             $provider = $this->llmManager
                 ->config($configuration->id)
                 ->getProvider();
 
             try {
-                // Parameters for streaming request
-                $params = [
-                    'temperature' => $validated['temperature'] ?? $configuration->temperature,
-                    'max_tokens' => $validated['max_tokens'] ?? $configuration->max_tokens,
-                ];
-
                 // Stream chunks to client
                 $fullResponse = '';
                 $tokenCount = 0;
 
-                $provider->stream(
+                $metrics = $provider->stream(
                     $validated['prompt'],
                     [],
                     $params,
@@ -92,11 +100,18 @@ class LLMStreamController extends Controller
                     }
                 );
 
-                // Send completion event
+                // Save usage log to database
+                $usageLog = $this->streamLogger->endSession($session, $fullResponse, $metrics);
+
+                // Send completion event with real metrics
                 echo "data: " . json_encode([
                     'type' => 'done',
-                    'total_tokens' => $tokenCount,
-                    'full_response' => $fullResponse,
+                    'usage' => $metrics['usage'],
+                    'cost' => $usageLog->cost_usd,
+                    'execution_time_ms' => $usageLog->execution_time_ms,
+                    'log_id' => $usageLog->id,
+                    'model' => $metrics['model'],
+                    'finish_reason' => $metrics['finish_reason'],
                 ]) . "\n\n";
 
                 if (ob_get_level()) {
@@ -105,6 +120,9 @@ class LLMStreamController extends Controller
                 flush();
 
             } catch (\Exception $e) {
+                // Log error to database
+                $this->streamLogger->logError($session, $e->getMessage());
+
                 // Send error event
                 echo "data: " . json_encode([
                     'type' => 'error',
@@ -164,6 +182,14 @@ class LLMStreamController extends Controller
                 ob_end_clean();
             }
 
+            // Start logging session
+            $params = [];
+            $logSession = $this->streamLogger->startSession(
+                $configuration,
+                $validated['message'],
+                $params
+            );
+
             $provider = $this->llmManager
                 ->config($configuration->id)
                 ->getProvider();
@@ -172,7 +198,7 @@ class LLMStreamController extends Controller
                 $fullResponse = '';
                 $tokenCount = 0;
 
-                $provider->stream(
+                $metrics = $provider->stream(
                     $validated['message'],
                     $context,
                     [],
@@ -192,6 +218,9 @@ class LLMStreamController extends Controller
                     }
                 );
 
+                // Save usage log
+                $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics);
+
                 // Save messages after streaming completes
                 $session->messages()->create([
                     'role' => 'user',
@@ -201,12 +230,15 @@ class LLMStreamController extends Controller
                 $session->messages()->create([
                     'role' => 'assistant',
                     'content' => $fullResponse,
-                    'tokens_used' => $tokenCount,
+                    'tokens_used' => $metrics['usage']['completion_tokens'] ?? 0,
                 ]);
 
                 echo "data: " . json_encode([
                     'type' => 'done',
-                    'total_tokens' => $tokenCount,
+                    'usage' => $metrics['usage'],
+                    'cost' => $usageLog->cost_usd,
+                    'execution_time_ms' => $usageLog->execution_time_ms,
+                    'log_id' => $usageLog->id,
                 ]) . "\n\n";
 
                 if (ob_get_level()) {
@@ -215,6 +247,9 @@ class LLMStreamController extends Controller
                 flush();
 
             } catch (\Exception $e) {
+                // Log error
+                $this->streamLogger->logError($logSession, $e->getMessage());
+
                 echo "data: " . json_encode([
                     'type' => 'error',
                     'message' => $e->getMessage(),

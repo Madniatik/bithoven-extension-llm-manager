@@ -51,33 +51,7 @@ class AnthropicProvider implements LLMProviderInterface
         throw new \Exception('Anthropic does not support embeddings. Use OpenAI or configure a separate embedding service.');
     }
 
-    public function stream(string $prompt, array $parameters, callable $callback): void
-    {
-        $response = Http::withHeaders([
-            'x-api-key' => $this->configuration->api_key,
-            'anthropic-version' => '2023-06-01',
-            'content-type' => 'application/json',
-        ])->timeout(120)->post($this->configuration->api_endpoint, [
-            'model' => $this->configuration->model,
-            'messages' => [
-                ['role' => 'user', 'content' => $prompt],
-            ],
-            'max_tokens' => $parameters['max_tokens'] ?? 4096,
-            'stream' => true,
-        ]);
-
-        // Note: Streaming requires SSE handling
-        $response->onBody(function ($chunk) use ($callback) {
-            if (str_starts_with($chunk, 'data: ')) {
-                $data = json_decode(substr($chunk, 6), true);
-                if (isset($data['delta']['text'])) {
-                    $callback($data['delta']['text']);
-                }
-            }
-        });
-    }
-
-    public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+    public function stream(string $prompt, array $context, array $parameters, callable $callback): array
     {
         throw new \Exception('Streaming not yet implemented for Anthropic provider');
     }
