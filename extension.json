@@ -16,19 +16,17 @@
         "roles"
     ],
     "permissions": [
-        "view-llm-configs",
-        "create-llm-configs",
-        "edit-llm-configs",
-        "delete-llm-configs",
-        "test-llm-connections",
-        "view-llm-stats",
-        "view-llm-metrics",
-        "manage-llm-prompts",
-        "view-llm-conversations",
-        "manage-llm-knowledge-base",
-        "manage-llm-workflows",
-        "manage-llm-mcp-servers",
-        "execute-llm-tools"
+        "extensions:llm:base:view",
+        "extensions:llm:base:create",
+        "extensions:llm:providers:manage",
+        "extensions:llm:models:manage",
+        "extensions:llm:connections:test",
+        "extensions:llm:metrics:view",
+        "extensions:llm:prompts:manage",
+        "extensions:llm:conversations:view",
+        "extensions:llm:knowledge:manage",
+        "extensions:llm:workflows:manage",
+        "extensions:llm:tools:manage"
     ],
     "menu": {
         "label": "LLM Manager",
