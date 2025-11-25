@@ -160,6 +160,9 @@ class LLMServiceProvider extends ServiceProvider
 
         // Register middleware
         $this->registerMiddleware();
+        
+        // Register permissions
+        $this->registerPermissions();
     }
 
     /**
@@ -172,5 +175,44 @@ class LLMServiceProvider extends ServiceProvider
         
         // API middleware group
         Route::aliasMiddleware('llm.api', \Bithoven\LLMManager\Http\Middleware\LLMApiMiddleware::class);
+    }
+    
+    /**
+     * Register permissions with Spatie Laravel Permission
+     */
+    protected function registerPermissions(): void
+    {
+        // Only register if Spatie Permission is installed
+        if (!class_exists(\Spatie\Permission\Models\Permission::class)) {
+            return;
+        }
+
+        $permissions = [
+            'extensions:llm:base:view',
+            'extensions:llm:base:create',
+            'extensions:llm:providers:manage',
+            'extensions:llm:models:manage',
+            'extensions:llm:connections:test',
+            'extensions:llm:metrics:view',
+            'extensions:llm:prompts:manage',
+            'extensions:llm:conversations:view',
+            'extensions:llm:knowledge:manage',
+            'extensions:llm:workflows:manage',
+            'extensions:llm:tools:manage',
+        ];
+
+        foreach ($permissions as $permission) {
+            try {
+                \Spatie\Permission\Models\Permission::firstOrCreate([
+                    'name' => $permission,
+                    'guard_name' => 'web',
+                ]);
+            } catch (\Exception $e) {
+                // Silently fail if permissions table doesn't exist yet
+                logger()->warning("Could not create permission: {$permission}", [
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
     }
 }
