@@ -1,75 +1,76 @@
-# 🚀 LLM Manager Extension v1.0
+# 🚀 LLM Manager Extension v1.0.0
 
-**LLM Orchestration Platform with Hybrid Tools System**
+**Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/bithoven/llm-manager)
-[![Laravel](https://img.shields.io/badge/Laravel-11.x-red.svg)](https://laravel.com)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Enterprise-grade LLM management platform for Laravel applications with multi-agent orchestration, RAG system, and hybrid tools (Function Calling + MCP).
+Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, and comprehensive admin UI.
 
 ---
 
 ## ✨ Features
 
 ### 🎯 Core LLM Management
-- ✅ Multi-provider support (Ollama, OpenAI, Anthropic, Custom)
-- ✅ Per-extension configurations
-- ✅ Budget tracking & usage logs
-- ✅ Provider cache (models auto-discovery)
-- ✅ Fallback system
+- ✅ **Multi-Provider Support** - Ollama, OpenAI, Anthropic, OpenRouter, Custom endpoints
+- ✅ **Real-Time Streaming** - SSE-based streaming with live token counting and cost tracking
+- ✅ **Per-Extension Configurations** - Isolated configs for each extension/module
+- ✅ **Budget Tracking** - Cost monitoring with usage logs and alerts
+- ✅ **Provider Cache** - Auto-discovery of available models
+- ✅ **Fallback System** - Automatic failover between configurations
 
 ### 📊 Advanced Features
-- ✅ **Custom Metrics** - Extensions create their own metrics
-- ✅ **Prompt Templates** - Reusable templates with variables
-- ✅ **Parameter Override** - Runtime parameter customization
+- ✅ **Custom Metrics** - Extensions create domain-specific metrics with JSON metadata
+- ✅ **Prompt Templates** - Reusable templates with variable substitution (`{{var}}`)
+- ✅ **Parameter Override** - Runtime customization of temperature, max_tokens, etc.
+- ✅ **Permissions Protocol v2.0** - Granular role-based access control (12 permissions)
 
 ### 🤖 Orchestration Platform
-- ✅ **Conversations** - Persistent context & sessions
+- ✅ **Conversations** - Persistent multi-turn sessions with context management
 - ✅ **RAG System** - Document chunking + embeddings + semantic search
-- ✅ **Multi-Agent Workflows** - Orchestrate multiple agents with state machine
+- ✅ **Multi-Agent Workflows** - State machine orchestration (planned v1.2.0)
+- ✅ **Activity Monitoring** - Real-time execution logs with export (CSV/JSON)
 
-### 🛠️ Hybrid Tools System ⚡
-- ✅ **Function Calling** - Native OpenAI/Anthropic/Gemini support
-- ✅ **MCP Bundled** - 4 servers included (zero-config):
-  - `filesystem` - File operations
-  - `database` - Query, migrations, seeders
-  - `laravel` - Artisan, routes, config
-  - `code-generation` - Controllers, models, migrations
-- ✅ **MCP External** - GitHub, Context7, custom
-- ✅ **Auto-Selection** - Native→MCP intelligent fallback
-- ✅ **Security** - Whitelisting, validation, tracking
+### 🛠️ Hybrid Tools System (Planned v1.2.0)
+- ⏳ **Function Calling** - Native OpenAI/Anthropic/Gemini support
+- ⏳ **MCP Bundled** - 4 servers (filesystem, database, laravel, code-generation)
+- ⏳ **MCP External** - GitHub, Context7, custom integrations
+- ⏳ **Auto-Selection** - Native→MCP intelligent fallback
+- ⏳ **Security** - Whitelisting, validation, execution tracking
 
 ---
 
 ## 📚 Documentation
 
-Comprehensive documentation is available in the `docs/` directory:
+Complete documentation available in the `docs/` directory:
 
-### Getting Started
-- **[Installation Guide](docs/INSTALLATION.md)** - Complete installation instructions, requirements, and setup
-- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup, budget controls, RAG, MCP servers
-- **[Usage Guide](docs/USAGE-GUIDE.md)** - How to use all features with practical examples
-- **[FAQ](docs/FAQ.md)** - Frequently asked questions and troubleshooting
+### 📖 User Guides
+- **[Installation Guide](docs/INSTALLATION.md)** - Setup, requirements, post-install configuration
+- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup, streaming, budget controls
+- **[Usage Guide](docs/USAGE-GUIDE.md)** - Practical examples for all features
+- **[FAQ](docs/FAQ.md)** - Troubleshooting and common questions
 
-### Advanced Documentation
-- **[API Reference](docs/API-REFERENCE.md)** - Complete API documentation for facades, services, and models
-- **[Code Examples](docs/EXAMPLES.md)** - Practical code examples for all features
-- **[Contributing Guide](docs/CONTRIBUTING.md)** - How to contribute to the project
+### 🔧 Developer Documentation
+- **[API Reference](docs/API-REFERENCE.md)** - Facades, services, models, REST endpoints
+- **[Code Examples](docs/EXAMPLES.md)** - Copy-paste ready code snippets
+- **[Contributing Guide](docs/CONTRIBUTING.md)** - Development workflow and guidelines
 
-### Quick Links
-- **[Testing Status](#testing-status)** - Complete testing coverage report (100%)
-- **[Changelog](CHANGELOG.md)** - Version history and changes
-- **[License](LICENSE)** - MIT License
+### 📊 Project Status
+- **[Changelog](CHANGELOG.md)** - Complete version history (v1.0.0 - v1.1.0)
+- **[Testing Status](#-testing-status)** - Manual testing coverage (33/33 features - 100%)
+- **[Roadmap](#-roadmap)** - Future features and releases
 
 ---
 
-## 🎯 Unique Selling Points
+## 🎯 What Makes This Special
 
-1. **🚀 Hybrid Tools** - Only LLM manager with Function Calling + MCP hybrid system
-2. **📦 Zero-Config** - 4 MCP servers bundled, ready to use
-3. **🤖 Complete Platform** - RAG + Multi-Agent + Tools in one package
-4. **🎨 Laravel-First** - Custom Laravel MCP server included
+1. **🚀 Real-Time Streaming** - Only Laravel LLM manager with SSE-based streaming and live metrics
+2. **📊 Production-Ready** - Complete testing (33/33 features), permissions v2.0, activity monitoring
+3. **🎨 Laravel-Native** - Built for Laravel 11+ with Blade components, Eloquent, and Artisan commands
+4. **🔒 Enterprise Security** - Granular RBAC (12 permissions across 4 roles), encrypted API keys
+5. **📦 Zero-Config Installation** - One command setup via BITHOVEN Extension Manager
 
 ---
 
@@ -77,111 +78,140 @@ Comprehensive documentation is available in the `docs/` directory:
 
 ### Requirements
 
-- PHP 8.2+
-- Laravel 11.x
-- Node.js 18+ (for MCP servers)
-- Python 3.9+ (for database MCP)
+- **PHP** 8.2 or higher
+- **Laravel** 11.x
+- **Node.js** 18+ (optional, for future MCP servers)
+- **MySQL/PostgreSQL** - For data persistence
+- **Composer** 2.x
 
-### Via BITHOVEN Extension Manager
+### Via BITHOVEN Extension Manager (Recommended)
 
 ```bash
+# From CPANEL directory
 php artisan bithoven:extension:install llm-manager
+
+# Or install from GitHub
+php artisan bithoven:extension:install llm-manager --from=github
 ```
 
-### Manual Installation
+The installer will:
+1. Download extension from GitHub
+2. Install Composer dependencies
+3. Run migrations (16 tables)
+4. Execute core seeders (permissions, configs, tools, MCP)
+5. Create permissions and assign to roles
+6. Enable extension automatically
 
-1. Clone repository to extensions folder:
+### Manual Installation (Development)
+
 ```bash
+# 1. Clone to extensions folder
 cd /path/to/BITHOVEN/EXTENSIONS
-git clone https://github.com/bithoven/llm-manager bithoven-extension-llm-manager
-```
+git clone https://github.com/Madniatik/bithoven-extension-llm-manager
 
-2. Add to CPANEL `composer.json`:
-```json
+# 2. Add to CPANEL composer.json
 {
   "repositories": [
     {
       "type": "path",
       "url": "../EXTENSIONS/bithoven-extension-llm-manager",
-      "options": {
-        "symlink": true
-      }
+      "options": { "symlink": true }
     }
-  ],
-  "require": {
-    "bithoven/llm-manager": "^3.0"
-  }
+  ]
 }
-```
 
-3. Install via Composer:
-```bash
-composer require bithoven/llm-manager
-```
+# 3. Install
+cd /path/to/CPANEL
+composer require bithoven/llm-manager:@dev
 
-4. Run post-install:
-```bash
-php artisan vendor:publish --tag=llm-config
-php artisan vendor:publish --tag=llm-views
+# 4. Run migrations
 php artisan migrate
+
+# 5. Run seeders
 php artisan db:seed --class=Bithoven\\LLMManager\\Database\\Seeders\\DatabaseSeeder
-bash vendor/bithoven/llm-manager/scripts/install-mcp-servers.sh
+```
+
+### Post-Installation
+
+```bash
+# Verify installation
+php artisan bithoven:extension:list
+
+# Check permissions
+php artisan permission:show
+
+# Access admin panel
+# Navigate to: http://your-app.com/admin/llm
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Configure LLM Provider
+### 1. Configure Your First LLM Provider
 
+**Via Admin UI** (Recommended):
+```
+Navigate to: http://your-app.com/admin/llm/configurations/create
+```
+
+**Or Programmatically**:
 ```php
-// Via Admin UI: /admin/llm
-// Or programmatically:
 use Bithoven\LLMManager\Models\LLMConfiguration;
 
 LLMConfiguration::create([
-    'name' => 'OpenAI GPT-4',
-    'slug' => 'openai-gpt4',
-    'provider' => 'openai',
-    'model' => 'gpt-4o',
-    'api_key' => env('OPENAI_API_KEY'),
-    'temperature' => 0.3,
+    'name' => 'Ollama Qwen3',
+    'slug' => 'ollama-qwen3',
+    'provider' => 'ollama',
+    'model' => 'qwen3:4b',
+    'endpoint' => 'http://localhost:11434',
+    'temperature' => 0.7,
     'max_tokens' => 2000,
     'is_active' => true,
     'is_default' => true,
 ]);
 ```
 
-### 2. Use LLM in Your Extension
+### 2. Use LLM in Your Code
 
+**Simple Execution**:
 ```php
 use Bithoven\LLMManager\Facades\LLM;
 
-// Simple execution
-$response = LLM::execute('Analyze this code...');
+$response = LLM::execute('Explain Laravel middleware in 50 words');
+echo $response; // "Middleware in Laravel acts as..."
+```
 
-// With configuration
-$response = LLM::useConfig('openai-gpt4')
-    ->execute('Generate a Laravel controller...');
+**With Specific Configuration**:
+```php
+$response = LLM::useConfig('ollama-qwen3')
+    ->execute('Generate a REST API controller for a Blog model');
+```
 
-// With parameter override
-$response = LLM::execute('Complex analysis...', [
-    'temperature' => 0.7,
-    'max_tokens' => 3000,
+**With Parameter Override**:
+```php
+$response = LLM::execute('Write creative fiction', [
+    'temperature' => 1.2,  // More creative
+    'max_tokens' => 4000,
 ]);
 ```
 
-### 3. Start MCP Servers
+### 3. Test Real-Time Streaming
 
 ```bash
-# Start all bundled servers
-php artisan llm-manager:mcp:start
+# Start your LLM provider (e.g., Ollama)
+ollama serve
 
-# Start specific server
-php artisan llm-manager:mcp:start filesystem
+# Navigate to streaming test page
+# http://your-app.com/admin/llm/stream/test
 
-# List servers
-php artisan llm-manager:mcp:list
+# Or programmatically:
+use Bithoven\LLMManager\Services\LLMStreamService;
+
+$stream = app(LLMStreamService::class);
+$stream->stream($configId, 'Your prompt', function($chunk) {
+    echo $chunk; // Real-time output
+});
 ```
 
 ---
@@ -202,69 +232,153 @@ php artisan llm-manager:mcp:list
 
 ## 🗄️ Database Schema
 
-13 tables with `llm_*` prefix:
+**16 migrations creating comprehensive LLM infrastructure:**
 
-| Table | Category | Description |
-|-------|----------|-------------|
-| `llm_configurations` | Core | Provider configs |
-| `llm_usage_logs` | Core | Usage tracking |
-| `llm_provider_cache` | Core | Models cache |
-| `llm_extension_metrics` | Features | Custom metrics |
-| `llm_prompt_templates` | Features | Prompt templates |
-| `llm_conversation_sessions` | Orchestration | Sessions |
-| `llm_conversation_messages` | Orchestration | Messages |
-| `llm_conversation_logs` | Orchestration | Audit logs |
-| `llm_document_knowledge_base` | RAG | Documents + embeddings |
-| `llm_mcp_connectors` | Tools | MCP registry |
-| `llm_agent_workflows` | Orchestration | Workflows |
-| `llm_tool_definitions` | Tools | Tools registry |
-| `llm_tool_executions` | Tools | Execution tracking |
+| Table | Purpose | Key Features |
+|-------|---------|--------------|
+| `llm_manager_configurations` | Provider configs | Multi-provider, encrypted keys, per-extension |
+| `llm_manager_usage_logs` | Usage tracking | Tokens, cost, duration, status |
+| `llm_manager_custom_metrics` | Extension metrics | Numerical + JSON data, aggregation |
+| `llm_manager_parameter_overrides` | Runtime params | Temperature, max_tokens, etc. |
+| `llm_manager_prompt_templates` | Reusable prompts | Variable substitution, versioning |
+| `llm_manager_conversation_sessions` | Chat sessions | Context management, history |
+| `llm_manager_conversation_messages` | Chat messages | Role, content, timestamps |
+| `llm_manager_conversation_logs` | Audit logs | Debugging, compliance |
+| `llm_manager_document_knowledge_base` | RAG documents | Chunking, embeddings, search |
+| `llm_manager_mcp_connectors` | MCP registry | Server configs, health checks |
+| `llm_manager_agent_workflows` | Orchestration | State machine, multi-agent |
+| `llm_manager_tool_definitions` | Tools registry | Schemas, handlers, validation |
+| `llm_manager_tool_executions` | Tool tracking | Execution history, results |
+
+**Naming Convention:** All tables use `llm_manager_*` prefix for clean namespace separation.
 
 ---
 
 ## 🎨 Admin UI
 
-Access at: `http://your-app.com/admin/llm`
+**Access:** `http://your-app.com/admin/llm`
 
-Features:
-- **Configurations** - Manage LLM providers
-- **Conversations** - View chat history
-- **Knowledge Base** - RAG document management
-- **Workflows** - Visual workflow builder
-- **MCP Servers** - Manage servers
-- **Statistics** - Usage & cost reports
-- **Metrics** - Custom metrics dashboard
+### Dashboard
+- Quick stats cards (configs, conversations, tokens, costs)
+- Recent activity timeline
+- Provider distribution chart
+- Usage trends
+
+### Configurations (`/admin/llm/configurations`)
+- List all LLM provider configurations
+- Create/Edit/Delete configs
+- Test connections with preview
+- Toggle active/default status
+- Export/Import configs (JSON)
+
+### Conversations (`/admin/llm/conversations`)
+- View all chat sessions
+- Filter by extension, date, status
+- Inspect full message history
+- Export conversations (JSON/CSV)
+
+### Knowledge Base (`/admin/llm/knowledge-base`)
+- Upload and manage documents
+- Auto-indexing with RAG
+- View document chunks
+- Semantic search testing
+- Re-index functionality
+
+### Prompt Templates (`/admin/llm/prompts`)
+- Template library with CRUD
+- Variable substitution (`{{var}}`)
+- Global vs extension-specific
+- Version management
+- API usage examples
+
+### Tool Definitions (`/admin/llm/tools`)
+- Register custom tools
+- JSON schema validation
+- Handler class configuration
+- Execution history
+- Active/inactive toggle
+
+### Statistics (`/admin/llm/stats`)
+- Usage analytics dashboard
+- Provider breakdown (Pie chart)
+- Monthly trends (Line chart)
+- Date range filters (7/30/90 days, custom)
+- Cost analysis
+- Export reports (CSV/JSON)
+
+### Streaming Test (`/admin/llm/stream/test`)
+- Interactive streaming interface
+- Real-time token counting
+- Live cost calculation
+- Activity monitor console
+- Configuration selector
+- Parameter controls (temperature, max_tokens)
+
+### Activity Logs (`/admin/llm/activity`)
+- Complete execution history
+- Filter by provider, model, status
+- Performance metrics
+- Error tracking
+- Export functionality
 
 ---
 
 ## 🔧 Artisan Commands
 
 ```bash
-# MCP Management
-php artisan llm-manager:mcp:start [server]    # Start MCP servers
-php artisan llm-manager:mcp:list              # List servers
-php artisan llm-manager:mcp:add {name} {cmd}  # Add external server
+# Extension Management
+php artisan bithoven:extension:install llm-manager    # Install extension
+php artisan bithoven:extension:enable llm-manager     # Enable extension
+php artisan bithoven:extension:disable llm-manager    # Disable extension
+php artisan bithoven:extension:uninstall llm-manager  # Uninstall (preserves data)
 
-# RAG System
-php artisan llm-manager:index-documents        # Index docs
-php artisan llm-manager:generate-embeddings    # Generate embeddings
+# Configuration Testing
+php artisan llm-manager:test-connection {id}          # Test LLM config by ID
 
-# Testing
-php artisan llm-manager:test-connection {id}   # Test config
+# RAG System (Future)
+php artisan llm-manager:index-documents               # Index documents for RAG
+php artisan llm-manager:generate-embeddings           # Generate vector embeddings
+
+# MCP Servers (Future v1.2.0)
+php artisan llm-manager:mcp:start [server]            # Start MCP servers
+php artisan llm-manager:mcp:list                      # List available servers
+php artisan llm-manager:mcp:add {name} {command}      # Register custom server
+
+# Permissions
+php artisan permission:show                           # View all permissions
+php artisan permission:cache-reset                    # Clear permission cache
 ```
 
 ---
 
-## 🧪 Testing
+## 🧪 Testing & Quality
 
-```bash
-# Run all tests
-composer test
+### Manual Testing Coverage: 100% ✅
 
-# Run specific test suite
-./vendor/bin/phpunit tests/Feature/ConversationTest.php
-./vendor/bin/phpunit tests/Unit/ToolServiceTest.php
-```
+**Version:** v1.0.0  
+**Completed:** 21 de noviembre de 2025  
+**Features Tested:** 33/33 (100%)  
+**Bugs Fixed:** 15
+
+| Module | Features | Status | Documentation |
+|--------|----------|--------|---------------|
+| **Prompt Templates** | 8/8 | ✅ Complete | CRUD, variables, validation, API |
+| **Knowledge Base** | 8/8 | ✅ Complete | RAG, indexing, chunks, search |
+| **Tool Definitions** | 7/7 | ✅ Complete | Registry, schemas, handlers |
+| **Conversations** | 4/4 | ✅ Complete | Sessions, messages, export |
+| **Statistics** | 6/6 | ✅ Complete | Charts, filters, export |
+| **Streaming (v1.1.0)** | ✅ | ✅ Complete | SSE, metrics, activity logs |
+
+### Test Reports
+- **Testing Guide:** `CPANEL/reports/llm-manager-testing-guide.md`
+- **Final Summary:** `CPANEL/reports/llm-manager-testing-FINAL-SUMMARY.md`
+- **API Scripts:** `CPANEL/temp/test-prompts-api.php`, `test-tools-api.php`
+
+### Automated Testing (Planned v1.2.0)
+- PHPUnit test suite (80%+ coverage target)
+- Feature tests for all endpoints
+- Integration tests with real providers
+- Performance benchmarks
 
 ---
 
@@ -331,224 +445,223 @@ $results = $rag->search('How to create a controller?', extension: 'docs');
 
 ## 📊 Implementation Status
 
-**Current Version:** v3.0.0 (In Development)
+**Current Version:** v1.0.0 (Production Ready)
 
-**Backend Implementation:** ✅ 100% Complete (74 PHP files)  
-**Admin UI Implementation:** ✅ 100% Complete (20 Blade views)
+### ✅ Completed (v1.0.0)
 
-### Completed Components
+**Backend (100%)**
+- ✅ 49 Foundation files (ServiceProvider, migrations, models, seeders, config)
+- ✅ 5 Core services (Manager, Executor, Budget, Metrics, Prompts)
+- ✅ 5 Provider implementations (Ollama, OpenAI, Anthropic, OpenRouter, Custom)
+- ✅ 4 Orchestration services (Conversations, RAG, Embeddings, Workflows)
+- ✅ 11 Controllers (6 Admin, 5 API)
+- ✅ 6 CLI commands (mcp:*, llm:*, test)
+- ✅ Permissions Protocol v2.0 (12 permissions, 4-role assignment)
 
-#### ✅ Foundation (49 files)
-- ServiceProvider with comprehensive bindings
-- 13 database migrations
-- 13 Eloquent models with relationships
-- 4 seeders (demo data)
-- Configuration system
-- Routes (web + api)
-- Middleware (admin + api)
-- LLM Facade
+**Frontend (100%)**
+- ✅ 20 Admin UI views (Dashboard, Configs, Stats, Prompts, KB, Tools, Conversations)
+- ✅ Real-time streaming interface with activity monitor
+- ✅ Interactive charts (Chart.js, ApexCharts)
+- ✅ DataTables integration for all listings
+- ✅ SweetAlert2 notifications
+- ✅ Responsive Metronic 8.3.2 theme
 
-#### ✅ Core Services (5 files)
-- **LLMManager** - Central orchestrator with fluent API
-- **LLMExecutor** - Execution engine with logging
-- **LLMBudgetManager** - Cost control with alerts
-- **LLMMetricsService** - Custom metrics tracking
-- **LLMPromptService** - Template management
+**Testing (100%)**
+- ✅ Manual testing: 33/33 features (100%)
+- ✅ 15 bugs fixed and documented
+- ✅ Production deployment verified
 
-#### ✅ Providers (4 files)
-- **OllamaProvider** - Local LLM integration
-- **OpenAIProvider** - OpenAI API integration
-- **AnthropicProvider** - Claude integration
-- **CustomProvider** - Generic HTTP provider
+### ⏳ Planned Features
 
-#### ✅ Orchestration (4 files)
-- **LLMConversationManager** - Multi-turn sessions
-- **LLMRAGService** - Semantic search + generation
-- **LLMEmbeddingsService** - Vector generation
-- **LLMWorkflowEngine** - State machine workflows
+**v1.2.0 (Q1 2026)**
+- ⏳ Statistics Dashboard enhancements
+- ⏳ PHPUnit test suite (80%+ coverage)
+- ⏳ Streaming in Conversations UI
+- ⏳ Performance optimizations
 
-#### ✅ Hybrid Tools (4 files)
-- **LLMToolService** - Tool registry
-- **LLMToolExecutor** - Execution engine (native/mcp/custom)
-- **LLMFunctionCallingAdapter** - Native function calling
-- **LLMMCPConnectorManager** - MCP server management
+**v1.3.0 (Q2 2026)**
+- ⏳ MCP Servers (4 bundled: filesystem, database, laravel, code-generation)
+- ⏳ Function Calling (OpenAI, Anthropic, Gemini)
+- ⏳ Hybrid Tools System (Native + MCP)
 
-#### ✅ Controllers (11 files)
-**Admin Controllers (6):**
-- LLMConfigurationController - Config CRUD
-- LLMUsageStatsController - Statistics & export
-- LLMPromptTemplateController - Template CRUD
-- LLMConversationController - Session viewer
-- LLMKnowledgeBaseController - Document management
-- LLMToolDefinitionController - Tool registry
-
-**API Controllers (5):**
-- LLMGenerateController - Simple generation
-- LLMChatController - Conversation API
-- LLMRAGController - RAG operations
-- LLMToolController - Tool execution
-- LLMWorkflowController - Workflow execution
-
-#### ✅ CLI Commands (6 files)
-- `mcp:start` - Start MCP servers
-- `mcp:list` - List servers
-- `mcp:add` - Register new server
-- `llm:index-documents` - Index KB documents
-- `llm:generate-embeddings` - Generate embeddings
-- `llm:test` - Test LLM generation
-
-#### ✅ Admin UI Views (20 files)
-**Dashboard:**
-- admin/dashboard.blade.php - Main overview
-
-**Configurations (4 views):**
-- index.blade.php - List all configurations
-- create.blade.php - Create new configuration
-- edit.blade.php - Edit configuration
-- show.blade.php - View configuration details
-
-**Statistics (1 view):**
-- stats/index.blade.php - Usage analytics
-
-**Prompt Templates (4 views):**
-- prompts/index.blade.php - Template library
-- prompts/create.blade.php - Create template
-- prompts/edit.blade.php - Edit template
-- prompts/show.blade.php - View template
-
-**Conversations (2 views):**
-- conversations/index.blade.php - Session list
-- conversations/show.blade.php - Conversation details
-
-**Knowledge Base (4 views):**
-- knowledge-base/index.blade.php - Document library
-- knowledge-base/create.blade.php - Add document
-- knowledge-base/edit.blade.php - Edit document
-- knowledge-base/show.blade.php - View document & chunks
-
-**Tools Registry (4 views):**
-- tools/index.blade.php - Tool list
-- tools/create.blade.php - Register tool
-- tools/edit.blade.php - Edit tool
-- tools/show.blade.php - View tool details
+**v2.0.0 (Q3 2026)**
+- ⏳ Multi-Agent Workflows (visual builder)
+- ⏳ Advanced RAG strategies
+- ⏳ WebSocket streaming
+- ⏳ Plugin system
 
 ---
 
-## ✅ Testing Status
+## 🗺️ Roadmap
 
-**Version:** v1.0.0  
-**Testing Completed:** 21 de noviembre de 2025  
-**Coverage:** 33/33 features (100%) 🎉
+### v1.1.0 (Current - In Progress)
+**Focus:** Real-Time Streaming & Enhanced Monitoring
 
-### Testing Summary
+**Completed:**
+- ✅ SSE-based streaming with OllamaProvider and OpenAIProvider
+- ✅ Interactive streaming test UI with activity monitor
+- ✅ Real token counting and cost tracking
+- ✅ LLMStreamLogger service for usage metrics
+- ✅ Permissions Protocol v2.0 migration
+- ✅ Activity history with localStorage
+- ✅ Enhanced stats bar (6 metrics)
 
-| Module | Features | Status | Bugs Fixed |
-|--------|----------|--------|------------|
-| **Prompt Templates** | 8/8 | ✅ 100% | 6 |
-| **Knowledge Base** | 8/8 | ✅ 100% | 1 |
-| **Tool Definitions** | 7/7 | ✅ 100% | 4 |
-| **Conversations** | 4/4 | ✅ 100% | 3 |
-| **Statistics** | 6/6 | ✅ 100% | 0 |
-| **Dashboard** | ✅ | ✅ 100% | - |
+**In Progress:**
+- ⏳ Documentation updates (Usage Guide, API Reference)
+- ⏳ Streaming integration in Conversations UI
 
-**Total:** 33/33 features tested, 15 bugs resolved
+**Release Target:** December 2025
 
-### Detailed Testing
+---
 
-**Prompt Templates:**
-- ✅ CRUD operations (Create, Read, Update, Delete)
-- ✅ Variable substitution `{{var}}`
-- ✅ Unique validation (create/edit)
-- ✅ SweetAlert confirmations
-- ✅ Toggle active/inactive
-- ✅ Global templates (is_global field)
-- ✅ API/Facade usage (`LLM::template()`)
-- ✅ Model methods: `render()`, `validateVariables()`, `getMissingVariables()`
+### v1.2.0 (Q1 2026)
+**Focus:** Testing, Documentation & Statistics Dashboard
 
-**Knowledge Base:**
-- ✅ Document CRUD (Create, Edit, Delete verified via DB)
-- ✅ Auto-indexing with RAG service
-- ✅ Document types (documentation, guide, faq, code, other)
-- ✅ Chunks display (accordion view)
-- ✅ Indexed status badges
-- ✅ Last indexed timestamps
-- ✅ Search UI
-- ✅ Re-index functionality
+**Planned Features:**
+- PHPUnit test suite (80%+ coverage)
+- Enhanced Statistics Dashboard:
+  - Provider/model breakdown tables
+  - Advanced filtering and date ranges
+  - Cost analysis and projections
+  - Export functionality (CSV, JSON, PDF)
+- Complete API documentation with Swagger/OpenAPI
+- Video tutorials and screencasts
+- Performance optimizations
 
-**Tool Definitions:**
-- ✅ Tool registry CRUD
-- ✅ JSON schema validation
-- ✅ Handler class/method configuration
-- ✅ Parameter schema enforcement
-- ✅ Active/inactive toggle
-- ✅ Tool execution via handler pattern
-- ✅ API execution pattern verified
+---
 
-**Conversations:**
-- ✅ Session listing with filters
-- ✅ Message history display
-- ✅ Activity logs tracking
-- ✅ Export functionality (JSON/CSV)
-- ✅ Dynamic breadcrumbs
-- ✅ Immutable ID routing
+### v1.3.0 (Q2 2026)
+**Focus:** Hybrid Tools System
 
-**Statistics:**
-- ✅ Dashboard with quick stats cards
-- ✅ Provider distribution chart (Pie)
-- ✅ Monthly usage chart (Line)
-- ✅ Date range filters (7/30/90 days, custom)
-- ✅ Export stats (JSON/CSV)
-- ✅ Real-time data updates
+**Planned Features:**
+- **MCP Bundled Servers:**
+  - `filesystem` - File operations (CRUD, search)
+  - `database` - Queries, migrations, seeders
+  - `laravel` - Artisan, routes, config
+  - `code-generation` - Controllers, models, views
+- **Function Calling:**
+  - OpenAI tools API integration
+  - Anthropic tools API integration
+  - Google Gemini function calling
+- **Hybrid Intelligence:**
+  - Auto-selection (Native → MCP fallback)
+  - Zero-config for end users
+- **Security Layer:**
+  - Path whitelisting
+  - Command sanitization
+  - Execution tracking
 
-### Testing Documentation
+---
 
-Complete testing documentation available at:
-- **Testing Guide:** `CPANEL/reports/llm-manager-testing-guide.md`
-- **Final Summary:** `CPANEL/reports/llm-manager-testing-FINAL-SUMMARY.md`
-- **API Test Scripts:** `CPANEL/temp/test-prompts-api.php`, `test-tools-api.php`
+### v2.0.0 (Q3 2026)
+**Focus:** Multi-Agent Orchestration & Advanced RAG
 
-### ⏳ Pending
+**Planned Features:**
+- **Multi-Agent Workflows:**
+  - Visual workflow builder (drag-and-drop)
+  - State machine orchestration
+  - Conditional branching
+  - Agent coordination protocols
+- **Advanced RAG:**
+  - Multiple embedding strategies
+  - Hybrid search (semantic + keyword)
+  - Re-ranking algorithms
+  - Context compression
+- **Real-Time Collaboration:**
+  - WebSocket streaming
+  - Multi-user conversations
+  - Live collaborative editing
+- **Plugin System:**
+  - Custom provider plugins
+  - Custom tool plugins
+  - Extension marketplace
 
-- **MCP Servers** - 4 bundled servers (filesystem, database, laravel, code-generation)
-- **Integration Testing** - Multi-agent workflows
-- **Performance Testing** - Load testing with concurrent requests
+---
+
+### Future Vision (v3.0+)
+- Agent autonomy and self-improvement
+- Distributed agent networks
+- Advanced cost optimization with ML
+- Multi-modal support (images, audio)
+- Enterprise features (SSO, audit trails, compliance)
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Code of Conduct
+- Development workflow
+- Pull request process
+- Testing requirements
+- Documentation standards
+
+### Quick Start for Contributors
+
+```bash
+# 1. Fork and clone
+git clone https://github.com/YOUR-USERNAME/bithoven-extension-llm-manager
+cd bithoven-extension-llm-manager
+
+# 2. Create feature branch
+git checkout -b feature/your-feature-name
+
+# 3. Make changes and test
+# ... your changes ...
+
+# 4. Commit with conventional commits
+git commit -m "feat: add streaming support for Anthropic"
+
+# 5. Push and create PR
+git push origin feature/your-feature-name
+```
 
 ---
 
 ## 📄 License
 
-This extension is open-sourced software licensed under the [MIT license](LICENSE).
+This extension is open-sourced software licensed under the [MIT License](LICENSE).
+
+```
+MIT License
+
+Copyright (c) 2025 BITHOVEN Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction...
+```
+
+See [LICENSE](LICENSE) file for full details.
 
 ---
 
-## 🙏 Credits
+## 🙏 Credits & Acknowledgments
 
-Built with ❤️ by the BITHOVEN Team
+**Built with ❤️ by the BITHOVEN Team**
 
-**Powered by:**
-- [Laravel](https://laravel.com)
-- [OpenAI PHP Client](https://github.com/openai-php/client)
-- [Yajra DataTables](https://github.com/yajra/laravel-datatables)
-- [Spatie Laravel Permission](https://github.com/spatie/laravel-permission)
-- [Model Context Protocol (MCP)](https://modelcontextprotocol.io)
+### Core Technologies
+- **[Laravel 11](https://laravel.com)** - The PHP Framework for Web Artisans
+- **[Metronic 8.3.2](https://keenthemes.com/metronic)** - Premium Admin Theme
+- **[Yajra DataTables](https://github.com/yajra/laravel-datatables)** - Server-side DataTables
+- **[Spatie Laravel Permission](https://github.com/spatie/laravel-permission)** - Role-based access control
+
+### LLM Providers
+- **[OpenAI](https://openai.com)** - GPT models
+- **[Anthropic](https://anthropic.com)** - Claude models  
+- **[Ollama](https://ollama.ai)** - Local LLM runtime
+- **[OpenRouter](https://openrouter.ai)** - Multi-provider API gateway
+
+### Special Thanks
+- Model Context Protocol (MCP) team for the innovative protocol
+- Laravel community for continuous inspiration
+- All contributors and testers
 
 ---
 
-## 📞 Support
+**Version:** 1.0.0  
+**Last Updated:** 26 de noviembre de 2025  
+**Status:** ✅ Production Ready
 
-- **Documentation:** `vendor/bithoven/llm-manager/docs/`
-- **Issues:** [GitHub Issues](https://github.com/bithoven/llm-manager/issues)
-- **Discord:** [BITHOVEN Community](https://discord.gg/bithoven)
-- **Email:** dev@bithoven.com
-
----
-
-**Version:** 3.0.0  
-**Last Updated:** 18 de noviembre de 2025  
-**Status:** ✅ Ready for Production
+**GitHub:** https://github.com/Madniatik/bithoven-extension-llm-manager
