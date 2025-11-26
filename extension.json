@@ -3,7 +3,7 @@
     "name": "LLM Manager",
     "display_name": "LLM Manager",
     "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "BITHOVEN Team",
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {

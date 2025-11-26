@@ -3,7 +3,7 @@
     "description": "LLM Orchestration Platform with Hybrid Tools System for BITHOVEN",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "keywords": [
         "laravel",
         "llm",
