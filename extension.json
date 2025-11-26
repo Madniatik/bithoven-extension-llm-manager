@@ -1,15 +1,22 @@
 {
     "slug": "llm-manager",
     "name": "LLM Manager",
-    "display_name": "LLM Manager",
+    "version": "1.0.2",
     "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
-    "version": "1.0.1",
     "author": "BITHOVEN Team",
+    "created_at": "2025-01-15T10:00:00+00:00",
+    "updated_at": "2025-11-26T21:40:00+00:00",
+    
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {
         "type": "vcs",
-        "url": "https://github.com/bithoven/llm-manager"
+        "url": "https://github.com/Madniatik/bithoven-extension-llm-manager.git"
     },
+    
+    "category": "AI & Machine Learning",
+    "icon": "ki-abstract-26",
+    "featured": true,
+    "tags": ["ai", "llm", "openai", "anthropic", "streaming", "rag", "workflows", "mcp"],
     "system_tables": [
         "users",
         "permissions",
@@ -29,43 +36,7 @@
         "extensions:llm-manager:tools:manage",
         "extensions:llm-manager:stats:view"
     ],
-    "menu": {
-        "label": "LLM Manager",
-        "icon": "ki-abstract-41",
-        "route": "llm.admin.index",
-        "order": 85,
-        "parent": null,
-        "children": [
-            {
-                "label": "Configurations",
-                "route": "llm.admin.index"
-            },
-            {
-                "label": "Conversations",
-                "route": "llm.admin.conversations"
-            },
-            {
-                "label": "Knowledge Base",
-                "route": "llm.admin.knowledge-base"
-            },
-            {
-                "label": "Workflows",
-                "route": "llm.admin.workflows"
-            },
-            {
-                "label": "MCP Servers",
-                "route": "llm.admin.mcp-servers"
-            },
-            {
-                "label": "Statistics",
-                "route": "llm.admin.stats"
-            },
-            {
-                "label": "Reports",
-                "route": "llm.admin.reports"
-            }
-        ]
-    },
+    
     "migrations": {
         "required": true,
         "path": "database/migrations"
@@ -83,23 +54,28 @@
             "LLMDemoSeeder"
         ]
     },
-    "post_install": {
-        "commands": [
-            "php artisan vendor:publish --tag=llm-config",
-            "php artisan vendor:publish --tag=llm-views",
-            "php artisan migrate",
-            "php artisan db:seed --class=Bithoven\\LLMManager\\Database\\Seeders\\DatabaseSeeder",
-            "bash scripts/install-mcp-servers.sh"
-        ],
-        "messages": [
-            "✅ LLM Manager installed successfully!",
-            "📦 MCP bundled servers installed (filesystem, database, laravel, code-generation)",
-            "🚀 Run 'php artisan llm-manager:mcp:start' to start MCP servers",
-            "📚 Documentation: vendor/bithoven/llm-manager/docs/",
-            "🎯 Admin panel: /admin/llm"
-        ]
+    
+    "requirements": {
+        "php": "^8.2",
+        "laravel": "^11.0",
+        "node": "^18.0",
+        "python": "^3.9"
     },
+    
     "changelog": {
+        "v1.0.2": {
+            "date": "2025-11-26",
+            "changes": [
+                "Updated to extension.json schema v1.0.0",
+                "Added created_at and updated_at timestamps",
+                "Removed deprecated fields (menu, post_install, features)",
+                "Added category, icon, tags for marketplace",
+                "Normalized structure across all extensions"
+            ],
+            "migration_notes": "No database changes. Configuration update only.",
+            "breaking_changes": false,
+            "components": ["config"]
+        },
         "v1.0.1": {
             "date": "2025-11-26",
             "changes": [
@@ -135,38 +111,6 @@
                 "mcp-servers",
                 "scripts"
             ]
-        }
-    },
-    "requirements": {
-        "php": "^8.2",
-        "laravel": "^11.0",
-        "node": "^18.0",
-        "python": "^3.9"
-    },
-    "features": {
-        "llm-core": {
-            "multi-provider": true,
-            "budget-tracking": true,
-            "usage-logs": true,
-            "provider-cache": true
-        },
-        "advanced-features": {
-            "custom-metrics": true,
-            "prompt-templates": true,
-            "parameter-override": true
-        },
-        "orchestration": {
-            "conversations": true,
-            "rag-system": true,
-            "multi-agent": true,
-            "workflows": true
-        },
-        "tools": {
-            "function-calling": true,
-            "mcp-bundled": true,
-            "mcp-external": true,
-            "auto-selection": true,
-            "security-layer": true
         }
     }
 }
