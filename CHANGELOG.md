@@ -7,6 +7,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] - 2025-11-26
+
+### Fixed - Seeder Architecture
+
+**CRITICAL FIX:** Core data now populates correctly during installation
+
+#### Problem
+- Prompt Templates and Knowledge Base tables were empty after fresh installation
+- Core data only appeared after manually clicking "Load Demo Data"
+- Root cause: Essential application data was incorrectly placed in demo seeders
+
+#### Solution
+- **Created `LLMPromptTemplatesSeeder`** (core seeder)
+  - 5 essential templates: Code Review, Text Summarization, Documentation Generator, Bug Analysis, Translation
+  - All templates marked as global (`is_global=true`) for system-wide availability
+  - Categories: analysis, summarization, generation, translation
+- **Created `LLMKnowledgeBaseSeeder`** (core seeder)
+  - 2 essential KB documents: Quick Start Guide, Provider Configuration Guide
+  - Comprehensive markdown documentation for users
+  - Ready for optional indexing via RAG system
+- **Refactored `LLMDemoSeeder`** (demo seeder only)
+  - Removed prompt templates (now in core)
+  - Removed knowledge base documents (now in core)
+  - Retained only true demo data: parameter overrides, workflows, conversations, usage stats
+- **Updated `extension.json`**
+  - Added `LLMPromptTemplatesSeeder` to core seeders array
+  - Added `LLMKnowledgeBaseSeeder` to core seeders array
+  - Total core seeders: 6 (was 4)
+
+#### Impact
+- ✅ Fresh installations now have 5 prompt templates immediately available
+- ✅ Fresh installations now have 2 KB documents for user reference
+- ✅ "Load Demo Data" correctly only adds conversations and usage statistics
+- ✅ No breaking changes - purely additive
+
+#### Technical Details
+```json
+"seeders": {
+  "core": [
+    "LLMPermissionsSeeder",
+    "LLMConfigurationSeeder",
+    "LLMPromptTemplatesSeeder",  // NEW
+    "LLMKnowledgeBaseSeeder",    // NEW
+    "LLMToolDefinitionsSeeder",
+    "LLMMCPConnectorsSeeder"
+  ],
+  "demo": [
+    "LLMDemoSeeder"  // Refactored
+  ]
+}
+```
+
+**Commit:** `9eb0d18` - feat: separate core data from demo seeders
+
+---
+
 ## [1.1.0] - 2025-11-26
 
 ### Added - Real-Time Streaming & Permissions v2.0

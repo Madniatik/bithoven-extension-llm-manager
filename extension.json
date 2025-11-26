@@ -3,7 +3,7 @@
     "name": "LLM Manager",
     "display_name": "LLM Manager",
     "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "author": "BITHOVEN Team",
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {
@@ -100,6 +100,21 @@
         ]
     },
     "changelog": {
+        "v1.0.1": {
+            "date": "2025-11-26",
+            "changes": [
+                "CRITICAL FIX: Separated core data from demo seeders",
+                "Created LLMPromptTemplatesSeeder (5 essential templates)",
+                "Created LLMKnowledgeBaseSeeder (2 essential KB documents)",
+                "Refactored LLMDemoSeeder to only include demo data",
+                "Prompt Templates and Knowledge Base now populate on install"
+            ],
+            "migration_notes": "No new migrations. Only seeder architecture changes.",
+            "breaking_changes": false,
+            "components": [
+                "seeders"
+            ]
+        },
         "v1.0.0": {
             "date": "2025-11-18",
             "changes": [
