@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug', 100)->unique()->nullable(); // Nullable for testing
             $table->enum('type', ['function_calling', 'mcp'])->default('function_calling');
             $table->foreignId('mcp_connector_id')->nullable()->constrained('llm_manager_mcp_connectors')->onDelete('cascade');
-            $table->json('function_schema'); // OpenAI/Anthropic function definition
+            $table->json('function_schema')->nullable(); // OpenAI/Anthropic function definition (nullable for MCP tools)
             $table->string('handler_class')->nullable(); // PHP class for function_calling
             $table->string('handler_method')->nullable(); // PHP method
             $table->json('validation_rules')->nullable(); // Laravel validation rules
