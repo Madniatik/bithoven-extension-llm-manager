@@ -20,13 +20,13 @@ class LLMAdminMiddleware
             'has_user' => $request->user() !== null,
             'user_id' => $request->user()?->id,
             'user_name' => $request->user()?->name,
-            'can_view_llm' => $request->user()?->can('extensions:llm:base:view'),
+            'can_view_llm' => $request->user()?->can('extensions:llm-manager:base:view'),
             'user_roles' => $request->user()?->roles->pluck('name')->toArray(),
             'user_permissions_count' => $request->user()?->getAllPermissions()->count(),
         ]);
         
         // Check if user has permission to access LLM admin
-        if (! $request->user() || ! $request->user()->can('extensions:llm:base:view')) {
+        if (! $request->user() || ! $request->user()->can('extensions:llm-manager:base:view')) {
             \Log::warning('LLM Access Denied', [
                 'user_id' => $request->user()?->id,
                 'ip' => $request->ip(),
