@@ -4,6 +4,10 @@ namespace Bithoven\LLMManager;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Bithoven\LLMManager\Database\Seeders\Data\LLMPermissions;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMExecutor;
 use Bithoven\LLMManager\Services\LLMBudgetManager;
@@ -161,8 +165,8 @@ class LLMServiceProvider extends ServiceProvider
         // Register middleware
         $this->registerMiddleware();
         
-        // Register permissions
-        $this->registerPermissions();
+        // Register Extension Manager hooks
+        $this->registerExtensionHooks();
     }
 
     /**
@@ -178,41 +182,125 @@ class LLMServiceProvider extends ServiceProvider
     }
     
     /**
-     * Register permissions with Spatie Laravel Permission
+     * Register Extension Manager hooks for install/uninstall
      */
-    protected function registerPermissions(): void
+    protected function registerExtensionHooks(): void
     {
-        // Only register if Spatie Permission is installed
-        if (!class_exists(\Spatie\Permission\Models\Permission::class)) {
+        // Check if ExtensionManager exists (CPANEL context)
+        if (!class_exists('App\Services\ExtensionManager')) {
             return;
         }
 
-        $permissions = [
-            'extensions:llm:base:view',
-            'extensions:llm:base:create',
-            'extensions:llm:providers:manage',
-            'extensions:llm:models:manage',
-            'extensions:llm:connections:test',
-            'extensions:llm:metrics:view',
-            'extensions:llm:prompts:manage',
-            'extensions:llm:conversations:view',
-            'extensions:llm:knowledge:manage',
-            'extensions:llm:workflows:manage',
-            'extensions:llm:tools:manage',
-        ];
+        // Register install hook
+        try {
+            \App\Services\ExtensionManager::registerInstallHook('llm-manager', function() {
+                $this->installPermissions();
+            });
+        } catch (\Exception $e) {
+            logger()->debug('ExtensionManager install hook registration failed (normal in standalone mode)', [
+                'error' => $e->getMessage()
+            ]);
+        }
 
-        foreach ($permissions as $permission) {
+        // Register uninstall hook
+        try {
+            \App\Services\ExtensionManager::registerUninstallHook('llm-manager', function() {
+                $this->uninstallPermissions();
+            });
+        } catch (\Exception $e) {
+            logger()->debug('ExtensionManager uninstall hook registration failed (normal in standalone mode)', [
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+    
+    /**
+     * Install permissions during extension installation
+     * Implements Extension Permissions Protocol v2.0
+     */
+    protected function installPermissions(): void
+    {
+        // Only install if Spatie Permission is available
+        if (!class_exists(Permission::class)) {
+            logger()->warning('Spatie Permission not available, skipping permission installation');
+            return;
+        }
+
+        $permissions = LLMPermissions::all();
+        $createdCount = 0;
+        $skippedCount = 0;
+
+        foreach ($permissions as $permissionData) {
             try {
-                \Spatie\Permission\Models\Permission::firstOrCreate([
-                    'name' => $permission,
-                    'guard_name' => 'web',
-                ]);
+                $permission = Permission::firstOrCreate(
+                    ['name' => $permissionData['name']],
+                    [
+                        'alias' => $permissionData['alias'],
+                        'description' => $permissionData['description'],
+                        'guard_name' => 'web'
+                    ]
+                );
+
+                if ($permission->wasRecentlyCreated) {
+                    $createdCount++;
+                } else {
+                    $skippedCount++;
+                }
             } catch (\Exception $e) {
-                // Silently fail if permissions table doesn't exist yet
-                logger()->warning("Could not create permission: {$permission}", [
+                logger()->error('Failed to create permission: ' . $permissionData['name'], [
                     'error' => $e->getMessage()
                 ]);
             }
+        }
+
+        // Assign permissions to Super Admin role
+        try {
+            $superAdmin = Role::where('name', 'Super Admin')->first();
+            if ($superAdmin) {
+                $superAdmin->givePermissionTo(LLMPermissions::names());
+                logger()->info('LLM Manager permissions assigned to Super Admin role');
+            } else {
+                logger()->warning('Super Admin role not found, permissions not assigned to any role');
+            }
+        } catch (\Exception $e) {
+            logger()->error('Failed to assign permissions to Super Admin', [
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        logger()->info('LLM Manager permissions installed', [
+            'created' => $createdCount,
+            'skipped' => $skippedCount,
+            'total' => count($permissions)
+        ]);
+    }
+    
+    /**
+     * Uninstall permissions during extension uninstallation
+     * Implements Extension Permissions Protocol v2.0
+     */
+    protected function uninstallPermissions(): void
+    {
+        try {
+            // Delete role assignments
+            DB::table('role_has_permissions')
+                ->whereIn('permission_id', function($query) {
+                    $query->select('id')
+                        ->from('permissions')
+                        ->where('name', 'like', 'extensions:llm-manager:%');
+                })
+                ->delete();
+
+            // Delete permissions
+            $deletedCount = Permission::where('name', 'like', 'extensions:llm-manager:%')->delete();
+
+            logger()->info('LLM Manager permissions uninstalled', [
+                'deleted' => $deletedCount
+            ]);
+        } catch (\Exception $e) {
+            logger()->error('Failed to uninstall permissions', [
+                'error' => $e->getMessage()
+            ]);
         }
     }
 }

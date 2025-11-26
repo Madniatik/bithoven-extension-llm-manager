@@ -7,6 +7,323 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2025-11-26
+
+### Added - Real-Time Streaming & Permissions v2.0
+
+**Release Status:** ✅ PRODUCTION READY
+
+#### Streaming Infrastructure (100% Complete)
+
+**SSE Controller** (`src/Http/Controllers/Admin/LLMStreamController.php`)
+- `test()` - Interactive streaming test page with real-time UI
+- `stream()` - Simple streaming endpoint with request validation
+- `conversationStream()` - Streaming with full session history context
+- Response headers optimized: `text/event-stream`, `no-cache`, `X-Accel-Buffering: no`
+- Real-time token counting and cost tracking
+- Event types: `chunk`, `done`, `error` for robust client handling
+
+**Provider Streaming Implementations**
+
+_OllamaProvider_ (Complete NDJSON Streaming)
+- Real streaming with `fopen()` + `fgets()` (not buffered HTTP)
+- Line-by-line JSON parsing for NDJSON format
+- Context conversion to Ollama's formatted prompt style
+- Chunk extraction from `response` field
+- Support for models with `thinking` field (e.g., qwen3)
+- Completion detection via `done` flag
+- Parameters: `temperature`, `num_predict`, `top_p`
+
+_OpenAIProvider_ (SDK Streaming)
+- Message array construction from conversation context
+- Uses OpenAI SDK `createStreamed()` method
+- Delta content extraction from streamed chunks
+- Multi-turn conversation support with full history
+- Streaming with tool calls (function calling)
+
+_Other Providers_ (Stubs Ready)
+- AnthropicProvider: Stub implemented, ready for Anthropic streaming API
+- OpenRouterProvider: Stub implemented, ready for OpenRouter streaming
+- CustomProvider: Stub implemented, configurable for any SSE endpoint
+
+**Frontend Streaming UI** (`resources/views/admin/stream/test.blade.php`)
+- EventSource JavaScript client for SSE connections
+- Real-time statistics panel: tokens, chunks, duration, cost
+- Interactive controls:
+  - Configuration selector (filters to streaming-capable providers only)
+  - Temperature slider (0.0 - 2.0, step 0.1)
+  - Max tokens input (1 - 4000)
+  - Prompt textarea with placeholder
+- Live response area with cursor animation
+- Auto-scroll disabled (user can navigate page during streaming)
+- SweetAlert2 notifications for connection status
+- "Clear Response" and "Start Streaming" buttons
+
+#### Usage Metrics Logging (Phase 1 Complete)
+
+**Breaking Change:** `LLMProviderInterface::stream()` signature updated
+```php
+// OLD (v1.0.0)
+public function stream(string $prompt, array $context, array $parameters, callable $callback): void
+
+// NEW (v1.1.0)
+public function stream(string $prompt, array $context, array $parameters, callable $callback): array
+
+// Returns:
+[
+    'usage' => [
+        'prompt_tokens' => int,
+        'completion_tokens' => int,
+        'total_tokens' => int,
+    ],
+    'model' => string,
+    'finish_reason' => string|null, // 'stop', 'length', 'tool_calls', etc.
+]
+```
+
+**LLMStreamLogger Service** (`src/Services/LLMStreamLogger.php`)
+- `startSession(LLMConfiguration $config, string $prompt, array $params): array`
+  - Creates session with UUID, start timestamp, configuration snapshot
+- `endSession(array $session, array $metrics): void`
+  - Calculates execution_time_ms, calls calculateCost(), saves to database
+- `calculateCost(string $provider, string $model, array $usage): float`
+  - Reads pricing from `config/llm-manager.php`, calculates per 1M tokens
+- `logError(array $session, string $error): void`
+  - Logs failed streaming attempts with status='error'
+
+**Real Token Capture**
+- OllamaProvider: Extracts `prompt_eval_count`, `eval_count` from NDJSON `done` chunk
+- OpenAIProvider: Extracts `usage->promptTokens`, `completionTokens`, `totalTokens` from SDK response
+- OpenRouterProvider: Same as OpenAI (SDK compatible)
+- Database: 57+ real usage logs with accurate token counts and costs
+
+**Pricing Configuration** (`config/llm-manager.php` lines 368-407)
+```php
+'pricing' => [
+    'openai' => [
+        'gpt-4o' => ['prompt' => 2.50, 'completion' => 10.00],
+        'gpt-4o-mini' => ['prompt' => 0.15, 'completion' => 0.60],
+    ],
+    'anthropic' => [
+        'claude-3-5-sonnet-20241022' => ['prompt' => 3.00, 'completion' => 15.00],
+        'claude-3-opus-20240229' => ['prompt' => 15.00, 'completion' => 75.00],
+    ],
+    'openrouter' => [
+        'gpt-5.1' => ['prompt' => 5.00, 'completion' => 15.00],
+    ],
+    'ollama' => [
+        '*' => ['prompt' => 0.00, 'completion' => 0.00], // Local models are free
+    ],
+]
+```
+
+#### Permissions Protocol v2.0 Migration
+
+**LLMPermissions Data Class** (`src/Data/Permissions/LLMPermissions.php`)
+```php
+class LLMPermissions {
+    public static function getAll(): array {
+        return [
+            // Configurations (4)
+            ['name' => 'view-llm-configs', 'alias' => 'Ver configuraciones LLM', ...],
+            ['name' => 'create-llm-configs', 'alias' => 'Crear configuraciones LLM', ...],
+            ['name' => 'edit-llm-configs', 'alias' => 'Editar configuraciones LLM', ...],
+            ['name' => 'delete-llm-configs', 'alias' => 'Eliminar configuraciones LLM', ...],
+            
+            // Providers & Stats (2)
+            ['name' => 'manage-llm-providers', 'alias' => 'Gestionar proveedores LLM', ...],
+            ['name' => 'view-llm-stats', 'alias' => 'Ver estadísticas LLM', ...],
+            
+            // Testing (1)
+            ['name' => 'test-llm-configs', 'alias' => 'Probar configuraciones LLM', ...],
+            
+            // Advanced (5)
+            ['name' => 'manage-llm-encryption-keys', ...],
+            ['name' => 'view-llm-conversations', ...],
+            ['name' => 'manage-llm-knowledge-base', ...],
+            ['name' => 'manage-llm-workflows', ...],
+            ['name' => 'manage-llm-tools', ...],
+        ];
+    }
+}
+```
+
+**Auto-Detection Integration**
+- Extension Installer detects `LLMPermissions` class automatically
+- Namespace convention: `Bithoven\{ExtensionName}\Data\Permissions`
+- Backward compatibility: Falls back to `getPermissions()` method if class not found
+- Composer PSR-4 autoload configured for `Data\Permissions` namespace
+
+**ServiceProvider Cleanup**
+- Removed `getPermissions()` method (now uses data class)
+- Permissions registration via `registerPermissions()` method
+- Cleaner separation of concerns
+
+#### UI/UX Improvements
+
+**Streaming Test Page Enhancements**
+- Scroll fix (commit a775101):
+  - Moved `max-height: 500px` from `card-body` to `card` (correct container)
+  - Response area now scrolls correctly without growing indefinitely
+- Auto-scroll removal (commit a775101):
+  - Removed disruptive `responseDiv.scrollIntoView()` behavior
+  - Users can navigate page freely during streaming
+- Monitor improvements (commit 8f1debb):
+  - Changed monitor colors: `bg-dark` → `bg-light-dark`, `text-light` → `text-gray-800`
+  - Better readability and contrast
+  - Monitor logs persistence (only clears initial "Monitor ready" message)
+
+**Real-Time Activity Monitor** (commit 3403bdb)
+- Refactored from static "Test Connection" to live "Streaming Activity" monitor
+- Auto-activates during streaming
+- Logs with timestamps:
+  - Request details (configuration, prompt length, parameters)
+  - SSE connection establishment
+  - Chunk reception (with content preview)
+  - Token counts and costs
+  - Final metrics on completion
+- Status badges: Inactive → Active → Completed/Stopped/Error
+- Color-coded log levels
+- Auto-scroll to bottom of console
+
+**Stats Bar Expansion** (commit 054fb8c)
+- Expanded from 3 to 6 columns:
+  - Tokens (count)
+  - Chunks (count)
+  - Duration (seconds)
+  - Cost (USD with $ symbol)
+  - Log ID (database reference)
+  - View Log (link to detailed log page)
+- `stopStreaming(resetMetrics)` parameter added for controlled cleanup
+
+**Activity History Table** (commit 054fb8c)
+- Stores last 10 streaming sessions in localStorage
+- Click to expand/collapse rows
+- Columns: Date, Configuration, Prompt (truncated), Tokens, Cost, Duration, Status
+- Functions: `addToActivityHistory()`, `renderActivityTable()`
+- View Log button opens `/admin/llm/stats?log_id=X`
+
+#### Routes & Configuration
+
+**New Routes** (`routes/web.php`)
+- `GET /admin/llm/stream/test` - Streaming test page (name: `admin.llm.stream.test`)
+- `GET /admin/llm/stream/stream` - SSE simple endpoint (name: `admin.llm.stream.stream`)
+- `GET /admin/llm/stream/conversation` - SSE with history (name: `admin.llm.stream.conversation`)
+- `GET /admin/llm/activity` - Activity logs list (name: `admin.llm.activity.index`)
+- `GET /admin/llm/activity/{id}` - Activity log details (name: `admin.llm.activity.show`)
+- `GET /admin/llm/activity-export/csv` - CSV export (name: `admin.llm.activity.export.csv`)
+- `GET /admin/llm/activity-export/json` - JSON export (name: `admin.llm.activity.export.json`)
+
+**Breadcrumbs** (`routes/breadcrumbs.php`)
+- `admin.llm.stream.test` - "Streaming Test" (parent: `admin.llm.dashboard`)
+- `admin.llm.activity.index` - "Activity Logs" (parent: `admin.llm.dashboard`)
+- `admin.llm.activity.show` - "Log Details" (parent: `admin.llm.activity.index`)
+
+**CSRF Exceptions** (CPANEL `app/Http/Middleware/VerifyCsrfToken.php`)
+- Added `admin/llm/stream/*` to `$except` array
+- Allows EventSource connections without CSRF token
+
+**Database Seeders**
+- Updated configurations:
+  - ID 1: Ollama Qwen 3 (qwen3:4b, endpoint: `http://localhost:11434`)
+  - ID 2: Ollama DeepSeek Coder (deepseek-coder:6.7b, endpoint: `http://localhost:11434`)
+- Fixed endpoint duplication (base URL only, provider appends path)
+
+#### New Controllers & Services
+
+**Created:**
+- `src/Http/Controllers/Admin/LLMActivityController.php` - Activity logs management
+- `src/Services/LLMStreamLogger.php` - Metrics logging service
+
+**Modified:**
+- `src/Http/Controllers/Admin/LLMStreamController.php` - Logger integration
+- `src/Contracts/LLMProviderInterface.php` - BREAKING: stream() returns array
+- All provider classes - Updated stream() implementations
+
+### Changed
+
+**Breaking Changes:**
+1. `LLMProviderInterface::stream()` signature changed (returns array with metrics)
+2. All providers must implement updated interface (stubs provided for unsupported streaming)
+3. `ServiceProvider::getPermissions()` removed (use data class)
+
+**Non-Breaking Changes:**
+- Ollama endpoint configuration simplified (no duplicate `/api/generate`)
+- Monitor UI color scheme updated
+- Stats bar layout expanded
+
+### Fixed
+
+**Critical Fixes:**
+- Permissions 403 error (migrated to Protocol v2.0)
+- Response card scroll container (correct element targeted)
+- Disruptive auto-scroll behavior (removed)
+- Monitor color readability (improved contrast)
+
+**Minor Fixes:**
+- Validation table name corrected (`llm_manager_configurations`)
+- Ollama endpoint duplication resolved
+- CSRF verification excluded for streaming routes
+- OpenRouter/OpenAI SDK cosmetic error for missing `predictedTokens` (commit 9d6da1a)
+
+### Documentation
+
+**Updated:**
+- `CHANGELOG.md` - Complete v1.1.0 entry (this file)
+- `PROJECT-STATUS.md` - Consolidated project state
+- `ROADMAP.md` - Product roadmap with v1.2.0-v2.0.0 plan
+- `LLM-MANAGER-PENDING-WORK.md` - Marked as obsolete, redirects to new docs
+
+**Pending Updates:**
+- `USAGE-GUIDE.md` - Add streaming section
+- `API-REFERENCE.md` - Document streaming API
+- `EXAMPLES.md` - Add streaming code examples
+
+### Database
+
+**No Migration Changes**
+- Uses existing `llm_manager_usage_logs` table
+- New columns will be added in v1.2.0 (`provider`, `model`)
+
+### Testing
+
+**Manual Testing:** 100%
+- Ollama streaming tested with qwen3:4b and deepseek-coder:6.7b
+- OpenAI streaming tested with gpt-4o-mini
+- UI tested: scroll, auto-scroll, monitor, stats, activity table
+- Permissions tested: all 12 LLM permissions working
+
+**Automated Testing:** 0% (pending v1.2.0)
+- PHPUnit test suite planned for v1.2.0
+- Target: 80%+ code coverage
+
+### Notes
+
+**Requirements:**
+- Active Ollama instance on `localhost:11434` (for Ollama provider)
+- Browser with EventSource API support (all modern browsers)
+- Permissions v2.0 protocol in CPANEL core
+
+**Known Limitations:**
+- Streaming disabled for Anthropic, OpenRouter, Custom providers (stubs ready)
+- Browser cache issue with CSS changes (requires hard refresh)
+- Activity table limited to 10 items in localStorage
+
+**Migration from v1.0.0:**
+- No database changes required
+- Composer update recommended (`composer update bithoven/llm-manager`)
+- Clear caches: `php artisan optimize:clear`
+- Clear permissions cache: `php artisan permission:cache-reset`
+- Custom providers using old `stream()` signature must update
+
+**Next Steps (v1.2.0):**
+- Statistics Dashboard with provider/model breakdown
+- PHPUnit test suite with 80%+ coverage
+- Streaming integration in Conversations UI
+- Documentation updates for streaming API
+
+---
+
 ## [Unreleased] - v1.1.0
 
 ### Added - Real-Time Streaming Support

@@ -16,17 +16,18 @@
         "roles"
     ],
     "permissions": [
-        "extensions:llm:base:view",
-        "extensions:llm:base:create",
-        "extensions:llm:providers:manage",
-        "extensions:llm:models:manage",
-        "extensions:llm:connections:test",
-        "extensions:llm:metrics:view",
-        "extensions:llm:prompts:manage",
-        "extensions:llm:conversations:view",
-        "extensions:llm:knowledge:manage",
-        "extensions:llm:workflows:manage",
-        "extensions:llm:tools:manage"
+        "extensions:llm-manager:base:view",
+        "extensions:llm-manager:base:create",
+        "extensions:llm-manager:providers:manage",
+        "extensions:llm-manager:models:manage",
+        "extensions:llm-manager:connections:test",
+        "extensions:llm-manager:metrics:view",
+        "extensions:llm-manager:prompts:manage",
+        "extensions:llm-manager:conversations:view",
+        "extensions:llm-manager:knowledge:manage",
+        "extensions:llm-manager:workflows:manage",
+        "extensions:llm-manager:tools:manage",
+        "extensions:llm-manager:stats:view"
     ],
     "menu": {
         "label": "LLM Manager",

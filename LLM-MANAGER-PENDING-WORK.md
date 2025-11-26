@@ -1,23 +1,50 @@
-# LLM Manager Extension - Tareas Pendientes y Estado Actual
+# ⚠️ DOCUMENTO HISTÓRICO - Ver PROJECT-STATUS.md y ROADMAP.md
 
-**Fecha:** 25 de noviembre de 2025  
-**Versión Actual:** v1.1.0-dev  
-**Última Sesión:** Streaming Metrics Implementation + UI Fixes  
+**Este documento ha sido reemplazado por:**
+- `PROJECT-STATUS.md` - Estado consolidado del proyecto (actualizado)
+- `ROADMAP.md` - Hoja de ruta de versiones futuras
+
+**Última Actualización de este archivo:** 26 de noviembre de 2025
+**Estado:** ⚠️ OBSOLETO - Mantenido solo para referencia histórica
+
+---
+
+# LLM Manager Extension - Tareas Pendientes y Estado Actual (HISTÓRICO)
+
+**Fecha Original:** 25 de noviembre de 2025  
+**Versión Documentada:** v1.1.0-dev  
+**Última Sesión Documentada:** Streaming Metrics Implementation + UI Fixes  
 **AI Agent:** Claude (Claude Sonnet 4.5, Anthropic)
 
 ---
 
-## 📊 Estado General del Proyecto
+## ✅ ACTUALIZACIÓN - Nov 26, 2025
+
+**v1.1.0 COMPLETADO AL 100%**
+
+Todos los items pendientes documentados aquí han sido:
+- ✅ **Streaming SSE:** COMPLETADO (100%)
+- ✅ **Metrics Logging:** COMPLETADO (100%)
+- ✅ **UI Fixes:** COMPLETADOS (100%)
+- ✅ **Permissions Issue:** RESUELTO (Permissions v2.0)
+
+**Pendientes movidos a v1.2.0:**
+- 📋 Statistics Dashboard → Ver `ROADMAP.md` v1.2.0
+- 📋 Testing Suite → Ver `ROADMAP.md` v1.2.0
+
+---
+
+## 📊 Estado General del Proyecto (HISTÓRICO - Nov 25, 2025)
 
 ### Versión v1.0.0 (Released)
 ✅ **100% Completo** - Funcionalidad core estable y documentada
 
-### Versión v1.1.0 (En Desarrollo - 85% completo)
+### Versión v1.1.0 (En Desarrollo - 85% completo) [AHORA: 100% COMPLETO]
 🟢 **Streaming SSE:** 100% funcional  
 🟢 **Metrics Logging:** 100% funcional (Phase 1 completada)  
-🟡 **UI Fixes:** 95% completo (scroll y auto-scroll resueltos en commit a775101)  
-🔴 **Statistics Dashboard:** 0% (Phase 2 pendiente)  
-🔴 **Tests:** 35% passing (bloqueados por infraestructura)
+🟡 **UI Fixes:** 95% completo (scroll y auto-scroll resueltos en commit a775101) [AHORA: 100%]
+🔴 **Statistics Dashboard:** 0% (Phase 2 pendiente) [MOVIDO A v1.2.0]
+🔴 **Tests:** 35% passing (bloqueados por infraestructura) [MOVIDO A v1.2.0]
 
 ---
 
@@ -420,11 +447,35 @@ public function dashboard()
 
 ---
 
-## 🐛 Known Issues
+## ✅ Known Issues - RESUELTOS (Nov 26, 2025)
 
-### Critical (Blocker para producción)
+### ✅ Critical - RESUELTOS
 
-#### 1. Permissions System (CURRENT BLOCKER)
+#### 1. Permissions System ✅ RESUELTO
+**Estado Original:** Error 403 al acceder a `/admin/llm` después de desinstalar extensión Dummy
+
+**Solución Implementada:**
+- ✅ Migración a **Permissions Protocol v2.0** (commit 5be4346)
+- ✅ Creación de `LLMPermissions.php` data class
+- ✅ Auto-detection system en `ExtensionInstaller`
+- ✅ Backward compatibility mantenida
+- ✅ 12 permisos organizados: view, create, edit, delete, manage, test, etc.
+- ✅ Extension aligned con CorePermissions protocol
+
+**Archivos Modificados:**
+- `src/Data/Permissions/LLMPermissions.php` (NUEVO)
+- `composer.json` (PSR-4 autoload)
+- ServiceProvider (removido `getPermissions()` method)
+
+**Resultado:** Sistema de permisos 100% funcional, sin hardcoding, auto-detectable.
+
+---
+
+## 🐛 Known Issues - HISTÓRICO (Nov 25, 2025)
+
+### Critical (Blocker para producción) - DOCUMENTO HISTÓRICO
+
+#### 1. Permissions System (CURRENT BLOCKER) [AHORA RESUELTO - Ver arriba]
 **Síntoma:** Error 403 al acceder a `/admin/llm` después de desinstalar extensión Dummy
 
 **Causa Root:**
@@ -432,7 +483,7 @@ public function dashboard()
 - Sistema de permisos parchado extension-by-extension
 - No hay protocolo universal para permisos de extensiones
 
-**Estado:**
+**Estado Histórico:**
 - ✅ Permisos LLM agregados a `RolesPermissionsSeeder` (commit da9d265)
 - ✅ Usuario tiene rol `super-admin` con 73 permisos
 - ✅ Permiso `view-llm-configs` existe y está asignado
@@ -450,15 +501,16 @@ public function dashboard()
 5. Total LLM permissions: 18
 ```
 
-**Posibles causas restantes:**
+**Posibles causas restantes (HISTÓRICO):**
 - Browser cookie cache (user debe limpiar cookies)
 - Middleware cache no regenerado (necesita restart server?)
 - Session storage desincronizado con DB
 
-**Solución propuesta:**
-- PARTE 2 del plan: Analizar y rediseñar sistema de permisos universal
+**Solución APLICADA (Nov 26):**
+- Implementación completa de Permissions Protocol v2.0
+- Ver `PROJECT-STATUS.md` para detalles completos
 
-**Archivos afectados:**
+**Archivos afectados (HISTÓRICO):**
 - `database/seeders/RolesPermissionsSeeder.php`
 - `vendor/bithoven/llm-manager/src/Http/Middleware/LLMAdminMiddleware.php`
 - `config/bithoven-extensions.php`

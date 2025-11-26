@@ -26,12 +26,12 @@ class LLMPermissions
             // BASE (2 permisos)
             // ===========================================
             [
-                'name' => 'extensions:llm:base:view',
+                'name' => 'extensions:llm-manager:base:view',
                 'alias' => 'Ver LLM Manager',
                 'description' => 'Permite acceder al dashboard de LLM Manager y ver configuraciones generales. Incluye visualización de modelos, proveedores y estadísticas básicas.'
             ],
             [
-                'name' => 'extensions:llm:base:create',
+                'name' => 'extensions:llm-manager:base:create',
                 'alias' => 'Usar LLM Manager',
                 'description' => 'Permite crear y ejecutar conversaciones con modelos LLM. Incluye envío de prompts, uso de tools y generación de respuestas.'
             ],
@@ -40,7 +40,7 @@ class LLMPermissions
             // MODELS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:models:manage',
+                'name' => 'extensions:llm-manager:models:manage',
                 'alias' => 'Gestionar Modelos LLM',
                 'description' => 'Permite configurar y gestionar modelos de lenguaje. Incluye activación, desactivación, configuración de parámetros y selección de proveedores.'
             ],
@@ -49,7 +49,7 @@ class LLMPermissions
             // PROVIDERS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:providers:manage',
+                'name' => 'extensions:llm-manager:providers:manage',
                 'alias' => 'Gestionar Proveedores',
                 'description' => 'Permite configurar proveedores de LLM (OpenAI, Anthropic, Ollama, etc). Incluye gestión de API keys, endpoints y configuración de conexiones.'
             ],
@@ -58,7 +58,7 @@ class LLMPermissions
             // CONNECTIONS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:connections:test',
+                'name' => 'extensions:llm-manager:connections:test',
                 'alias' => 'Probar Conexiones',
                 'description' => 'Permite ejecutar pruebas de conexión con proveedores LLM. Incluye validación de API keys, latencia y disponibilidad de modelos.'
             ],
@@ -67,7 +67,7 @@ class LLMPermissions
             // CONVERSATIONS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:conversations:view',
+                'name' => 'extensions:llm-manager:conversations:view',
                 'alias' => 'Ver Conversaciones',
                 'description' => 'Permite ver historial de conversaciones con LLMs. Incluye acceso a prompts enviados, respuestas generadas y métricas de uso.'
             ],
@@ -76,7 +76,7 @@ class LLMPermissions
             // PROMPTS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:prompts:manage',
+                'name' => 'extensions:llm-manager:prompts:manage',
                 'alias' => 'Gestionar Prompts',
                 'description' => 'Permite crear, editar y gestionar prompts reutilizables. Incluye templates, variables dinámicas y versionamiento de prompts.'
             ],
@@ -85,7 +85,7 @@ class LLMPermissions
             // TOOLS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:tools:manage',
+                'name' => 'extensions:llm-manager:tools:manage',
                 'alias' => 'Gestionar Tools (Function Calling)',
                 'description' => 'Permite configurar tools y function calling para LLMs. Incluye definición de funciones, parámetros y conexión con MCP servers.'
             ],
@@ -94,7 +94,7 @@ class LLMPermissions
             // WORKFLOWS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:workflows:manage',
+                'name' => 'extensions:llm-manager:workflows:manage',
                 'alias' => 'Gestionar Workflows',
                 'description' => 'Permite crear y gestionar workflows multi-agente. Incluye orquestación de múltiples LLMs, encadenamiento de prompts y automatizaciones.'
             ],
@@ -103,7 +103,7 @@ class LLMPermissions
             // KNOWLEDGE (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:knowledge:manage',
+                'name' => 'extensions:llm-manager:knowledge:manage',
                 'alias' => 'Gestionar Base de Conocimiento',
                 'description' => 'Permite gestionar bases de conocimiento para RAG (Retrieval Augmented Generation). Incluye indexación de documentos y embeddings.'
             ],
@@ -112,7 +112,7 @@ class LLMPermissions
             // METRICS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:metrics:view',
+                'name' => 'extensions:llm-manager:metrics:view',
                 'alias' => 'Ver Métricas',
                 'description' => 'Permite ver métricas detalladas de uso de LLMs. Incluye tokens consumidos, costos, latencia y rendimiento de modelos.'
             ],
@@ -121,7 +121,7 @@ class LLMPermissions
             // STATS (1 permiso)
             // ===========================================
             [
-                'name' => 'extensions:llm:stats:view',
+                'name' => 'extensions:llm-manager:stats:view',
                 'alias' => 'Ver Estadísticas',
                 'description' => 'Permite ver estadísticas generales del sistema LLM. Incluye reportes de uso, gráficas de tendencias y análisis comparativo.'
             ],
@@ -139,7 +139,7 @@ class LLMPermissions
         $grouped = [];
 
         foreach ($all as $permission) {
-            // Format: extensions:llm:scope:action
+            // Format: extensions:llm-manager:scope:action
             $parts = explode(':', $permission['name']);
             $scope = $parts[2] ?? 'other';
             
