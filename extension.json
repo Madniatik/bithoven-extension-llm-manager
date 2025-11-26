@@ -72,6 +72,7 @@
     },
     "seeders": {
         "core": [
+            "LLMPermissionsSeeder",
             "LLMConfigurationSeeder",
             "LLMToolDefinitionsSeeder",
             "LLMMCPConnectorsSeeder"
