@@ -74,6 +74,8 @@
         "core": [
             "LLMPermissionsSeeder",
             "LLMConfigurationSeeder",
+            "LLMPromptTemplatesSeeder",
+            "LLMKnowledgeBaseSeeder",
             "LLMToolDefinitionsSeeder",
             "LLMMCPConnectorsSeeder"
         ],
