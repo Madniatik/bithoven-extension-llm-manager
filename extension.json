@@ -1,11 +1,11 @@
 {
     "slug": "llm-manager",
     "name": "LLM Manager",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
     "author": "BITHOVEN Team",
     "created_at": "2025-01-15T10:00:00+00:00",
-    "updated_at": "2025-11-26T21:40:00+00:00",
+    "updated_at": "2025-11-27T12:00:00+00:00",
     
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {
@@ -52,6 +52,9 @@
         ],
         "demo": [
             "LLMDemoSeeder"
+        ],
+        "uninstall": [
+            "LLMUninstallSeeder"
         ]
     },
     
@@ -63,6 +66,23 @@
     },
     
     "changelog": {
+        "v1.0.3": {
+            "date": "2025-11-27",
+            "changes": [
+                "REFACTOR: Code sanitation - removed 190 lines of dead code from ServiceProvider",
+                "Removed registerExtensionHooks() method (ExtensionManager doesn't support static hooks)",
+                "Removed installPermissions() method (never executed, seeder handles this)",
+                "Removed uninstallPermissions() method (never executed, replaced with UninstallSeeder)",
+                "Created LLMUninstallSeeder for proper permission cleanup on uninstall",
+                "Added 'seeders.uninstall' configuration in extension.json",
+                "Updated ExtensionSeederManager with runUninstall() method",
+                "Updated ExtensionUninstaller to execute uninstall seeders before migration rollback",
+                "Confirmed LLMPermissionsSeeder is the single source of truth for permission installation"
+            ],
+            "migration_notes": "No database changes. Code cleanup and architecture improvement only.",
+            "breaking_changes": false,
+            "components": ["code", "seeders", "config"]
+        },
         "v1.0.2": {
             "date": "2025-11-26",
             "changes": [

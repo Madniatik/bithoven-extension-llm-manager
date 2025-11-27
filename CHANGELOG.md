@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.3] - 2025-11-27
+
+### Removed - Code Sanitation
+
+**REFACTOR:** Eliminated 190 lines of dead code from ServiceProvider
+
+#### Background
+- Code audit revealed ServiceProvider contained hook-based permission management that never executed
+- ExtensionManager doesn't implement static hook registration (`registerInstallHook()`, `registerUninstallHook()` don't exist)
+- LLMPermissionsSeeder was already the functional single source of truth (verified in production)
+- Hooks were silently failing in try/catch blocks without visibility
+
+#### Changes Made
+
+**Removed from LLMServiceProvider.php (~190 lines):**
+- ❌ `registerExtensionHooks()` method (110 lines)
+- ❌ `installPermissions()` method (55 lines) - Never executed, incomplete (only assigned to super-admin vs seeder's 4 roles)
+- ❌ `uninstallPermissions()` method (25 lines) - Never executed
+
+**Created:**
+- ✅ `LLMUninstallSeeder.php` - Proper permission cleanup during uninstallation
+  - Deletes role_has_permissions entries
+  - Deletes permissions matching `extensions:llm-manager:%`
+  - Clears permission cache
+  - Provides detailed console output
+
+**Updated extension.json:**
+```json
+"seeders": {
+  "core": [...],
+  "demo": [...],
+  "uninstall": ["LLMUninstallSeeder"]  // NEW
+}
+```
+
+**Updated CPANEL Core (app/Services/Extensions/):**
+- `ExtensionSeederManager`: Added `runUninstall()` method
+- `ExtensionUninstaller`: Now executes uninstall seeders before migration rollback
+
+#### Impact
+- ✅ Cleaner codebase - removed confusing dead code
+- ✅ Permissions now properly cleaned up on uninstall (was missing before)
+- ✅ Consistent seeder-based approach for install/uninstall
+- ✅ No breaking changes - installation flow unchanged
+- ✅ LLMPermissionsSeeder remains the authoritative source for permission creation
+
+#### Verification
+```bash
+# Before uninstall
+SELECT COUNT(*) FROM permissions WHERE name LIKE 'extensions:llm-manager:%';
+# Result: 12
+
+# After uninstall (with remove_data=true)
+SELECT COUNT(*) FROM permissions WHERE name LIKE 'extensions:llm-manager:%';
+# Result: 0 ✅
+```
+
+#### Technical Details
+- **Installation flow:** ExtensionSeederManager::runBase() → LLMPermissionsSeeder → 4 roles assigned (12, 12, 5, 8 perms)
+- **Uninstallation flow:** ExtensionSeederManager::runUninstall() → LLMUninstallSeeder → Cleanup complete
+- **No hooks involved:** System uses seeders exclusively, not ServiceProvider callbacks
+
+---
+
 ## [1.0.1] - 2025-11-26
 
 ### Fixed - Seeder Architecture
