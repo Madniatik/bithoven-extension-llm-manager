@@ -119,7 +119,7 @@
                                     @if($message->role === 'user')
                                     <div class="symbol symbol-35px symbol-circle ms-3">
                                         @if($conversation->user && $conversation->user->avatar)
-                                            <img src="{{ asset($conversation->user->avatar) }}" alt="{{ $conversation->user->name }}" />
+                                            <img src="{{ asset('storage/' . $conversation->user->avatar) }}" alt="{{ $conversation->user->name }}" />
                                         @elseif($conversation->user)
                                             <span class="symbol-label bg-light-success text-success fw-bold">{{ strtoupper(substr($conversation->user->name, 0, 1)) }}</span>
                                         @else
@@ -157,6 +157,8 @@
                             <select id="configuration_id" name="configuration_id" class="form-select">
                                 @foreach($configurations as $config)
                                     <option value="{{ $config->id }}" 
+                                        data-provider="{{ ucfirst($config->provider) }}"
+                                        data-model="{{ $config->model }}"
                                         {{ $config->id == $conversation->configuration->id ? 'selected' : '' }}>
                                         {{ $config->name }}
                                     </option>
@@ -243,7 +245,7 @@
                 const userName = '{{ $conversation->user->name ?? "User" }}';
                 const userInitial = '{{ $conversation->user ? strtoupper(substr($conversation->user->name, 0, 1)) : "U" }}';
                 @if($conversation->user && $conversation->user->avatar)
-                const userAvatar = `<img src="{{ asset($conversation->user->avatar) }}" alt="${userName}" />`;
+                const userAvatar = `<img src="{{ asset('storage/' . $conversation->user->avatar) }}" alt="${userName}" />`;
                 @else
                 const userAvatar = `<span class="symbol-label bg-light-success text-success fw-bold">${userInitial}</span>`;
                 @endif
@@ -276,9 +278,9 @@
                 const timeStr = now.toTimeString().split(' ')[0];
                 const configSelect = document.getElementById('configuration_id');
                 const selectedOption = configSelect.options[configSelect.selectedIndex];
-                const configName = selectedOption.text;
-                // Extract provider and model from config name (format: "Provider - Model")
-                const [provider, model] = configName.includes(' - ') ? configName.split(' - ') : [configName, ''];
+                // Get provider and model from data attributes
+                const provider = selectedOption.getAttribute('data-provider') || 'AI';
+                const model = selectedOption.getAttribute('data-model') || '';
                 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'd-flex justify-content-start mb-10';
