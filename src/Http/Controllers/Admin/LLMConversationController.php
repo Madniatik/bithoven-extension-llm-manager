@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Models\LLMConversationSession;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
+use Bithoven\LLMManager\Models\LLMConfiguration;
 use Bithoven\LLMManager\Services\Conversations\LLMConversationManager;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMStreamLogger;
@@ -32,8 +33,11 @@ class LLMConversationController extends Controller
     {
         $conversation = LLMConversationSession::with(['user', 'configuration', 'messages', 'logs'])
             ->findOrFail($id);
+        
+        // Get all active configurations for model selector
+        $configurations = LLMConfiguration::active()->get();
 
-        return view('llm-manager::admin.conversations.show', compact('conversation'));
+        return view('llm-manager::admin.conversations.show', compact('conversation', 'configurations'));
     }
 
     public function destroy(int $id)
@@ -63,9 +67,14 @@ class LLMConversationController extends Controller
             'message' => 'required|string|max:5000',
             'temperature' => 'nullable|numeric|min:0|max:2',
             'max_tokens' => 'nullable|integer|min:1|max:4000',
+            'configuration_id' => 'nullable|integer|exists:llm_manager_configurations,id',
         ]);
 
         $conversation = LLMConversationSession::with(['configuration', 'messages'])->findOrFail($id);
+
+        // Use provided configuration or fall back to conversation's configuration
+        $configurationId = $validated['configuration_id'] ?? $conversation->configuration->id;
+        $configuration = LLMConfiguration::findOrFail($configurationId);
 
         // If conversation has ended or expired, don't allow streaming
         if ($conversation->ended_at || ($conversation->expires_at && $conversation->expires_at->isPast())) {
@@ -77,7 +86,7 @@ class LLMConversationController extends Controller
         // Increase PHP execution time for streaming
         set_time_limit(300); // 5 minutes
 
-        return Response::stream(function () use ($validated, $conversation) {
+        return Response::stream(function () use ($validated, $conversation, $configuration) {
             // Disable output buffering
             if (ob_get_level()) {
                 ob_end_clean();
@@ -108,19 +117,19 @@ class LLMConversationController extends Controller
 
                 // 3. Start logging session
                 $params = [
-                    'temperature' => $validated['temperature'] ?? $conversation->configuration->temperature,
-                    'max_tokens' => $validated['max_tokens'] ?? $conversation->configuration->max_tokens,
+                    'temperature' => $validated['temperature'] ?? $configuration->temperature,
+                    'max_tokens' => $validated['max_tokens'] ?? $configuration->max_tokens,
                 ];
 
                 $session = $this->streamLogger->startSession(
-                    $conversation->configuration,
+                    $configuration,
                     $validated['message'],
                     $params
                 );
 
                 // 4. Get provider instance
                 $provider = $this->llmManager
-                    ->config($conversation->configuration->id)
+                    ->config($configuration->id)
                     ->getProvider();
 
                 // 5. Stream response chunks

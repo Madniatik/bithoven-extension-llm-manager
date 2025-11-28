@@ -137,6 +137,20 @@
                     <form id="stream-message-form" class="d-flex flex-column gap-3">
                         @csrf
                         
+                        <!-- Model Selection -->
+                        <div>
+                            <label class="form-label">LLM Model</label>
+                            <select id="configuration_id" name="configuration_id" class="form-select">
+                                @foreach($configurations as $config)
+                                    <option value="{{ $config->id }}" 
+                                        {{ $config->id == $conversation->configuration->id ? 'selected' : '' }}>
+                                        {{ $config->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-gray-600">Select which model to use for streaming</small>
+                        </div>
+                        
                         <!-- Streaming Controls -->
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -245,6 +259,7 @@
                 // Get form data
                 const temperature = document.getElementById('temperature').value;
                 const maxTokens = document.getElementById('max_tokens').value;
+                const configurationId = document.getElementById('configuration_id').value;
 
                 // Update UI
                 document.getElementById('send-stream-btn').style.display = 'none';
@@ -265,7 +280,8 @@
                 const eventSourceUrl = url.toString() + '?' + new URLSearchParams({
                     message: message,
                     temperature: temperature,
-                    max_tokens: maxTokens
+                    max_tokens: maxTokens,
+                    configuration_id: configurationId
                 });
 
                 this.eventSource = new EventSource(eventSourceUrl);
