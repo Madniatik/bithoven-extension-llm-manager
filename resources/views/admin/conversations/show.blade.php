@@ -457,20 +457,6 @@
                     this.currentAssistantMessage.removeAttribute('id');
                     this.currentAssistantMessage = null;
                 }
-                
-                // Show success notification
-                const toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                });
-                
-                toast.fire({
-                    icon: 'success',
-                    title: 'Message streamed successfully'
-                });
             }
 
             resetUI() {
