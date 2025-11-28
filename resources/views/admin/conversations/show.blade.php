@@ -227,16 +227,73 @@
             }
 
             init() {
+                // Load saved settings from localStorage
+                this.loadSettings();
+                
                 // Temperature slider listener
                 document.getElementById('temperature').addEventListener('input', (e) => {
                     document.getElementById('temp-display').textContent = e.target.value;
+                    this.saveSettings();
                 });
+
+                // Context limit listener
+                document.getElementById('context_limit').addEventListener('change', () => this.saveSettings());
+
+                // Max tokens listener
+                document.getElementById('max_tokens').addEventListener('input', () => this.saveSettings());
+
+                // Configuration selector listener
+                document.getElementById('configuration_id').addEventListener('change', () => this.saveSettings());
 
                 // Send button listener
                 document.getElementById('send-stream-btn').addEventListener('click', () => this.startStreaming());
 
                 // Stop button listener
                 document.getElementById('stop-stream-btn').addEventListener('click', () => this.stopStreaming());
+            }
+
+            loadSettings() {
+                const conversationId = {{ $conversation->id }};
+                const savedSettings = localStorage.getItem(`llm_conversation_${conversationId}_settings`);
+                
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    
+                    // Restore context limit
+                    if (settings.context_limit !== undefined) {
+                        const contextSelect = document.getElementById('context_limit');
+                        contextSelect.value = settings.context_limit;
+                    }
+                    
+                    // Restore temperature
+                    if (settings.temperature !== undefined) {
+                        const tempInput = document.getElementById('temperature');
+                        tempInput.value = settings.temperature;
+                        document.getElementById('temp-display').textContent = settings.temperature;
+                    }
+                    
+                    // Restore max tokens
+                    if (settings.max_tokens !== undefined) {
+                        document.getElementById('max_tokens').value = settings.max_tokens;
+                    }
+                    
+                    // Restore configuration
+                    if (settings.configuration_id !== undefined) {
+                        document.getElementById('configuration_id').value = settings.configuration_id;
+                    }
+                }
+            }
+
+            saveSettings() {
+                const conversationId = {{ $conversation->id }};
+                const settings = {
+                    context_limit: document.getElementById('context_limit').value,
+                    temperature: document.getElementById('temperature').value,
+                    max_tokens: document.getElementById('max_tokens').value,
+                    configuration_id: document.getElementById('configuration_id').value
+                };
+                
+                localStorage.setItem(`llm_conversation_${conversationId}_settings`, JSON.stringify(settings));
             }
 
             createUserMessage(message) {
