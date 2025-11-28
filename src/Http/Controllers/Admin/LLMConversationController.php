@@ -63,12 +63,19 @@ class LLMConversationController extends Controller
      */
     public function streamReply(int $id, Request $request)
     {
+        \Log::info('streamReply validation attempt', [
+            'conversation_id' => $id,
+            'params' => $request->all(),
+        ]);
+
         $validated = $request->validate([
             'message' => 'required|string|max:5000',
             'temperature' => 'nullable|numeric|min:0|max:2',
             'max_tokens' => 'nullable|integer|min:1|max:4000',
             'configuration_id' => 'nullable|integer|exists:llm_manager_configurations,id',
         ]);
+
+        \Log::info('streamReply validation passed', ['validated' => $validated]);
 
         $conversation = LLMConversationSession::with(['configuration', 'messages'])->findOrFail($id);
 
@@ -101,9 +108,20 @@ class LLMConversationController extends Controller
                     'token_count' => str_word_count($validated['message']), // Rough estimate
                 ]);
 
-                // 2. Build context from conversation history
+                // 2. Build context from conversation history (limit to last 10 messages)
                 $context = [];
-                foreach ($conversation->messages as $msg) {
+                $recentMessages = $conversation->messages()
+                    ->orderBy('created_at', 'desc')
+                    ->take(10)
+                    ->get()
+                    ->reverse();
+                
+                foreach ($recentMessages as $msg) {
+                    // Skip empty messages
+                    if (empty(trim($msg->content))) {
+                        continue;
+                    }
+                    
                     $context[] = [
                         'role' => $msg->role,
                         'content' => $msg->content,
@@ -117,8 +135,8 @@ class LLMConversationController extends Controller
 
                 // 3. Start logging session
                 $params = [
-                    'temperature' => $validated['temperature'] ?? $configuration->temperature,
-                    'max_tokens' => $validated['max_tokens'] ?? $configuration->max_tokens,
+                    'temperature' => (float) ($validated['temperature'] ?? $configuration->temperature),
+                    'max_tokens' => (int) ($validated['max_tokens'] ?? $configuration->max_tokens),
                 ];
 
                 $session = $this->streamLogger->startSession(
@@ -159,6 +177,12 @@ class LLMConversationController extends Controller
                     }
                 );
 
+                \Log::info('Stream completed', [
+                    'fullResponse_length' => strlen($fullResponse),
+                    'fullResponse_preview' => substr($fullResponse, 0, 100),
+                    'metrics' => $metrics,
+                ]);
+
                 // 6. Save usage log
                 $usageLog = $this->streamLogger->endSession($session, $fullResponse, $metrics);
 
@@ -192,6 +216,13 @@ class LLMConversationController extends Controller
                 flush();
 
             } catch (\Exception $e) {
+                \Log::error('streamReply exception', [
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString(),
+                ]);
+
                 // Send error event
                 echo "data: " . json_encode([
                     'type' => 'error',

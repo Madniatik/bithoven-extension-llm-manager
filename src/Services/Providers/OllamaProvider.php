@@ -88,57 +88,81 @@ class OllamaProvider implements LLMProviderInterface
             ],
         ]);
 
-        // Use native PHP streams for real streaming (Laravel Http waits for full response)
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
-                'content' => $payload,
-                'timeout' => 120,
-            ],
+        \Log::info('OllamaProvider: Payload', [
+            'payload' => $payload,
+            'payload_length' => strlen($payload),
+            'context_count' => count($context),
         ]);
 
-        $stream = @fopen($endpoint, 'r', false, $context);
-        
-        if (!$stream) {
-            throw new \Exception("Failed to connect to Ollama at {$endpoint}");
-        }
-
-        // Storage for final metrics
+        // Use cURL for real streaming (fopen doesn't work well with POST)
         $finalData = null;
+        $buffer = '';
 
-        // Read NDJSON stream line by line
-        while (!feof($stream)) {
-            $line = fgets($stream);
-            if ($line === false) {
-                continue;
-            }
+        $ch = curl_init($endpoint);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_RETURNTRANSFER => false,
+            CURLOPT_WRITEFUNCTION => function($curl, $data) use ($callback, &$finalData, &$buffer) {
+                $buffer .= $data;
+                $lines = explode("\n", $buffer);
+                
+                // Keep last incomplete line in buffer
+                $buffer = array_pop($lines);
+                
+                foreach ($lines as $line) {
+                    $line = trim($line);
+                    if (empty($line)) {
+                        continue;
+                    }
 
-            $line = trim($line);
-            if (empty($line)) {
-                continue;
-            }
+                    $json = json_decode($line, true);
+                    if (!$json) {
+                        continue;
+                    }
 
-            $data = json_decode($line, true);
-            if (!$data) {
-                continue;
-            }
+                    // Send response chunk to callback
+                    // Some models (like qwen3) may use 'thinking' field instead of 'response'
+                    $chunk = $json['response'] ?? $json['thinking'] ?? null;
+                    if ($chunk !== null && $chunk !== '') {
+                        $callback($chunk);
+                    }
 
-            // Send response chunk to callback
-            // Some models (like qwen3) may use 'thinking' field instead of 'response'
-            $chunk = $data['response'] ?? $data['thinking'] ?? null;
-            if ($chunk !== null && $chunk !== '') {
-                $callback($chunk);
-            }
+                    // Check if done and capture final metrics
+                    if (isset($json['done']) && $json['done'] === true) {
+                        $finalData = $json;
+                    }
+                }
+                
+                return strlen($data);
+            },
+            CURLOPT_TIMEOUT => 120,
+            CURLOPT_FOLLOWLOCATION => true,
+        ]);
 
-            // Check if done and capture final metrics
-            if (isset($data['done']) && $data['done'] === true) {
-                $finalData = $data;
-                break;
-            }
+        \Log::info('OllamaProvider: Starting cURL request', [
+            'endpoint' => $endpoint,
+            'model' => $this->configuration->model,
+        ]);
+
+        $result = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        $errno = curl_errno($ch);
+        curl_close($ch);
+
+        \Log::info('OllamaProvider: cURL completed', [
+            'result' => $result === false ? 'FALSE' : 'TRUE',
+            'http_code' => $httpCode,
+            'error' => $error,
+            'errno' => $errno,
+            'finalData_isset' => isset($finalData),
+        ]);
+        
+        if ($result === false) {
+            throw new \Exception("Failed to connect to Ollama at {$endpoint}: {$error}");
         }
-
-        fclose($stream);
 
         // Extract usage metrics from final response
         return [
