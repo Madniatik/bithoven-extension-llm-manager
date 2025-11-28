@@ -80,15 +80,22 @@ class OpenAIProvider implements LLMProviderInterface
         $lastResponse = null;
 
         try {
+            // Ensure parameters are of correct types
+            $temperature = (float) ($parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7);
+            $maxTokens = (int) ($parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096);
+            $topP = (float) ($parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1);
+            $frequencyPenalty = (float) ($parameters['frequency_penalty'] ?? $this->configuration->default_parameters['frequency_penalty'] ?? 0);
+            $presencePenalty = (float) ($parameters['presence_penalty'] ?? $this->configuration->default_parameters['presence_penalty'] ?? 0);
+
             // Create streaming request
             $stream = $this->client->chat()->createStreamed([
                 'model' => $this->configuration->model,
                 'messages' => $messages,
-                'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
-                'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
-                'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
-                'frequency_penalty' => $parameters['frequency_penalty'] ?? $this->configuration->default_parameters['frequency_penalty'] ?? 0,
-                'presence_penalty' => $parameters['presence_penalty'] ?? $this->configuration->default_parameters['presence_penalty'] ?? 0,
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+                'top_p' => $topP,
+                'frequency_penalty' => $frequencyPenalty,
+                'presence_penalty' => $presencePenalty,
             ]);
 
             // Process stream chunks

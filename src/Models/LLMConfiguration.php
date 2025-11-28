@@ -102,6 +102,18 @@ class LLMConfiguration extends Model
     }
 
     /**
+     * Magic accessor for default_parameters fields
+     * Allows accessing $config->temperature, $config->max_tokens, etc.
+     */
+    public function __get($key)
+    {
+        if (in_array($key, ['temperature', 'max_tokens', 'top_p', 'frequency_penalty', 'presence_penalty'])) {
+            return $this->default_parameters[$key] ?? null;
+        }
+        return parent::__get($key);
+    }
+
+    /**
      * Get effective parameters by merging with overrides
      */
     public function getEffectiveParameters(string $extensionSlug = null, string $context = null): array

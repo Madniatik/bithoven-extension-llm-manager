@@ -67,13 +67,18 @@ class OpenRouterProvider implements LLMProviderInterface
         $lastResponse = null;
 
         try {
+            // Ensure parameters are of correct types
+            $temperature = (float) ($parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7);
+            $maxTokens = (int) ($parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096);
+            $topP = (float) ($parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1);
+
             // Stream using OpenAI-compatible API
             $stream = $this->client->chat()->createStreamed([
                 'model' => $this->configuration->model,
                 'messages' => $messages,
-                'temperature' => $parameters['temperature'] ?? $this->configuration->default_parameters['temperature'] ?? 0.7,
-                'max_tokens' => $parameters['max_tokens'] ?? $this->configuration->default_parameters['max_tokens'] ?? 4096,
-                'top_p' => $parameters['top_p'] ?? $this->configuration->default_parameters['top_p'] ?? 1,
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+                'top_p' => $topP,
             ]);
 
             foreach ($stream as $response) {
