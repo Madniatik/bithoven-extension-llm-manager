@@ -29,6 +29,34 @@ class LLMConversationController extends Controller
         return view('llm-manager::admin.conversations.index', compact('sessions'));
     }
 
+    public function create()
+    {
+        $configurations = LLMConfiguration::active()->get();
+
+        return view('llm-manager::admin.conversations.create', compact('configurations'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'configuration_id' => 'required|exists:llm_manager_configurations,id',
+            'title' => 'nullable|string|max:255',
+        ]);
+
+        $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
+        
+        $conversation = $this->conversationManager->createSession(
+            $configuration,
+            null, // extension_slug
+            auth()->id(),
+            $validated['title'] ?? 'New Conversation'
+        );
+
+        return redirect()
+            ->route('admin.llm.conversations.show', $conversation->id)
+            ->with('success', 'Conversation created successfully');
+    }
+
     public function show(int $id)
     {
         $conversation = LLMConversationSession::with(['user', 'configuration', 'messages', 'logs'])

@@ -44,6 +44,8 @@ Route::prefix('admin/llm')
         
         // Conversations
         Route::get('conversations', [LLMConversationController::class, 'index'])->name('conversations.index');
+        Route::get('conversations/create', [LLMConversationController::class, 'create'])->name('conversations.create');
+        Route::post('conversations', [LLMConversationController::class, 'store'])->name('conversations.store');
         Route::get('conversations/{id}', [LLMConversationController::class, 'show'])->name('conversations.show')->where('id', '[0-9]+');
         Route::delete('conversations/{id}', [LLMConversationController::class, 'destroy'])->name('conversations.destroy')->where('id', '[0-9]+');
         Route::get('conversations/{id}/export', [LLMConversationController::class, 'export'])->name('conversations.export')->where('id', '[0-9]+');

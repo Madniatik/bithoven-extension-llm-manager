@@ -16,6 +16,10 @@
                 </div>
             </div>
             <div class="card-toolbar">
+                <a href="{{ route('admin.llm.conversations.create') }}" class="btn btn-primary me-3">
+                    <i class="ki-duotone ki-plus fs-2"></i>
+                    New Conversation
+                </a>
                 <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
                     <i class="ki-duotone ki-filter fs-2"><span class="path1"></span><span class="path2"></span></i>
                     Filter
