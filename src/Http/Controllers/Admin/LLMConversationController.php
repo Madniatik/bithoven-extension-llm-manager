@@ -73,6 +73,7 @@ class LLMConversationController extends Controller
             'temperature' => 'nullable|numeric|min:0|max:2',
             'max_tokens' => 'nullable|integer|min:1|max:4000',
             'configuration_id' => 'nullable|integer|exists:llm_manager_configurations,id',
+            'context_limit' => 'nullable|integer|min:0|max:100',
         ]);
 
         \Log::info('streamReply validation passed', ['validated' => $validated]);
@@ -108,25 +109,47 @@ class LLMConversationController extends Controller
                     'token_count' => str_word_count($validated['message']), // Rough estimate
                 ]);
 
-                // 2. Build context from conversation history (limit to last 10 messages)
+                // 2. Build context from conversation history (use context_limit from request)
+                $contextLimit = (int) ($validated['context_limit'] ?? 10);
                 $context = [];
-                $recentMessages = $conversation->messages()
-                    ->orderBy('created_at', 'desc')
-                    ->take(10)
-                    ->get()
-                    ->reverse();
                 
-                foreach ($recentMessages as $msg) {
-                    // Skip empty messages
-                    if (empty(trim($msg->content))) {
-                        continue;
-                    }
+                if ($contextLimit > 0) {
+                    $recentMessages = $conversation->messages()
+                        ->orderBy('created_at', 'desc')
+                        ->take($contextLimit)
+                        ->get()
+                        ->reverse();
                     
-                    $context[] = [
-                        'role' => $msg->role,
-                        'content' => $msg->content,
-                    ];
+                    foreach ($recentMessages as $msg) {
+                        // Skip empty messages
+                        if (empty(trim($msg->content))) {
+                            continue;
+                        }
+                        
+                        $context[] = [
+                            'role' => $msg->role,
+                            'content' => $msg->content,
+                        ];
+                    }
+                } else {
+                    // context_limit = 0 means all messages
+                    $allMessages = $conversation->messages()
+                        ->orderBy('created_at', 'asc')
+                        ->get();
+                    
+                    foreach ($allMessages as $msg) {
+                        // Skip empty messages
+                        if (empty(trim($msg->content))) {
+                            continue;
+                        }
+                        
+                        $context[] = [
+                            'role' => $msg->role,
+                            'content' => $msg->content,
+                        ];
+                    }
                 }
+                
                 // Add current user message
                 $context[] = [
                     'role' => 'user',

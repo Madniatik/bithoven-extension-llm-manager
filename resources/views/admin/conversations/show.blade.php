@@ -101,8 +101,16 @@
                                     
                                     <div>
                                         <span class="text-gray-600 fw-semibold fs-8">
-                                            {{ ucfirst($message->role) }}
+                                            @if($message->role === 'user')
+                                                {{ $conversation->user->name }}
+                                            @else
+                                                Assistant
+                                            @endif
                                         </span>
+                                        @if($message->role === 'assistant')
+                                            <span class="badge badge-light-primary badge-sm ms-2">{{ $conversation->configuration->provider }}</span>
+                                            <span class="badge badge-light-info badge-sm">{{ $conversation->configuration->model }}</span>
+                                        @endif
                                         <span class="text-gray-500 fw-semibold fs-8 ms-2">
                                             {{ $message->created_at->format('H:i:s') }}
                                         </span>
@@ -110,7 +118,11 @@
 
                                     @if($message->role === 'user')
                                     <div class="symbol symbol-35px symbol-circle ms-3">
-                                        <span class="symbol-label bg-light-success text-success fw-bold">U</span>
+                                        @if($conversation->user->avatar)
+                                            <img src="{{ asset($conversation->user->avatar) }}" alt="{{ $conversation->user->name }}" />
+                                        @else
+                                            <span class="symbol-label bg-light-success text-success fw-bold">{{ strtoupper(substr($conversation->user->name, 0, 1)) }}</span>
+                                        @endif
                                     </div>
                                     @endif
                                 </div>
@@ -153,12 +165,23 @@
                         
                         <!-- Streaming Controls -->
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <label class="form-label">Context Limit</label>
+                                <select id="context_limit" name="context_limit" class="form-select">
+                                    <option value="5">Last 5 messages</option>
+                                    <option value="10" selected>Last 10 messages</option>
+                                    <option value="20">Last 20 messages</option>
+                                    <option value="50">Last 50 messages</option>
+                                    <option value="0">All messages</option>
+                                </select>
+                                <small class="text-gray-600">How much conversation history to send</small>
+                            </div>
+                            <div class="col-md-4">
                                 <label class="form-label">Temperature</label>
                                 <input type="range" id="temperature" name="temperature" class="form-range" min="0" max="2" step="0.1" value="{{ $conversation->configuration->temperature ?? 0.7 }}">
                                 <small class="text-gray-600">Current: <span id="temp-display">{{ $conversation->configuration->temperature ?? 0.7 }}</span></small>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label">Max Tokens</label>
                                 <input type="number" id="max_tokens" name="max_tokens" class="form-control" min="1" max="4000" value="{{ $conversation->configuration->max_tokens ?? 2000 }}" placeholder="2000">
                             </div>
@@ -215,6 +238,13 @@
             createUserMessage(message) {
                 const now = new Date();
                 const timeStr = now.toTimeString().split(' ')[0];
+                const userName = '{{ $conversation->user->name }}';
+                const userInitial = '{{ strtoupper(substr($conversation->user->name, 0, 1)) }}';
+                @if($conversation->user->avatar)
+                const userAvatar = `<img src="{{ asset($conversation->user->avatar) }}" alt="${userName}" />`;
+                @else
+                const userAvatar = `<span class="symbol-label bg-light-success text-success fw-bold">${userInitial}</span>`;
+                @endif
                 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'd-flex justify-content-end mb-10';
@@ -222,11 +252,11 @@
                     <div class="d-flex flex-column align-items-end">
                         <div class="d-flex align-items-center mb-2">
                             <div>
-                                <span class="text-gray-600 fw-semibold fs-8">User</span>
+                                <span class="text-gray-600 fw-semibold fs-8">${userName}</span>
                                 <span class="text-gray-500 fw-semibold fs-8 ms-2">${timeStr}</span>
                             </div>
                             <div class="symbol symbol-35px symbol-circle ms-3">
-                                <span class="symbol-label bg-light-success text-success fw-bold">U</span>
+                                ${userAvatar}
                             </div>
                         </div>
                         <div class="p-5 rounded bg-light-success" style="max-width: 70%">
@@ -242,6 +272,11 @@
             createAssistantPlaceholder() {
                 const now = new Date();
                 const timeStr = now.toTimeString().split(' ')[0];
+                const configSelect = document.getElementById('configuration_id');
+                const selectedOption = configSelect.options[configSelect.selectedIndex];
+                const configName = selectedOption.text;
+                // Extract provider and model from config name (format: "Provider - Model")
+                const [provider, model] = configName.includes(' - ') ? configName.split(' - ') : [configName, ''];
                 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'd-flex justify-content-start mb-10';
@@ -254,6 +289,8 @@
                             </div>
                             <div>
                                 <span class="text-gray-600 fw-semibold fs-8">Assistant</span>
+                                <span class="badge badge-light-primary badge-sm ms-2">${this.escapeHtml(provider)}</span>
+                                ${model ? `<span class="badge badge-light-info badge-sm">${this.escapeHtml(model)}</span>` : ''}
                                 <span class="text-gray-500 fw-semibold fs-8 ms-2">${timeStr}</span>
                             </div>
                         </div>
@@ -335,6 +372,7 @@
                 const temperature = document.getElementById('temperature').value;
                 const maxTokens = document.getElementById('max_tokens').value;
                 const configurationId = document.getElementById('configuration_id').value;
+                const contextLimit = document.getElementById('context_limit').value;
 
                 // 1. Add user message to chat
                 this.createUserMessage(message);
@@ -365,7 +403,8 @@
                     message: message,
                     temperature: temperature,
                     max_tokens: maxTokens,
-                    configuration_id: configurationId
+                    configuration_id: configurationId,
+                    context_limit: contextLimit
                 });
 
                 this.eventSource = new EventSource(eventSourceUrl);
