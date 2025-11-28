@@ -102,7 +102,7 @@
                                     <div>
                                         <span class="text-gray-600 fw-semibold fs-8">
                                             @if($message->role === 'user')
-                                                {{ $conversation->user->name }}
+                                                {{ $conversation->user->name ?? 'User' }}
                                             @else
                                                 Assistant
                                             @endif
@@ -118,10 +118,12 @@
 
                                     @if($message->role === 'user')
                                     <div class="symbol symbol-35px symbol-circle ms-3">
-                                        @if($conversation->user->avatar)
+                                        @if($conversation->user && $conversation->user->avatar)
                                             <img src="{{ asset($conversation->user->avatar) }}" alt="{{ $conversation->user->name }}" />
-                                        @else
+                                        @elseif($conversation->user)
                                             <span class="symbol-label bg-light-success text-success fw-bold">{{ strtoupper(substr($conversation->user->name, 0, 1)) }}</span>
+                                        @else
+                                            <span class="symbol-label bg-light-success text-success fw-bold">U</span>
                                         @endif
                                     </div>
                                     @endif
@@ -238,9 +240,9 @@
             createUserMessage(message) {
                 const now = new Date();
                 const timeStr = now.toTimeString().split(' ')[0];
-                const userName = '{{ $conversation->user->name }}';
-                const userInitial = '{{ strtoupper(substr($conversation->user->name, 0, 1)) }}';
-                @if($conversation->user->avatar)
+                const userName = '{{ $conversation->user->name ?? "User" }}';
+                const userInitial = '{{ $conversation->user ? strtoupper(substr($conversation->user->name, 0, 1)) : "U" }}';
+                @if($conversation->user && $conversation->user->avatar)
                 const userAvatar = `<img src="{{ asset($conversation->user->avatar) }}" alt="${userName}" />`;
                 @else
                 const userAvatar = `<span class="symbol-label bg-light-success text-success fw-bold">${userInitial}</span>`;
