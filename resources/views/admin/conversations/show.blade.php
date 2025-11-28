@@ -88,7 +88,7 @@
                     </h3>
                 </div>
                 <div class="card-body pt-5">
-                    <div class="scroll-y me-n5 pe-5 h-600px" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer" data-kt-scroll-wrappers="#kt_content" data-kt-scroll-offset="5px">
+                    <div id="messages-container" class="scroll-y me-n5 pe-5 h-600px" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer" data-kt-scroll-wrappers="#kt_content" data-kt-scroll-offset="5px">
                         @foreach($conversation->messages as $message)
                         <div class="d-flex {{ $message->role === 'user' ? 'justify-content-end' : 'justify-content-start' }} mb-10">
                             <div class="d-flex flex-column align-items-{{ $message->role === 'user' ? 'end' : 'start' }}">
@@ -181,38 +181,6 @@
                                 Stop Generating
                             </button>
                         </div>
-
-                        <!-- Streaming Status -->
-                        <div id="stream-status" style="display: none;" class="alert alert-info">
-                            <div class="d-flex align-items-center">
-                                <div class="spinner-border spinner-border-sm me-2" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <span id="stream-status-text">Streaming response...</span>
-                            </div>
-                        </div>
-
-                        <!-- Real-time Response Display -->
-                        <div id="stream-response-container" style="display: none;" class="p-5 rounded bg-light-primary">
-                            <div class="mb-2">
-                                <span class="text-gray-600 fw-semibold fs-8">Assistant Response</span>
-                            </div>
-                            <div id="stream-response" class="text-gray-800 fs-6" style="min-height: 100px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;"></div>
-                            
-                            <!-- Streaming Metrics -->
-                            <div class="mt-3 pt-3 border-top">
-                                <div class="row text-center">
-                                    <div class="col-6">
-                                        <small class="text-gray-600">Tokens</small>
-                                        <div class="fw-bold"><span id="stream-tokens">0</span></div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-gray-600">Time</small>
-                                        <div class="fw-bold"><span id="stream-time">0</span>ms</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -227,6 +195,8 @@
                 this.eventSource = null;
                 this.startTime = null;
                 this.tokenCount = 0;
+                this.messagesContainer = document.getElementById('messages-container');
+                this.currentAssistantMessage = null;
             }
 
             init() {
@@ -240,6 +210,111 @@
 
                 // Stop button listener
                 document.getElementById('stop-stream-btn').addEventListener('click', () => this.stopStreaming());
+            }
+
+            createUserMessage(message) {
+                const now = new Date();
+                const timeStr = now.toTimeString().split(' ')[0];
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'd-flex justify-content-end mb-10';
+                messageDiv.innerHTML = `
+                    <div class="d-flex flex-column align-items-end">
+                        <div class="d-flex align-items-center mb-2">
+                            <div>
+                                <span class="text-gray-600 fw-semibold fs-8">User</span>
+                                <span class="text-gray-500 fw-semibold fs-8 ms-2">${timeStr}</span>
+                            </div>
+                            <div class="symbol symbol-35px symbol-circle ms-3">
+                                <span class="symbol-label bg-light-success text-success fw-bold">U</span>
+                            </div>
+                        </div>
+                        <div class="p-5 rounded bg-light-success" style="max-width: 70%">
+                            <div class="text-gray-800 fw-semibold fs-6">${this.escapeHtml(message)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                this.messagesContainer.appendChild(messageDiv);
+                this.scrollToBottom();
+            }
+
+            createAssistantPlaceholder() {
+                const now = new Date();
+                const timeStr = now.toTimeString().split(' ')[0];
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'd-flex justify-content-start mb-10';
+                messageDiv.id = 'streaming-assistant-message';
+                messageDiv.innerHTML = `
+                    <div class="d-flex flex-column align-items-start">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="symbol symbol-35px symbol-circle me-3">
+                                <span class="symbol-label bg-light-primary text-primary fw-bold">AI</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600 fw-semibold fs-8">Assistant</span>
+                                <span class="text-gray-500 fw-semibold fs-8 ms-2">${timeStr}</span>
+                            </div>
+                        </div>
+                        <div class="p-5 rounded bg-light-primary" style="max-width: 70%">
+                            <div class="text-gray-800 fw-semibold fs-6" id="assistant-content">
+                                <div class="d-flex align-items-center">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <span class="text-muted">Thinking...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-gray-500 fw-semibold fs-8 mt-1" id="assistant-tokens" style="display: none;">
+                            Tokens: <span id="token-count">0</span>
+                        </div>
+                    </div>
+                `;
+                
+                this.messagesContainer.appendChild(messageDiv);
+                this.currentAssistantMessage = messageDiv;
+                this.scrollToBottom();
+            }
+
+            updateAssistantMessage(content, isComplete = false) {
+                if (!this.currentAssistantMessage) return;
+                
+                const contentDiv = this.currentAssistantMessage.querySelector('#assistant-content');
+                if (!contentDiv) return;
+
+                if (isComplete) {
+                    // Remove thinking indicator, show final content
+                    contentDiv.innerHTML = `<div class="text-gray-800 fw-semibold fs-6">${this.escapeHtml(content)}</div>`;
+                } else {
+                    // Update streaming content
+                    contentDiv.innerHTML = `<div class="text-gray-800 fw-semibold fs-6" style="white-space: pre-wrap;">${this.escapeHtml(content)}</div>`;
+                }
+                
+                this.scrollToBottom();
+            }
+
+            updateTokenCount(tokens) {
+                if (!this.currentAssistantMessage) return;
+                
+                const tokenDiv = this.currentAssistantMessage.querySelector('#assistant-tokens');
+                const tokenCount = this.currentAssistantMessage.querySelector('#token-count');
+                
+                if (tokenDiv && tokenCount) {
+                    tokenDiv.style.display = 'block';
+                    tokenCount.textContent = tokens;
+                }
+            }
+
+            scrollToBottom() {
+                this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
 
             startStreaming() {
@@ -261,14 +336,23 @@
                 const maxTokens = document.getElementById('max_tokens').value;
                 const configurationId = document.getElementById('configuration_id').value;
 
+                // 1. Add user message to chat
+                this.createUserMessage(message);
+
+                // 2. Clear textarea
+                messageInput.value = '';
+
+                // 3. Create assistant placeholder with "Thinking..."
+                this.createAssistantPlaceholder();
+
                 // Update UI
                 document.getElementById('send-stream-btn').style.display = 'none';
                 document.getElementById('stop-stream-btn').style.display = 'block';
-                document.getElementById('stream-status').style.display = 'block';
-                document.getElementById('stream-response-container').style.display = 'block';
-                document.getElementById('stream-response').textContent = '';
+                messageInput.disabled = true;
+
                 this.tokenCount = 0;
                 this.startTime = Date.now();
+                let fullResponse = '';
 
                 // Build URL with query params
                 const url = new URL(
@@ -290,20 +374,29 @@
                     const data = JSON.parse(event.data);
 
                     if (data.type === 'chunk') {
-                        // Append chunk to response
-                        document.getElementById('stream-response').textContent += data.content;
-                        this.tokenCount = data.tokens || this.tokenCount;
-                        document.getElementById('stream-tokens').textContent = this.tokenCount;
-                    } else if (data.type === 'done') {
-                        // Streaming complete
-                        this.tokenCount = data.usage?.completion_tokens || this.tokenCount;
-                        const duration = Date.now() - this.startTime;
+                        // Append chunk to full response
+                        fullResponse += data.content;
                         
-                        document.getElementById('stream-tokens').textContent = this.tokenCount;
-                        document.getElementById('stream-time').textContent = duration;
+                        // Update assistant message with accumulated content
+                        this.updateAssistantMessage(fullResponse, false);
+                        
+                        // Update token count
+                        if (data.tokens) {
+                            this.tokenCount = data.tokens;
+                            this.updateTokenCount(this.tokenCount);
+                        }
+                    } else if (data.type === 'done') {
+                        // Streaming complete - finalize message
+                        this.updateAssistantMessage(fullResponse, true);
+                        
+                        // Update final token count
+                        if (data.usage?.completion_tokens) {
+                            this.tokenCount = data.usage.completion_tokens;
+                            this.updateTokenCount(this.tokenCount);
+                        }
                         
                         this.eventSource.close();
-                        this.onStreamComplete(message);
+                        this.onStreamComplete();
                     } else if (data.type === 'error') {
                         // Error occurred
                         Swal.fire({
@@ -311,6 +404,13 @@
                             text: data.message || 'An error occurred during streaming',
                             icon: 'error'
                         });
+                        
+                        // Remove the placeholder message
+                        if (this.currentAssistantMessage) {
+                            this.currentAssistantMessage.remove();
+                            this.currentAssistantMessage = null;
+                        }
+                        
                         this.eventSource.close();
                         this.resetUI();
                     }
@@ -323,6 +423,13 @@
                         text: 'Lost connection to server',
                         icon: 'error'
                     });
+                    
+                    // Remove the placeholder message
+                    if (this.currentAssistantMessage) {
+                        this.currentAssistantMessage.remove();
+                        this.currentAssistantMessage = null;
+                    }
+                    
                     this.eventSource.close();
                     this.resetUI();
                 };
@@ -331,34 +438,45 @@
             stopStreaming() {
                 if (this.eventSource) {
                     this.eventSource.close();
-                    document.getElementById('stream-status').style.display = 'none';
-                    document.getElementById('stream-status-text').textContent = 'Streaming stopped';
                     this.resetUI();
+                    
+                    Swal.fire({
+                        title: 'Stopped',
+                        text: 'Streaming stopped by user',
+                        icon: 'info',
+                        timer: 2000
+                    });
                 }
             }
 
-            onStreamComplete(userMessage) {
-                document.getElementById('stream-status').style.display = 'none';
-                document.getElementById('message-input').value = '';
+            onStreamComplete() {
+                this.resetUI();
+                
+                // Remove streaming message ID
+                if (this.currentAssistantMessage) {
+                    this.currentAssistantMessage.removeAttribute('id');
+                    this.currentAssistantMessage = null;
+                }
                 
                 // Show success notification
-                Swal.fire({
-                    title: 'Success',
-                    text: 'Message streamed and saved to conversation',
-                    icon: 'success',
-                    timer: 2000
+                const toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
                 });
-
-                // Optionally reload the page to see new messages saved
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                
+                toast.fire({
+                    icon: 'success',
+                    title: 'Message streamed successfully'
+                });
             }
 
             resetUI() {
                 document.getElementById('send-stream-btn').style.display = 'block';
                 document.getElementById('stop-stream-btn').style.display = 'none';
-                document.getElementById('stream-status').style.display = 'none';
+                document.getElementById('message-input').disabled = false;
             }
         }
 
