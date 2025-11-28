@@ -1,7 +1,7 @@
 <x-default-layout>
     @section('title', 'Conversation Details')
     @section('breadcrumbs')
-        {!! Breadcrumbs::render('admin.llm.conversations.show', $conversation) !!}
+        {!! Breadcrumbs::render('admin.llm.conversations.show', $conversation->id) !!}
     @endsection
 
     <div class="row g-5 g-xl-10 mb-5">
@@ -70,7 +70,7 @@
 
                     <div class="separator separator-dashed my-5"></div>
 
-                    <a href="{{ route('admin.llm.conversations.export', $conversation) }}" class="btn btn-light-primary w-100">
+                    <a href="{{ route('admin.llm.conversations.export', $conversation->id) }}" class="btn btn-light-primary w-100">
                         <i class="ki-duotone ki-exit-down fs-2"><span class="path1"></span><span class="path2"></span></i>
                         Export Conversation
                     </a>
