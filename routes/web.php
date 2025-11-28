@@ -9,6 +9,7 @@ use Bithoven\LLMManager\Http\Controllers\Admin\LLMKnowledgeBaseController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMToolDefinitionController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMStreamController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMActivityController;
+use Bithoven\LLMManager\Http\Controllers\Admin\LLMQuickChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,9 @@ Route::prefix('admin/llm')
         Route::delete('conversations/{id}', [LLMConversationController::class, 'destroy'])->name('conversations.destroy')->where('id', '[0-9]+');
         Route::get('conversations/{id}/export', [LLMConversationController::class, 'export'])->name('conversations.export')->where('id', '[0-9]+');
         Route::get('conversations/{id}/stream-reply', [LLMConversationController::class, 'streamReply'])->name('conversations.stream-reply')->where('id', '[0-9]+');
+        
+        // Quick Chat
+        Route::get('quick-chat', [LLMQuickChatController::class, 'index'])->name('quick-chat');
         
         // Knowledge Base
         Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([
