@@ -130,8 +130,227 @@
                         </div>
                         @endforeach
                     </div>
+
+                    <!-- Message Input Area -->
+                    <div class="separator separator-dashed my-5"></div>
+                    
+                    <form id="stream-message-form" class="d-flex flex-column gap-3">
+                        @csrf
+                        
+                        <!-- Streaming Controls -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Temperature</label>
+                                <input type="range" id="temperature" name="temperature" class="form-range" min="0" max="2" step="0.1" value="{{ $conversation->configuration->temperature ?? 0.7 }}">
+                                <small class="text-gray-600">Current: <span id="temp-display">{{ $conversation->configuration->temperature ?? 0.7 }}</span></small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Max Tokens</label>
+                                <input type="number" id="max_tokens" name="max_tokens" class="form-control" min="1" max="4000" value="{{ $conversation->configuration->max_tokens ?? 2000 }}" placeholder="2000">
+                            </div>
+                        </div>
+
+                        <!-- Message Input -->
+                        <div>
+                            <label class="form-label">Your Message</label>
+                            <textarea id="message-input" name="message" class="form-control" rows="3" placeholder="Type your message..." required></textarea>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="button" id="send-stream-btn" class="btn btn-primary flex-shrink-0">
+                                <i class="ki-duotone ki-send fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                Send with Streaming
+                            </button>
+                            <button type="button" id="stop-stream-btn" class="btn btn-danger flex-shrink-0" style="display: none;">
+                                <i class="ki-duotone ki-stop fs-2"><span class="path1"></span><span class="path2"></span></i>
+                                Stop Generating
+                            </button>
+                        </div>
+
+                        <!-- Streaming Status -->
+                        <div id="stream-status" style="display: none;" class="alert alert-info">
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-border spinner-border-sm me-2" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span id="stream-status-text">Streaming response...</span>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Response Display -->
+                        <div id="stream-response-container" style="display: none;" class="p-5 rounded bg-light-primary">
+                            <div class="mb-2">
+                                <span class="text-gray-600 fw-semibold fs-8">Assistant Response</span>
+                            </div>
+                            <div id="stream-response" class="text-gray-800 fs-6" style="min-height: 100px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;"></div>
+                            
+                            <!-- Streaming Metrics -->
+                            <div class="mt-3 pt-3 border-top">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <small class="text-gray-600">Tokens</small>
+                                        <div class="fw-bold"><span id="stream-tokens">0</span></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-gray-600">Time</small>
+                                        <div class="fw-bold"><span id="stream-time">0</span>ms</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // Conversation Streaming Handler
+        class ConversationStreaming {
+            constructor() {
+                this.eventSource = null;
+                this.startTime = null;
+                this.tokenCount = 0;
+            }
+
+            init() {
+                // Temperature slider listener
+                document.getElementById('temperature').addEventListener('input', (e) => {
+                    document.getElementById('temp-display').textContent = e.target.value;
+                });
+
+                // Send button listener
+                document.getElementById('send-stream-btn').addEventListener('click', () => this.startStreaming());
+
+                // Stop button listener
+                document.getElementById('stop-stream-btn').addEventListener('click', () => this.stopStreaming());
+            }
+
+            startStreaming() {
+                const messageInput = document.getElementById('message-input');
+                const message = messageInput.value.trim();
+
+                if (!message) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Please enter a message',
+                        icon: 'error',
+                        timer: 3000
+                    });
+                    return;
+                }
+
+                // Get form data
+                const temperature = document.getElementById('temperature').value;
+                const maxTokens = document.getElementById('max_tokens').value;
+
+                // Update UI
+                document.getElementById('send-stream-btn').style.display = 'none';
+                document.getElementById('stop-stream-btn').style.display = 'block';
+                document.getElementById('stream-status').style.display = 'block';
+                document.getElementById('stream-response-container').style.display = 'block';
+                document.getElementById('stream-response').textContent = '';
+                this.tokenCount = 0;
+                this.startTime = Date.now();
+
+                // Build URL with query params
+                const url = new URL(
+                    '{{ route("admin.llm.conversations.stream-reply", $conversation->id) }}',
+                    window.location.origin
+                );
+
+                // Create EventSource with query parameters
+                const eventSourceUrl = url.toString() + '?' + new URLSearchParams({
+                    message: message,
+                    temperature: temperature,
+                    max_tokens: maxTokens
+                });
+
+                this.eventSource = new EventSource(eventSourceUrl);
+
+                this.eventSource.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+
+                    if (data.type === 'chunk') {
+                        // Append chunk to response
+                        document.getElementById('stream-response').textContent += data.content;
+                        this.tokenCount = data.tokens || this.tokenCount;
+                        document.getElementById('stream-tokens').textContent = this.tokenCount;
+                    } else if (data.type === 'done') {
+                        // Streaming complete
+                        this.tokenCount = data.usage?.completion_tokens || this.tokenCount;
+                        const duration = Date.now() - this.startTime;
+                        
+                        document.getElementById('stream-tokens').textContent = this.tokenCount;
+                        document.getElementById('stream-time').textContent = duration;
+                        
+                        this.eventSource.close();
+                        this.onStreamComplete(message);
+                    } else if (data.type === 'error') {
+                        // Error occurred
+                        Swal.fire({
+                            title: 'Streaming Error',
+                            text: data.message || 'An error occurred during streaming',
+                            icon: 'error'
+                        });
+                        this.eventSource.close();
+                        this.resetUI();
+                    }
+                };
+
+                this.eventSource.onerror = (error) => {
+                    console.error('EventSource error:', error);
+                    Swal.fire({
+                        title: 'Connection Error',
+                        text: 'Lost connection to server',
+                        icon: 'error'
+                    });
+                    this.eventSource.close();
+                    this.resetUI();
+                };
+            }
+
+            stopStreaming() {
+                if (this.eventSource) {
+                    this.eventSource.close();
+                    document.getElementById('stream-status').style.display = 'none';
+                    document.getElementById('stream-status-text').textContent = 'Streaming stopped';
+                    this.resetUI();
+                }
+            }
+
+            onStreamComplete(userMessage) {
+                document.getElementById('stream-status').style.display = 'none';
+                document.getElementById('message-input').value = '';
+                
+                // Show success notification
+                Swal.fire({
+                    title: 'Success',
+                    text: 'Message streamed and saved to conversation',
+                    icon: 'success',
+                    timer: 2000
+                });
+
+                // Optionally reload the page to see new messages saved
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+
+            resetUI() {
+                document.getElementById('send-stream-btn').style.display = 'block';
+                document.getElementById('stop-stream-btn').style.display = 'none';
+                document.getElementById('stream-status').style.display = 'none';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const streaming = new ConversationStreaming();
+            streaming.init();
+        });
+    </script>
+    @endpush
 </x-default-layout>
