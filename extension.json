@@ -1,11 +1,11 @@
 {
     "slug": "llm-manager",
     "name": "LLM Manager",
-    "version": "1.0.0",
-    "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
+    "version": "1.1.0",
+    "description": "Multi-provider LLM Manager with Real-Time Streaming, RAG, Workflows & MCP Integration",
     "author": "BITHOVEN Team",
     "created_at": "2025-01-18T10:00:00+00:00",
-    "updated_at": "2025-11-28T02:48:00Z",
+    "updated_at": "2025-11-28T14:35:00Z",
     
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {
@@ -66,6 +66,24 @@
     },
     
     "changelog": {
+        "v1.1.0": {
+            "date": "2025-11-28",
+            "changes": [
+                "🚀 FEATURE: Real-time streaming support (SSE) with OllamaProvider and OpenAIProvider",
+                "🚀 FEATURE: Usage metrics logging (LLMStreamLogger service)",
+                "🚀 FEATURE: Activity monitoring with real-time dashboard",
+                "🔒 SECURITY: Permissions Protocol v2.0 migration (12 granular permissions)",
+                "🎨 UI/UX: Streaming test interface with monitor, stats bar (6 metrics)",
+                "🐛 FIX: Scroll container issues in streaming responses",
+                "🐛 FIX: Auto-scroll behavior causing navigation disruption",
+                "📊 FEATURE: Enhanced stats tracking (tokens, chunks, duration, cost)",
+                "📝 DOCS: Streaming implementation documented in archived-docs/",
+                "⚠️ BREAKING: LLMProviderInterface::stream() now returns array with metrics"
+            ],
+            "migration_notes": "Update custom providers implementing LLMProviderInterface::stream() signature. No database changes required.",
+            "breaking_changes": true,
+            "components": ["streaming", "providers", "permissions", "ui"]
+        },
         "v1.0.3": {
             "date": "2025-11-27",
             "changes": [
