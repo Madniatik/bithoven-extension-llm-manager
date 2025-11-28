@@ -14,8 +14,10 @@ class OllamaProvider implements LLMProviderInterface
 
     public function generate(string $prompt, array $parameters = []): array
     {
+        $endpoint = rtrim($this->configuration->api_endpoint, '/') . '/api/generate';
+        
         $response = Http::timeout(120)
-            ->post($this->configuration->api_endpoint, [
+            ->post($endpoint, [
                 'model' => $this->configuration->model,
                 'prompt' => $prompt,
                 'stream' => false,
@@ -44,7 +46,7 @@ class OllamaProvider implements LLMProviderInterface
 
     public function embed(string|array $text): array
     {
-        $endpoint = str_replace('/api/generate', '/api/embeddings', $this->configuration->api_endpoint);
+        $endpoint = rtrim($this->configuration->api_endpoint, '/') . '/api/embeddings';
 
         $response = Http::post($endpoint, [
             'model' => $this->configuration->model,
