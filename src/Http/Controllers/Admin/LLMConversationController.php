@@ -86,7 +86,7 @@ class LLMConversationController extends Controller
             try {
                 // 1. Save user message to database
                 $userMessage = LLMConversationMessage::create([
-                    'conversation_session_id' => $conversation->id,
+                    'session_id' => $conversation->id,
                     'role' => 'user',
                     'content' => $validated['message'],
                     'token_count' => str_word_count($validated['message']), // Rough estimate
@@ -155,7 +155,7 @@ class LLMConversationController extends Controller
 
                 // 7. Save assistant message to database
                 $assistantMessage = LLMConversationMessage::create([
-                    'conversation_session_id' => $conversation->id,
+                    'session_id' => $conversation->id,
                     'role' => 'assistant',
                     'content' => $fullResponse,
                     'token_count' => $metrics['usage']['completion_tokens'] ?? $tokenCount,
