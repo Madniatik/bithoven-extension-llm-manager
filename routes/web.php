@@ -47,7 +47,7 @@ Route::prefix('admin/llm')
         Route::get('conversations/{id}', [LLMConversationController::class, 'show'])->name('conversations.show')->where('id', '[0-9]+');
         Route::delete('conversations/{id}', [LLMConversationController::class, 'destroy'])->name('conversations.destroy')->where('id', '[0-9]+');
         Route::get('conversations/{id}/export', [LLMConversationController::class, 'export'])->name('conversations.export')->where('id', '[0-9]+');
-        Route::post('conversations/{id}/stream-reply', [LLMConversationController::class, 'streamReply'])->name('conversations.stream-reply')->where('id', '[0-9]+');
+        Route::get('conversations/{id}/stream-reply', [LLMConversationController::class, 'streamReply'])->name('conversations.stream-reply')->where('id', '[0-9]+');
         
         // Knowledge Base
         Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([
