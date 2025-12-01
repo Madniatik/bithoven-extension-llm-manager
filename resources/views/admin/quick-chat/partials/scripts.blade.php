@@ -69,7 +69,7 @@
         const text = codeElement.textContent;
         
         navigator.clipboard.writeText(text).then(() => {
-            // Show toast notification
+            // Show toast notification with Metronic theme
             Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -77,7 +77,12 @@
                 title: 'JSON copied to clipboard',
                 showConfirmButton: false,
                 timer: 2000,
-                timerProgressBar: true
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'bg-success text-white',
+                    title: 'text-white'
+                },
+                iconColor: 'white'
             });
         });
     }
