@@ -42,7 +42,7 @@
                     @endif
                 </div>
 
-                <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }}" style="max-width: 70%">
+                <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }} bubble-content-wrapper" style="max-width: 70%">
                     <div class="text-gray-800 fw-semibold fs-6 {{ $message->role === 'assistant' ? 'message-content' : '' }}" @if($message->role === 'assistant') data-role="assistant" @endif>@if($message->role === 'assistant'){{ $message->content }}@else{{ $message->content }}@endif</div>
                 </div>
 
@@ -137,7 +137,7 @@
                     <span class="text-gray-500 fw-semibold fs-8 ms-2">{{ now()->format('H:i:s') }}</span>
                 </div>
             </div>
-            <div class="p-5 rounded bg-light-primary" style="max-width: 70%">
+            <div class="p-5 rounded bg-light-primary bubble-content-wrapper" style="max-width: 70%">
                 <div class="text-gray-800 fw-semibold fs-6">
                     <div class="d-flex align-items-center">
                         <div class="spinner-border spinner-border-sm text-primary me-2" role="status">

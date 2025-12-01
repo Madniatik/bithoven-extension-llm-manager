@@ -69,18 +69,16 @@
         const text = codeElement.textContent;
         
         navigator.clipboard.writeText(text).then(() => {
-            // Change button text temporarily
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.textContent = '✓ Copied!';
-            btn.classList.remove('btn-primary');
-            btn.classList.add('btn-success');
-            
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.classList.remove('btn-success');
-                btn.classList.add('btn-primary');
-            }, 2000);
+            // Show toast notification
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'JSON copied to clipboard',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true
+            });
         });
     }
 
@@ -130,31 +128,32 @@
             });
         });
         
-        // Add copy buttons to message bubbles
+        // Add copy buttons to message bubbles (inside the content area)
         document.querySelectorAll('.message-bubble').forEach(bubble => {
-            if (!bubble.querySelector('.copy-bubble-btn')) {
-                // Get message ID from data attribute (will add this to HTML)
+            const bubbleContent = bubble.querySelector('.bubble-content-wrapper');
+            if (bubbleContent && !bubbleContent.querySelector('.copy-bubble-btn')) {
+                // Get message ID from data attribute
                 const messageId = bubble.getAttribute('data-message-id');
                 
                 // Copy button
                 const copyBtn = document.createElement('button');
-                copyBtn.className = 'btn btn-icon btn-sm btn-light position-absolute top-0 end-0 m-2 copy-bubble-btn';
+                copyBtn.className = 'btn btn-icon btn-sm btn-light position-absolute top-0 end-0 m-1 copy-bubble-btn';
                 copyBtn.setAttribute('data-bs-toggle', 'tooltip');
                 copyBtn.setAttribute('title', 'Copy message');
                 copyBtn.onclick = function() { copyBubbleContent(this); };
                 copyBtn.innerHTML = '<i class="ki-duotone ki-copy fs-6"><span class="path1"></span><span class="path2"></span></i>';
-                bubble.style.position = 'relative';
-                bubble.appendChild(copyBtn);
+                bubbleContent.style.position = 'relative';
+                bubbleContent.appendChild(copyBtn);
                 
                 // Raw view button (only if message ID exists)
                 if (messageId) {
                     const rawBtn = document.createElement('button');
-                    rawBtn.className = 'btn btn-icon btn-sm btn-light-info position-absolute top-0 end-0 me-10 m-2 raw-view-btn';
+                    rawBtn.className = 'btn btn-icon btn-sm btn-light-info position-absolute top-0 end-0 m-1 me-9 raw-view-btn';
                     rawBtn.setAttribute('data-bs-toggle', 'tooltip');
                     rawBtn.setAttribute('title', 'View raw data');
                     rawBtn.onclick = function() { showRawMessage(messageId); };
                     rawBtn.innerHTML = '<i class="ki-duotone ki-code fs-6"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>';
-                    bubble.appendChild(rawBtn);
+                    bubbleContent.appendChild(rawBtn);
                 }
             }
         });
