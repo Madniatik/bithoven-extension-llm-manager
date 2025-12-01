@@ -59,8 +59,15 @@ class LLMConversationController extends Controller
 
     public function show(int $id)
     {
-        $conversation = LLMConversationSession::with(['user', 'configuration', 'messages', 'logs'])
-            ->findOrFail($id);
+        // Eager load all necessary relationships to avoid N+1 queries
+        $conversation = LLMConversationSession::with([
+            'user',
+            'configuration',
+            'messages' => function ($query) {
+                $query->orderBy('created_at', 'asc');
+            },
+            'logs'
+        ])->findOrFail($id);
         
         // Get all active configurations for model selector
         $configurations = LLMConfiguration::active()->get();
@@ -109,7 +116,14 @@ class LLMConversationController extends Controller
         $conversation = LLMConversationSession::with(['configuration', 'messages'])->findOrFail($id);
 
         // Use provided configuration or fall back to conversation's configuration
-        $configurationId = $validated['configuration_id'] ?? $conversation->configuration->id;
+        $configurationId = $validated['configuration_id'] ?? $conversation->configuration?->id;
+        
+        if (!$configurationId) {
+            return response()->json([
+                'error' => 'No LLM configuration available. Please select a configuration.',
+            ], 422);
+        }
+        
         $configuration = LLMConfiguration::findOrFail($configurationId);
 
         // If conversation has ended or expired, don't allow streaming

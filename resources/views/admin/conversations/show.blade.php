@@ -130,7 +130,7 @@
                                 </div>
 
                                 <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }}" style="max-width: 70%">
-                                    <div class="text-gray-800 fw-semibold fs-6 message-content" data-role="{{ $message->role }}">
+                                    <div class="text-gray-800 fw-semibold fs-6 message-content" data-role="{{ $message->role }}" data-rendered="true">
                                         @if($message->role === 'assistant')
                                             {!! $message->content !!}
                                         @else
@@ -139,9 +139,60 @@
                                     </div>
                                 </div>
 
-                                @if($message->token_count)
-                                <div class="text-gray-500 fw-semibold fs-8 mt-1">
-                                    Tokens: {{ number_format($message->token_count) }}
+                                @if($message->token_count || $message->tokens || $message->total_tokens)
+                                <div class="text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap">
+                                    {{-- Tokens --}}
+                                    <span>
+                                        <i class="ki-duotone ki-calculator fs-7 text-gray-400">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        {{ number_format($message->total_tokens ?? $message->token_count ?? 0) }} tokens
+                                    </span>
+
+                                    {{-- Response Time --}}
+                                    @if($message->response_time)
+                                    <span class="text-success">
+                                        <i class="ki-duotone ki-timer fs-7 text-success">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        {{ number_format($message->response_time, 2) }}s
+                                    </span>
+                                    @endif
+
+                                    {{-- Provider & Model --}}
+                                    @if(isset($message->metadata['provider']) && isset($message->metadata['model']))
+                                    <span class="text-primary">
+                                        <i class="ki-duotone ki-technology-2 fs-7 text-primary">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        {{ ucfirst($message->metadata['provider']) }} / {{ $message->metadata['model'] }}
+                                    </span>
+                                    @endif
+
+                                    {{-- Streaming --}}
+                                    @if(isset($message->metadata['is_streaming']) && $message->metadata['is_streaming'])
+                                    <span class="text-info" title="{{ $message->metadata['chunks_count'] ?? 0 }} chunks">
+                                        <i class="ki-duotone ki-cloud-download fs-7 text-info">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        Stream
+                                    </span>
+                                    @endif
+
+                                    {{-- TTFT --}}
+                                    @if(isset($message->metadata['time_to_first_chunk']))
+                                    <span class="text-warning" title="Time to first token">
+                                        <i class="ki-duotone ki-flash-circle fs-7 text-warning">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        {{ $message->metadata['time_to_first_chunk'] }}s
+                                    </span>
+                                    @endif
                                 </div>
                                 @endif
                             </div>
@@ -163,7 +214,7 @@
                                     <option value="{{ $config->id }}" 
                                         data-provider="{{ ucfirst($config->provider) }}"
                                         data-model="{{ $config->model }}"
-                                        {{ $config->id == $conversation->configuration->id ? 'selected' : '' }}>
+                                        {{ ($conversation->configuration && $config->id == $conversation->configuration->id) ? 'selected' : '' }}>
                                         {{ $config->name }}
                                     </option>
                                 @endforeach
@@ -198,7 +249,7 @@
                         <!-- Message Input -->
                         <div>
                             <label class="form-label">Your Message</label>
-                            <textarea id="message-input" name="message" class="form-control" rows="3" placeholder="Type your message..." required></textarea>
+                            <textarea id="conversation-message-input" name="message" class="form-control" rows="3" placeholder="Type your message..." required></textarea>
                         </div>
 
                         <!-- Action Buttons -->
@@ -224,6 +275,8 @@
     <!-- Prism.js for syntax highlighting -->
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <!-- markup-templating is required for PHP -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup-templating.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-php.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
@@ -320,6 +373,17 @@
             init() {
                 // Load saved settings from localStorage
                 this.loadSettings();
+                
+                // Debug: Monitor message input changes
+                const messageInput = document.getElementById('conversation-message-input');
+                if (messageInput) {
+                    messageInput.addEventListener('input', (e) => {
+                        console.log('Input changed:', e.target.value);
+                    });
+                    console.log('Message input listener attached to:', messageInput.id);
+                } else {
+                    console.error('conversation-message-input not found during init');
+                }
                 
                 // Temperature slider listener
                 document.getElementById('temperature').addEventListener('input', (e) => {
@@ -478,9 +542,16 @@
                     const markdownHtml = marked.parse(content);
                     contentDiv.innerHTML = `<div class="text-gray-800 fw-semibold fs-6 message-content" data-role="assistant">${markdownHtml}</div>`;
                     
-                    // Apply syntax highlighting to code blocks
+                    // Apply syntax highlighting to code blocks (defensive)
                     contentDiv.querySelectorAll('pre code').forEach(block => {
-                        Prism.highlightElement(block);
+                        if (typeof Prism !== 'undefined') {
+                            try {
+                                Prism.highlightElement(block);
+                            } catch (error) {
+                                console.warn('Prism highlighting failed:', error.message);
+                                // Keep code block without highlighting
+                            }
+                        }
                     });
                 } else {
                     // Streaming - show raw text (Markdown será visible)
@@ -513,8 +584,36 @@
             }
 
             startStreaming() {
-                const messageInput = document.getElementById('message-input');
-                const message = messageInput.value.trim();
+                const messageInput = document.getElementById('conversation-message-input');
+                
+                // Extended debug logging
+                console.log('startStreaming called');
+                console.log('messageInput element:', messageInput);
+                console.log('messageInput placeholder:', messageInput ? messageInput.placeholder : 'N/A');
+                console.log('messageInput.value:', messageInput ? messageInput.value : 'ELEMENT NOT FOUND');
+                console.log('messageInput.textContent:', messageInput ? messageInput.textContent : 'N/A');
+                console.log('messageInput.innerHTML:', messageInput ? messageInput.innerHTML : 'N/A');
+                
+                if (!messageInput) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Message input field not found. Please refresh the page.',
+                        icon: 'error',
+                        timer: 3000
+                    });
+                    return;
+                }
+                
+                // Try multiple ways to get the value
+                const value1 = messageInput.value;
+                const value2 = messageInput.textContent;
+                const value3 = messageInput.innerHTML;
+                console.log('value (property):', value1);
+                console.log('textContent:', value2);
+                console.log('innerHTML:', value3);
+                
+                const message = (value1 || value2 || value3 || '').trim();
+                console.log('message after trim:', message);
 
                 if (!message) {
                     Swal.fire({
@@ -665,6 +764,12 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
+            // Check if marked.js is loaded
+            if (typeof marked === 'undefined') {
+                console.error('marked.js is not loaded');
+                return;
+            }
+
             // Configure marked.js
             marked.setOptions({
                 breaks: true,
@@ -674,14 +779,30 @@
             });
 
             // Render existing assistant messages with Markdown
-            document.querySelectorAll('.message-content[data-role="assistant"]').forEach(element => {
-                const markdownText = element.textContent;
-                element.innerHTML = marked.parse(markdownText);
-                
-                // Apply syntax highlighting to code blocks
-                element.querySelectorAll('pre code').forEach(block => {
-                    Prism.highlightElement(block);
-                });
+            document.querySelectorAll('.message-content[data-role="assistant"]:not([data-rendered="true"])').forEach(element => {
+                try {
+                    const content = element.textContent.trim();
+                    
+                    // Skip if empty
+                    if (!content) return;
+                    
+                    element.innerHTML = marked.parse(content);
+                    
+                    // Apply syntax highlighting to code blocks (defensive)
+                    element.querySelectorAll('pre code').forEach(block => {
+                        if (typeof Prism !== 'undefined') {
+                            try {
+                                Prism.highlightElement(block);
+                            } catch (error) {
+                                console.warn('Prism highlighting failed:', error.message);
+                                // Keep code block without highlighting
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error parsing markdown:', error);
+                    // Keep original content if parsing fails
+                }
             });
 
             const streaming = new ConversationStreaming();
