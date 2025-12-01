@@ -1,3 +1,4 @@
+@push('styles')
 <!-- Marked.js for Markdown rendering -->
 <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 <!-- Prism.js for syntax highlighting -->
@@ -128,3 +129,4 @@
         opacity: 1;
     }
 </style>
+@endpush

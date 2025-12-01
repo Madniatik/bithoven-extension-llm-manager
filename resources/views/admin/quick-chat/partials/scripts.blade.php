@@ -1,3 +1,4 @@
+@push('scripts')
 <script>
     // Copy functions
     function copyBubbleContent(button) {
@@ -187,3 +188,4 @@
         console.log('✅ Quick Chat loaded successfully');
     });
 </script>
+@endpush
