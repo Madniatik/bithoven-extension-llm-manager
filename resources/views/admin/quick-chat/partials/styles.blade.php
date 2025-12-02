@@ -128,5 +128,16 @@
     pre:hover .copy-code-btn {
         opacity: 1;
     }
+
+    /* Responsive bubbles - 100% width on mobile */
+    @media (max-width: 768px) {
+        .message-bubble .d-flex.flex-column {
+            max-width: 100% !important;
+        }
+        
+        .bubble-content-wrapper {
+            max-width: 100% !important;
+        }
+    }
 </style>
 @endpush

@@ -4,7 +4,7 @@
         <div class="d-flex {{ $message->role === 'user' ? 'justify-content-end' : 'justify-content-start' }} mb-10 message-bubble"
             data-message-id="{{ $message->id }}" data-message-role="{{ $message->role }}">
             <div class="d-flex flex-column align-items-{{ $message->role === 'user' ? 'end' : 'start' }}"
-                style="width: 100%; max-width: 75%;">
+                style="width: 100%; max-width: 85%;">
                 <div class="d-flex align-items-center mb-2">
                     @if ($message->role === 'assistant')
                         <div class="symbol symbol-35px symbol-circle me-3">
@@ -46,13 +46,9 @@
                 </div>
 
                 <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }} bubble-content-wrapper"
-                    style="max-width: 70%">
+                    style="max-width: 85%">
                     <div class="text-gray-800 fw-semibold fs-6 {{ $message->role === 'assistant' ? 'message-content' : '' }}"
-                        @if ($message->role === 'assistant') data-role="assistant" @endif>
-                        @if ($message->role === 'assistant')
-                            {{ $message->content }}@else{{ $message->content }}
-                        @endif
-                    </div>
+                        @if ($message->role === 'assistant') data-role="assistant" @endif>{{ $message->content }}</div>
                 </div>
 
                 @if ($message->role === 'assistant')
