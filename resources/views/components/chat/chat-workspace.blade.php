@@ -41,60 +41,16 @@
 @include('llm-manager::components.chat.partials.styles.markdown')
 @include('llm-manager::components.chat.partials.styles.buttons')
 @include('llm-manager::components.chat.partials.styles.responsive')
+@if($monitorLayout === 'split-horizontal')
+    @include('llm-manager::components.chat.partials.styles.split-horizontal')
+@endif
 
 {{-- Scripts (partitioned) --}}
 @include('llm-manager::components.chat.partials.scripts.clipboard-utils')
 @include('llm-manager::components.chat.partials.scripts.message-renderer')
 @include('llm-manager::components.chat.partials.scripts.settings-manager')
 @include('llm-manager::components.chat.partials.scripts.event-handlers')
-
-{{-- Alpine.js Component for Chat Workspace --}}
-@push('scripts')
-<script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('chatWorkspace', (initialShowMonitor = false, initialMonitorOpen = false, layout = 'sidebar') => ({
-        showMonitor: initialShowMonitor,
-        monitorOpen: initialMonitorOpen,
-        layout: layout,
-        
-        init() {
-            // Cargar estado desde localStorage
-            const saved = localStorage.getItem('llm_chat_monitor_open');
-            if (saved !== null && this.showMonitor) {
-                this.monitorOpen = saved === 'true';
-            }
-            
-            console.log('[ChatWorkspace] Initialized', {
-                showMonitor: this.showMonitor,
-                monitorOpen: this.monitorOpen,
-                layout: this.layout
-            });
-            
-            // En móvil, vincular toggle con modal
-            if (this.isMobile()) {
-                this.$watch('monitorOpen', (value) => {
-                    if (value) {
-                        const modal = new bootstrap.Modal(document.getElementById('monitorModal'));
-                        modal.show();
-                    }
-                });
-            }
-        },
-        
-        toggleMonitor() {
-            this.monitorOpen = !this.monitorOpen;
-            localStorage.setItem('llm_chat_monitor_open', this.monitorOpen);
-            
-            console.log('[ChatWorkspace] Monitor toggled:', {
-                open: this.monitorOpen,
-                layout: this.layout
-            });
-        },
-        
-        isMobile() {
-            return window.innerWidth < 992; // Bootstrap lg breakpoint
-        }
-    }));
-});
-</script>
-@endpush
+@include('llm-manager::components.chat.partials.scripts.chat-workspace')
+@if($monitorLayout === 'split-horizontal')
+    @include('llm-manager::components.chat.partials.scripts.split-resizer')
+@endif
