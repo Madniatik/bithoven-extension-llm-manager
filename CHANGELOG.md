@@ -7,6 +7,124 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.0] - 2025-12-03
+
+### Added - Multi-Instance Support for ChatWorkspace Component
+
+**MAJOR FEATURE:** ChatWorkspace now supports múltiples instancias simultáneas en la misma página.
+
+#### Multi-Instance Architecture
+
+**Alpine.js Scopes Únicos:**
+- `chatWorkspace_{{sessionId}}` - Scope único por sesión
+- `splitResizer_{{sessionId}}` - Resizer independiente por sesión
+- Factory pattern con auto-registro de componentes
+
+**DOM IDs Dinámicos:**
+- `messages-container-{{sessionId}}`
+- `monitor-console-{{sessionId}}`
+- `quick-chat-form-{{sessionId}}`
+- `quick-chat-message-input-{{sessionId}}`
+- `send-btn-{{sessionId}}`, `clear-btn-{{sessionId}}`
+- `monitor-token-count-{{sessionId}}`, etc.
+
+**Monitor Factory Pattern:**
+- `window.LLMMonitorFactory.create(sessionId)` - Crear instancia
+- `window.LLMMonitorFactory.get(sessionId)` - Obtener instancia
+- `window.LLMMonitorFactory.getOrCreate(sessionId)` - Convenience method
+- Cada monitor con su propio state, métricas e historial
+
+**LocalStorage Isolation:**
+- `llm_chat_monitor_open_{{sessionId}}`
+- `llm_split_chat_flex_{{sessionId}}`
+- `llm_split_monitor_flex_{{sessionId}}`
+- `llm_chat_monitor_history_{{sessionId}}`
+
+**Custom Events Enhanced:**
+- Todos los eventos incluyen `sessionId` en `event.detail`
+- Permite discriminar eventos de diferentes instancias
+- Compatible con analytics y plugins multi-sesión
+
+#### Files Modified (9)
+
+**Components:**
+- `resources/views/components/chat/chat-workspace.blade.php`
+- `resources/views/components/chat/layouts/split-horizontal-layout.blade.php`
+
+**Partials:**
+- `resources/views/components/chat/partials/messages-container.blade.php`
+- `resources/views/components/chat/partials/input-form.blade.php`
+
+**Scripts:**
+- `resources/views/components/chat/partials/scripts/chat-workspace.blade.php`
+- `resources/views/components/chat/partials/scripts/split-resizer.blade.php`
+- `resources/views/components/chat/partials/scripts/monitor-api.blade.php` (Factory pattern)
+
+**Shared:**
+- `resources/views/components/chat/shared/monitor.blade.php`
+- `resources/views/components/chat/shared/monitor-console.blade.php`
+
+#### Use Cases
+
+**Dual-Chat Comparison:**
+```blade
+<div class="row">
+    <div class="col-md-6">
+        <x-llm-manager-chat-workspace :session="$session1" ... />
+    </div>
+    <div class="col-md-6">
+        <x-llm-manager-chat-workspace :session="$session2" ... />
+    </div>
+</div>
+```
+
+**Model A/B Testing:**
+- Comparar GPT-4 vs Claude 3 lado a lado
+- Métricas independientes (tokens, cost, duration)
+- Historial separado por sesión
+
+**Multi-User Dashboard:**
+- Monitoreo de múltiples usuarios simultáneos
+- Dashboard administrativo
+- Testing workflows en paralelo
+
+#### Backward Compatibility
+
+✅ **100% Compatible:**
+- `window.LLMMonitor` apunta a instancia 'default'
+- Código existente sin `sessionId` sigue funcionando
+- Props del componente sin cambios breaking
+- API methods mantienen misma signature
+
+#### Documentation
+
+- `docs/components/CHAT-WORKSPACE.md` - Updated to v2.2.0
+- New section: "Multi-Instance Support" (500+ lines)
+- Multi-instance API examples
+- Use cases y best practices
+- Testing examples
+
+#### Migration Notes
+
+**No database changes required.**
+
+**Auto-migration:**
+- Componentes existentes funcionan sin cambios
+- SessionId se genera automáticamente (default si no hay sesión)
+- localStorage antiguo se mantiene (instancia 'default')
+
+**Recommended changes for new code:**
+```javascript
+// OLD (still works)
+window.LLMMonitor.start();
+
+// NEW (multi-instance aware)
+const monitor = window.LLMMonitorFactory.get(sessionId);
+monitor.start();
+```
+
+---
+
 ## [1.0.4] - 2025-12-03
 
 ### Changed - ChatWorkspace Component v2.1 Optimizations

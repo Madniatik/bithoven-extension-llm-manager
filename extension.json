@@ -1,11 +1,11 @@
 {
     "slug": "llm-manager",
     "name": "LLM Manager",
-    "version": "1.0.4",
+    "version": "2.2.0",
     "description": "Multi-provider LLM Manager with RAG, Workflows & MCP Integration",
     "author": "BITHOVEN Team",
     "created_at": "2025-01-18T10:00:00+00:00",
-    "updated_at": "2025-12-03T07:20:00Z",
+    "updated_at": "2025-12-03T07:40:00Z",
     
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {
@@ -66,6 +66,27 @@
     },
     
     "changelog": {
+        "v2.2.0": {
+            "date": "2025-12-03",
+            "changes": [
+                "🚀 MAJOR: Multi-instance support for ChatWorkspace component",
+                "✅ Alpine.js scopes únicos por sesión (chatWorkspace_{{sessionId}})",
+                "✅ DOM IDs dinámicos por sesión (messages-container-{{sessionId}})",
+                "✅ window.LLMMonitorFactory pattern (múltiples monitors independientes)",
+                "✅ LocalStorage isolation per session (llm_chat_monitor_open_{{sessionId}})",
+                "✅ Custom events con sessionId discriminator en detail payload",
+                "✅ Backward compatible: window.LLMMonitor → instancia 'default'",
+                "📚 DOCS: Multi-Instance Support section (500+ lines)",
+                "📚 DOCS: Use cases (Dual-chat A/B testing, Multi-user dashboard)",
+                "📚 DOCS: LLMMonitorFactory API documentation",
+                "🎯 Use Case: Comparar 2+ modelos simultáneamente en misma página",
+                "🎯 Use Case: Dashboard multi-usuario con sesiones independientes",
+                "✅ 100% backward compatible - no breaking changes"
+            ],
+            "migration_notes": "No database changes. Auto-migration: componentes existentes funcionan sin cambios. SessionId se genera automáticamente ('default' si no hay sesión). Recomendado: usar LLMMonitorFactory para nuevas implementaciones multi-instancia.",
+            "breaking_changes": false,
+            "components": ["ui", "components", "scripts", "docs"]
+        },
         "v1.0.4": {
             "date": "2025-12-03",
             "changes": [
