@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ## 📝 Changelog
 
-### v2.2 (3 diciembre 2025)
+### v1.0.6 (3 diciembre 2025)
 
 **ChatWorkspace Component Multi-Instance Support:**
 - ✅ Multi-instance architecture with unique Alpine.js scopes
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - ✅ 100% backward compatible
 - ✅ Legacy partials cleanup (1,213 lines removed)
 
-### v2.1 (3 diciembre 2025)
+### v1.0.5 (3 diciembre 2025)
 
 **ChatWorkspace Component Optimizations:**
 - ✅ Monitor code partitioning (56% reduction)
@@ -215,14 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
 - ✅ Null-safe DOM checks added
 - ✅ Complete usage documentation created
 
-### v2.0 (3 diciembre 2025)
+### v1.0.4 (28 noviembre 2025)
 
-**ChatWorkspace Component:**
+**Streaming Support & Permissions:**
 - ✅ Split-horizontal code partitioning (66% reduction)
 - ✅ Alpine.js components extracted (chatWorkspace, splitResizer)
 - ✅ Conditional loading implemented
 - ✅ Sidebar collapse fix (d-none binding)
 - ✅ Monitor toggle consolidated to footer
+- ✅ Streaming API implementation
+- ✅ Permissions system integration
 
 **Ver:** [CHANGELOG.md](../CHANGELOG.md)
 

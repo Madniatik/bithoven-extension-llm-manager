@@ -202,7 +202,7 @@ See [USAGE-GUIDE.md](USAGE-GUIDE.md#knowledge-base-rag) for complete examples.
 
 ### Can I use RAG without OpenAI?
 
-Currently, embeddings require OpenAI API. Support for local embedding models (via Ollama) is planned for v1.1.0.
+Currently, embeddings require OpenAI API. Support for local embedding models (via Ollama) is planned for future versions.
 
 ---
 
@@ -432,7 +432,7 @@ $totalTokens = LLMUsageLog::sum('total_tokens');
 
 4. **Use async requests (future):**
    ```php
-   // Coming in v1.1.0
+   // Planned for future versions
    LLM::async()->generate($prompt);
    ```
 

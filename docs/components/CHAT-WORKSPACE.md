@@ -1,6 +1,6 @@
 # Chat Workspace Component - Guía de Uso
 
-**Versión:** 2.2.0  
+**Versión:** 1.0.6  
 **Estado:** ✅ Producción  
 **Última actualización:** 3 diciembre 2025
 
@@ -28,7 +28,7 @@
 El **Chat Workspace Component** es un componente Blade optimizado para interfaces de chat LLM con soporte para:
 
 - ✅ **Dual Layout System:** Sidebar (vertical) y Split-Horizontal (horizontal)
-- ✅ **Multi-Instance Support:** Múltiples chats simultáneos en la misma página ⭐ **v2.2.0**
+- ✅ **Multi-Instance Support:** Múltiples chats simultáneos en la misma página ⭐ **v1.0.6**
 - ✅ **Monitor Integrado:** Métricas en tiempo real, historial de actividad, console logs
 - ✅ **Streaming Support:** Compatible con Server-Sent Events (SSE)
 - ✅ **Alpine.js Reactive:** Componentes reactivos sin Vue/React
@@ -39,7 +39,7 @@ El **Chat Workspace Component** es un componente Blade optimizado para interface
 ### Arquitectura
 
 ```
-ChatWorkspace Component (v2.2.0 - Multi-Instance)
+ChatWorkspace Component (v1.0.6 - Multi-Instance)
 ├── Layouts (intercambiables)
 │   ├── Sidebar Layout (60/40 vertical)
 │   └── Split-Horizontal Layout (70/30 horizontal resizable)
@@ -190,7 +190,7 @@ Monitor dividido horizontalmente con resize drag.
 
 ### Descripción
 
-**Desde v2.2.0**, el componente Chat Workspace soporta **múltiples instancias simultáneas** en la misma página sin conflictos.
+**Desde v1.0.6**, el componente Chat Workspace soporta **múltiples instancias simultáneas** en la misma página sin conflictos.
 
 Cada instancia es completamente independiente con:
 - ✅ **Alpine.js scopes únicos** - `chatWorkspace_{{sessionId}}`
@@ -405,7 +405,7 @@ window.addEventListener('llm-streaming-chunk', (event) => {
 
 ### Limitaciones Conocidas
 
-**v2.2.0 - Sin limitaciones críticas:**
+**v1.0.6 - Sin limitaciones críticas:**
 - ✅ Soporta 2+ instancias simultáneas
 - ✅ Monitors independientes funcionan correctamente
 - ✅ LocalStorage sin conflictos
@@ -545,7 +545,7 @@ document.addEventListener('alpine:init', () => {
 
 ---
 
-### 3. JavaScript: window.LLMMonitorFactory API (v2.2.0)
+### 3. JavaScript: window.LLMMonitorFactory API (v1.0.6)
 
 **Ubicación:** `partials/scripts/monitor-api.blade.php`  
 **Scope:** Global Factory (multi-instance support)
