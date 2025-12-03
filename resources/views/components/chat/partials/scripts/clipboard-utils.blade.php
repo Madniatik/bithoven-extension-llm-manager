@@ -58,9 +58,22 @@
      * @param {number} messageId - The message ID
      */
     function showRawMessage(messageId) {
-        // Fetch message data from backend
-        fetch(`/admin/llm/messages/${messageId}/raw`)
-            .then(response => response.json())
+        // Fetch message data from backend with credentials
+        fetch(`/admin/llm/messages/${messageId}/raw`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 const jsonString = JSON.stringify(data, null, 2);
                 const codeElement = document.getElementById('rawMessageContent');
@@ -77,7 +90,17 @@
             })
             .catch(error => {
                 console.error('Error fetching raw message:', error);
-                alert('Error loading message data');
+                
+                // Show user-friendly error with SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Loading Message',
+                    text: `Failed to load message data: ${error.message}`,
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    }
+                });
             });
     }
     

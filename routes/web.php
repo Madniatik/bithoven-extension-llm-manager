@@ -57,6 +57,9 @@ Route::prefix('admin/llm')
         Route::get('quick-chat/stream', [LLMQuickChatController::class, 'stream'])->name('quick-chat.stream');
         Route::get('quick-chat/new', [LLMQuickChatController::class, 'newChat'])->name('quick-chat.new');
         
+        // Messages API
+        Route::get('messages/{messageId}/raw', [LLMQuickChatController::class, 'getRawMessage'])->name('messages.raw')->where('messageId', '[0-9]+');
+        
         // Knowledge Base
         Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([
             'knowledge-base' => 'document'
