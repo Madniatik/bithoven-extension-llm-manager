@@ -108,14 +108,13 @@
         position: relative;
     }
     
-    .copy-bubble-btn,
-    .raw-view-btn {
+    .message-actions-container {
         opacity: 0;
-        transition: opacity 0.2s;
+        transition: opacity 0.2s ease-in-out;
+        z-index: 5;
     }
     
-    .bubble-content-wrapper:hover .copy-bubble-btn,
-    .bubble-content-wrapper:hover .raw-view-btn {
+    .bubble-content-wrapper:hover .message-actions-container {
         opacity: 1;
     }
     

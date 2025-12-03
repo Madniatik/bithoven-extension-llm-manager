@@ -141,26 +141,32 @@
                 // Get message ID from data attribute
                 const messageId = bubble.getAttribute('data-message-id');
                 
-                // Copy button
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'btn btn-icon btn-sm btn-light position-absolute top-0 end-0 m-1 copy-bubble-btn';
-                copyBtn.setAttribute('data-bs-toggle', 'tooltip');
-                copyBtn.setAttribute('title', 'Copy message');
-                copyBtn.onclick = function() { copyBubbleContent(this); };
-                copyBtn.innerHTML = '<i class="ki-duotone ki-copy fs-6"><span class="path1"></span><span class="path2"></span></i>';
-                bubbleContent.style.position = 'relative';
-                bubbleContent.appendChild(copyBtn);
+                // Create button container
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'message-actions-container position-absolute top-0 end-0 m-2 d-flex gap-1';
                 
                 // Raw view button (only if message ID exists)
                 if (messageId) {
                     const rawBtn = document.createElement('button');
-                    rawBtn.className = 'btn btn-icon btn-sm btn-light-info position-absolute top-0 end-0 m-1 me-9 raw-view-btn';
+                    rawBtn.className = 'btn btn-icon btn-sm btn-light-info raw-view-btn';
                     rawBtn.setAttribute('data-bs-toggle', 'tooltip');
                     rawBtn.setAttribute('title', 'View raw data');
                     rawBtn.onclick = function() { showRawMessage(messageId); };
                     rawBtn.innerHTML = '<i class="ki-duotone ki-code fs-6"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>';
-                    bubbleContent.appendChild(rawBtn);
+                    btnContainer.appendChild(rawBtn);
                 }
+                
+                // Copy button
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'btn btn-icon btn-sm btn-light copy-bubble-btn';
+                copyBtn.setAttribute('data-bs-toggle', 'tooltip');
+                copyBtn.setAttribute('title', 'Copy message');
+                copyBtn.onclick = function() { copyBubbleContent(this); };
+                copyBtn.innerHTML = '<i class="ki-duotone ki-copy fs-6"><span class="path1"></span><span class="path2"></span></i>';
+                btnContainer.appendChild(copyBtn);
+                
+                bubbleContent.style.position = 'relative';
+                bubbleContent.appendChild(btnContainer);
             }
         });
         

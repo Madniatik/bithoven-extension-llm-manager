@@ -40,7 +40,7 @@
     </div>
 
     {{-- Raw Message Modal --}}
-    @include('llm-manager::admin.quick-chat.partials.modal-raw-message')
+    @include('llm-manager::admin.quick-chat.partials.modals.modal-raw-message')
 
     {{-- Styles --}}
     @include('llm-manager::admin.quick-chat.partials.styles')
