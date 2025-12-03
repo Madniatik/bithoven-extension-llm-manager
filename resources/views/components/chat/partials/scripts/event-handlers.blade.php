@@ -318,18 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMessage('assistant', '', 0, assistantMessageId, true);
         
         // Get current settings from UI
-        const temperature = parseFloat(document.getElementById('quick-chat-temperature')?.value) || 0.7;
-        const maxTokens = parseInt(document.getElementById('quick-chat-max-tokens')?.value) || 2000;
-        const contextLimit = parseInt(document.getElementById('quick-chat-context-limit')?.value) || 10;
+        const temperature = parseFloat(document.getElementById('quick-chat-temperature')?.value || 0.7);
+        const maxTokens = parseInt(document.getElementById('quick-chat-max-tokens')?.value || 2000, 10);
+        const contextLimit = parseInt(document.getElementById('quick-chat-context-limit')?.value || 10, 10);
         
         // EventSource with session_id, configuration_id, and custom parameters
         const params = new URLSearchParams({
             session_id: sessionId,
             configuration_id: modelSelector.value,
             prompt: userPrompt,
-            temperature: temperature,
-            max_tokens: maxTokens,
-            context_limit: contextLimit
+            temperature: temperature.toString(),
+            max_tokens: maxTokens.toString(),
+            context_limit: contextLimit.toString()
         });
         
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
