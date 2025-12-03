@@ -327,9 +327,9 @@ document.addEventListener('DOMContentLoaded', () => {
             session_id: sessionId,
             configuration_id: modelSelector.value,
             prompt: userPrompt,
-            temperature: temperature.toString(),
-            max_tokens: maxTokens.toString(),
-            context_limit: contextLimit.toString()
+            temperature: temperature,
+            max_tokens: maxTokens,
+            context_limit: contextLimit
         });
         
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
