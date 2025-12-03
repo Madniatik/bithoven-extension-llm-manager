@@ -1,6 +1,6 @@
 # Chat Workspace Component - Guía de Uso
 
-**Versión:** 2.1  
+**Versión:** 2.2.0  
 **Estado:** ✅ Producción  
 **Última actualización:** 3 diciembre 2025
 
@@ -13,11 +13,13 @@
 3. [Uso Básico](#uso-básico)
 4. [Propiedades (Props)](#propiedades-props)
 5. [Layouts Disponibles](#layouts-disponibles)
-6. [API JavaScript](#api-javascript)
-7. [Personalización](#personalización)
-8. [Ejemplos Completos](#ejemplos-completos)
-9. [Troubleshooting](#troubleshooting)
-10. [Performance](#performance)
+6. [**Multi-Instance Support** ⭐ NEW](#multi-instance-support)
+7. [API JavaScript](#api-javascript)
+8. [Custom Events API](#custom-events-api)
+9. [Personalización](#personalización)
+10. [Ejemplos Completos](#ejemplos-completos)
+11. [Troubleshooting](#troubleshooting)
+12. [Performance](#performance)
 
 ---
 
@@ -26,27 +28,32 @@
 El **Chat Workspace Component** es un componente Blade optimizado para interfaces de chat LLM con soporte para:
 
 - ✅ **Dual Layout System:** Sidebar (vertical) y Split-Horizontal (horizontal)
+- ✅ **Multi-Instance Support:** Múltiples chats simultáneos en la misma página ⭐ **v2.2.0**
 - ✅ **Monitor Integrado:** Métricas en tiempo real, historial de actividad, console logs
 - ✅ **Streaming Support:** Compatible con Server-Sent Events (SSE)
 - ✅ **Alpine.js Reactive:** Componentes reactivos sin Vue/React
-- ✅ **LocalStorage Persistence:** Guarda preferencias del usuario
+- ✅ **LocalStorage Persistence:** Guarda preferencias del usuario por sesión
 - ✅ **Mobile Responsive:** Adaptativo a pantallas pequeñas
 - ✅ **Code Partitioning:** Carga condicional para máxima performance
 
 ### Arquitectura
 
 ```
-ChatWorkspace Component
+ChatWorkspace Component (v2.2.0 - Multi-Instance)
 ├── Layouts (intercambiables)
 │   ├── Sidebar Layout (60/40 vertical)
 │   └── Split-Horizontal Layout (70/30 horizontal resizable)
-├── Monitor Components
+├── Monitor Components (per-session)
 │   ├── Full Monitor (métricas + historial + consola)
 │   └── Console Only (solo consola para split)
-└── Alpine.js Components
-    ├── chatWorkspace (global)
-    ├── splitResizer (condicional)
-    └── window.LLMMonitor API (global)
+├── Alpine.js Components (unique scopes per session)
+│   ├── chatWorkspace_{{sessionId}} (per instance)
+│   ├── splitResizer_{{sessionId}} (conditional)
+│   └── window.LLMMonitorFactory (multi-instance API)
+└── DOM Elements (unique IDs per session)
+    ├── messages-container-{{sessionId}}
+    ├── monitor-console-{{sessionId}}
+    └── All interactive elements scoped
 ```
 
 ---
@@ -179,6 +186,269 @@ Monitor dividido horizontalmente con resize drag.
 
 ---
 
+## Multi-Instance Support
+
+### Descripción
+
+**Desde v2.2.0**, el componente Chat Workspace soporta **múltiples instancias simultáneas** en la misma página sin conflictos.
+
+Cada instancia es completamente independiente con:
+- ✅ **Alpine.js scopes únicos** - `chatWorkspace_{{sessionId}}`
+- ✅ **DOM IDs únicos** - `messages-container-{{sessionId}}`
+- ✅ **Monitor independiente** - `window.LLMMonitorFactory.get(sessionId)`
+- ✅ **LocalStorage aislado** - Keys únicas por sesión
+- ✅ **Custom events discriminados** - `event.detail.sessionId`
+
+---
+
+### Uso Básico: Dos Chats Lado a Lado
+
+```blade
+<div class="row">
+    {{-- Chat 1: OpenAI GPT-4 --}}
+    <div class="col-md-6">
+        <x-llm-manager-chat-workspace
+            :session="$session1"
+            :configurations="$configurations"
+            layout="sidebar"
+            :show-monitor="true"
+        />
+    </div>
+    
+    {{-- Chat 2: Anthropic Claude --}}
+    <div class="col-md-6">
+        <x-llm-manager-chat-workspace
+            :session="$session2"
+            :configurations="$configurations"
+            layout="sidebar"
+            :show-monitor="true"
+        />
+    </div>
+</div>
+```
+
+**Resultado:** Dos chats completamente independientes, cada uno con su propio monitor, historial y configuración.
+
+---
+
+### Caso de Uso: Comparación A/B de Modelos
+
+```blade
+{{-- Comparar respuestas de diferentes modelos en tiempo real --}}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3>Model Comparison: Same Prompt, Different Models</h3>
+        </div>
+    </div>
+    
+    <div class="row">
+        {{-- GPT-4 --}}
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">GPT-4</h4>
+                </div>
+                <div class="card-body">
+                    <x-llm-manager-chat-workspace
+                        :session="$gpt4Session"
+                        :configurations="$configurations"
+                        monitor-layout="split-horizontal"
+                        :show-monitor="true"
+                    />
+                </div>
+            </div>
+        </div>
+        
+        {{-- Claude 3 --}}
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Claude 3</h4>
+                </div>
+                <div class="card-body">
+                    <x-llm-manager-chat-workspace
+                        :session="$claudeSession"
+                        :configurations="$configurations"
+                        monitor-layout="split-horizontal"
+                        :show-monitor="true"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+**Beneficios:**
+- Compara respuestas de diferentes modelos en tiempo real
+- Métricas de performance lado a lado (tokens, cost, duration)
+- Historial independiente por modelo
+- Testing A/B de prompts
+
+---
+
+### Caso de Uso: Multi-Usuario Dashboard
+
+```blade
+{{-- Dashboard con múltiples sesiones de usuarios --}}
+<div class="row">
+    @foreach($activeSessions as $userSession)
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>{{ $userSession->user->name }}</h5>
+                    <span class="badge badge-light-info">Session #{{ $userSession->id }}</span>
+                </div>
+                <div class="card-body">
+                    <x-llm-manager-chat-workspace
+                        :session="$userSession"
+                        :configurations="$configurations"
+                        layout="sidebar"
+                        :show-monitor="false"
+                    />
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+```
+
+**Beneficios:**
+- Monitoreo de múltiples usuarios en tiempo real
+- Dashboard administrativo
+- Testing simultáneo de workflows
+
+---
+
+### Acceso Programático a Instancias
+
+#### Monitor API Factory
+
+```javascript
+// Crear/obtener monitor de una sesión específica
+const monitor1 = window.LLMMonitorFactory.create(1);
+const monitor2 = window.LLMMonitorFactory.create(2);
+
+// Obtener monitor existente
+const monitor = window.LLMMonitorFactory.get(sessionId);
+
+// Obtener o crear (convenience method)
+const monitor = window.LLMMonitorFactory.getOrCreate(sessionId);
+
+// Usar monitor
+monitor.start();
+monitor.trackChunk('chunk text', 10);
+monitor.complete('OpenAI', 'gpt-4');
+```
+
+#### Alpine.js Scopes
+
+Cada instancia tiene su propio scope Alpine:
+
+```javascript
+// Scope único por sesión
+chatWorkspace_1  // Sesión 1
+chatWorkspace_2  // Sesión 2
+chatWorkspace_default  // Sin sesión
+
+// Acceso desde HTML
+<div x-data="chatWorkspace_{{ $session->id }}(...)">
+    <button @click="toggleMonitor()">Toggle Monitor</button>
+</div>
+```
+
+#### LocalStorage Keys
+
+Cada sesión tiene sus propias keys:
+
+```javascript
+// Session 1
+llm_chat_monitor_open_1
+llm_split_chat_flex_1
+llm_split_monitor_flex_1
+llm_chat_monitor_history_1
+
+// Session 2
+llm_chat_monitor_open_2
+llm_split_chat_flex_2
+llm_split_monitor_flex_2
+llm_chat_monitor_history_2
+```
+
+---
+
+### Custom Events Multi-Instance
+
+Todos los eventos incluyen `sessionId` en el `detail`:
+
+```javascript
+// Escuchar eventos de una sesión específica
+document.addEventListener('llm-message-sent', (event) => {
+    const { sessionId, content } = event.detail;
+    
+    if (sessionId === 1) {
+        console.log('Session 1 sent:', content);
+    } else if (sessionId === 2) {
+        console.log('Session 2 sent:', content);
+    }
+});
+
+// Escuchar streaming de todas las sesiones
+window.addEventListener('llm-streaming-chunk', (event) => {
+    const { sessionId, totalTokens } = event.detail;
+    updateDashboard(sessionId, totalTokens);
+});
+```
+
+---
+
+### Limitaciones Conocidas
+
+**v2.2.0 - Sin limitaciones críticas:**
+- ✅ Soporta 2+ instancias simultáneas
+- ✅ Monitors independientes funcionan correctamente
+- ✅ LocalStorage sin conflictos
+- ✅ Alpine.js scopes aislados
+- ✅ DOM IDs únicos por sesión
+- ✅ Custom events con discriminador sessionId
+
+**Performance Considerations:**
+- Cada instancia carga sus propios partials (CSS/JS)
+- Recomendado: Máximo 4-6 instancias simultáneas en desktop
+- En móvil: Máximo 2 instancias (por espacio de pantalla)
+
+**Backward Compatibility:**
+- `window.LLMMonitor` apunta a instancia 'default' (retrocompatibilidad)
+- Código antiguo sin sessionId sigue funcionando
+
+---
+
+### Testing Multi-Instance
+
+```javascript
+// Test: Crear 3 monitores simultáneos
+const m1 = window.LLMMonitorFactory.create(1);
+const m2 = window.LLMMonitorFactory.create(2);
+const m3 = window.LLMMonitorFactory.create(3);
+
+// Test: Verificar independencia
+m1.start();
+m2.start();
+m3.start();
+
+console.log(m1.currentMetrics.startTime);  // Timestamp 1
+console.log(m2.currentMetrics.startTime);  // Timestamp 2
+console.log(m3.currentMetrics.startTime);  // Timestamp 3
+
+// Test: Verificar localStorage isolation
+localStorage.getItem('llm_chat_monitor_history_1');  // History 1
+localStorage.getItem('llm_chat_monitor_history_2');  // History 2
+localStorage.getItem('llm_chat_monitor_history_3');  // History 3
+```
+
+---
+
 ## API JavaScript
 
 ### 1. Alpine.js: chatWorkspace Component
@@ -189,6 +459,7 @@ Monitor dividido horizontalmente con resize drag.
 
 ```javascript
 {
+    sessionId: number|string,  // ID de la sesión (unique per instance)
     monitorOpen: boolean,      // Estado del monitor (abierto/cerrado)
     isMobile: boolean,         // Detección de móvil
     showMobileModal: boolean   // Modal en móvil
@@ -208,9 +479,10 @@ toggleMonitor()
 #### Ejemplo de Extensión
 
 ```blade
-<div x-data="chatWorkspace(true, true, 'sidebar')">
+<div x-data="chatWorkspace_{{ $session->id }}(true, true, 'sidebar', {{ $session->id }})">
     {{-- Acceso a propiedades --}}
     <div x-show="monitorOpen">Monitor abierto</div>
+    <div x-text="sessionId">Session ID</div>
     
     {{-- Llamar métodos --}}
     <button @click="toggleMonitor()">Toggle</button>
@@ -273,15 +545,32 @@ document.addEventListener('alpine:init', () => {
 
 ---
 
-### 3. JavaScript: window.LLMMonitor API
+### 3. JavaScript: window.LLMMonitorFactory API (v2.2.0)
 
 **Ubicación:** `partials/scripts/monitor-api.blade.php`  
-**Scope:** Global (disponible en todo el documento)
+**Scope:** Global Factory (multi-instance support)
 
-#### Propiedades
+#### Factory Methods
 
 ```javascript
-window.LLMMonitor = {
+// Crear nueva instancia de monitor
+window.LLMMonitorFactory.create(sessionId)
+// Returns: Monitor instance
+
+// Obtener instancia existente
+window.LLMMonitorFactory.get(sessionId)
+// Returns: Monitor instance | undefined
+
+// Obtener o crear (convenience)
+window.LLMMonitorFactory.getOrCreate(sessionId)
+// Returns: Monitor instance
+```
+
+#### Monitor Instance Properties
+
+```javascript
+{
+    sessionId: number|string,
     currentMetrics: {
         tokens: number,
         chunks: number,
@@ -294,60 +583,78 @@ window.LLMMonitor = {
 }
 ```
 
-#### Métodos Públicos
+#### Monitor Instance Methods
 
 ```javascript
-// Inicializar monitor (automático en DOMContentLoaded)
-window.LLMMonitor.init()
+const monitor = window.LLMMonitorFactory.get(sessionId);
+
+// Inicializar monitor (automático)
+monitor.init()
 
 // Iniciar tracking de stream
-window.LLMMonitor.start()
+monitor.start()
 
 // Trackear chunk recibido
-window.LLMMonitor.trackChunk(chunk, tokens = 0)
+monitor.trackChunk(chunk, tokens = 0)
 
 // Stream completado
-window.LLMMonitor.complete(provider, model)
+monitor.complete(provider, model)
 
 // Error en stream
-window.LLMMonitor.error(message)
+monitor.error(message)
 
 // Log a consola
-window.LLMMonitor.log(message, type = 'info')
+monitor.log(message, type = 'info')
 // types: 'info', 'success', 'error', 'warning'
 
 // Refrescar vista
-window.LLMMonitor.refresh()
+monitor.refresh()
 
 // Limpiar datos
-window.LLMMonitor.clear()
+monitor.clear()
 
 // Resetear métricas actuales
-window.LLMMonitor.reset()
+monitor.reset()
 ```
 
-#### Ejemplo de Uso con Streaming
+#### Ejemplo de Uso Multi-Instance
 
 ```javascript
-// Al iniciar stream
-window.LLMMonitor.start();
+// Stream en sesión 1
+const monitor1 = window.LLMMonitorFactory.create(1);
+monitor1.start();
 
-// Por cada chunk recibido
-eventSource.onmessage = (event) => {
-    const chunk = event.data;
-    const tokens = calculateTokens(chunk);
-    window.LLMMonitor.trackChunk(chunk, tokens);
+eventSource1.onmessage = (event) => {
+    const tokens = calculateTokens(event.data);
+    monitor1.trackChunk(event.data, tokens);
 };
 
-// Al completar
-eventSource.addEventListener('done', () => {
-    window.LLMMonitor.complete('OpenAI', 'gpt-4');
+eventSource1.addEventListener('done', () => {
+    monitor1.complete('OpenAI', 'gpt-4');
 });
 
-// Si hay error
-eventSource.onerror = () => {
-    window.LLMMonitor.error('Stream connection failed');
+// Stream en sesión 2 (independiente)
+const monitor2 = window.LLMMonitorFactory.create(2);
+monitor2.start();
+
+eventSource2.onmessage = (event) => {
+    const tokens = calculateTokens(event.data);
+    monitor2.trackChunk(event.data, tokens);
 };
+
+eventSource2.addEventListener('done', () => {
+    monitor2.complete('Anthropic', 'claude-3');
+});
+```
+
+#### Backward Compatibility
+
+```javascript
+// window.LLMMonitor apunta a la instancia 'default'
+window.LLMMonitor.start();  // ✅ Funciona (instancia default)
+
+// Equivalente a:
+window.LLMMonitorFactory.getOrCreate('default').start();
 ```
 
 #### Activity History Structure
