@@ -10,6 +10,7 @@
         marked.setOptions({
             breaks: true,
             gfm: true,
+            pedantic: false,    // Don't convert indented text to code blocks
             headerIds: false,
             mangle: false
         });
