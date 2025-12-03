@@ -71,7 +71,7 @@ class LLMQuickChatController extends Controller
                     'session_id' => $session->id,
                     'role' => 'user',
                     'content' => $validated['prompt'],
-                    'token_count' => 0,
+                    'tokens' => 0,
                 ]);
 
                 $params = [
@@ -117,14 +117,13 @@ class LLMQuickChatController extends Controller
                     'session_id' => $session->id,
                     'role' => 'assistant',
                     'content' => $fullResponse,
-                    'token_count' => $metrics['usage']['total_tokens'] ?? $tokenCount,
+                    'tokens' => $metrics['usage']['total_tokens'] ?? $tokenCount,
                 ]);
 
                 $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics);
 
-                // Update session totals
-                $session->increment('total_tokens', $metrics['usage']['total_tokens'] ?? $tokenCount);
-                $session->increment('total_cost', $usageLog->cost_usd);
+                // Note: Session totals (tokens/cost) can be calculated from messages and usage_logs
+                // No need to store redundant data in session table
 
                 echo "data: " . json_encode([
                     'type' => 'done',
