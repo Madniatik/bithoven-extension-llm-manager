@@ -4,6 +4,6 @@
     data-kt-scroll-wrappers="#kt_content, #kt_app_content, #kt_chat_messenger_body"
     data-kt-scroll-offset="{default: '35px', lg: '5px'}">
     <!--begin::Messages-->
-    @include('llm-manager::admin.quick-chat.partials.chat-messages')
+    @include('llm-manager::components.chat.partials.chat-messages')
     <!--end::Messages-->
 </div>

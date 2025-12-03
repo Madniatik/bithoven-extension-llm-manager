@@ -7,7 +7,7 @@
     <!--begin:Toolbar-->
     <div class="d-flex flex-stack align-items-center">
         {{-- Action Buttons --}}
-        @include('llm-manager::admin.quick-chat.partials.buttons.action-buttons')
+        @include('llm-manager::components.chat.partials.buttons.action-buttons')
         
         {{-- Model Selection --}}
         <div class="flex-grow-1 mx-3">
