@@ -11,6 +11,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added - Multi-Instance Support for ChatWorkspace Component
 
+#### Legacy Code Cleanup (commit 00349e9)
+
+**Removed 17 unused legacy files** from `resources/views/admin/quick-chat/partials/`
+
+**Deleted Files:**
+- `partials/buttons/` (2 files: action-buttons, chat-settings)
+- `partials/scripts/` (4 files: clipboard-utils, event-handlers, message-renderer, settings-manager)
+- `partials/styles/` (4 files: buttons, dependencies, markdown, responsive)
+- `partials/modals/` (1 file: modal-raw-message)
+- `partials/drafts/` (1 file: chat-users)
+- `partials/*.blade.php` (5 files: chat-messages, input-form, messages-container, scripts, styles)
+
+**Reason for Removal:**
+- System migrated to component architecture (`<x-llm-manager-chat-workspace>`)
+- Quick Chat now uses `components/chat/` structure exclusively
+- No external references found (grep search verified)
+- `index.blade.php` uses component, NOT legacy partials
+- `modal-raw-message` exists in new location: `components/chat/partials/modals/`
+
+**Total cleanup:** 1,213 lines removed
+
+**Verification:**
+- ✅ Grep search: No external references to `admin.quick-chat.partials`
+- ✅ index.blade.php: Uses `<x-llm-manager-chat-workspace>` component
+- ✅ Controllers: Only render index.blade.php (no partials references)
+- ✅ New system: All partials in `components/chat/partials/`
+
+---
+
+### Added - Multi-Instance Support for ChatWorkspace Component
+
 **MAJOR FEATURE:** ChatWorkspace now supports múltiples instancias simultáneas en la misma página.
 
 #### Multi-Instance Architecture

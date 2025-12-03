@@ -196,6 +196,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ## 📝 Changelog
 
+### v2.2 (3 diciembre 2025)
+
+**ChatWorkspace Component Multi-Instance Support:**
+- ✅ Multi-instance architecture with unique Alpine.js scopes
+- ✅ window.LLMMonitorFactory pattern for independent monitors
+- ✅ LocalStorage isolation per session
+- ✅ Custom Events with sessionId discriminator
+- ✅ 100% backward compatible
+- ✅ Legacy partials cleanup (1,213 lines removed)
+
 ### v2.1 (3 diciembre 2025)
 
 **ChatWorkspace Component Optimizations:**

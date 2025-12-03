@@ -1,8 +1,8 @@
-# 🚀 LLM Manager Extension v1.0.4
+# 🚀 LLM Manager Extension v2.2.0
 
 **Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
 [![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -58,15 +58,20 @@ Complete documentation available in the `docs/` directory:
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - Development workflow and guidelines
 
 ### 🧩 Components
-- **[Chat Workspace Component](docs/components/CHAT-WORKSPACE.md)** - Complete usage guide for ChatWorkspace v2.1
+- **[Chat Workspace Component](docs/components/CHAT-WORKSPACE.md)** - Complete usage guide for ChatWorkspace v2.2 (Multi-Instance Support)
 
 ### 📊 Project Status
-- **[Changelog](CHANGELOG.md)** - Complete version history (v1.0.0 - v1.0.4)
+- **[Changelog](CHANGELOG.md)** - Complete version history (v1.0.0 - v2.2.0)
 - **[Testing Status](#-testing-status)** - Manual testing coverage (33/33 features - 100%)
 - **[Roadmap](#-roadmap)** - Future features and releases
 
-### 🎨 Component Optimizations (v1.0.4)
-- **ChatWorkspace v2.1** - 63% code reduction (740 → 270 lines)
+### 🎨 Component Features (v2.2.0)
+- **ChatWorkspace v2.2** - Multi-Instance Support + 63% code reduction (740 → 270 lines)
+  - ✅ Multi-instance architecture: Múltiples chats en la misma página
+  - ✅ Alpine.js scopes únicos: `chatWorkspace_{{sessionId}}`, `splitResizer_{{sessionId}}`
+  - ✅ Factory pattern: `window.LLMMonitorFactory` para monitors independientes
+  - ✅ LocalStorage isolation: Configuraciones separadas por sesión
+  - ✅ Custom Events con `sessionId` discriminator
   - Split-horizontal layout: 66% reduction
   - Monitor components: 56% reduction
   - 10 reusable partials created
@@ -365,8 +370,8 @@ php artisan permission:cache-reset                    # Clear permission cache
 
 ### Manual Testing Coverage: 100% ✅
 
-**Version:** v1.0.0  
-**Completed:** 21 de noviembre de 2025  
+**Version:** v2.2.0  
+**Completed:** 3 de diciembre de 2025  
 **Features Tested:** 33/33 (100%)  
 **Bugs Fixed:** 15
 
@@ -455,7 +460,7 @@ $results = $rag->search('How to create a controller?', extension: 'docs');
 
 ## 📊 Implementation Status
 
-**Current Version:** v1.0.0 (Production Ready)
+**Current Version:** v2.2.0 (Production Ready - Multi-Instance Support)
 
 ### ✅ Completed (v1.0.0)
 
@@ -670,8 +675,8 @@ See [LICENSE](LICENSE) file for full details.
 
 ---
 
-**Version:** 1.0.0  
-**Last Updated:** 26 de noviembre de 2025  
-**Status:** ✅ Production Ready
+**Version:** 2.2.0  
+**Last Updated:** 3 de diciembre de 2025  
+**Status:** ✅ Production Ready - Multi-Instance Support
 
 **GitHub:** https://github.com/Madniatik/bithoven-extension-llm-manager
