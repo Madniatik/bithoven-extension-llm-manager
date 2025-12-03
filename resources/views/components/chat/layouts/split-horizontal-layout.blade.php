@@ -1,10 +1,10 @@
 {{--
     SPLIT HORIZONTAL LAYOUT
-    Chat arriba (70%) + Monitor abajo (30%) con resizer draggable
+    Chat arriba (70%) + Monitor Console abajo (30%) con resizer draggable
 --}}
 
 <div class="split-horizontal-container" id="llm-split-view" x-data="splitResizer()" x-init="init()">
-    {{-- CHAT PANE (70% default) --}}
+    {{-- CHAT PANE (70% default) - Incluye TODA la card con textarea --}}
     <div class="split-pane split-chat" id="split-chat-pane">
         @include('llm-manager::components.chat.partials.chat-card')
     </div>
@@ -25,7 +25,7 @@
             </div>
         </div>
         
-        {{-- MONITOR PANE (30% default) --}}
+        {{-- MONITOR PANE (30% default) - SOLO CONSOLA --}}
         <div 
             x-show="monitorOpen"
             x-transition:enter="transition ease-out duration-300"
@@ -38,56 +38,33 @@
             id="split-monitor-pane"
             style="display: none;">
             
-            {{-- Monitor Header --}}
-            <div class="card mb-0">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h5 class="mb-0">
-                            <i class="ki-duotone ki-chart-line-down fs-2 me-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                            Monitor de Streaming
-                        </h5>
-                    </div>
-                    <div class="card-toolbar">
-                        <button 
-                            type="button" 
-                            class="btn btn-sm btn-icon btn-light-dark" 
-                            @click="monitorOpen = false; localStorage.setItem('llm_chat_monitor_open', 'false')"
-                            data-bs-toggle="tooltip"
-                            title="Cerrar Monitor">
-                            <i class="ki-duotone ki-cross fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    @include('llm-manager::components.chat.shared.monitor')
-                </div>
+            {{-- Console Header con botón cerrar --}}
+            <div class="d-flex justify-content-between align-items-center mb-2 px-3 pt-3">
+                <h6 class="mb-0 text-gray-700">
+                    <i class="ki-duotone ki-code fs-3 me-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                        <span class="path4"></span>
+                    </i>
+                    Monitor Console
+                </h6>
+                <button 
+                    type="button" 
+                    class="btn btn-sm btn-icon btn-light-dark" 
+                    @click="monitorOpen = false; localStorage.setItem('llm_chat_monitor_open', 'false')"
+                    data-bs-toggle="tooltip"
+                    title="Cerrar Monitor">
+                    <i class="ki-duotone ki-cross fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
             </div>
-        </div>
-        
-        {{-- Mobile: Modal fallback --}}
-        <div class="modal fade" id="monitorModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="ki-duotone ki-chart-line-down fs-2 me-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                            Monitor de Streaming
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        @include('llm-manager::components.chat.shared.monitor')
-                    </div>
-                </div>
+            
+            {{-- Solo la consola (fondo negro) --}}
+            <div class="px-3 pb-3" style="height: calc(100% - 60px);">
+                @include('llm-manager::components.chat.shared.monitor-console')
             </div>
         </div>
     @endif
@@ -112,11 +89,14 @@
 .split-chat {
     flex: 70%;
     min-height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
 .split-monitor {
     flex: 30%;
-    min-height: 200px;
+    min-height: 150px;
+    background: var(--bs-body-bg);
 }
 
 .split-resizer {
