@@ -97,10 +97,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Documentation
 
 **Created comprehensive documentation:**
-- `docs/components/CHAT-WORKSPACE.md` (800+ lines)
+- `docs/components/CHAT-WORKSPACE.md` (1300+ lines)
   - Installation and props reference
   - Layout selection guide (sidebar vs split-horizontal)
   - Complete JavaScript API documentation
+  - **Custom Events API section** (500+ lines)
+    * Message events, Streaming events, Monitor events, Session events
+    * 3 complete integration examples (Analytics, Auto-save, Dashboard)
+    * Event structure, detail payload, and best practices
+    * Enables external integrations, plugins, analytics without code coupling
   - Customization examples
   - Troubleshooting section
   - Performance benchmarks
