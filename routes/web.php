@@ -53,7 +53,10 @@ Route::prefix('admin/llm')
         Route::get('conversations/{id}/stream-reply', [LLMConversationController::class, 'streamReply'])->name('conversations.stream-reply')->where('id', '[0-9]+');
         
         // Quick Chat
-        Route::get('quick-chat/{sessionId?}', [LLMQuickChatController::class, 'index'])->name('quick-chat')->where('sessionId', '[0-9]+');
+        Route::get('quick-chat', [LLMQuickChatController::class, 'index'])->name('quick-chat');
+        Route::post('quick-chat/stream', [LLMQuickChatController::class, 'stream'])->name('quick-chat.stream');
+        Route::post('quick-chat/save', [LLMQuickChatController::class, 'save'])->name('quick-chat.save');
+        Route::get('quick-chat/new', [LLMQuickChatController::class, 'newChat'])->name('quick-chat.new');
         Route::get('messages/{messageId}/raw', [LLMQuickChatController::class, 'getRawMessage'])->name('messages.raw')->where('messageId', '[0-9]+');
         
         // Knowledge Base
