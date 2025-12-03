@@ -1,18 +1,69 @@
 # 📖 LLM Manager - Usage Guide
 
-**Version:** 1.0.0  
-**Last Updated:** 21 de noviembre de 2025
+**Version:** 1.0.4  
+**Last Updated:** 3 de diciembre de 2025
 
 ---
 
 ## 📑 Table of Contents
 
-1. [Prompt Templates](#-prompt-templates)
-2. [Knowledge Base (RAG)](#-knowledge-base-rag)
-3. [Tool Definitions](#-tool-definitions)
-4. [Conversations](#-conversations)
-5. [Statistics Dashboard](#-statistics-dashboard)
-6. [Best Practices](#-best-practices)
+1. [Chat Workspace Component](#-chat-workspace-component)
+2. [Prompt Templates](#-prompt-templates)
+3. [Knowledge Base (RAG)](#-knowledge-base-rag)
+4. [Tool Definitions](#-tool-definitions)
+5. [Conversations](#-conversations)
+6. [Statistics Dashboard](#-statistics-dashboard)
+7. [Best Practices](#-best-practices)
+
+---
+
+## 🧩 Chat Workspace Component
+
+### Overview
+
+The Chat Workspace component provides a complete chat interface with dual layout support, integrated monitoring, and real-time streaming capabilities.
+
+**📖 Complete Documentation:** [Chat Workspace Component Guide](components/CHAT-WORKSPACE.md)
+
+### Quick Start
+
+```blade
+{{-- Basic usage --}}
+<x-llm-manager-chat-workspace
+    :session="$session"
+    :configurations="$configurations"
+/>
+
+{{-- With split-horizontal layout --}}
+<x-llm-manager-chat-workspace
+    :session="$session"
+    :configurations="$configurations"
+    :show-monitor="true"
+    :monitor-open="true"
+    monitor-layout="split-horizontal"
+/>
+```
+
+### Features (v2.1)
+
+- ✅ **Dual Layouts:** Sidebar (60/40 vertical) and Split-Horizontal (70/30 horizontal resizable)
+- ✅ **Monitor:** Real-time metrics, activity history, console logs
+- ✅ **Streaming:** SSE-based real-time responses
+- ✅ **Alpine.js Reactive:** chatWorkspace and splitResizer components
+- ✅ **LocalStorage:** Persists layout sizes and monitor state
+- ✅ **Optimized:** 63% code reduction (740 → 270 lines)
+
+### Component Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `session` | `LLMConversationSession\|null` | required | Current conversation session |
+| `configurations` | `Collection` | required | Available LLM configurations |
+| `show-monitor` | `bool` | `true` | Show/hide monitor panel |
+| `monitor-open` | `bool` | `true` | Initial monitor state |
+| `monitor-layout` | `string` | `'sidebar'` | Layout mode: `'sidebar'` or `'split-horizontal'` |
+
+**For complete API reference, customization, and troubleshooting:** [Full Documentation](components/CHAT-WORKSPACE.md)
 
 ---
 

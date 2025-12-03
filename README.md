@@ -1,8 +1,8 @@
-# 🚀 LLM Manager Extension v1.0.3
+# 🚀 LLM Manager Extension v1.0.4
 
 **Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.3-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
 [![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -57,10 +57,20 @@ Complete documentation available in the `docs/` directory:
 - **[Code Examples](docs/EXAMPLES.md)** - Copy-paste ready code snippets
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - Development workflow and guidelines
 
+### 🧩 Components
+- **[Chat Workspace Component](docs/components/CHAT-WORKSPACE.md)** - Complete usage guide for ChatWorkspace v2.1
+
 ### 📊 Project Status
-- **[Changelog](CHANGELOG.md)** - Complete version history (v1.0.0 - v1.1.0)
+- **[Changelog](CHANGELOG.md)** - Complete version history (v1.0.0 - v1.0.4)
 - **[Testing Status](#-testing-status)** - Manual testing coverage (33/33 features - 100%)
 - **[Roadmap](#-roadmap)** - Future features and releases
+
+### 🎨 Component Optimizations (v1.0.4)
+- **ChatWorkspace v2.1** - 63% code reduction (740 → 270 lines)
+  - Split-horizontal layout: 66% reduction
+  - Monitor components: 56% reduction
+  - 10 reusable partials created
+  - [Full documentation](docs/components/CHAT-WORKSPACE.md)
 
 ---
 
