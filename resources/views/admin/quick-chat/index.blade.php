@@ -42,9 +42,15 @@
     {{-- Raw Message Modal --}}
     @include('llm-manager::admin.quick-chat.partials.modals.modal-raw-message')
 
-    {{-- Styles --}}
-    @include('llm-manager::admin.quick-chat.partials.styles')
+    {{-- Styles (partitioned) --}}
+    @include('llm-manager::admin.quick-chat.partials.styles.dependencies')
+    @include('llm-manager::admin.quick-chat.partials.styles.markdown')
+    @include('llm-manager::admin.quick-chat.partials.styles.buttons')
+    @include('llm-manager::admin.quick-chat.partials.styles.responsive')
 
-    {{-- Scripts --}}
-    @include('llm-manager::admin.quick-chat.partials.scripts')
+    {{-- Scripts (partitioned) --}}
+    @include('llm-manager::admin.quick-chat.partials.scripts.clipboard-utils')
+    @include('llm-manager::admin.quick-chat.partials.scripts.message-renderer')
+    @include('llm-manager::admin.quick-chat.partials.scripts.settings-manager')
+    @include('llm-manager::admin.quick-chat.partials.scripts.event-handlers')
 </x-default-layout>

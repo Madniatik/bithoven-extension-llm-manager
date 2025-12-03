@@ -5,9 +5,30 @@
         data-kt-element="input" data-kt-autosize="true" placeholder="Type your message"></textarea>
 
     <!--begin:Toolbar-->
-    <div class="d-flex flex-stack">
+    <div class="d-flex flex-stack align-items-center">
         {{-- Action Buttons --}}
         @include('llm-manager::admin.quick-chat.partials.buttons.action-buttons')
+        
+        {{-- Model Selection --}}
+        <div class="flex-grow-1 mx-3">
+            <select id="quick-chat-model-selector" name="configuration_id" 
+                class="form-select form-select-sm form-select-solid w-300px" 
+                data-control="select2" 
+                data-hide-search="false" 
+                data-placeholder="Select LLM Model"
+                data-dropdown-css-class="w-300px">
+                @foreach ($configurations as $config)
+                    <option value="{{ $config->id }}" 
+                        data-provider="{{ ucfirst($config->provider) }}"
+                        data-model="{{ $config->model }}"
+                        {{ $session && $session->configuration_id == $config->id ? 'selected' : '' }}>
+                        {{ $config->name }} ({{ ucfirst($config->provider) }})
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        
+        {{-- Send/Clear Buttons --}}
         <div class="d-flex align-items-center gap-2">
             <button type="button" id="send-btn" class="btn btn-icon btn-sm btn-primary" data-bs-toggle="tooltip"
                 title="Send Message">

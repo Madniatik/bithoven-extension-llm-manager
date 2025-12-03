@@ -10,7 +10,7 @@
         {!! getIcon('ki-paper-clip', 'fs-3', '', 'i') !!}
     </button>
     <button class="btn btn-sm btn-icon btn-active-light-primary" type="button" data-bs-toggle="tooltip"
-        title="Coming soon">
+        title="Export chat">
         {!! getIcon('ki-exit-up', 'fs-3', '', 'i') !!}
     </button>
 </div>
