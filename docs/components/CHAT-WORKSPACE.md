@@ -706,6 +706,622 @@ php artisan view:clear
 
 ---
 
+## 📡 Custom Events API
+
+### Overview
+
+El componente ChatWorkspace emite **eventos custom JavaScript** que permiten integraciones externas sin modificar el código del componente. Cualquier aplicación puede escuchar estos eventos para reaccionar a cambios en el chat, streaming, o monitor.
+
+**Beneficios:**
+- ✅ Desacoplamiento total - el componente no conoce a los listeners
+- ✅ Extensibilidad - agrega funcionalidad sin tocar el componente
+- ✅ Testing simplificado - verifica que se emiten los eventos correctos
+- ✅ Integraciones de terceros - plugins, analytics, dashboards externos
+
+---
+
+### Event Structure
+
+Todos los eventos siguen este formato:
+
+```javascript
+// Alpine.js events (dentro del componente)
+this.$dispatch('event-name', {
+    // detail object
+    property1: value1,
+    property2: value2
+});
+
+// Vanilla JS events (window.LLMMonitor)
+window.dispatchEvent(new CustomEvent('event-name', {
+    detail: {
+        property1: value1,
+        property2: value2
+    }
+}));
+```
+
+**Escuchar eventos:**
+
+```javascript
+// Alpine events (desde el elemento del componente hacia arriba)
+document.addEventListener('event-name', (event) => {
+    console.log(event.detail);
+});
+
+// Window events (globales)
+window.addEventListener('event-name', (event) => {
+    console.log(event.detail);
+});
+```
+
+---
+
+### Message Events
+
+#### `llm-message-sent`
+
+Emitido cuando el usuario envía un mensaje.
+
+**Detail:**
+```javascript
+{
+    content: string,        // Texto del mensaje
+    sessionId: number,      // ID de la sesión
+    timestamp: number       // Unix timestamp (ms)
+}
+```
+
+**Ejemplo:**
+```javascript
+document.addEventListener('llm-message-sent', (event) => {
+    console.log('Usuario envió:', event.detail.content);
+    
+    // Analytics
+    analytics.track('Message Sent', {
+        sessionId: event.detail.sessionId,
+        length: event.detail.content.length
+    });
+});
+```
+
+---
+
+#### `llm-response-received`
+
+Emitido cuando se recibe la respuesta completa del LLM.
+
+**Detail:**
+```javascript
+{
+    content: string,        // Respuesta completa
+    sessionId: number,      // ID de la sesión
+    provider: string,       // 'OpenAI', 'Anthropic', etc.
+    model: string,          // 'gpt-4', 'claude-3', etc.
+    tokens: number,         // Total de tokens
+    duration: number,       // Duración en milisegundos
+    cost: number           // Costo estimado
+}
+```
+
+**Ejemplo:**
+```javascript
+document.addEventListener('llm-response-received', (event) => {
+    const { provider, tokens, duration, cost } = event.detail;
+    
+    // Actualizar dashboard externo
+    updateDashboardStats({
+        provider,
+        tokens,
+        avgResponseTime: duration,
+        totalCost: cost
+    });
+    
+    // Notificación si respuesta larga
+    if (duration > 30000) { // >30 segundos
+        showNotification(`Respuesta tardó ${duration/1000}s`);
+    }
+});
+```
+
+---
+
+### Streaming Events
+
+#### `llm-streaming-started`
+
+Emitido cuando comienza el streaming de una respuesta.
+
+**Detail:**
+```javascript
+{
+    sessionId: number,      // ID de la sesión
+    provider: string,       // Provider LLM
+    model: string,          // Modelo usado
+    timestamp: number       // Unix timestamp
+}
+```
+
+**Ejemplo:**
+```javascript
+window.addEventListener('llm-streaming-started', (event) => {
+    console.log('Streaming iniciado:', event.detail);
+    
+    // Mostrar indicador de carga global
+    showGlobalLoadingIndicator();
+    
+    // Deshabilitar envío de nuevos mensajes
+    disableChatInput();
+});
+```
+
+---
+
+#### `llm-streaming-chunk`
+
+Emitido por cada chunk recibido durante el streaming.
+
+**Detail:**
+```javascript
+{
+    chunk: string,          // Texto del chunk
+    tokens: number,         // Tokens en este chunk
+    totalTokens: number,    // Tokens acumulados
+    totalChunks: number,    // Chunks acumulados
+    sessionId: number       // ID de la sesión
+}
+```
+
+**Ejemplo:**
+```javascript
+window.addEventListener('llm-streaming-chunk', (event) => {
+    const { totalTokens, totalChunks } = event.detail;
+    
+    // Actualizar contador en tiempo real
+    updateTokenCounter(totalTokens);
+    
+    // Progress bar
+    updateProgressBar(totalChunks);
+});
+```
+
+---
+
+#### `llm-streaming-completed`
+
+Emitido cuando el streaming termina exitosamente.
+
+**Detail:**
+```javascript
+{
+    sessionId: number,      // ID de la sesión
+    provider: string,       // Provider usado
+    model: string,          // Modelo usado
+    totalTokens: number,    // Total de tokens
+    totalChunks: number,    // Total de chunks
+    duration: number,       // Duración total (ms)
+    cost: number           // Costo total
+}
+```
+
+**Ejemplo:**
+```javascript
+window.addEventListener('llm-streaming-completed', (event) => {
+    const { totalTokens, duration, cost } = event.detail;
+    
+    // Ocultar indicador de carga
+    hideGlobalLoadingIndicator();
+    
+    // Habilitar input
+    enableChatInput();
+    
+    // Notificación
+    showNotification(`Completado: ${totalTokens} tokens en ${duration/1000}s ($${cost.toFixed(4)})`);
+    
+    // Auto-save
+    saveConversation(event.detail.sessionId);
+});
+```
+
+---
+
+#### `llm-streaming-error`
+
+Emitido cuando ocurre un error durante el streaming.
+
+**Detail:**
+```javascript
+{
+    sessionId: number,      // ID de la sesión
+    error: string,          // Mensaje de error
+    code: string,           // Código de error
+    timestamp: number       // Unix timestamp
+}
+```
+
+**Ejemplo:**
+```javascript
+window.addEventListener('llm-streaming-error', (event) => {
+    const { error, code } = event.detail;
+    
+    console.error('Streaming error:', error);
+    
+    // Mostrar error al usuario
+    showErrorNotification(error);
+    
+    // Log para analytics
+    logError({
+        type: 'streaming_error',
+        code: code,
+        message: error
+    });
+    
+    // Reintentar automáticamente
+    if (code === 'NETWORK_ERROR') {
+        retryStreaming(event.detail.sessionId);
+    }
+});
+```
+
+---
+
+### Monitor Events
+
+#### `llm-monitor-toggled`
+
+Emitido cuando el usuario abre/cierra el monitor.
+
+**Detail:**
+```javascript
+{
+    isOpen: boolean,        // Estado del monitor
+    layout: string,         // 'sidebar' o 'split-horizontal'
+    sessionId: number       // ID de la sesión
+}
+```
+
+**Ejemplo:**
+```javascript
+document.addEventListener('llm-monitor-toggled', (event) => {
+    const { isOpen, layout } = event.detail;
+    
+    // Guardar preferencia de usuario
+    saveUserPreference('monitor_open', isOpen);
+    saveUserPreference('monitor_layout', layout);
+    
+    // Analytics
+    analytics.track('Monitor Toggled', {
+        isOpen,
+        layout
+    });
+});
+```
+
+---
+
+#### `llm-monitor-cleared`
+
+Emitido cuando el usuario limpia los datos del monitor.
+
+**Detail:**
+```javascript
+{
+    sessionId: number,      // ID de la sesión
+    itemsCleared: number,   // Cantidad de items eliminados
+    timestamp: number       // Unix timestamp
+}
+```
+
+**Ejemplo:**
+```javascript
+window.addEventListener('llm-monitor-cleared', (event) => {
+    console.log('Monitor limpiado:', event.detail.itemsCleared, 'items');
+    
+    // Notificación
+    showNotification(`Monitor limpiado (${event.detail.itemsCleared} items)`);
+});
+```
+
+---
+
+#### `llm-layout-changed`
+
+Emitido cuando cambia el layout del monitor (sidebar ↔ split-horizontal).
+
+**Detail:**
+```javascript
+{
+    oldLayout: string,      // Layout anterior
+    newLayout: string,      // Layout nuevo
+    sessionId: number       // ID de la sesión
+}
+```
+
+**Ejemplo:**
+```javascript
+document.addEventListener('llm-layout-changed', (event) => {
+    const { oldLayout, newLayout } = event.detail;
+    
+    console.log(`Layout cambiado: ${oldLayout} → ${newLayout}`);
+    
+    // Ajustar UI externa
+    if (newLayout === 'split-horizontal') {
+        adjustExternalUIForSplitMode();
+    }
+});
+```
+
+---
+
+### Session Events
+
+#### `llm-session-created`
+
+Emitido cuando se crea una nueva sesión de conversación.
+
+**Detail:**
+```javascript
+{
+    sessionId: number,      // ID de la nueva sesión
+    provider: string,       // Provider seleccionado
+    model: string,          // Modelo seleccionado
+    timestamp: number       // Unix timestamp
+}
+```
+
+**Ejemplo:**
+```javascript
+document.addEventListener('llm-session-created', (event) => {
+    const { sessionId, provider } = event.detail;
+    
+    // Actualizar UI externa
+    updateSessionList();
+    
+    // Analytics
+    analytics.track('Session Created', {
+        sessionId,
+        provider
+    });
+});
+```
+
+---
+
+#### `llm-session-cleared`
+
+Emitido cuando se limpia/elimina una sesión.
+
+**Detail:**
+```javascript
+{
+    sessionId: number,      // ID de la sesión eliminada
+    messageCount: number,   // Cantidad de mensajes eliminados
+    timestamp: number       // Unix timestamp
+}
+```
+
+**Ejemplo:**
+```javascript
+document.addEventListener('llm-session-cleared', (event) => {
+    console.log('Sesión eliminada:', event.detail.sessionId);
+    
+    // Actualizar lista de sesiones
+    removeSessionFromList(event.detail.sessionId);
+});
+```
+
+---
+
+### Example: Complete Integration
+
+```javascript
+// analytics-integration.js
+class LLMAnalytics {
+    constructor() {
+        this.initListeners();
+    }
+    
+    initListeners() {
+        // Track message activity
+        document.addEventListener('llm-message-sent', (e) => {
+            this.trackEvent('Message Sent', {
+                sessionId: e.detail.sessionId,
+                length: e.detail.content.length
+            });
+        });
+        
+        // Track streaming performance
+        window.addEventListener('llm-streaming-completed', (e) => {
+            this.trackEvent('Streaming Completed', {
+                provider: e.detail.provider,
+                tokens: e.detail.totalTokens,
+                duration: e.detail.duration,
+                cost: e.detail.cost
+            });
+        });
+        
+        // Track errors
+        window.addEventListener('llm-streaming-error', (e) => {
+            this.trackError('Streaming Error', {
+                code: e.detail.code,
+                message: e.detail.error
+            });
+        });
+        
+        // Track monitor usage
+        document.addEventListener('llm-monitor-toggled', (e) => {
+            this.trackEvent('Monitor Toggled', {
+                isOpen: e.detail.isOpen,
+                layout: e.detail.layout
+            });
+        });
+    }
+    
+    trackEvent(name, properties) {
+        // Send to analytics service
+        if (typeof analytics !== 'undefined') {
+            analytics.track(name, properties);
+        }
+    }
+    
+    trackError(name, properties) {
+        // Send to error tracking service
+        if (typeof Sentry !== 'undefined') {
+            Sentry.captureMessage(name, {
+                level: 'error',
+                extra: properties
+            });
+        }
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    new LLMAnalytics();
+});
+```
+
+---
+
+### Example: Auto-save Plugin
+
+```javascript
+// auto-save-plugin.js
+class ChatAutoSave {
+    constructor(intervalMs = 30000) { // 30 segundos
+        this.interval = intervalMs;
+        this.sessionId = null;
+        this.hasChanges = false;
+        this.initListeners();
+        this.startAutoSave();
+    }
+    
+    initListeners() {
+        // Detectar cambios
+        document.addEventListener('llm-message-sent', (e) => {
+            this.sessionId = e.detail.sessionId;
+            this.hasChanges = true;
+        });
+        
+        document.addEventListener('llm-response-received', (e) => {
+            this.sessionId = e.detail.sessionId;
+            this.hasChanges = true;
+        });
+    }
+    
+    startAutoSave() {
+        setInterval(() => {
+            if (this.hasChanges && this.sessionId) {
+                this.saveConversation();
+            }
+        }, this.interval);
+    }
+    
+    async saveConversation() {
+        try {
+            await fetch(`/api/sessions/${this.sessionId}/save`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            this.hasChanges = false;
+            console.log('Conversation auto-saved');
+        } catch (error) {
+            console.error('Auto-save failed:', error);
+        }
+    }
+}
+
+// Initialize
+new ChatAutoSave();
+```
+
+---
+
+### Example: Real-time Dashboard
+
+```javascript
+// dashboard-integration.js
+class LLMDashboard {
+    constructor() {
+        this.stats = {
+            totalMessages: 0,
+            totalTokens: 0,
+            totalCost: 0,
+            avgResponseTime: 0,
+            errorCount: 0
+        };
+        
+        this.initListeners();
+        this.renderDashboard();
+    }
+    
+    initListeners() {
+        // Update stats on message sent
+        document.addEventListener('llm-message-sent', () => {
+            this.stats.totalMessages++;
+            this.updateDashboard();
+        });
+        
+        // Update stats on streaming completed
+        window.addEventListener('llm-streaming-completed', (e) => {
+            this.stats.totalTokens += e.detail.totalTokens;
+            this.stats.totalCost += e.detail.cost;
+            this.stats.avgResponseTime = (
+                (this.stats.avgResponseTime * (this.stats.totalMessages - 1) + e.detail.duration) 
+                / this.stats.totalMessages
+            );
+            this.updateDashboard();
+        });
+        
+        // Track errors
+        window.addEventListener('llm-streaming-error', () => {
+            this.stats.errorCount++;
+            this.updateDashboard();
+        });
+    }
+    
+    updateDashboard() {
+        document.getElementById('total-messages').textContent = this.stats.totalMessages;
+        document.getElementById('total-tokens').textContent = this.stats.totalTokens.toLocaleString();
+        document.getElementById('total-cost').textContent = '$' + this.stats.totalCost.toFixed(4);
+        document.getElementById('avg-response-time').textContent = (this.stats.avgResponseTime / 1000).toFixed(2) + 's';
+        document.getElementById('error-count').textContent = this.stats.errorCount;
+    }
+    
+    renderDashboard() {
+        // Initial render
+        this.updateDashboard();
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    new LLMDashboard();
+});
+```
+
+---
+
+### Best Practices
+
+1. **Event Naming:** Todos los eventos usan prefijo `llm-` para evitar colisiones
+2. **Detail Structure:** Siempre incluye `sessionId` para identificar la conversación
+3. **Error Handling:** Listeners deben tener try-catch para evitar romper el flujo
+4. **Performance:** No realizar operaciones pesadas en listeners de alta frecuencia (`llm-streaming-chunk`)
+5. **Cleanup:** Remover listeners cuando ya no son necesarios
+
+```javascript
+// Ejemplo de cleanup
+const listener = (e) => console.log(e.detail);
+document.addEventListener('llm-message-sent', listener);
+
+// Cleanup
+document.removeEventListener('llm-message-sent', listener);
+```
+
+---
+
 ## Performance
 
 ### Optimizaciones Incluidas
