@@ -21,6 +21,7 @@ class LLMConversationMessage extends Model
 
     protected $fillable = [
         'session_id',
+        'user_id',
         'role',
         'content',
         'metadata',
@@ -60,6 +61,11 @@ class LLMConversationMessage extends Model
     public function session(): BelongsTo
     {
         return $this->belongsTo(LLMConversationSession::class, 'session_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\User::class);
     }
 
     /**

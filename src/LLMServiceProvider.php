@@ -141,10 +141,8 @@ class LLMServiceProvider extends ServiceProvider
         // Load translations
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'llm-manager');
 
-        // Load Blade components
-        $this->loadViewComponentsAs('llm-manager', [
-            \Bithoven\LLMManager\View\Components\Chat\ChatWorkspace::class,
-        ]);
+        // Register Blade class-based components
+        \Illuminate\Support\Facades\Blade::component('llm-manager-chat-workspace', \Bithoven\LLMManager\View\Components\Chat\ChatWorkspace::class);
 
         // Load routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');

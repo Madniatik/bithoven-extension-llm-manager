@@ -37,23 +37,33 @@ class ChatWorkspace extends Component
     public $monitorOpen;
 
     /**
+     * Layout del monitor
+     *
+     * @var string
+     */
+    public $monitorLayout;
+
+    /**
      * Crear nueva instancia del componente
      *
      * @param LLMConversationSession|null $session
      * @param Collection $configurations
      * @param bool $showMonitor
      * @param bool $monitorOpen
+     * @param string $monitorLayout 'sidebar' | 'split-horizontal'
      */
     public function __construct(
         $session = null,
         $configurations = null,
         bool $showMonitor = false,
-        bool $monitorOpen = false
+        bool $monitorOpen = false,
+        string $monitorLayout = 'sidebar'
     ) {
         $this->session = $session;
         $this->configurations = $configurations ?? collect([]);
         $this->showMonitor = $showMonitor;
         $this->monitorOpen = $monitorOpen;
+        $this->monitorLayout = $monitorLayout;
     }
 
     /**
@@ -100,7 +110,7 @@ class ChatWorkspace extends Component
      */
     public function render()
     {
-        return view('llm-manager::components.chat.ChatWorkspace', [
+        return view('llm-manager::components.chat.chat-workspace', [
             'messages' => $this->getMessages(),
             'monitorId' => $this->getMonitorId(),
         ]);

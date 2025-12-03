@@ -23,6 +23,14 @@ class DemoConversationsSeeder extends Seeder
             return;
         }
 
+        // Get first user for demo messages
+        $demoUser = \App\Models\User::first();
+        
+        if (!$demoUser) {
+            $this->command->warn('No users found. Please seed users first.');
+            return;
+        }
+
         // Session 1: Laravel Framework Discussion
         $session1 = LLMConversationSession::create([
             'session_id' => 'demo-session-001',
@@ -44,6 +52,7 @@ class DemoConversationsSeeder extends Seeder
         $msg1Time = now()->subMinutes(15);
         LLMConversationMessage::create([
             'session_id' => $session1->id,
+            'user_id' => $demoUser->id,
             'role' => 'user',
             'content' => 'What is Laravel?',
             'tokens' => 15,
@@ -86,6 +95,7 @@ class DemoConversationsSeeder extends Seeder
         $msg3Time = $msg2End->copy()->addSeconds(5);
         LLMConversationMessage::create([
             'session_id' => $session1->id,
+            'user_id' => $demoUser->id,
             'role' => 'user',
             'content' => 'What are its main features?',
             'tokens' => 20,
@@ -152,6 +162,7 @@ class DemoConversationsSeeder extends Seeder
         $mlMsg1Time = now()->subHours(2);
         LLMConversationMessage::create([
             'session_id' => $session2->id,
+            'user_id' => $demoUser->id,
             'role' => 'user',
             'content' => 'Explain machine learning in simple terms',
             'tokens' => 25,
@@ -217,6 +228,7 @@ class DemoConversationsSeeder extends Seeder
         $webMsg1Time = now()->subDay();
         LLMConversationMessage::create([
             'session_id' => $session3->id,
+            'user_id' => $demoUser->id,
             'role' => 'user',
             'content' => 'What are RESTful API best practices?',
             'tokens' => 30,
@@ -259,6 +271,7 @@ class DemoConversationsSeeder extends Seeder
         $webMsg3Time = $webMsg2End->copy()->addSeconds(8);
         LLMConversationMessage::create([
             'session_id' => $session3->id,
+            'user_id' => $demoUser->id,
             'role' => 'user',
             'content' => 'How to handle authentication?',
             'tokens' => 25,
@@ -301,6 +314,7 @@ class DemoConversationsSeeder extends Seeder
         $webMsg5Time = $webMsg4End->copy()->addSeconds(6);
         LLMConversationMessage::create([
             'session_id' => $session3->id,
+            'user_id' => $demoUser->id,
             'role' => 'user',
             'content' => 'What about security?',
             'tokens' => 18,

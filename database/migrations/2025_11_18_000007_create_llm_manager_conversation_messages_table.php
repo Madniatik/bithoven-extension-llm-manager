@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('llm_manager_conversation_messages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('session_id')->constrained('llm_manager_conversation_sessions')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // User who sent the message
             $table->enum('role', ['system', 'user', 'assistant', 'tool'])->default('user');
             $table->longText('content');
             $table->json('metadata')->nullable(); // Tool calls, function results, LLM config, streaming info, etc.

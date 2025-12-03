@@ -224,11 +224,11 @@ Opción B: SPLIT HORIZONTAL (Mejor para análisis en tiempo real)
 
 ┌─────────────────────────────────────┐
 │         CHAT (70%)                  │
-│  [Burbujas de mensajes]            │
+│  [Burbujas de mensajes]             │
 │                                     │
 ├─────────────────────────────────────┤ ← Resizable
 │     MONITOR (30%)                   │
-│  [Métricas streaming en vivo]      │
+│  [Métricas streaming en vivo]       │
 └─────────────────────────────────────┘
 
 Implementación:
