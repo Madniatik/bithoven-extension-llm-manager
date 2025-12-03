@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.2.0] - 2025-12-03
+## [1.0.6] - 2025-12-03
 
 ### Added - Multi-Instance Support for ChatWorkspace Component
 
@@ -129,7 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Documentation
 
-- `docs/components/CHAT-WORKSPACE.md` - Updated to v2.2.0
+- `docs/components/CHAT-WORKSPACE.md` - Updated to v1.0.6
 - New section: "Multi-Instance Support" (500+ lines)
 - Multi-instance API examples
 - Use cases y best practices
@@ -156,13 +156,13 @@ monitor.start();
 
 ---
 
-## [1.0.4] - 2025-12-03
+## [1.0.5] - 2025-12-03
 
-### Changed - ChatWorkspace Component v2.1 Optimizations
+### Changed - ChatWorkspace Component Optimizations (63% code reduction)
 
 **REFACTOR:** Partitioned component code for 63% total reduction (740 → 270 lines)
 
-#### Phase 1: Split-Horizontal Layout (v2.0)
+#### Phase 1: Split-Horizontal Layout
 
 **Optimized split-horizontal-layout.blade.php:**
 - Reduced from 450 to 150 lines (66% reduction)
@@ -177,7 +177,7 @@ monitor.start();
 - ✅ localStorage persistence for sizes
 - ✅ Drag constraints (20%-80%)
 
-#### Phase 2: Monitor Components (v2.1)
+#### Phase 2: Monitor Components
 
 **Optimized monitor.blade.php:**
 - Reduced from 230 to 100 lines (56% reduction)
@@ -425,7 +425,7 @@ SELECT COUNT(*) FROM permissions WHERE name LIKE 'extensions:llm-manager:%';
 
 ---
 
-## [1.1.0] - 2025-11-26
+## [1.0.4] - 2025-11-28
 
 ### Added - Real-Time Streaming & Permissions v2.0
 

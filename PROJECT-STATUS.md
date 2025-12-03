@@ -1,7 +1,7 @@
 # LLM Manager Extension - Estado del Proyecto
 
 **Última Actualización:** 3 de diciembre de 2025
-**Versión Actual:** v2.2.0 ✅ **RELEASED**
+**Versión Actual:** v1.0.6 ✅ **RELEASED**
 **Branch Activo:** main
 **Estado:** 🟢 **PRODUCCIÓN - Multi-Instance + Streaming Complete**
 
@@ -12,8 +12,10 @@
 LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona gestión completa de Large Language Models (LLMs) con soporte para múltiples proveedores, streaming en tiempo real, RAG (Retrieval-Augmented Generation), workflows multi-agente, y sistema híbrido de herramientas.
 
 **✅ v1.0.0:** Core functionality 100% completo y documentado
-**✅ v1.1.0:** Real-time streaming + permissions v2.0 + metrics logging
-**✅ v2.2.0:** Multi-instance support + ChatWorkspace v2.2 + Legacy cleanup
+**✅ v1.0.1-v1.0.3:** Bugfixes y optimizaciones menores
+**✅ v1.0.4:** Real-time streaming + permissions v2.0 + metrics logging
+**✅ v1.0.5:** ChatWorkspace optimizations (63% code reduction)
+**✅ v1.0.6:** Multi-instance support + Legacy cleanup
 
 ---
 
@@ -44,19 +46,54 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ---
 
-### ✅ v1.1.0 (Released: 26 Nov 2025) - 100% COMPLETE
+### ✅ v1.0.4 (Released: 28 Nov 2025) - 100% COMPLETE
 
 **Estado:** 🟢 **STREAMING PRODUCTION-READY**
 
+#### Real-Time Streaming Support (100%)
+
+**Backend Implementation:**
+- ✅ `LLMStreamController` - 3 endpoints SSE
+- ✅ `LLMProviderInterface::stream()` - New method (no breaking change)
+- ✅ `OllamaProvider::stream()` - NDJSON streaming completo
+- ✅ `OpenAIProvider::stream()` - SDK streaming completo
+
+#### Permissions Protocol v2.0 (100%)
+
+**Migration Complete:**
+- ✅ `LLMPermissions.php` data class (12 permissions)
+- ✅ Auto-detection system integrated
+
+#### Usage Metrics Logging (100%)
+
+**PHASE 1 Complete:**
+- ✅ `LLMStreamLogger` service
+- ✅ Real token capture from providers
+- ✅ Cost calculation per 1M tokens
+
 ---
 
-### ✅ v2.2.0 (Released: 3 Dec 2025) - 100% COMPLETE
+### ✅ v1.0.5 (Released: 3 Dec 2025) - 100% COMPLETE
+
+**Estado:** 🟢 **CHATWORKSPACE OPTIMIZATIONS**
+
+#### Component Optimizations (63% code reduction)
+
+**Refactoring:**
+- ✅ Split-horizontal layout partitioning (66% reduction)
+- ✅ Monitor components optimization
+- ✅ 10 reusable partials created
+- ✅ Conditional loading implementation
+
+---
+
+### ✅ v1.0.6 (Released: 3 Dec 2025) - 100% COMPLETE
 
 **Estado:** 🟢 **MULTI-INSTANCE PRODUCTION-READY**
 
 #### Multi-Instance Support (100%)
 
-**ChatWorkspace Component v2.2:**
+**ChatWorkspace Component:**
 - ✅ Alpine.js scopes únicos por sesión: `chatWorkspace_{{sessionId}}`, `splitResizer_{{sessionId}}`
 - ✅ DOM IDs dinámicos: `messages-container-{{sessionId}}`, `monitor-console-{{sessionId}}`
 - ✅ Factory pattern: `window.LLMMonitorFactory.create/get/getOrCreate(sessionId)`
@@ -77,7 +114,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - Shared: `monitor.blade.php`, `monitor-console.blade.php`
 
 **Documentation:**
-- ✅ `docs/components/CHAT-WORKSPACE.md` updated to v2.2.0
+- ✅ `docs/components/CHAT-WORKSPACE.md` updated to v1.0.6
 - ✅ New section: "Multi-Instance Support" (500+ lines)
 - ✅ Multi-instance API examples and use cases
 - ✅ Testing examples for parallel chat instances
@@ -109,7 +146,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - Backward compatibility: 100% maintained
 - Breaking changes: NONE
 
-**v1.0.4 + v2.2.0 Combined:**
+**v1.0.5 + v1.0.6 Combined:**
 - Code reduction: 63% (740 → 270 lines in components)
 - Legacy removed: 1,213 lines
 - Total optimization: ~1,683 lines removed
@@ -118,180 +155,22 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ---
 
-#### Real-Time Streaming Support (100%)
-
-**Backend Implementation:**
-- ✅ `LLMStreamController` - 3 endpoints SSE
-  - `test()` - Interactive test page
-  - `stream()` - Simple streaming with validation
-  - `conversationStream()` - Streaming with session history
-- ✅ `LLMProviderInterface::stream()` - BREAKING CHANGE (signature updated)
-- ✅ `OllamaProvider::stream()` - NDJSON streaming completo (fopen + fgets)
-- ✅ `OpenAIProvider::stream()` - SDK streaming completo (createStreamed)
-- ✅ Stubs for Anthropic, OpenRouter, Custom (ready for implementation)
-
-**Frontend Implementation:**
-- ✅ EventSource JavaScript client
-- ✅ Real-time stats panel (tokens, chunks, duration)
-- ✅ Parameter controls (temperature, max_tokens)
-- ✅ Configuration selector (streaming-capable only)
-- ✅ Auto-scroll and cursor animation
-- ✅ SweetAlert2 notifications
-
-**Infrastructure:**
-- ✅ Routes registered (`/admin/llm/stream/*`)
-- ✅ CSRF exceptions configured
-- ✅ Breadcrumbs complete
-- ✅ Seeders updated (Ollama Qwen 3, DeepSeek Coder)
-
-#### Permissions Protocol v2.0 (100%)
-
-**Migration Complete:**
-- ✅ `LLMPermissions.php` data class created (12 permisos)
-- ✅ Auto-detection system integrated
-- ✅ Backward compatibility maintained
-- ✅ `getPermissions()` method removed from ServiceProvider
-- ✅ Composer PSR-4 autoload configured
-- ✅ Extension aligned with CorePermissions protocol
-
-**Permissions Structure:**
-```php
-LLMPermissions::getAll() // 12 permissions
-- view-llm-configs, create-llm-configs, edit-llm-configs, delete-llm-configs
-- manage-llm-providers, view-llm-stats, test-llm-configs
-- manage-llm-encryption-keys, view-llm-conversations, manage-llm-knowledge-base
-- manage-llm-workflows, manage-llm-tools
-```
-
-#### Usage Metrics Logging (100%)
-
-**PHASE 1 Complete (commit ae29df2):**
-- ✅ `LLMStreamLogger` service
-  - `startSession()` - Crea session con UUID + start_time
-  - `endSession()` - Calcula execution_time_ms, cost, guarda log
-  - `calculateCost()` - Pricing por 1M tokens (config file)
-  - `logError()` - Failed streaming logs
-- ✅ Provider interface returns metrics:
-  ```php
-  [
-    'usage' => ['prompt_tokens', 'completion_tokens', 'total_tokens'],
-    'model' => string,
-    'finish_reason' => string|null
-  ]
-  ```
-- ✅ OllamaProvider - Real token capture from NDJSON `done` chunk
-- ✅ OpenAI/OpenRouter - Real token capture from SDK `$lastResponse->usage`
-- ✅ Pricing configuration in `config/llm-manager.php` (lines 368-407)
-- ✅ Database: 57+ usage logs with real data
-
-#### UI/UX Improvements (100%)
-
-**Streaming UI (commits a775101, 8f1debb, 3403bdb, 054fb8c):**
-- ✅ Scroll container fixed (`max-height: 500px` en card, no card-body)
-- ✅ Disruptive auto-scroll removed (user can navigate during streaming)
-- ✅ Monitor real-time activity (not static "Test Connection")
-- ✅ Stats bar expanded: 6 columns (Tokens, Chunks, Duration, Cost, Log ID, View Log)
-- ✅ Activity table with localStorage (last 10 items)
-- ✅ Monitor colors: `bg-light-dark` + `text-gray-800` (mejor legibilidad)
-
-**Pending UI Enhancements:**
-- ⏳ Browser cache issue (requires asset versioning with Laravel Mix)
-- ⏳ Conversations UI integration (streaming toggle, stop button)
-
----
-
-### 📋 v1.2.0 (Planned) - NEXT RELEASE
+### 📋 v1.0.7 (Planned) - NEXT RELEASE
 
 **Estado:** 🔴 **NOT STARTED** (0%)
 
-**Focus:** Statistics Dashboard + Testing Suite + Conversations Streaming UI
+**Focus:** Quick Chat Feature + UI/UX Optimizations + Testing Suite + Streaming Documentation
 
-#### PHASE 2: Statistics Dashboard (0%)
+**Ver detalles completos en:** `PLAN-v1.0.7.md`
 
-**Estimated:** 4-6 hours
+#### Resumen de Features:
+1. **Quick Chat Feature** (7-10h) - Chat sin persistencia en DB
+2. **UI/UX Optimizations** (6-8h) - Animaciones, shortcuts, microinteracciones
+3. **Testing Suite** (4-5h) - PHPUnit tests, coverage 70%+
+4. **Streaming Documentation** (1.5h) - docs/STREAMING.md completo
+5. **GitHub Release Management** (1h) - Tags, releases, milestones
 
-**Features to Implement:**
-1. **Migration Updates** (30 min)
-   - Add `provider` and `model` columns to `llm_manager_usage_logs`
-   - Create migration: `2025_11_27_000001_add_provider_model_to_usage_logs.php`
-
-2. **Statistics Service** (1.5h)
-   ```php
-   class LLMStatisticsService {
-     totalUsageByProvider(Carbon $from, Carbon $to): Collection
-     totalUsageByModel(Carbon $from, Carbon $to): Collection
-     costBreakdownByProvider(Carbon $from, Carbon $to): array
-     costBreakdownByModel(string $provider, Carbon $from, Carbon $to): array
-     topModels(int $limit = 10): Collection
-     usageTrends(string $period = 'daily'): array
-   }
-   ```
-
-3. **Controller & Views** (1.5h)
-   - Update `LLMUsageStatsController::dashboard()`
-   - Charts: ApexCharts or Chart.js
-   - Tables: DataTables with grouping
-   - Files:
-     - `resources/views/admin/stats/dashboard.blade.php`
-     - `resources/views/admin/stats/index.blade.php`
-
-4. **Routes & Breadcrumbs** (30 min)
-   - Update `routes/web.php`
-   - Update `routes/breadcrumbs.php`
-
-**Deliverables:**
-- Dashboard with provider/model breakdown
-- Cost analysis charts
-- Usage trends graphs
-- Top models table
-- Export functionality
-
-#### Testing Suite (0%)
-
-**Estimated:** 10-12 hours
-
-**PHPUnit Tests to Create:**
-- `tests/Unit/Services/LLMManagerTest.php`
-- `tests/Unit/Services/LLMStreamLoggerTest.php`
-- `tests/Feature/LLMConfigurationTest.php`
-- `tests/Feature/LLMStreamingTest.php`
-- `tests/Feature/LLMPermissionsTest.php`
-- Integration tests with real providers (mocked APIs)
-
-**Coverage Target:** 80%+
-
----
-
-### 📋 v1.3.0 (Planned) - OPTIMIZATION & POLISH
-
-**Estado:** 🔴 **NOT STARTED** (0%)
-
-**Focus:** Performance, Caching, UI/UX Polish
-
-#### Features:
-1. **Response Caching** (4-6h)
-   - Semantic similarity detection
-   - Cache invalidation strategies
-   - Configuration per provider
-
-2. **MCP Servers UI** (6-8h)
-   - Visual management interface
-   - Health check and status monitoring
-   - Auto-restart on failure
-   - Logs viewer
-
-3. **Advanced RAG** (8-10h)
-   - Local embeddings (Ollama)
-   - Hybrid search (keyword + semantic)
-   - Re-ranking algorithms
-   - Chunk optimization
-
-4. **Workflow Builder UI** (8-10h)
-   - Visual drag-and-drop
-   - Workflow templates
-   - Testing interface
-
-**Total Estimated:** 26-34 hours
+**Total Estimated:** 19.5-24.5 hours
 
 ---
 
@@ -300,16 +179,17 @@ LLMPermissions::getAll() // 12 permissions
 ### Archivos de Estado (Actualizados)
 
 **✅ Completados:**
-- `PROJECT-STATUS.md` - Este archivo (estado consolidado v2.2.0)
-- `CHANGELOG.md` - v1.0.0 + v1.1.0 + v2.2.0 (multi-instance + legacy cleanup)
-- `README.md` - Features overview + quick start (v2.2.0)
-- `extension.json` - Metadata actualizado (version 2.2.0)
-- `docs/README.md` - Documentation index (v2.2 section added)
-- `docs/components/CHAT-WORKSPACE.md` - Complete guide v2.2.0 (1,705 lines)
+- `PROJECT-STATUS.md` - Este archivo (estado consolidado v1.0.6)
+- `CHANGELOG.md` - v1.0.0 a v1.0.6 completo
+- `README.md` - Features overview + quick start (v1.0.6)
+- `extension.json` - Metadata actualizado (version 1.0.6)
+- `docs/README.md` - Documentation index actualizado
+- `docs/components/CHAT-WORKSPACE.md` - Complete guide v1.0.6 (1,705 lines)
+- `PLAN-v1.0.7.md` - Roadmap próxima versión
 
-**📝 En Revisión:**
-- `LLM-MANAGER-PENDING-WORK.md` - ⚠️ OBSOLETO (actualizar a v1.2.0 roadmap)
-- `STREAMING-IMPLEMENTATION-STATUS.md` - ⚠️ OBSOLETO (streaming 100% done)
+**📝 Para Eliminar:**
+- `LLM-MANAGER-PENDING-WORK.md` - ⚠️ OBSOLETO (reemplazado por PLAN-v1.0.7.md)
+- `STREAMING-IMPLEMENTATION-STATUS.md` - ⚠️ OBSOLETO (streaming 100% done en v1.0.4)
 - `PENDING-WORK-ANALYSIS.md` - ⚠️ OBSOLETO (era para v1.0.0)
 
 **✅ Reportes Históricos (Archivar):**
@@ -366,7 +246,7 @@ LLMPermissions::getAll() // 12 permissions
 
 ## 🐛 Bugs & Known Issues
 
-### ✅ Resueltos en v1.1.0
+### ✅ Resueltos en v1.0.4
 
 1. **Permissions 403 Error** (CRITICAL - RESOLVED)
    - **Problema:** Error 403 al acceder a `/admin/llm` después de desinstalar Dummy extension
@@ -412,10 +292,11 @@ LLMPermissions::getAll() // 12 permissions
 
 ```
 bithoven-extension-llm-manager/
-├── PROJECT-STATUS.md                      # ✅ NUEVO - Estado consolidado
-├── CHANGELOG.md                           # ✅ Actualizado (v1.1.0)
-├── README.md                              # ✅ Features overview
-├── extension.json                         # ✅ Version 1.1.0
+├── PROJECT-STATUS.md                      # ✅ Estado consolidado v1.0.6
+├── CHANGELOG.md                           # ✅ Actualizado (v1.0.6)
+├── README.md                              # ✅ Features overview v1.0.6
+├── PLAN-v1.0.7.md                         # ✅ Roadmap próxima versión
+├── extension.json                         # ✅ Version 1.0.6
 ├── composer.json                          # ✅ PSR-4 autoload
 │
 ├── docs/                                  # ✅ Documentación completa (7 archivos)
@@ -433,23 +314,23 @@ bithoven-extension-llm-manager/
 │   │       └── LLMPermissions.php         # ✅ Permissions v2.0
 │   ├── Services/
 │   │   ├── LLMManager.php
-│   │   ├── LLMStreamLogger.php            # ✅ v1.1.0 Metrics logging
+│   │   ├── LLMStreamLogger.php            # ✅ v1.0.4 Metrics logging
 │   │   └── ...
 │   ├── Providers/
-│   │   ├── OllamaProvider.php             # ✅ v1.1.0 NDJSON streaming
-│   │   ├── OpenAIProvider.php             # ✅ v1.1.0 SDK streaming
+│   │   ├── OllamaProvider.php             # ✅ v1.0.4 NDJSON streaming
+│   │   ├── OpenAIProvider.php             # ✅ v1.0.4 SDK streaming
 │   │   └── ...
 │   └── Http/
 │       └── Controllers/
 │           └── Admin/
-│               ├── LLMStreamController.php # ✅ v1.1.0 SSE endpoints
+│               ├── LLMStreamController.php # ✅ v1.0.4 SSE endpoints
 │               └── ...
 │
 ├── resources/
 │   └── views/
 │       └── admin/
 │           ├── stream/
-│           │   └── test.blade.php         # ✅ v1.1.0 Streaming UI
+│           │   └── test.blade.php         # ✅ v1.0.4 Streaming UI
 │           └── ...
 │
 ├── database/
@@ -464,7 +345,7 @@ bithoven-extension-llm-manager/
 │   ├── web.php                            # ✅ Streaming routes
 │   └── breadcrumbs.php                    # ✅ Breadcrumbs
 │
-├── tests/                                 # ⏳ v1.2.0 - PHPUnit tests pending
+├── tests/                                 # ⏳ v1.0.7 - PHPUnit tests pending
 │
 └── archived-reports/                      # 📁 NUEVO - Reportes históricos
     ├── STREAMING-TEST-REPORT.md
@@ -503,9 +384,9 @@ php artisan permission:cache-reset
 ```
 
 **4. Decisión:**
-- **Opción A:** Comenzar v1.2.0 (Statistics Dashboard)
-- **Opción B:** Mejorar v1.1.0 (Testing Suite, Conversations UI)
-- **Opción C:** Publicar v1.1.0 en GitHub Marketplace
+- **Opción A:** Comenzar v1.0.7 (Quick Chat + UI/UX + Testing)
+- **Opción B:** Publicar v1.0.6 en GitHub y empezar v1.0.7
+- **Opción C:** Consolidar documentación antes de v1.0.7
 
 ---
 
@@ -514,65 +395,75 @@ php artisan permission:cache-reset
 | Versión | Features | Backend | Frontend | Testing | Docs | Total |
 |---------|----------|---------|----------|---------|------|-------|
 | **v1.0.0** | ✅ 100% | ✅ 100% | ✅ 100% | ✅ 100% | ✅ 100% | **100%** |
-| **v1.1.0** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 90% | **78%** |
-| **v2.2.0** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
-| **v1.2.0** | 📋 0% | 📋 0% | 📋 0% | 📋 0% | 📋 0% | **0%** |
+| **v1.0.1-v1.0.3** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
+| **v1.0.4** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 90% | **78%** |
+| **v1.0.5** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
+| **v1.0.6** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
+| **v1.0.7** | 📋 0% | 📋 0% | 📋 0% | 📋 0% | 📋 0% | **0%** |
 
-**Promedio General:** **86% hacia v1.3.0 release**
+**Promedio General:** **87% completado (v1.0.0-v1.0.6)**
 
 ---
 
 ## 💡 Recomendación
 
-### ✅ OPCIÓN 1: Publicar v2.2.0 YA (Recomendado)
+### ✅ OPCIÓN 1: Publicar v1.0.6 YA (Recomendado)
 
 **Razones:**
 - Multi-instance support 100% funcional y testeado en browser
-- Streaming 100% funcional y testeado manualmente
+- Streaming 100% funcional (v1.0.4)
+- Component optimizations complete (v1.0.5)
 - Permissions v2.0 implementado y working
 - Metrics logging capturing real data
-- UI improvements complete
 - Legacy code cleanup (1,213 lines removed)
-- Production-ready y backward compatible
+- Production-ready y 100% backward compatible
 
 **Pendientes son nice-to-have, no blockers:**
-- Testing suite (puede agregarse en v1.2.0)
-- Statistics dashboard (feature enhancement)
-- Conversations UI streaming integration (opcional)
-- Streaming docs en USAGE-GUIDE/API-REFERENCE (nice-to-have)
+- Testing suite (puede agregarse en v1.0.7)
+- Quick Chat feature (nueva funcionalidad)
+- UI/UX optimizations (mejoras incrementales)
+- Streaming docs detallada (nice-to-have)
 
 **Acción:**
 ```bash
 # Tag release
-git tag -a v2.2.0 -m "Release v2.2.0: Multi-Instance + Streaming + Component Optimizations"
-git push origin v2.2.0
+git tag -a v1.0.6 -m "Release v1.0.6: Multi-Instance Support + Legacy Cleanup"
+git push origin v1.0.6
 
 # Publicar en GitHub
 # Crear release notes basado en CHANGELOG.md
 ```
 
-### 📋 OPCIÓN 2: Completar v1.2.0 antes de publicar
+### 📋 OPCIÓN 2: Completar v1.0.7 antes de publicar
 
-**Tiempo estimado:** 14-18 horas adicionales
+**Tiempo estimado:** 19.5-24.5 horas adicionales
 
 **Features a agregar:**
-- Statistics Dashboard (4-6h)
-- Testing Suite (10-12h)
+- Quick Chat Feature (7-10h)
+- UI/UX Optimizations (6-8h)
+- Testing Suite (4-5h)
+- Streaming Documentation (1.5h)
 
-**Beneficio:** Release más robusto con analytics
-**Desventaja:** Retrasa publicación 2-3 semanas
+**Beneficio:** Release más completo con testing y nueva feature mayor
+**Desventaja:** Retrasa publicación 3-4 semanas
 
 ---
 
-**🎉 LLM Manager v2.2.0 está listo para producción!**
+**🎉 LLM Manager v1.0.6 está listo para producción!**
 
-**Última Actualización:** 3 de diciembre de 2025, 17:35h
+**Última Actualización:** 3 de diciembre de 2025, 19:00h
 **Estado:** 🟢 **MULTI-INSTANCE + STREAMING PRODUCTION-READY**
-**Próxima Acción:** Decisión de release v2.2.0 o continuar con v1.2.0
+**Próxima Acción:** Decisión de release v1.0.6 o continuar con v1.0.7
 
-**Changelog v2.2.0:**
+**Changelog v1.0.6:**
 - ✅ Multi-instance support (9 files modified)
 - ✅ Legacy cleanup (17 files, 1,213 lines removed)
 - ✅ Documentation complete (1,705 lines CHAT-WORKSPACE.md)
 - ✅ 100% backward compatible
 - ✅ Tested in browser (Alpine.js auto-registration verified)
+
+**Cronología de Versiones:**
+```
+v1.0.0 (18 Nov) → v1.0.1 (26 Nov) → v1.0.2 (26 Nov) → v1.0.3 (27 Nov)
+→ v1.0.4 (28 Nov) → v1.0.5 (3 Dec) → v1.0.6 (3 Dec) → v1.0.7 (Planned)
+```
