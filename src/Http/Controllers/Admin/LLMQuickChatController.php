@@ -65,6 +65,9 @@ class LLMQuickChatController extends Controller
             'session_id' => 'required|exists:llm_manager_conversation_sessions,id',
             'prompt' => 'required|string|max:5000',
             'configuration_id' => 'required|exists:llm_manager_configurations,id',
+            'temperature' => 'nullable|numeric|min:0|max:2',
+            'max_tokens' => 'nullable|integer|min:1|max:128000',
+            'context_limit' => 'nullable|integer|min:0|max:100',
         ]);
 
         $session = LLMConversationSession::findOrFail($validated['session_id']);
@@ -93,31 +96,44 @@ class LLMQuickChatController extends Controller
                 ]);
 
                 $params = [
-                    'temperature' => $configuration->temperature,
-                    'max_tokens' => $configuration->default_parameters['max_tokens'] ?? 8000,
+                    'temperature' => $validated['temperature'] ?? $configuration->temperature,
+                    'max_tokens' => $validated['max_tokens'] ?? $configuration->default_parameters['max_tokens'] ?? 8000,
                 ];
 
                 $logSession = $this->streamLogger->startSession($configuration, $validated['prompt'], $params);
                 
                 $provider = $this->llmManager->config($configuration->id)->getProvider();
                 
-                // Build context from previous messages
-                $context = $session->messages()
-                    ->orderBy('id')
-                    ->get()
+                // Build context from previous messages (apply context_limit)
+                $contextLimit = $validated['context_limit'] ?? 10;
+                $query = $session->messages()->orderBy('id');
+                
+                // If context_limit is 0, use all messages; otherwise take last N
+                if ($contextLimit > 0) {
+                    $query->take($contextLimit);
+                }
+                
+                $context = $query->get()
                     ->map(fn($m) => ['role' => $m->role, 'content' => $m->content])
                     ->toArray();
 
                 $fullResponse = '';
                 $tokenCount = 0;
+                $startTime = microtime(true);
+                $firstChunkTime = null;
 
                 $metrics = $provider->stream(
                     $validated['prompt'],
                     $context,
                     $params,
-                    function ($chunk) use (&$fullResponse, &$tokenCount) {
+                    function ($chunk) use (&$fullResponse, &$tokenCount, &$firstChunkTime, $startTime) {
                         $fullResponse .= $chunk;
                         $tokenCount++;
+                        
+                        // Capture time to first chunk
+                        if ($tokenCount === 1) {
+                            $firstChunkTime = microtime(true);
+                        }
 
                         echo "data: " . json_encode([
                             'type' => 'chunk',
@@ -129,6 +145,10 @@ class LLMQuickChatController extends Controller
                         flush();
                     }
                 );
+                
+                $endTime = microtime(true);
+                $responseTime = round($endTime - $startTime, 3);
+                $ttft = $firstChunkTime ? round($firstChunkTime - $startTime, 3) : null;
 
                 // Save assistant message to DB
                 $assistantMessage = LLMConversationMessage::create([
@@ -137,6 +157,7 @@ class LLMQuickChatController extends Controller
                     'role' => 'assistant',
                     'content' => $fullResponse,
                     'tokens' => $metrics['usage']['total_tokens'] ?? $tokenCount,
+                    'response_time' => $responseTime,
                     'metadata' => [
                         'model' => $configuration->model,
                         'provider' => $configuration->provider,
@@ -148,6 +169,8 @@ class LLMQuickChatController extends Controller
                         'input_tokens' => $metrics['usage']['prompt_tokens'] ?? 0,
                         'context_size' => count($context),
                         'is_streaming' => true,
+                        'time_to_first_chunk' => $ttft,
+                        'response_time' => $responseTime,
                     ],
                 ]);
 
@@ -161,6 +184,12 @@ class LLMQuickChatController extends Controller
                     'usage' => $metrics['usage'],
                     'cost' => $usageLog->cost_usd,
                     'message_id' => $assistantMessage->id,
+                    'response_time' => $responseTime,
+                    'ttft' => $ttft,
+                    'metadata' => [
+                        'provider' => $configuration->provider,
+                        'model' => $configuration->model,
+                    ],
                 ]) . "\n\n";
 
                 if (ob_get_level()) ob_flush();

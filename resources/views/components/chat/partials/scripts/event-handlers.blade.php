@@ -119,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'message-actions-container position-absolute top-0 end-0 m-2 d-flex gap-1';
                 
-                // Raw view button (only if message ID exists)
-                if (messageId) {
+                // Raw view button (only if message ID exists and is NOT temporary)
+                if (messageId && !messageId.toString().startsWith('msg-')) {
                     const rawBtn = document.createElement('button');
                     rawBtn.className = 'btn btn-icon btn-sm btn-light-info raw-view-btn';
                     rawBtn.setAttribute('data-bs-toggle', 'tooltip');
@@ -317,11 +317,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const assistantMessageId = `msg-${Date.now()}`;
         appendMessage('assistant', '', 0, assistantMessageId, true);
         
-        // EventSource with session_id and configuration_id
+        // Get current settings from UI
+        const temperature = parseFloat(document.getElementById('quick-chat-temperature')?.value) || 0.7;
+        const maxTokens = parseInt(document.getElementById('quick-chat-max-tokens')?.value) || 2000;
+        const contextLimit = parseInt(document.getElementById('quick-chat-context-limit')?.value) || 10;
+        
+        // EventSource with session_id, configuration_id, and custom parameters
         const params = new URLSearchParams({
             session_id: sessionId,
             configuration_id: modelSelector.value,
-            prompt: userPrompt
+            prompt: userPrompt,
+            temperature: temperature,
+            max_tokens: maxTokens,
+            context_limit: contextLimit
         });
         
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
@@ -437,6 +445,92 @@ document.addEventListener('DOMContentLoaded', () => {
                     const assistantBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
                     if (assistantBubble) {
                         assistantBubble.dataset.messageId = data.message_id;
+                        
+                        // Add raw data button now that we have real DB ID
+                        const bubbleContent = assistantBubble.querySelector('.bubble-content-wrapper');
+                        const btnContainer = bubbleContent?.querySelector('.message-actions-container');
+                        
+                        if (btnContainer && !btnContainer.querySelector('.raw-view-btn')) {
+                            const rawBtn = document.createElement('button');
+                            rawBtn.className = 'btn btn-icon btn-sm btn-light-info raw-view-btn';
+                            rawBtn.setAttribute('data-bs-toggle', 'tooltip');
+                            rawBtn.setAttribute('title', 'View raw data');
+                            rawBtn.onclick = function() { showRawMessage(data.message_id); };
+                            rawBtn.innerHTML = '<i class="ki-duotone ki-code fs-6"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>';
+                            
+                            // Insert before copy button
+                            const copyBtn = btnContainer.querySelector('.copy-bubble-btn');
+                            if (copyBtn) {
+                                btnContainer.insertBefore(rawBtn, copyBtn);
+                            } else {
+                                btnContainer.appendChild(rawBtn);
+                            }
+                            
+                            // Initialize tooltip
+                            if (typeof bootstrap !== 'undefined') {
+                                new bootstrap.Tooltip(rawBtn);
+                            }
+                        }
+                        
+                        // Add complete footer with response time, TTFT, provider/model
+                        const wrapper = assistantBubble.querySelector('.d-flex.flex-column');
+                        let footer = wrapper?.querySelector('.text-gray-500.fw-semibold.fs-8.mt-1');
+                        
+                        if (!footer && wrapper) {
+                            footer = document.createElement('div');
+                            footer.className = 'text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap';
+                            wrapper.appendChild(footer);
+                        }
+                        
+                        if (footer) {
+                            // Tokens (already exists)
+                            const tokensHtml = `
+                                <span>
+                                    <i class="ki-duotone ki-calculator fs-7 text-gray-400">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                    ${data.usage?.total_tokens || 0} tokens
+                                </span>
+                            `;
+                            
+                            // Response Time
+                            const responseTimeHtml = data.response_time ? `
+                                <span class="text-success">
+                                    <i class="ki-duotone ki-timer fs-7 text-success">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                    ${data.response_time.toFixed(2)}s
+                                </span>
+                            ` : '';
+                            
+                            // Provider & Model
+                            const providerModelHtml = data.metadata?.provider && data.metadata?.model ? `
+                                <span class="text-primary">
+                                    <i class="ki-duotone ki-technology-2 fs-7 text-primary">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    ${data.metadata.provider.charAt(0).toUpperCase() + data.metadata.provider.slice(1)} / ${data.metadata.model}
+                                </span>
+                            ` : '';
+                            
+                            // TTFT (Time to First Chunk)
+                            const ttftHtml = data.ttft ? `
+                                <span class="text-warning" title="Time to first token">
+                                    <i class="ki-duotone ki-flash-circle fs-7 text-warning">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    TTFT: ${data.ttft.toFixed(2)}s
+                                </span>
+                            ` : '';
+                            
+                            footer.innerHTML = tokensHtml + responseTimeHtml + providerModelHtml + ttftHtml;
+                        }
                     }
                 }
                 
