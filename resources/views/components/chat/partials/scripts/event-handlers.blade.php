@@ -316,9 +316,9 @@ document.addEventListener('DOMContentLoaded', () => {
     sendBtn.addEventListener('click', sendMessage);
     clearBtn?.addEventListener('click', clearConversation);
     
-    // Enter key to send (Ctrl+Enter for new line)
+    // Shift+Enter to send (Enter for new line - comportamiento estándar)
     messageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey) {
+        if (e.key === 'Enter' && e.shiftKey) {
             e.preventDefault();
             sendMessage();
         }
