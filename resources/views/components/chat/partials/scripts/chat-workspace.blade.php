@@ -12,6 +12,7 @@ document.addEventListener('alpine:init', () => {
         showMonitor: initialShowMonitor,
         monitorOpen: initialMonitorOpen,
         layout: layout,
+        logs: [], // Monitor logs array
         
         init() {
             // Load saved state from localStorage (unique per session)
@@ -36,6 +37,31 @@ document.addEventListener('alpine:init', () => {
                     }
                 });
             }
+        },
+        
+        addLog(logEntry) {
+            this.logs.push({
+                ...logEntry,
+                timestamp: logEntry.timestamp || new Date().toISOString(),
+                id: Date.now() + Math.random()
+            });
+            
+            // Keep only last 100 logs
+            if (this.logs.length > 100) {
+                this.logs.shift();
+            }
+            
+            // Auto-scroll monitor console
+            this.$nextTick(() => {
+                const monitorConsole = document.getElementById(`monitor-console-${this.sessionId}`);
+                if (monitorConsole) {
+                    monitorConsole.scrollTop = monitorConsole.scrollHeight;
+                }
+            });
+        },
+        
+        clearLogs() {
+            this.logs = [];
         },
         
         toggleMonitor() {

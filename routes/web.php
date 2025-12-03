@@ -52,12 +52,10 @@ Route::prefix('admin/llm')
         Route::get('conversations/{id}/export', [LLMConversationController::class, 'export'])->name('conversations.export')->where('id', '[0-9]+');
         Route::get('conversations/{id}/stream-reply', [LLMConversationController::class, 'streamReply'])->name('conversations.stream-reply')->where('id', '[0-9]+');
         
-        // Quick Chat
+        // Quick Chat (with ChatWorkspace component + auto-save to DB)
         Route::get('quick-chat', [LLMQuickChatController::class, 'index'])->name('quick-chat');
-        Route::post('quick-chat/stream', [LLMQuickChatController::class, 'stream'])->name('quick-chat.stream');
-        Route::post('quick-chat/save', [LLMQuickChatController::class, 'save'])->name('quick-chat.save');
+        Route::get('quick-chat/stream', [LLMQuickChatController::class, 'stream'])->name('quick-chat.stream');
         Route::get('quick-chat/new', [LLMQuickChatController::class, 'newChat'])->name('quick-chat.new');
-        Route::get('messages/{messageId}/raw', [LLMQuickChatController::class, 'getRawMessage'])->name('messages.raw')->where('messageId', '[0-9]+');
         
         // Knowledge Base
         Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([

@@ -77,6 +77,13 @@ class ChatWorkspace extends Component
             return collect([]);
         }
 
+        // Handle temporary session (stdClass from Quick Chat)
+        if (is_object($this->session) && !($this->session instanceof LLMConversationSession)) {
+            // Temporary session has messages as property (array/collection)
+            return collect($this->session->messages ?? []);
+        }
+
+        // Handle Eloquent model (Conversation)
         return $this->session->messages()
             ->with('user')
             ->orderBy('created_at')
@@ -91,6 +98,21 @@ class ChatWorkspace extends Component
     public function hasSession(): bool
     {
         return $this->session !== null;
+    }
+
+    /**
+     * Check if session is temporary (not persisted to DB)
+     *
+     * @return bool
+     */
+    public function isTemporarySession(): bool
+    {
+        if (!$this->session) {
+            return false;
+        }
+
+        // Temporary sessions are stdClass objects or have null ID
+        return !($this->session instanceof LLMConversationSession) || $this->session->id === null;
     }
 
     /**
