@@ -28,21 +28,6 @@
                     <span class="badge badge-light-primary">{{ ucfirst($session->configuration->provider) }}</span>
                 @endif
             @endif
-            
-            {{-- Monitor Toggle Button --}}
-            @if($showMonitor)
-                <button 
-                    type="button" 
-                    class="btn btn-sm btn-icon btn-light-primary" 
-                    @click="toggleMonitor()"
-                    data-bs-toggle="tooltip"
-                    :title="monitorOpen ? 'Ocultar Monitor' : 'Mostrar Monitor'">
-                    <i class="ki-duotone ki-chart-line-down fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </button>
-            @endif
         </div>
     </div>
     
