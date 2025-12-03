@@ -6,14 +6,17 @@
 @push('scripts')
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('chatWorkspace', (initialShowMonitor = false, initialMonitorOpen = false, layout = 'sidebar') => ({
+    // Factory function: creates unique Alpine component per session
+    const createChatWorkspace = (sessionId) => (initialShowMonitor = false, initialMonitorOpen = false, layout = 'sidebar', sid = null) => ({
+        sessionId: sid || sessionId,
         showMonitor: initialShowMonitor,
         monitorOpen: initialMonitorOpen,
         layout: layout,
         
         init() {
-            // Load saved state from localStorage
-            const saved = localStorage.getItem('llm_chat_monitor_open');
+            // Load saved state from localStorage (unique per session)
+            const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
+            const saved = localStorage.getItem(storageKey);
             if (saved !== null && this.showMonitor) {
                 this.monitorOpen = saved === 'true';
             }
@@ -37,7 +40,8 @@ document.addEventListener('alpine:init', () => {
         
         toggleMonitor() {
             this.monitorOpen = !this.monitorOpen;
-            localStorage.setItem('llm_chat_monitor_open', this.monitorOpen);
+            const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
+            localStorage.setItem(storageKey, this.monitorOpen);
             
             console.log('[ChatWorkspace] Monitor toggled:', {
                 open: this.monitorOpen,
@@ -48,7 +52,22 @@ document.addEventListener('alpine:init', () => {
         isMobile() {
             return window.innerWidth < 992; // Bootstrap lg breakpoint
         }
-    }));
+    });
+    
+    // ✅ FIX: Auto-register component for current session ID from DOM
+    // Scan DOM BEFORE Alpine starts to find all session IDs
+    document.querySelectorAll('[data-session-id]').forEach(el => {
+        const sessionId = el.dataset.sessionId || 'default';
+        const componentName = `chatWorkspace_${sessionId}`;
+        Alpine.data(componentName, createChatWorkspace(sessionId));
+        console.log(`[ChatWorkspace] Registered component: ${componentName}`);
+    });
+    
+    // Fallback: Register default session
+    if (!document.querySelector('[data-session-id]')) {
+        Alpine.data('chatWorkspace_default', createChatWorkspace('default'));
+        console.log('[ChatWorkspace] Registered component: chatWorkspace_default (fallback)');
+    }
 });
 </script>
 @endpush

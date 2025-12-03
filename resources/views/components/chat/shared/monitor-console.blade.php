@@ -5,9 +5,13 @@
     Note: JavaScript API loaded globally via chat-workspace.blade.php
 --}}
 
-<div id="monitor-console" class="monitor-console-dark" style="height: 100%; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
-    <div id="monitor-logs">
-        <span class="text-muted">[Monitor initialized]</span>
+@php
+    $monitorId = $session?->id ?? 'default';
+@endphp
+
+<div id="monitor-console-{{ $monitorId }}" class="monitor-console-dark" style="height: 100%; overflow-y: auto; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6;">
+    <div id="monitor-logs-{{ $monitorId }}">
+        <span class="text-muted">[Monitor {{ $monitorId }} initialized]</span>
     </div>
 </div>
 

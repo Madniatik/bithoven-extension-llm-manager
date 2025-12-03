@@ -16,7 +16,8 @@
 <div class="llm-chat-workspace" 
      data-session-id="{{ $session?->id }}" 
      data-monitor-layout="{{ $monitorLayout }}"
-     x-data="chatWorkspace({{ $showMonitor ? 'true' : 'false' }}, {{ $monitorOpen ? 'true' : 'false' }}, '{{ $monitorLayout }}')">
+     x-data="chatWorkspace_{{ $session?->id ?? 'default' }}({{ $showMonitor ? 'true' : 'false' }}, {{ $monitorOpen ? 'true' : 'false' }}, '{{ $monitorLayout }}', {{ $session?->id ?? 'null' }})"
+     id="chat-workspace-{{ $session?->id ?? 'default' }}">
     
     @if($monitorLayout === 'split-horizontal')
         {{-- SPLIT HORIZONTAL LAYOUT: Chat arriba (70%), Monitor abajo (30%) --}}
@@ -31,10 +32,11 @@
 @include('llm-manager::components.chat.partials.modals.modal-raw-message')
 
 {{-- Shared JavaScript Utilities --}}
-@push('scripts')
+{{-- REMOVED: External JS files not needed, logic inline in Blade --}}
+{{-- @push('scripts')
     <script src="{{ asset('vendor/llm-manager/js/streaming-handler.js') }}"></script>
     <script src="{{ asset('vendor/llm-manager/js/metrics-calculator.js') }}"></script>
-@endpush
+@endpush --}}
 
 {{-- Styles (partitioned) --}}
 @include('llm-manager::components.chat.partials.styles.dependencies')

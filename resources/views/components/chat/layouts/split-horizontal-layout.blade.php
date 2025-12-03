@@ -33,10 +33,13 @@
     </div>
     
     {{-- SPLIT CONTAINER (solo body: mensajes + monitor) --}}
-    <div class="split-horizontal-container" id="llm-split-view" x-data="splitResizer()" x-init="init()">
+    <div class="split-horizontal-container" 
+         id="llm-split-view-{{ $session?->id ?? 'default' }}" 
+         x-data="splitResizer_{{ $session?->id ?? 'default' }}({{ $session?->id ?? 'null' }})" 
+         x-init="init()">
         {{-- CHAT PANE (70% default) - Solo mensajes con scroll --}}
-        <div class="split-pane split-chat" id="split-chat-pane">
-            <div class="card-body py-0" id="kt_chat_messenger_body">
+        <div class="split-pane split-chat" id="split-chat-pane-{{ $session?->id ?? 'default' }}">
+            <div class="card-body py-0" id="kt_chat_messenger_body-{{ $session?->id ?? 'default' }}">
                 @include('llm-manager::components.chat.partials.messages-container')
             </div>
         </div>
@@ -46,7 +49,7 @@
             <div 
                 x-show="monitorOpen"
                 class="split-resizer" 
-                id="split-resizer"
+                id="split-resizer-{{ $session?->id ?? 'default' }}"
                 @mousedown="startResize($event)"
                 style="display: none;">
                 <div class="split-resizer-handle">
@@ -67,7 +70,7 @@
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform translate-y-4"
                 class="split-pane split-monitor" 
-                id="split-monitor-pane"
+                id="split-monitor-pane-{{ $session?->id ?? 'default' }}"
                 style="display: none;">
                 
                 {{-- Console Header con botón cerrar --}}
@@ -84,7 +87,7 @@
                     <button 
                         type="button" 
                         class="btn btn-sm btn-icon btn-light-dark" 
-                        @click="monitorOpen = false; localStorage.setItem('llm_chat_monitor_open', 'false')"
+                        @click="monitorOpen = false; localStorage.setItem(`llm_chat_monitor_open_${sessionId}`, 'false')"
                         data-bs-toggle="tooltip"
                         title="Cerrar Monitor">
                         <i class="ki-duotone ki-cross fs-2">
