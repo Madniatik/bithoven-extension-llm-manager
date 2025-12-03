@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let warningShown = false;
         let firstChunkTime = null;
         const baseMaxTokens = {{ $configurations->first()->default_parameters['max_tokens'] ?? 8000 }};
-        let currentMaxTokens = baseMaxTokens;
+        let currentMaxTokens = maxTokens; // Use UI value instead of base default
         
         // Update streaming stats in real-time (every 100ms)
         statsUpdateInterval = setInterval(() => {
@@ -440,6 +440,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(statsUpdateInterval);
                 const duration = Date.now() - startTime;
                 
+                // Check if response is empty (stream cut early without content)
+                if (!fullResponse || fullResponse.trim() === '') {
+                    // Remove empty assistant bubble
+                    const emptyBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
+                    if (emptyBubble) {
+                        emptyBubble.remove();
+                    }
+                    
+                    addMonitorLog('', 'info');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    addMonitorLog('⚠️  EMPTY RESPONSE DETECTED', 'header');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    addMonitorLog('Stream completed but no content was received', 'warning');
+                    addMonitorLog('This can happen if token limit was exceeded before first chunk', 'debug');
+                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                    
+                    toastr.warning('No response generated. Try increasing max_tokens limit.');
+                    
+                    eventSource?.close();
+                    sendBtn.disabled = false;
+                    sendBtn.classList.remove('d-none');
+                    stopBtn?.classList.add('d-none');
+                    messageInput.disabled = false;
+                    return;
+                }
+                
                 // Update message bubble with real DB message ID
                 if (data.message_id) {
                     const assistantBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
@@ -507,17 +533,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </span>
                             ` : '';
                             
-                            // Provider & Model
-                            const providerModelHtml = data.metadata?.provider && data.metadata?.model ? `
-                                <span class="text-primary">
-                                    <i class="ki-duotone ki-technology-2 fs-7 text-primary">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                    ${data.metadata.provider.charAt(0).toUpperCase() + data.metadata.provider.slice(1)} / ${data.metadata.model}
-                                </span>
-                            ` : '';
-                            
                             // TTFT (Time to First Chunk)
                             const ttftHtml = data.ttft ? `
                                 <span class="text-warning" title="Time to first token">
@@ -529,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </span>
                             ` : '';
                             
-                            footer.innerHTML = tokensHtml + responseTimeHtml + providerModelHtml + ttftHtml;
+                            footer.innerHTML = tokensHtml + responseTimeHtml + ttftHtml;
                         }
                     }
                 }

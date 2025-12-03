@@ -76,17 +76,6 @@
                             </span>
                         @endif
 
-                        {{-- Provider & Model --}}
-                        @if (isset($message->metadata['provider']) && isset($message->metadata['model']))
-                            <span class="text-primary">
-                                <i class="ki-duotone ki-technology-2 fs-7 text-primary">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                </i>
-                                {{ ucfirst($message->metadata['provider']) }} / {{ $message->metadata['model'] }}
-                            </span>
-                        @endif
-
                         {{-- Time to First Chunk (TTFT) --}}
                         @if (isset($message->metadata['time_to_first_chunk']))
                             <span class="text-warning" title="Time to first token">
