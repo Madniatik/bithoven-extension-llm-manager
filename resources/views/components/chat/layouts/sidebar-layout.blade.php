@@ -20,8 +20,8 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 transform translate-x-0"
             x-transition:leave-end="opacity-0 transform translate-x-4"
-            class="col-lg-4 d-none d-lg-block monitor-column"
-            style="display: none;">
+            :class="monitorOpen ? 'col-lg-4 d-none d-lg-block' : 'd-none'"
+            class="monitor-column">
             @include('llm-manager::components.chat.shared.monitor')
         </div>
 
