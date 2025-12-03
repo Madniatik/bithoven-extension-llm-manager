@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    const appendMessage = (role, content, tokens = 0, messageId = null) => {
+    const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
         if (!messagesContainer) return;
         
         const div = document.createElement('div');
-        div.className = `d-flex mb-10 message-bubble ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}`;
+        div.className = `d-flex mb-10 message-bubble ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}${hidden ? ' d-none' : ''}`;
         if (messageId) div.dataset.messageId = messageId;
         
         const timestamp = new Date().toLocaleTimeString();
@@ -67,7 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="text-gray-600 fw-semibold fs-8">${role === 'user' ? '{{ auth()->user()->name ?? "User" }}' : 'Assistant'}</span>
                         <span class="text-gray-500 fw-semibold fs-8 ms-2">${timestamp}</span>
                     </div>
-                    ${role === 'user' ? '<div class="symbol symbol-35px symbol-circle ms-3"><span class="symbol-label bg-light-success text-success fw-bold">U</span></div>' : ''}
+                    ${role === 'user' ? `
+                        <div class="symbol symbol-35px symbol-circle ms-3">
+                            @if(auth()->user() && auth()->user()->avatar)
+                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" />
+                            @else
+                                <span class="symbol-label bg-light-success text-success fw-bold">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                            @endif
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="p-5 rounded ${role === 'user' ? 'bg-light-success' : 'bg-light-primary'} bubble-content-wrapper" style="max-width: 85%">
                     <div class="message-content text-gray-800 fw-semibold fs-6"${role === 'assistant' ? ' data-role="assistant"' : ''}>${renderedContent}</div>
@@ -305,9 +313,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         showThinking();
         
-        // Create empty assistant message (will be filled with streaming chunks)
+        // Create empty assistant message (hidden until first chunk arrives)
         const assistantMessageId = `msg-${Date.now()}`;
-        appendMessage('assistant', '', 0, assistantMessageId);
+        appendMessage('assistant', '', 0, assistantMessageId, true);
         
         // EventSource with session_id and configuration_id
         const params = new URLSearchParams({
@@ -328,16 +336,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Update streaming stats in real-time (every 100ms)
         statsUpdateInterval = setInterval(() => {
-            const thinkingStats = thinkingMessage?.querySelector('.text-gray-500.fw-semibold.fs-8');
-            if (thinkingStats && !thinkingMessage.classList.contains('d-none')) {
+            if (thinkingMessage && !thinkingMessage.classList.contains('d-none')) {
                 const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
                 const ttft = firstChunkTime ? ((firstChunkTime - startTime) / 1000).toFixed(2) : '...';
-                thinkingStats.innerHTML = `
-                    <span><i class="ki-duotone ki-calculator fs-7 text-gray-400"><span class="path1"></span><span class="path2"></span></i> ${chunkCount} tokens</span>
-                    <span class="text-info"><i class="ki-duotone ki-timer fs-7 text-info"><span class="path1"></span><span class="path2"></span></i> ${elapsed}s</span>
-                    <span class="text-warning"><i class="ki-duotone ki-flash-circle fs-7 text-warning"><span class="path1"></span><span class="path2"></span></i> TTFT: ${ttft}s</span>
-                    <span class="text-primary"><i class="ki-duotone ki-cloud-download fs-7 text-primary"><span class="path1"></span><span class="path2"></span></i> Streaming...</span>
-                `;
+                
+                const tokensSpan = thinkingMessage.querySelector('.thinking-tokens');
+                const timeSpan = thinkingMessage.querySelector('.thinking-time');
+                const ttftSpan = thinkingMessage.querySelector('.thinking-ttft');
+                
+                if (tokensSpan) tokensSpan.textContent = chunkCount;
+                if (timeSpan) timeSpan.textContent = elapsed;
+                if (ttftSpan) ttftSpan.textContent = ttft;
             }
         }, 100);
         
@@ -349,15 +358,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 chunkCount++;
                 const currentTokens = data.tokens || chunkCount;
                 
-                // Update message DOM with Markdown rendering
-                updateMessage(assistantMessageId, fullResponse, currentTokens);
-                
+                // Show assistant bubble on first chunk
                 if (chunkCount === 1) {
+                    const assistantBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
+                    if (assistantBubble) {
+                        assistantBubble.classList.remove('d-none');
+                    }
                     firstChunkTime = Date.now();
                     hideThinking();
                     addMonitorLog('✅ Streaming started', 'success');
                     addMonitorLog('⏳ Receiving chunks...', 'info');
                 }
+                
+                // Update message DOM with Markdown rendering
+                updateMessage(assistantMessageId, fullResponse, currentTokens);
                 
                 if (chunkCount % 50 === 0) {
                     addMonitorLog(`📥 Received ${chunkCount} chunks (${currentTokens} tokens)`, 'info');

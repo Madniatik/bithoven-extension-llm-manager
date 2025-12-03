@@ -61,7 +61,7 @@
                                 <span class="path2"></span>
                                 <span class="path3"></span>
                             </i>
-                            {{ number_format($message->total_tokens) }} tokens
+                            {{ number_format($message->tokens ?? 0) }} tokens
                         </span>
 
                         {{-- Response Time --}}
@@ -84,18 +84,6 @@
                                     <span class="path2"></span>
                                 </i>
                                 {{ ucfirst($message->metadata['provider']) }} / {{ $message->metadata['model'] }}
-                            </span>
-                        @endif
-
-                        {{-- Streaming indicator --}}
-                        @if (isset($message->metadata['is_streaming']) && $message->metadata['is_streaming'])
-                            <span class="text-info"
-                                title="Streaming enabled - {{ $message->metadata['chunks_count'] ?? 0 }} chunks">
-                                <i class="ki-duotone ki-cloud-download fs-7 text-info">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                </i>
-                                Streaming
                             </span>
                         @endif
 
@@ -128,41 +116,20 @@
     </div>
 @endif
 
-{{-- Thinking/Streaming message (ejemplo) - COMPLETAMENTE OCULTO por defecto --}}
-<div id="thinking-message-{{ $session?->id ?? 'default' }}" class="d-none" data-message-role="assistant">
-    <div class="d-flex justify-content-start mb-10 message-bubble">
+{{-- Thinking indicator (solo spinner + stats, NO es un bubble completo) --}}
+<div id="thinking-message-{{ $session?->id ?? 'default' }}" class="d-none mb-10" data-message-role="thinking">
+    <div class="d-flex justify-content-start">
         <div class="d-flex flex-column align-items-start" style="width: 100%; max-width: 75%;">
-            <div class="d-flex align-items-center mb-2">
-                <div class="symbol symbol-35px symbol-circle me-3">
-                    <span class="symbol-label bg-light-primary text-primary fw-bold">AI</span>
+            <div class="p-3 rounded bg-light-primary d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
-                <div>
-                    <span class="text-gray-600 fw-semibold fs-8">Assistant</span>
-                    @if ($session && $session->configuration)
-                        <span
-                            class="badge badge-light-primary badge-sm ms-2">{{ ucfirst($session->configuration->provider) }}</span>
-                        <span class="badge badge-light-info badge-sm">{{ $session->configuration->model }}</span>
-                    @endif
-                    <span class="text-gray-500 fw-semibold fs-8 ms-2">{{ now()->format('H:i:s') }}</span>
-                </div>
+                <span class="text-muted fw-semibold fs-7">Thinking<span class="streaming-cursor">|</span></span>
             </div>
-            <div class="p-5 rounded bg-light-primary bubble-content-wrapper" style="max-width: 70%">
-                <div class="text-gray-800 fw-semibold fs-6">
-                    <div class="d-flex align-items-center">
-                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <span class="text-muted">Thinking<span class="streaming-cursor">|</span></span>
-                    </div>
-                </div>
-            </div>
-            <div class="text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3">
-                <span><i class="ki-duotone ki-calculator fs-7 text-gray-400"><span class="path1"></span><span
-                            class="path2"></span></i> 0 tokens</span>
-                <span class="text-info"><i class="ki-duotone ki-timer fs-7 text-info"><span class="path1"></span><span
-                            class="path2"></span></i> 0.00s</span>
-                <span class="text-primary"><i class="ki-duotone ki-cloud-download fs-7 text-primary"><span
-                            class="path1"></span><span class="path2"></span></i> Streaming...</span>
+            <div class="text-gray-500 fw-semibold fs-8 mt-2 d-flex align-items-center gap-3">
+                <span><i class="ki-duotone ki-calculator fs-7 text-gray-400"><span class="path1"></span><span class="path2"></span></i> <span class="thinking-tokens">0</span> tokens</span>
+                <span class="text-info"><i class="ki-duotone ki-timer fs-7 text-info"><span class="path1"></span><span class="path2"></span></i> <span class="thinking-time">0.00</span>s</span>
+                <span class="text-warning"><i class="ki-duotone ki-flash-circle fs-7 text-warning"><span class="path1"></span><span class="path2"></span></i> TTFT: <span class="thinking-ttft">...</span>s</span>
             </div>
         </div>
     </div>
