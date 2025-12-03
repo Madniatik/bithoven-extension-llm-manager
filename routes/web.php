@@ -10,7 +10,6 @@ use Bithoven\LLMManager\Http\Controllers\Admin\LLMToolDefinitionController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMStreamController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMActivityController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMQuickChatController;
-use Bithoven\LLMManager\Http\Controllers\Admin\LLMChatTemplateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,9 +55,6 @@ Route::prefix('admin/llm')
         // Quick Chat
         Route::get('quick-chat/{sessionId?}', [LLMQuickChatController::class, 'index'])->name('quick-chat')->where('sessionId', '[0-9]+');
         Route::get('messages/{messageId}/raw', [LLMQuickChatController::class, 'getRawMessage'])->name('messages.raw')->where('messageId', '[0-9]+');
-        
-        // Chat Template
-        Route::get('chat-template/{sessionId?}', [LLMChatTemplateController::class, 'index'])->name('chat-template')->where('sessionId', '[0-9]+');
         
         // Knowledge Base
         Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([

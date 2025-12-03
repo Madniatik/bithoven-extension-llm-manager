@@ -1,5 +1,9 @@
-<div id="messages-container" class="scroll-y pe-5 h-600px" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer" data-kt-scroll-wrappers="#kt_content" data-kt-scroll-offset="5px">
-    
+<div id="messages-container" class="scroll-y me-n5 pe-5 h-lg-auto" data-kt-element="messages" data-kt-scroll="true"
+    data-kt-scroll-activate="{default: true, xs: false, lg: true}" data-kt-scroll-max-height="auto"
+    data-kt-scroll-dependencies="#kt_header, #kt_app_header, #kt_app_toolbar, #kt_toolbar, #kt_footer, #kt_app_footer, #kt_chat_messenger_header, #kt_chat_messenger_footer"
+    data-kt-scroll-wrappers="#kt_content, #kt_app_content, #kt_chat_messenger_body"
+    data-kt-scroll-offset="{default: '35px', lg: '5px'}">
+    <!--begin::Messages-->
     @include('llm-manager::admin.quick-chat.partials.chat-messages')
-
+    <!--end::Messages-->
 </div>
