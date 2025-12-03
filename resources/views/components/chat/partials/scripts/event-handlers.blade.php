@@ -47,16 +47,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const timestamp = new Date().toLocaleTimeString();
         
         // Renderizar Markdown para ambos roles
-        let renderedContent = content;
+        let renderedContent = content.trim();
         if (typeof marked !== 'undefined') {
             try {
-                renderedContent = marked.parse(content);
+                renderedContent = marked.parse(content.trim());
             } catch (e) {
                 console.warn('Markdown parsing failed:', e);
-                renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
             }
         } else {
-            renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+            renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
         }
         
         div.innerHTML = `
@@ -158,16 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // Render Markdown with marked.js
-        let renderedContent = content;
+        let renderedContent = content.trim();
         if (typeof marked !== 'undefined') {
             try {
-                renderedContent = marked.parse(content);
+                renderedContent = marked.parse(content.trim());
             } catch (e) {
                 console.warn('Markdown parsing failed:', e);
-                renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
         } else {
-            renderedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
         
         if (contentDiv) {

@@ -49,10 +49,7 @@
                     style="max-width: 85%">
                     <div class="text-gray-800 fw-semibold fs-6 message-content"
                         @if ($message->role === 'assistant') data-role="assistant" @endif
-                        data-raw-content="{{ base64_encode($message->content) }}">
-                        {{-- Content will be rendered with Markdown via JavaScript --}}
-                        <div class="markdown-content">{{ $message->content }}</div>
-                    </div>
+                        data-raw-content="{{ base64_encode($message->content) }}">{{ $message->content }}</div>
                 </div>
 
                 @if ($message->role === 'assistant')

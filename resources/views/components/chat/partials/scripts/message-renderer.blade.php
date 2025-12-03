@@ -17,7 +17,7 @@
         
         // Render existing assistant messages
         document.querySelectorAll('.message-content[data-role="assistant"]').forEach(element => {
-            const markdownText = element.textContent;
+            const markdownText = element.textContent.trim();
             element.innerHTML = marked.parse(markdownText);
             
             // Apply syntax highlighting to code blocks
