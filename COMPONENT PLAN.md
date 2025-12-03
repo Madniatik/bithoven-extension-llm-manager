@@ -536,3 +536,7 @@ monitor.blade.php (UI reutilizable)
 Migrar Quick Chat al nuevo componente
 
 ¿Empezamos? 🎯
+
+
+Documentar eventos custom si planeas integraciones externas
+Tests unitarios para Alpine components si es necesario

@@ -51,6 +51,7 @@
 @include('llm-manager::components.chat.partials.scripts.settings-manager')
 @include('llm-manager::components.chat.partials.scripts.event-handlers')
 @include('llm-manager::components.chat.partials.scripts.chat-workspace')
+@include('llm-manager::components.chat.partials.scripts.monitor-api')
 @if($monitorLayout === 'split-horizontal')
     @include('llm-manager::components.chat.partials.scripts.split-resizer')
 @endif
