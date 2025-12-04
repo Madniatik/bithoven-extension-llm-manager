@@ -153,6 +153,46 @@ document.addEventListener('DOMContentLoaded', () => {
         return div;
     };
     
+    /**
+     * Sanitize incomplete Markdown to prevent broken HTML
+     * Closes unclosed code blocks, lists, and inline code
+     */
+    const sanitizeIncompleteMarkdown = (content) => {
+        let sanitized = content;
+        
+        // Count unclosed code blocks (```)
+        const codeBlockMatches = sanitized.match(/```/g);
+        if (codeBlockMatches && codeBlockMatches.length % 2 !== 0) {
+            sanitized += '\n```'; // Close unclosed code block
+        }
+        
+        // Count unclosed inline code (`)
+        const inlineCodeMatches = sanitized.match(/`/g);
+        if (inlineCodeMatches && inlineCodeMatches.length % 2 !== 0) {
+            sanitized += '`'; // Close unclosed inline code
+        }
+        
+        // Close unclosed HTML-like tags (basic protection)
+        const openTags = sanitized.match(/<([a-z]+)(?![^>]*\/>)[^>]*>/gi) || [];
+        const closeTags = sanitized.match(/<\/([a-z]+)>/gi) || [];
+        
+        if (openTags.length > closeTags.length) {
+            // Simple approach: add closing tags for common markdown-generated HTML
+            const commonTags = ['div', 'span', 'code', 'pre', 'ul', 'ol', 'li'];
+            commonTags.forEach(tag => {
+                const opens = (sanitized.match(new RegExp(`<${tag}[^>]*>`, 'gi')) || []).length;
+                const closes = (sanitized.match(new RegExp(`</${tag}>`, 'gi')) || []).length;
+                if (opens > closes) {
+                    for (let i = 0; i < (opens - closes); i++) {
+                        sanitized += `</${tag}>`;
+                    }
+                }
+            });
+        }
+        
+        return sanitized;
+    };
+    
     const updateMessage = (messageId, content, tokens = 0) => {
         const messageDiv = messagesContainer.querySelector(`[data-message-id="${messageId}"]`);
         if (!messageDiv) return;
@@ -165,17 +205,20 @@ document.addEventListener('DOMContentLoaded', () => {
             contentDiv.setAttribute('data-role', 'assistant');
         }
         
+        // Sanitize incomplete markdown (for partial responses)
+        const sanitizedContent = sanitizeIncompleteMarkdown(content.trim());
+        
         // Render Markdown with marked.js
-        let renderedContent = content.trim();
+        let renderedContent = sanitizedContent;
         if (typeof marked !== 'undefined') {
             try {
-                renderedContent = marked.parse(content.trim());
+                renderedContent = marked.parse(sanitizedContent);
             } catch (e) {
                 console.warn('Markdown parsing failed:', e);
-                renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                renderedContent = sanitizedContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             }
         } else {
-            renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            renderedContent = sanitizedContent.replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
         
         if (contentDiv) {
@@ -440,35 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(statsUpdateInterval);
                 const duration = Date.now() - startTime;
                 
-                // Check if response is empty (stream cut early without content)
-                if (!fullResponse || fullResponse.trim() === '') {
-                    // Remove empty assistant bubble
-                    const emptyBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
-                    if (emptyBubble) {
-                        emptyBubble.remove();
-                    }
-                    
-                    addMonitorLog('', 'info');
-                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                    addMonitorLog('⚠️  EMPTY RESPONSE DETECTED', 'header');
-                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                    addMonitorLog('Stream completed but no content was received', 'warning');
-                    if (data.metadata?.finish_reason) {
-                        addMonitorLog(`   Finish Reason: ${data.metadata.finish_reason}`, 'debug');
-                    }
-                    addMonitorLog(`   Max Tokens: ${currentMaxTokens}`, 'debug');
-                    addMonitorLog('This can happen if token limit was exceeded before first chunk', 'debug');
-                    addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                    
-                    toastr.warning('No response generated. Try increasing max_tokens limit.');
-                    
-                    eventSource?.close();
-                    sendBtn.disabled = false;
-                    sendBtn.classList.remove('d-none');
-                    stopBtn?.classList.add('d-none');
-                    messageInput.disabled = false;
-                    return;
-                }
+                // Note: Backend now saves error messages, so we don't remove bubble
+                // Error messages contain helpful info about what went wrong
                 
                 // Update message bubble with real DB message ID
                 if (data.message_id) {

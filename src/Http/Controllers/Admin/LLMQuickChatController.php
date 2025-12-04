@@ -150,39 +150,47 @@ class LLMQuickChatController extends Controller
                 $responseTime = round($endTime - $startTime, 3);
                 $ttft = $firstChunkTime ? round($firstChunkTime - $startTime, 3) : null;
 
-                // Check if response is empty (stream cut before generating content)
-                if (empty($fullResponse) || trim($fullResponse) === '') {
-                    \Log::warning('LLMQuickChat: Empty response received', [
+                // Determine error type and create appropriate message
+                $finishReason = $metrics['finish_reason'] ?? 'unknown';
+                $isEmptyResponse = empty($fullResponse) || trim($fullResponse) === '';
+                $errorMessage = null;
+                
+                if ($isEmptyResponse) {
+                    // Generate error explanation based on finish_reason
+                    switch ($finishReason) {
+                        case 'length':
+                            $errorMessage = "⚠️ **Response Generation Failed**\n\n" .
+                                           "The model could not generate a useful response within the token limit.\n\n" .
+                                           "**Settings:**\n" .
+                                           "- Max Tokens: {$params['max_tokens']}\n" .
+                                           "- Model: {$configuration->model}\n\n" .
+                                           "**Suggestion:** Increase `max_tokens` to allow longer responses (try 500-2000).";
+                            break;
+                        case 'stop':
+                            $errorMessage = "⚠️ **Empty Response**\n\n" .
+                                           "The model stopped without generating content.\n\n" .
+                                           "This may indicate an issue with the prompt or model configuration.";
+                            break;
+                        default:
+                            $errorMessage = "⚠️ **Streaming Error**\n\n" .
+                                           "No content was received from the model.\n\n" .
+                                           "**Details:**\n" .
+                                           "- Finish Reason: {$finishReason}\n" .
+                                           "- Max Tokens: {$params['max_tokens']}\n" .
+                                           "- Response Time: {$responseTime}s";
+                    }
+                    
+                    $fullResponse = $errorMessage;
+                    
+                    \Log::warning('LLMQuickChat: Empty response - saving error message', [
                         'session_id' => $session->id,
                         'max_tokens' => $params['max_tokens'],
-                        'finish_reason' => $metrics['finish_reason'] ?? 'unknown',
+                        'finish_reason' => $finishReason,
                         'token_count' => $tokenCount,
-                    ]);
-                    
-                    echo "data: " . json_encode([
-                        'type' => 'done',
-                        'usage' => $metrics['usage'] ?? ['prompt_tokens' => 0, 'completion_tokens' => 0, 'total_tokens' => 0],
-                        'message_id' => null, // No message saved
-                        'response_time' => $responseTime,
-                        'ttft' => $ttft,
-                        'metadata' => [
-                            'provider' => $configuration->provider,
-                            'model' => $configuration->model,
-                            'finish_reason' => $metrics['finish_reason'] ?? 'empty_response',
-                        ],
-                    ]) . "\n\n";
-                    
-                    if (ob_get_level()) ob_flush();
-                    flush();
-                    
-                    return response()->stream(function() {}, 200, [
-                        'Content-Type' => 'text/event-stream',
-                        'Cache-Control' => 'no-cache',
-                        'X-Accel-Buffering' => 'no',
                     ]);
                 }
 
-                // Save assistant message to DB (only if response has content)
+                // Save assistant message to DB (always save, even errors)
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),
@@ -196,6 +204,7 @@ class LLMQuickChatController extends Controller
                         'max_tokens' => $params['max_tokens'],
                         'temperature' => $params['temperature'],
                         'chunks_count' => $tokenCount,
+                        'is_error' => $isEmptyResponse, // Flag error messages
                         'finish_reason' => $metrics['finish_reason'] ?? 'unknown',
                         'output_tokens' => $metrics['usage']['completion_tokens'] ?? 0,
                         'input_tokens' => $metrics['usage']['prompt_tokens'] ?? 0,
