@@ -54,7 +54,7 @@
     }
     
     /**
-     * Show raw message JSON in modal
+     * Show raw message JSON in modal with tabs (metadata + raw_response)
      * @param {number} messageId - The message ID
      */
     function showRawMessage(messageId) {
@@ -75,14 +75,26 @@
                 return response.json();
             })
             .then(data => {
-                const jsonString = JSON.stringify(data, null, 2);
-                const codeElement = document.getElementById('rawMessageContent');
-                codeElement.textContent = jsonString;
+                // Populate metadata tab
+                const metadataElement = document.getElementById('metadataContent');
+                const metadataString = JSON.stringify(data.metadata || {}, null, 2);
+                metadataElement.textContent = metadataString;
                 
-                // Apply syntax highlighting
+                // Populate raw_response tab
+                const rawResponseElement = document.getElementById('rawResponseContent');
+                const rawResponseString = JSON.stringify(data.raw_response || {}, null, 2);
+                rawResponseElement.textContent = rawResponseString;
+                
+                // Apply syntax highlighting to both
                 if (typeof Prism !== 'undefined') {
-                    Prism.highlightElement(codeElement);
+                    Prism.highlightElement(metadataElement);
+                    Prism.highlightElement(rawResponseElement);
                 }
+                
+                // Reset to metadata tab (first tab)
+                const metadataTab = document.getElementById('metadata-tab');
+                const metadataTabInstance = new bootstrap.Tab(metadataTab);
+                metadataTabInstance.show();
                 
                 // Show modal
                 const modal = new bootstrap.Modal(document.getElementById('rawMessageModal'));
@@ -105,29 +117,36 @@
     }
     
     /**
-     * Copy raw message JSON to clipboard
+     * Copy active tab JSON to clipboard
      */
-    function copyRawMessage() {
-        const codeElement = document.getElementById('rawMessageContent');
+    function copyActiveTabJSON() {
+        // Find active tab
+        const activeTab = document.querySelector('#rawDataTabs .tab-pane.active');
+        const codeElement = activeTab?.querySelector('code');
+        
+        if (!codeElement) {
+            toastr.error('No content to copy');
+            return;
+        }
+        
         const text = codeElement.textContent;
         
         navigator.clipboard.writeText(text).then(() => {
-            // Show toast notification with Metronic theme
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'JSON copied to clipboard',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'bg-success text-white',
-                    title: 'text-white'
-                },
-                iconColor: 'white'
-            });
+            // Get tab name for feedback
+            const tabName = activeTab.id === 'metadata-content' ? 'Metadata' : 'Raw Response';
+            toastr.success(`${tabName} copied to clipboard!`);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            toastr.error('Failed to copy to clipboard');
         });
+    }
+    
+    /**
+     * Legacy function - kept for backward compatibility
+     * @deprecated Use copyActiveTabJSON() instead
+     */
+    function copyRawMessage() {
+        copyActiveTabJSON();
     }
 </script>
 @endpush

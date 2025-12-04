@@ -147,6 +147,20 @@ class LLMQuickChatController extends Controller
                 $startTime = microtime(true);
                 $firstChunkTime = null;
 
+                // Send metadata event BEFORE streaming starts (with estimated input_tokens)
+                // This allows UI to show token count during "Thinking..." phase
+                $estimatedInputTokens = str_word_count($validated['prompt']) + 
+                                       array_sum(array_map(fn($m) => str_word_count($m['content']), $context));
+                
+                echo "data: " . json_encode([
+                    'type' => 'metadata',
+                    'input_tokens' => $estimatedInputTokens,
+                    'context_size' => count($context),
+                ]) . "\n\n";
+                
+                if (ob_get_level()) ob_flush();
+                flush();
+
                 $metrics = $provider->stream(
                     $validated['prompt'],
                     $context,
@@ -220,6 +234,7 @@ class LLMQuickChatController extends Controller
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),
                     'llm_configuration_id' => $configuration->id,
+                    'model' => $metrics['model'] ?? $configuration->model, // Snapshot (prefer from provider response)
                     'role' => 'assistant',
                     'content' => $fullResponse,
                     'tokens' => $metrics['usage']['total_tokens'] ?? $tokenCount,
@@ -381,6 +396,7 @@ class LLMQuickChatController extends Controller
             'role' => $message->role,
             'content' => $message->content,
             'metadata' => $message->metadata,
+            'raw_response' => $message->raw_response, // Complete provider response
             'tokens' => $message->tokens,
             'created_at' => $message->created_at?->toIso8601String() ?? null,
             'updated_at' => $message->updated_at?->toIso8601String() ?? null,

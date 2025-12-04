@@ -23,6 +23,7 @@ class LLMConversationMessage extends Model
         'session_id',
         'user_id',
         'llm_configuration_id',
+        'model', // Snapshot of the actual model used (e.g., "gpt-4", "qwen3:4b")
         'role',
         'content',
         'metadata',
@@ -169,14 +170,22 @@ class LLMConversationMessage extends Model
     }
 
     /**
-     * Get model (null-safe, from metadata or session configuration)
+     * Get model (null-safe, from database field, metadata, or session configuration)
      */
-    public function getModelAttribute(): ?string
+    public function getModelAttribute($value): ?string
     {
         try {
-            // First try metadata
-            if (is_array($this->metadata) && isset($this->metadata['model'])) {
-                return $this->metadata['model'];
+            // First try database field (primary source)
+            if ($value !== null) {
+                return $value;
+            }
+
+            // Second try metadata
+            if (is_array($this->attributes['metadata'] ?? null)) {
+                $metadata = json_decode($this->attributes['metadata'], true);
+                if (isset($metadata['model'])) {
+                    return $metadata['model'];
+                }
             }
 
             // Fallback to session configuration (with null-safe checks)

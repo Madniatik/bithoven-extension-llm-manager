@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('session_id')->constrained('llm_manager_conversation_sessions')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // User who sent the message
             $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_manager_configurations')->onDelete('set null'); // LLM config used for this message
+            $table->string('model', 100)->nullable(); // Snapshot of actual model used (e.g., "gpt-4", "qwen3:4b")
             $table->enum('role', ['system', 'user', 'assistant', 'tool'])->default('user');
             $table->longText('content');
             $table->json('metadata')->nullable(); // Tool calls, function results, LLM config, streaming info, etc.
@@ -31,6 +32,7 @@ return new class extends Migration
             // Indexes (shortened names for MySQL 64-char limit)
             $table->index(['session_id', 'created_at'], 'llm_cm_session_created_idx');
             $table->index('role', 'llm_cm_role_idx');
+            $table->index('model', 'llm_cm_model_idx');
             $table->index('started_at', 'llm_cm_started_idx');
             $table->index('completed_at', 'llm_cm_completed_idx');
         });

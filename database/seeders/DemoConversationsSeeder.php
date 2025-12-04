@@ -71,6 +71,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session1->id,
             'llm_configuration_id' => $config->id,
+            'model' => $config->model, // Snapshot of model used
             'role' => 'assistant',
             'content' => 'Laravel is a popular PHP framework for web development. It provides elegant syntax and powerful tools for building modern web applications.',
             'tokens' => 85,
@@ -118,6 +119,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session1->id,
             'llm_configuration_id' => $config->id,
+            'model' => $config->model, // Snapshot of model used
             'role' => 'assistant',
             'content' => 'Main Laravel features include: Eloquent ORM for database operations, Blade templating engine, built-in authentication, routing system, migrations for database version control, and Artisan CLI for common tasks.',
             'tokens' => 230,
@@ -189,6 +191,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session2->id,
             'llm_configuration_id' => $config->id,
+            'model' => $config->model, // Snapshot of model used
             'role' => 'assistant',
             'content' => 'Machine learning is teaching computers to learn from data without explicit programming. Like how you learn from experience, ML algorithms improve their performance as they process more data.',
             'tokens' => 155,
@@ -258,6 +261,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session3->id,
             'llm_configuration_id' => $config->id,
+            'model' => $config->model, // Snapshot of model used
             'role' => 'assistant',
             'content' => 'RESTful API best practices: Use proper HTTP methods (GET, POST, PUT, DELETE), implement versioning, use meaningful URLs, return appropriate status codes, and provide consistent response formats.',
             'tokens' => 140,
@@ -304,6 +308,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session3->id,
             'llm_configuration_id' => $config->id,
+            'model' => $config->model, // Snapshot of model used
             'role' => 'assistant',
             'content' => 'Common authentication methods: JWT tokens for stateless auth, OAuth2 for third-party integration, API keys for simple cases, and session-based auth for traditional web apps.',
             'tokens' => 120,
@@ -350,6 +355,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session3->id,
             'llm_configuration_id' => $config->id,
+            'model' => $config->model, // Snapshot of model used
             'role' => 'assistant',
             'content' => 'Security essentials: Always validate input, use HTTPS, implement rate limiting, sanitize output to prevent XSS, use parameterized queries to prevent SQL injection, and keep dependencies updated.',
             'tokens' => 187,

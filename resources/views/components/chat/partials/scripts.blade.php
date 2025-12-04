@@ -41,52 +41,8 @@
         });
     }
     
-    function showRawMessage(messageId) {
-        // Fetch message data from backend
-        fetch(`/admin/llm/messages/${messageId}/raw`)
-            .then(response => response.json())
-            .then(data => {
-                const jsonString = JSON.stringify(data, null, 2);
-                const codeElement = document.getElementById('rawMessageContent');
-                codeElement.textContent = jsonString;
-                
-                // Apply syntax highlighting
-                if (typeof Prism !== 'undefined') {
-                    Prism.highlightElement(codeElement);
-                }
-                
-                // Show modal
-                const modal = new bootstrap.Modal(document.getElementById('rawMessageModal'));
-                modal.show();
-            })
-            .catch(error => {
-                console.error('Error fetching raw message:', error);
-                alert('Error loading message data');
-            });
-    }
-    
-    function copyRawMessage() {
-        const codeElement = document.getElementById('rawMessageContent');
-        const text = codeElement.textContent;
-        
-        navigator.clipboard.writeText(text).then(() => {
-            // Show toast notification with Metronic theme
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'JSON copied to clipboard',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'bg-success text-white',
-                    title: 'text-white'
-                },
-                iconColor: 'white'
-            });
-        });
-    }
+    // Note: showRawMessage() and copyRawMessage() moved to clipboard-utils.blade.php
+    // to avoid duplication and maintain single source of truth
 
     document.addEventListener('DOMContentLoaded', () => {
         // Initialize Bootstrap tooltips

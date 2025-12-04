@@ -447,6 +447,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseMaxTokens = {{ $configurations->first()->default_parameters['max_tokens'] ?? 8000 }};
         let currentMaxTokens = maxTokens; // Use UI value instead of base default
         
+        // Initialize thinking tokens with input_tokens (prompt tokens)
+        let inputTokens = 0;
+        
         // Update streaming stats in real-time (every 100ms)
         statsUpdateInterval = setInterval(() => {
             if (thinkingMessage && !thinkingMessage.classList.contains('d-none')) {
@@ -457,7 +460,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeSpan = thinkingMessage.querySelector('.thinking-time');
                 const ttftSpan = thinkingMessage.querySelector('.thinking-ttft');
                 
-                if (tokensSpan) tokensSpan.textContent = chunkCount;
+                // Show input_tokens + current chunks (total tokens so far)
+                if (tokensSpan) tokensSpan.textContent = inputTokens + chunkCount;
                 if (timeSpan) timeSpan.textContent = elapsed;
                 if (ttftSpan) ttftSpan.textContent = ttft;
             }
@@ -466,7 +470,13 @@ document.addEventListener('DOMContentLoaded', () => {
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
             
-            if (data.type === 'chunk') {
+            if (data.type === 'metadata') {
+                // Capture input_tokens from metadata event (sent before streaming starts)
+                if (data.input_tokens) {
+                    inputTokens = data.input_tokens;
+                    addMonitorLog(`📥 Input tokens: ${inputTokens}`, 'debug');
+                }
+            } else if (data.type === 'chunk') {
                 fullResponse += data.content;
                 chunkCount++;
                 const currentTokens = data.tokens || chunkCount;
@@ -768,7 +778,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 stopBtn?.classList.add('d-none');
                 messageInput.disabled = false;
                 messageInput.focus();
-                toastr.success(`Response complete! (${chunkCount} chunks, ${(duration/1000).toFixed(2)}s)`);
                 
             } else if (data.type === 'error') {
                 hideThinking();

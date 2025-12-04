@@ -146,9 +146,10 @@ class LLMConversationController extends Controller
                 // 1. Save user message to database
                 $userMessage = LLMConversationMessage::create([
                     'session_id' => $conversation->id,
+                    'llm_configuration_id' => $configuration->id,
                     'role' => 'user',
                     'content' => $validated['message'],
-                    'token_count' => str_word_count($validated['message']), // Rough estimate
+                    'tokens' => str_word_count($validated['message']), // Rough estimate
                 ]);
 
                 // 2. Build context from conversation history (use context_limit from request)
@@ -254,9 +255,11 @@ class LLMConversationController extends Controller
                 // 7. Save assistant message to database
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $conversation->id,
+                    'llm_configuration_id' => $configuration->id,
+                    'model' => $metrics['model'] ?? $configuration->model, // Snapshot (prefer from provider response)
                     'role' => 'assistant',
                     'content' => $fullResponse,
-                    'token_count' => $metrics['usage']['completion_tokens'] ?? $tokenCount,
+                    'tokens' => $metrics['usage']['completion_tokens'] ?? $tokenCount,
                 ]);
 
                 // 8. Update conversation totals
