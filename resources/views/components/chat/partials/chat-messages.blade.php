@@ -80,8 +80,8 @@
                         {{-- Tokens with breakdown --}}
                         @php
                             $totalTokens = $message->tokens ?? 0;
-                            $promptTokens = $message->metadata['usage']['prompt_tokens'] ?? 0;
-                            $completionTokens = $message->metadata['usage']['completion_tokens'] ?? 0;
+                            $promptTokens = $message->metadata['input_tokens'] ?? 0;
+                            $completionTokens = $message->metadata['output_tokens'] ?? 0;
                         @endphp
                         <span>
                             <i class="ki-duotone ki-calculator fs-7 text-gray-400">
