@@ -758,15 +758,12 @@ document.addEventListener('DOMContentLoaded', () => {
             stopBtn.classList.add('d-none');
             messageInput.disabled = false;
             addMonitorLog('⏸️  Streaming stopped by user (connection closed)', 'info');
-            addMonitorLog('   Note: Ollama may continue processing in background', 'debug');
-            addMonitorLog('   No message saved (partial response discarded)', 'debug');
-            toastr.warning('Stream stopped. No message saved.');
+            addMonitorLog('   Partial response kept visible (not saved to DB)', 'debug');
+            addMonitorLog('   Will disappear on page refresh', 'debug');
+            toastr.warning('Stream stopped. Partial response not saved.');
             
-            // Remove partial assistant bubble
-            const partialBubble = messagesContainer.querySelector('[data-message-id="' + assistantMessageId + '"]');
-            if (partialBubble) {
-                partialBubble.remove();
-            }
+            // Keep partial response visible (DON'T remove bubble)
+            // It will disappear naturally on page refresh since it's not in DB
         }
     });
     clearBtn?.addEventListener('click', clearConversation);
