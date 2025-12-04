@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const workspace = document.querySelector('[data-session-id]');
     const sessionId = workspace?.dataset.sessionId || 'default';
+    const monitorId = 'monitor-' + sessionId; // Match ChatWorkspace.php getMonitorId() format
     
     const sendBtn = document.getElementById(`send-btn-${sessionId}`);
     const stopBtn = document.getElementById(`stop-btn-${sessionId}`);
@@ -443,6 +444,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
         
+        // Start monitor tracking
+        if (window.LLMMonitor) {
+            window.LLMMonitor.start(monitorId);
+        }
+        
         let fullResponse = '';
         chunkCount = 0; // Reset global chunkCount
         let startTime = Date.now();
@@ -495,6 +501,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 fullResponse += data.content;
                 chunkCount++;
                 const currentTokens = data.tokens || chunkCount;
+                
+                // Track chunk in monitor
+                if (window.LLMMonitor) {
+                    window.LLMMonitor.trackChunk(data.content, currentTokens, monitorId);
+                }
                 
                 // Show assistant bubble on first chunk
                 if (chunkCount === 1) {

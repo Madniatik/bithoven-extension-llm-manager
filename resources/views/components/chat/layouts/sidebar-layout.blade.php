@@ -22,7 +22,7 @@
             x-transition:leave-end="opacity-0 transform translate-x-4"
             :class="monitorOpen ? 'col-lg-4 d-none d-lg-block' : 'd-none'"
             class="monitor-column">
-            @include('llm-manager::components.chat.shared.monitor')
+            @include('llm-manager::components.chat.shared.monitor', ['monitorId' => $monitorId])
         </div>
 
         {{-- Mobile: Modal --}}
@@ -40,7 +40,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        @include('llm-manager::components.chat.shared.monitor')
+                        @include('llm-manager::components.chat.shared.monitor', ['monitorId' => $monitorId])
                     </div>
                 </div>
             </div>

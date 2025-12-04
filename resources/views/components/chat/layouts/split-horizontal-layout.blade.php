@@ -75,7 +75,10 @@
                 
                 {{-- Monitor completo con botones de export --}}
                 <div class="px-3 py-3" style="height: 100%; overflow-y: auto;">
-                    @include('llm-manager::components.chat.shared.monitor', ['showCloseButton' => true])
+                    @include('llm-manager::components.chat.shared.monitor', [
+                        'monitorId' => $monitorId,
+                        'showCloseButton' => true
+                    ])
                 </div>
             </div>
         @endif
