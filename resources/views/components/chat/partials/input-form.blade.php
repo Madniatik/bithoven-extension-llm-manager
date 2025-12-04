@@ -28,7 +28,7 @@
             </select>
         </div>
         
-        {{-- Send/Stop Buttons --}}
+        {{-- Send/Stop/Clear Buttons --}}
         <div class="d-flex align-items-center gap-2">
             <button type="button" id="send-btn-{{ $session?->id ?? 'default' }}" class="btn btn-icon btn-sm btn-primary" data-bs-toggle="tooltip"
                 title="Send Message">
@@ -37,6 +37,10 @@
             <button type="button" id="stop-btn-{{ $session?->id ?? 'default' }}" class="btn btn-icon btn-sm btn-danger d-none" data-bs-toggle="tooltip"
                 title="Stop Streaming">
                 <i class="ki-duotone ki-cross-circle fs-4"><span class="path1"></span><span class="path2"></span></i>
+            </button>
+            <button type="button" id="clear-btn-{{ $session?->id ?? 'default' }}" class="btn btn-icon btn-sm btn-light-danger" data-bs-toggle="tooltip"
+                title="Delete Chat">
+                <i class="ki-duotone ki-trash fs-4"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
             </button>
         </div>
     </div>

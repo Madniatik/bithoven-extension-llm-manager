@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const sendBtn = document.getElementById(`send-btn-${sessionId}`);
     const stopBtn = document.getElementById(`stop-btn-${sessionId}`);
+    const clearBtn = document.getElementById(`clear-btn-${sessionId}`);
     const newChatBtn = document.getElementById(`new-chat-btn-${sessionId}`);
     const messageInput = document.getElementById(`quick-chat-message-input-${sessionId}`);
     const modelSelector = document.getElementById(`quick-chat-model-selector-${sessionId}`);
@@ -767,6 +768,30 @@ document.addEventListener('DOMContentLoaded', () => {
             // It will disappear naturally on page refresh since it's not in DB
         }
     });
+    
+    /**
+     * Clear/Delete current chat conversation
+     */
+    const clearConversation = async () => {
+        const result = await Swal.fire({
+            title: 'Delete This Chat?',
+            html: '<div class="text-start"><p class="text-muted">This will permanently delete all messages in this conversation.</p><p class="fw-bold text-danger">This action cannot be undone.</p></div>',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: '<i class="ki-duotone ki-trash"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i> Delete Chat',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton: 'btn btn-light'
+            }
+        });
+        
+        if (result.isConfirmed) {
+            toastr.info('Deleting chat...');
+            window.location.href = '{{ route("admin.llm.quick-chat.delete", ["sessionId" => $session?->id ?? 0]) }}';
+        }
+    };
+    
     clearBtn?.addEventListener('click', clearConversation);
     
     // Shift+Enter to send (Enter for new line - comportamiento estándar)

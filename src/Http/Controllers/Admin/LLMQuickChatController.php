@@ -314,6 +314,33 @@ class LLMQuickChatController extends Controller
     }
     
     /**
+     * Delete a Quick Chat session and all its messages
+     */
+    public function deleteSession($sessionId)
+    {
+        $session = LLMConversationSession::where('id', $sessionId)
+            ->where('user_id', auth()->id()) // Security: only user's own sessions
+            ->where('extension_slug', null) // Only Quick Chat sessions
+            ->first();
+        
+        if (!$session) {
+            return redirect()->route('admin.llm.quick-chat')
+                ->with('error', 'Session not found or access denied.');
+        }
+        
+        $title = $session->title;
+        
+        // Delete all messages in this session
+        $session->messages()->delete();
+        
+        // Delete the session itself
+        $session->delete();
+        
+        return redirect()->route('admin.llm.quick-chat')
+            ->with('success', 'Chat deleted: ' . $title);
+    }
+    
+    /**
      * Get raw message data for debugging/inspection
      */
     public function getRawMessage($messageId)

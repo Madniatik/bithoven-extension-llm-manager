@@ -56,6 +56,7 @@ Route::prefix('admin/llm')
         Route::get('quick-chat', [LLMQuickChatController::class, 'index'])->name('quick-chat');
         Route::get('quick-chat/new', [LLMQuickChatController::class, 'newChat'])->name('quick-chat.new');
         Route::get('quick-chat/{sessionId}', [LLMQuickChatController::class, 'index'])->name('quick-chat.session')->where('sessionId', '[0-9]+');
+        Route::get('quick-chat/{sessionId}/delete', [LLMQuickChatController::class, 'deleteSession'])->name('quick-chat.delete')->where('sessionId', '[0-9]+');
         Route::get('quick-chat/stream', [LLMQuickChatController::class, 'stream'])->name('quick-chat.stream');
         
         // Messages API
