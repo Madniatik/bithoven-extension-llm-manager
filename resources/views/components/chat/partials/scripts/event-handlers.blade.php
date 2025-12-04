@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const sendBtn = document.getElementById(`send-btn-${sessionId}`);
     const stopBtn = document.getElementById(`stop-btn-${sessionId}`);
+    const newChatBtn = document.getElementById(`new-chat-btn-${sessionId}`);
     const messageInput = document.getElementById(`quick-chat-message-input-${sessionId}`);
     const modelSelector = document.getElementById(`quick-chat-model-selector-${sessionId}`);
     const messagesContainer = document.getElementById(`messages-container-${sessionId}`);
@@ -922,6 +923,51 @@ document.addEventListener('DOMContentLoaded', () => {
         // Esperar un poco si Marked aún no está cargado
         setTimeout(renderExistingMessages, 500);
     }
+    
+    /**
+     * New Chat Button Handler
+     * Shows modal with optional custom title
+     */
+    newChatBtn?.addEventListener('click', async () => {
+        const now = new Date();
+        const defaultTitle = 'Quick Chat - ' + now.getFullYear() + '-' + 
+                           String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                           String(now.getDate()).padStart(2, '0') + ' ' + 
+                           String(now.getHours()).padStart(2, '0') + ':' + 
+                           String(now.getMinutes()).padStart(2, '0');
+        
+        const result = await Swal.fire({
+            title: 'Start New Chat',
+            html: `
+                <div class="text-start">
+                    <p class="mb-3 text-muted">Create a new conversation session.</p>
+                    <label class="form-label fw-bold">Chat Title (optional):</label>
+                    <input type="text" id="new-chat-title" class="form-control" 
+                           placeholder="${defaultTitle}" 
+                           maxlength="100">
+                    <div class="form-text">Leave empty to use default title with timestamp</div>
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '<i class="ki-duotone ki-plus"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Create Chat',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                confirmButton: 'btn btn-primary',
+                cancelButton: 'btn btn-light'
+            },
+            preConfirm: () => {
+                const title = document.getElementById('new-chat-title').value.trim();
+                return title || defaultTitle;
+            }
+        });
+        
+        if (result.isConfirmed) {
+            const chatTitle = result.value;
+            // Send title as query param to backend
+            window.location.href = '{{ route("admin.llm.quick-chat.new") }}?title=' + encodeURIComponent(chatTitle);
+        }
+    });
     
     console.log('✅ Quick Chat ready - Press Enter or Send button');
 });

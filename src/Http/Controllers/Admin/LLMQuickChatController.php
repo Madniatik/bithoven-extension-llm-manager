@@ -281,7 +281,7 @@ class LLMQuickChatController extends Controller
         ]);
     }
     
-    public function newChat()
+    public function newChat(Request $request)
     {
         // Marcar sesión actual como inactiva
         LLMConversationSession::where('user_id', auth()->id())
@@ -289,7 +289,28 @@ class LLMQuickChatController extends Controller
             ->where('is_active', true)
             ->update(['is_active' => false]);
         
-        return redirect()->route('admin.llm.quick-chat');
+        // Get custom title from query param or use default
+        $customTitle = $request->query('title');
+        $title = $customTitle ?: ('Quick Chat - ' . now()->format('Y-m-d H:i'));
+        
+        // Create new session with custom title
+        $defaultConfig = LLMConfiguration::active()->first();
+        
+        if (!$defaultConfig) {
+            return redirect()->route('admin.llm.configurations.index')
+                ->with('error', 'No active LLM configuration found.');
+        }
+        
+        $newSession = LLMConversationSession::create([
+            'session_id' => 'quick_chat_' . uniqid(),
+            'title' => $title,
+            'user_id' => auth()->id(),
+            'llm_configuration_id' => $defaultConfig->id,
+            'extension_slug' => null,
+        ]);
+        
+        return redirect()->route('admin.llm.quick-chat.session', ['sessionId' => $newSession->id])
+            ->with('success', 'New chat created: ' . $title);
     }
     
     /**
