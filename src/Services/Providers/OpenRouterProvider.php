@@ -164,7 +164,10 @@ class OpenRouterProvider implements LLMProviderInterface
         curl_close($ch);
 
         // Extract usage metrics from final chunk
-        // OpenRouter DOES include usage in final SSE chunk, but also provides generation endpoint as fallback
+        // OpenRouter standardizes responses to OpenAI-compatible format regardless of underlying model
+        // Fields ALWAYS present: usage.prompt_tokens, usage.completion_tokens, choices[0].message.content
+        // Fields MAY VARY by model: id format, system_fingerprint, native_tokens_*
+        // See: https://openrouter.ai/docs/responses
         $usage = [
             'prompt_tokens' => 0,
             'completion_tokens' => 0,
@@ -178,17 +181,21 @@ class OpenRouterProvider implements LLMProviderInterface
         // First, try to get usage from final chunk (most reliable)
         if ($finalData && isset($finalData['usage'])) {
             $usage = [
+                // Standard OpenRouter fields (always present)
                 'prompt_tokens' => $finalData['usage']['prompt_tokens'] ?? 0,
                 'completion_tokens' => $finalData['usage']['completion_tokens'] ?? 0,
                 'total_tokens' => $finalData['usage']['total_tokens'] ?? 0,
+                // Aliases for compatibility
                 'input_tokens' => $finalData['usage']['prompt_tokens'] ?? 0,
                 'output_tokens' => $finalData['usage']['completion_tokens'] ?? 0,
+                // Model-specific fields (may be null depending on model)
                 'native_tokens_prompt' => $finalData['native_tokens_prompt'] ?? null,
                 'native_tokens_completion' => $finalData['native_tokens_completion'] ?? null,
             ];
             
             \Log::info('OpenRouter: Usage data from final SSE chunk', [
                 'generation_id' => $generationId,
+                'model' => $finalData['model'] ?? 'unknown',
                 'usage' => $usage,
             ]);
         }
@@ -225,15 +232,20 @@ class OpenRouterProvider implements LLMProviderInterface
         }
 
         return [
+            // Standard fields (always present in OpenRouter responses)
             'usage' => $usage,
-            'model' => $finalData['model'] ?? $this->configuration->model,
+            'model' => $finalData['model'] ?? $this->configuration->model, // Reflects actual model used
             'finish_reason' => $finalData['choices'][0]['finish_reason'] ?? 'stop',
-            'generation_id' => $generationId,
-            'system_fingerprint' => $finalData['system_fingerprint'] ?? null,
+            
+            // OpenRouter-specific fields (always present)
+            'generation_id' => $generationId, // Format: "gen-xxx" (varies by model)
             'created_at' => $finalData['created'] ?? null,
-            // OpenRouter-specific: use provider's calculated cost (more accurate than our estimation)
-            'cost' => $finalData['usage']['cost'] ?? null,
-            // Raw response for debugging and analysis
+            
+            // Optional fields (may be null depending on underlying model)
+            'system_fingerprint' => $finalData['system_fingerprint'] ?? null, // GPT-4: present, Claude: null
+            'cost' => $finalData['usage']['cost'] ?? null, // Provider-calculated cost (more accurate)
+            
+            // Complete raw response for debugging and future-proofing
             'raw_response' => $finalData,
         ];
     }
