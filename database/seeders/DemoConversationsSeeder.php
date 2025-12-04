@@ -53,6 +53,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session1->id,
             'user_id' => $demoUser->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'user',
             'content' => 'What is Laravel?',
             'tokens' => 15,
@@ -69,9 +70,11 @@ class DemoConversationsSeeder extends Seeder
         $msg2End = $msg2Start->copy()->addMilliseconds(1850);
         LLMConversationMessage::create([
             'session_id' => $session1->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'assistant',
             'content' => 'Laravel is a popular PHP framework for web development. It provides elegant syntax and powerful tools for building modern web applications.',
             'tokens' => 85,
+            'response_time' => 1.85,
             'created_at' => $msg2End,
             'started_at' => $msg2Start,
             'completed_at' => $msg2End,
@@ -85,6 +88,7 @@ class DemoConversationsSeeder extends Seeder
                 'is_streaming' => true,
                 'chunks_count' => 23,
                 'time_to_first_chunk' => 0.18,
+                'response_time' => 1.85,
                 'finish_reason' => 'stop',
                 'context_messages_count' => 1,
                 'context_size' => 89,
@@ -96,6 +100,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session1->id,
             'user_id' => $demoUser->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'user',
             'content' => 'What are its main features?',
             'tokens' => 20,
@@ -112,9 +117,11 @@ class DemoConversationsSeeder extends Seeder
         $msg4End = $msg4Start->copy()->addMilliseconds(2100);
         LLMConversationMessage::create([
             'session_id' => $session1->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'assistant',
             'content' => 'Main Laravel features include: Eloquent ORM for database operations, Blade templating engine, built-in authentication, routing system, migrations for database version control, and Artisan CLI for common tasks.',
             'tokens' => 230,
+            'response_time' => 2.10,
             'created_at' => $msg4End,
             'started_at' => $msg4Start,
             'completed_at' => $msg4End,
@@ -128,6 +135,7 @@ class DemoConversationsSeeder extends Seeder
                 'is_streaming' => true,
                 'chunks_count' => 35,
                 'time_to_first_chunk' => 0.21,
+                'response_time' => 2.10,
                 'finish_reason' => 'stop',
                 'context_messages_count' => 3,
                 'context_size' => 567,
@@ -163,6 +171,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session2->id,
             'user_id' => $demoUser->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'user',
             'content' => 'Explain machine learning in simple terms',
             'tokens' => 25,
@@ -179,9 +188,11 @@ class DemoConversationsSeeder extends Seeder
         $mlMsg2End = $mlMsg2Start->copy()->addMilliseconds(2800);
         LLMConversationMessage::create([
             'session_id' => $session2->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'assistant',
             'content' => 'Machine learning is teaching computers to learn from data without explicit programming. Like how you learn from experience, ML algorithms improve their performance as they process more data.',
             'tokens' => 155,
+            'response_time' => 2.80,
             'created_at' => $mlMsg2End,
             'started_at' => $mlMsg2Start,
             'completed_at' => $mlMsg2End,
@@ -229,6 +240,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session3->id,
             'user_id' => $demoUser->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'user',
             'content' => 'What are RESTful API best practices?',
             'tokens' => 30,
@@ -245,9 +257,11 @@ class DemoConversationsSeeder extends Seeder
         $webMsg2End = $webMsg2Start->copy()->addMilliseconds(2200);
         LLMConversationMessage::create([
             'session_id' => $session3->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'assistant',
             'content' => 'RESTful API best practices: Use proper HTTP methods (GET, POST, PUT, DELETE), implement versioning, use meaningful URLs, return appropriate status codes, and provide consistent response formats.',
             'tokens' => 140,
+            'response_time' => 2.20,
             'created_at' => $webMsg2End,
             'started_at' => $webMsg2Start,
             'completed_at' => $webMsg2End,
@@ -272,6 +286,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session3->id,
             'user_id' => $demoUser->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'user',
             'content' => 'How to handle authentication?',
             'tokens' => 25,
@@ -288,9 +303,11 @@ class DemoConversationsSeeder extends Seeder
         $webMsg4End = $webMsg4Start->copy()->addMilliseconds(1900);
         LLMConversationMessage::create([
             'session_id' => $session3->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'assistant',
             'content' => 'Common authentication methods: JWT tokens for stateless auth, OAuth2 for third-party integration, API keys for simple cases, and session-based auth for traditional web apps.',
             'tokens' => 120,
+            'response_time' => 1.90,
             'created_at' => $webMsg4End,
             'started_at' => $webMsg4Start,
             'completed_at' => $webMsg4End,
@@ -315,6 +332,7 @@ class DemoConversationsSeeder extends Seeder
         LLMConversationMessage::create([
             'session_id' => $session3->id,
             'user_id' => $demoUser->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'user',
             'content' => 'What about security?',
             'tokens' => 18,
@@ -331,9 +349,11 @@ class DemoConversationsSeeder extends Seeder
         $webMsg6End = $webMsg6Start->copy()->addMilliseconds(2450);
         LLMConversationMessage::create([
             'session_id' => $session3->id,
+            'llm_configuration_id' => $config->id,
             'role' => 'assistant',
             'content' => 'Security essentials: Always validate input, use HTTPS, implement rate limiting, sanitize output to prevent XSS, use parameterized queries to prevent SQL injection, and keep dependencies updated.',
             'tokens' => 187,
+            'response_time' => 2.45,
             'created_at' => $webMsg6End,
             'started_at' => $webMsg6Start,
             'completed_at' => $webMsg6End,

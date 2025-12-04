@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('session_id')->constrained('llm_manager_conversation_sessions')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // User who sent the message
+            $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_manager_configurations')->onDelete('set null'); // LLM config used for this message
             $table->enum('role', ['system', 'user', 'assistant', 'tool'])->default('user');
             $table->longText('content');
             $table->json('metadata')->nullable(); // Tool calls, function results, LLM config, streaming info, etc.
             $table->integer('tokens')->unsigned()->nullable();
+            $table->decimal('response_time', 8, 3)->nullable(); // Response time in seconds (e.g., 2.456s)
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('sent_at')->nullable(); // When user/system sent the message
             $table->timestamp('started_at')->nullable(); // When LLM started processing

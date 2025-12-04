@@ -22,10 +22,12 @@ class LLMConversationMessage extends Model
     protected $fillable = [
         'session_id',
         'user_id',
+        'llm_configuration_id',
         'role',
         'content',
         'metadata',
         'tokens',
+        'response_time',
         'created_at',
         'sent_at',
         'started_at',
@@ -35,6 +37,7 @@ class LLMConversationMessage extends Model
     protected $casts = [
         'metadata' => 'array',
         'tokens' => 'integer',
+        'response_time' => 'float',
         'created_at' => 'datetime',
         'sent_at' => 'datetime',
         'started_at' => 'datetime',

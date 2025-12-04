@@ -104,6 +104,7 @@ class LLMQuickChatController extends Controller
                 $userMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),
+                    'llm_configuration_id' => $configuration->id,
                     'role' => 'user',
                     'content' => $validated['prompt'],
                     'tokens' => 0,
@@ -218,6 +219,7 @@ class LLMQuickChatController extends Controller
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),
+                    'llm_configuration_id' => $configuration->id,
                     'role' => 'assistant',
                     'content' => $fullResponse,
                     'tokens' => $metrics['usage']['total_tokens'] ?? $tokenCount,
