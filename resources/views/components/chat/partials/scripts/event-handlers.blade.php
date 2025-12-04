@@ -81,7 +81,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="p-5 rounded ${role === 'user' ? 'bg-light-success' : 'bg-light-primary'} bubble-content-wrapper" style="max-width: 85%">
                     <div class="message-content text-gray-800 fw-semibold fs-6"${role === 'assistant' ? ' data-role="assistant"' : ''}>${renderedContent}</div>
                 </div>
-                ${tokens > 0 && role === 'assistant' ? `<div class="message-tokens text-gray-500 fw-semibold fs-8 mt-1">${tokens} tokens</div>` : ''}
+                ${role === 'assistant' ? `
+                    <div class="bubble-footer text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap">
+                        <span class="footer-tokens">
+                            <i class="ki-duotone ki-calculator fs-7 text-gray-400">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                            ${tokens > 0 ? tokens + ' tokens' : 'Calculating...'}
+                        </span>
+                        <span class="footer-response-time text-gray-400">
+                            <i class="ki-duotone ki-timer fs-7 text-gray-400">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                            ...
+                        </span>
+                        <span class="footer-ttft text-gray-400">
+                            <i class="ki-duotone ki-flash-circle fs-7 text-gray-400">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            TTFT: ...
+                        </span>
+                    </div>
+                ` : ''}
             </div>
         `;
         
@@ -569,53 +595,55 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                         
-                        // Add complete footer with response time, TTFT, provider/model
-                        const wrapper = assistantBubble.querySelector('.d-flex.flex-column');
-                        let footer = wrapper?.querySelector('.text-gray-500.fw-semibold.fs-8.mt-1');
-                        
-                        if (!footer && wrapper) {
-                            footer = document.createElement('div');
-                            footer.className = 'text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap';
-                            wrapper.appendChild(footer);
-                        }
+                        // Update footer with final metrics
+                        const footer = assistantBubble.querySelector('.bubble-footer');
                         
                         if (footer) {
-                            // Tokens (already exists)
-                            const tokensHtml = `
-                                <span>
+                            // Tokens breakdown (prompt + completion)
+                            const promptTokens = data.usage?.prompt_tokens || 0;
+                            const completionTokens = data.usage?.completion_tokens || 0;
+                            const totalTokens = data.usage?.total_tokens || 0;
+                            
+                            const tokensSpan = footer.querySelector('.footer-tokens');
+                            if (tokensSpan) {
+                                tokensSpan.innerHTML = `
                                     <i class="ki-duotone ki-calculator fs-7 text-gray-400">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                         <span class="path3"></span>
                                     </i>
-                                    ${data.usage?.total_tokens || 0} tokens
-                                </span>
-                            `;
+                                    ${totalTokens} tokens <span class="text-gray-400" title="Sent / Received">(↑${promptTokens} / ↓${completionTokens})</span>
+                                `;
+                            }
                             
                             // Response Time
-                            const responseTimeHtml = data.response_time ? `
-                                <span class="text-success">
+                            const responseTimeSpan = footer.querySelector('.footer-response-time');
+                            if (responseTimeSpan && data.response_time) {
+                                responseTimeSpan.innerHTML = `
                                     <i class="ki-duotone ki-timer fs-7 text-success">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                         <span class="path3"></span>
                                     </i>
                                     ${data.response_time.toFixed(2)}s
-                                </span>
-                            ` : '';
+                                `;
+                                responseTimeSpan.classList.remove('text-gray-400');
+                                responseTimeSpan.classList.add('text-success');
+                            }
                             
                             // TTFT (Time to First Chunk)
-                            const ttftHtml = data.ttft ? `
-                                <span class="text-warning" title="Time to first token">
+                            const ttftSpan = footer.querySelector('.footer-ttft');
+                            if (ttftSpan && data.ttft) {
+                                ttftSpan.innerHTML = `
                                     <i class="ki-duotone ki-flash-circle fs-7 text-warning">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                     </i>
                                     TTFT: ${data.ttft.toFixed(2)}s
-                                </span>
-                            ` : '';
-                            
-                            footer.innerHTML = tokensHtml + responseTimeHtml + ttftHtml;
+                                `;
+                                ttftSpan.classList.remove('text-gray-400');
+                                ttftSpan.classList.add('text-warning');
+                            }
                         }
                     }
                 }
