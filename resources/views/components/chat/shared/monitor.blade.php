@@ -9,12 +9,23 @@
 
 @php
     $monitorId = $session?->id ?? 'default';
+    $showCloseButton = $showCloseButton ?? false; // Prop para mostrar botón cerrar
 @endphp
 
 <div class="llm-monitor" data-monitor-id="{{ $monitorId }}">
     {{-- Monitor Header --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">Monitor</h5>
+        <h5 class="mb-0">
+            @if($showCloseButton)
+                <i class="ki-duotone ki-code fs-3 me-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span>
+                </i>
+            @endif
+            Monitor
+        </h5>
         <div class="d-flex gap-2">
             {{-- Download Logs (Green) --}}
             <button class="btn btn-sm btn-icon btn-light-success" 
@@ -75,6 +86,21 @@
                     <span class="path2"></span>
                 </i>
             </button>
+
+            @if($showCloseButton)
+                {{-- Close Monitor (Dark) - Solo en split-horizontal --}}
+                <button 
+                    type="button" 
+                    class="btn btn-sm btn-icon btn-light-dark" 
+                    @click="monitorOpen = false; localStorage.setItem(`llm_chat_monitor_open_${sessionId}`, 'false')"
+                    data-bs-toggle="tooltip"
+                    title="Close monitor">
+                    <i class="ki-duotone ki-cross fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </button>
+            @endif
         </div>
     </div>
 

@@ -73,33 +73,9 @@
                 id="split-monitor-pane-{{ $session?->id ?? 'default' }}"
                 style="display: none;">
                 
-                {{-- Console Header con botón cerrar --}}
-                <div class="d-flex justify-content-between align-items-center mb-2 px-3 pt-3">
-                    <h6 class="mb-0 text-gray-700">
-                        <i class="ki-duotone ki-code fs-3 me-2">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                            <span class="path3"></span>
-                            <span class="path4"></span>
-                        </i>
-                        Monitor Console
-                    </h6>
-                    <button 
-                        type="button" 
-                        class="btn btn-sm btn-icon btn-light-dark" 
-                        @click="monitorOpen = false; localStorage.setItem(`llm_chat_monitor_open_${sessionId}`, 'false')"
-                        data-bs-toggle="tooltip"
-                        title="Cerrar Monitor">
-                        <i class="ki-duotone ki-cross fs-2">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                    </button>
-                </div>
-                
-                {{-- Solo la consola (fondo negro) --}}
-                <div class="px-3 pb-3" style="height: calc(100% - 60px);">
-                    @include('llm-manager::components.chat.shared.monitor-console')
+                {{-- Monitor completo con botones de export --}}
+                <div class="px-3 py-3" style="height: 100%; overflow-y: auto;">
+                    @include('llm-manager::components.chat.shared.monitor', ['showCloseButton' => true])
                 </div>
             </div>
         @endif
