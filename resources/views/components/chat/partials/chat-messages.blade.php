@@ -77,14 +77,22 @@
 
                 @if ($message->role === 'assistant')
                     <div class="text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap">
-                        {{-- Tokens --}}
+                        {{-- Tokens with breakdown --}}
+                        @php
+                            $totalTokens = $message->tokens ?? 0;
+                            $promptTokens = $message->metadata['usage']['prompt_tokens'] ?? 0;
+                            $completionTokens = $message->metadata['usage']['completion_tokens'] ?? 0;
+                        @endphp
                         <span>
                             <i class="ki-duotone ki-calculator fs-7 text-gray-400">
                                 <span class="path1"></span>
                                 <span class="path2"></span>
                                 <span class="path3"></span>
                             </i>
-                            {{ number_format($message->tokens ?? 0) }} tokens
+                            {{ number_format($totalTokens) }} tokens
+                            @if ($promptTokens > 0 && $completionTokens > 0)
+                                <span class="text-gray-400" title="Sent / Received">(↑{{ $promptTokens }} / ↓{{ $completionTokens }})</span>
+                            @endif
                         </span>
 
                         {{-- Response Time (column or metadata fallback) - Sin color en bubbles antiguos --}}

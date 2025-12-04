@@ -277,14 +277,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        if (tokensDiv) {
-            tokensDiv.textContent = `${tokens} tokens`;
-        } else if (tokens > 0) {
-            const wrapper = messageDiv.querySelector('.d-flex.flex-column');
-            const newTokensDiv = document.createElement('div');
-            newTokensDiv.className = 'message-tokens text-gray-500 fw-semibold fs-8 mt-1';
-            newTokensDiv.textContent = `${tokens} tokens`;
-            wrapper.appendChild(newTokensDiv);
+        // Update footer tokens during streaming
+        if (tokens > 0) {
+            const footer = messageDiv.querySelector('.bubble-footer');
+            const tokensSpan = footer?.querySelector('.footer-tokens');
+            if (tokensSpan) {
+                tokensSpan.innerHTML = `
+                    <i class="ki-duotone ki-calculator fs-7 text-gray-400">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                    ${tokens} tokens
+                `;
+            }
         }
         scrollToBottom();
     };
