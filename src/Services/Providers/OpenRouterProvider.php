@@ -106,15 +106,18 @@ class OpenRouterProvider implements LLMProviderInterface
                 'prompt_tokens' => $lastResponse->usage->promptTokens ?? 0,
                 'completion_tokens' => $lastResponse->usage->completionTokens ?? 0,
                 'total_tokens' => $lastResponse->usage->totalTokens ?? 0,
-                // OpenRouter-specific: native tokens (actual model usage)
-                'native_tokens_prompt' => $lastResponse->usage->native_tokens_prompt ?? null,
-                'native_tokens_completion' => $lastResponse->usage->native_tokens_completion ?? null,
+                // Aliases for metadata consistency
+                'input_tokens' => $lastResponse->usage->promptTokens ?? 0,
+                'output_tokens' => $lastResponse->usage->completionTokens ?? 0,
+                // OpenRouter-specific: native tokens (actual model usage) - camelCase for OpenAI SDK
+                'native_tokens_prompt' => $lastResponse->usage->nativeTokensPrompt ?? null,
+                'native_tokens_completion' => $lastResponse->usage->nativeTokensCompletion ?? null,
             ],
             'model' => $lastResponse->model ?? $this->configuration->model,
             'finish_reason' => $lastResponse->choices[0]->finishReason ?? 'stop',
-            // Additional OpenRouter metadata
+            // Additional OpenRouter metadata - camelCase for OpenAI SDK
             'generation_id' => $lastResponse->id ?? null,
-            'system_fingerprint' => $lastResponse->system_fingerprint ?? null,
+            'system_fingerprint' => $lastResponse->systemFingerprint ?? null,
             'created_at' => $lastResponse->created ?? null,
         ];
     }

@@ -41,6 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
         if (!messagesContainer) return;
         
+        // Get provider/model from current configuration selector for assistant badges
+        const configSelect = document.getElementById('quick-chat-model-selector-{{ $session?->id ?? "default" }}');
+        const selectedOption = configSelect?.options[configSelect.selectedIndex];
+        const provider = selectedOption?.dataset.provider || '';
+        const model = selectedOption?.dataset.model || '';
+        
         const div = document.createElement('div');
         div.className = `d-flex mb-10 message-bubble ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}${hidden ? ' d-none' : ''}`;
         if (messageId) div.dataset.messageId = messageId;
@@ -66,6 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${role === 'assistant' ? '<div class="symbol symbol-35px symbol-circle me-3"><span class="symbol-label bg-light-primary text-primary fw-bold">AI</span></div>' : ''}
                     <div>
                         <span class="text-gray-600 fw-semibold fs-8">${role === 'user' ? '{{ auth()->user()->name ?? "User" }}' : 'Assistant'}</span>
+                        ${role === 'assistant' && provider ? `
+                            <span class="badge badge-light-primary badge-sm ms-2">${provider.charAt(0).toUpperCase() + provider.slice(1)}</span>
+                            <span class="badge badge-light-info badge-sm">${model}</span>
+                        ` : ''}
                         <span class="text-gray-500 fw-semibold fs-8 ms-2">${timestamp}</span>
                     </div>
                     ${role === 'user' ? `
@@ -395,6 +405,16 @@ document.addEventListener('DOMContentLoaded', () => {
         addMonitorLog('🚀 Sending message to LLM...', 'info');
         addMonitorLog(`   Prompt: "${userPrompt.substring(0, 50)}${userPrompt.length > 50 ? '...' : ''}"`, 'debug');
         
+        // Update thinking message with model info
+        const configSelect = document.getElementById('quick-chat-model-selector-{{ $session?->id ?? "default" }}');
+        const selectedOption = configSelect?.options[configSelect.selectedIndex];
+        const thinkingProvider = selectedOption?.dataset.provider || '';
+        const thinkingModel = selectedOption?.dataset.model || '';
+        const thinkingModelInfo = document.getElementById('thinking-model-info-{{ $session?->id ?? "default" }}');
+        if (thinkingModelInfo && thinkingProvider && thinkingModel) {
+            thinkingModelInfo.textContent = `${thinkingProvider} / ${thinkingModel} thinking`;
+        }
+        
         showThinking();
         
         // Create empty assistant message (hidden until first chunk arrives)
@@ -423,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let startTime = Date.now();
         let warningShown = false;
         let firstChunkTime = null;
+        let streamCompleted = false; // Track if stream completed successfully
         const baseMaxTokens = {{ $configurations->first()->default_parameters['max_tokens'] ?? 8000 }};
         let currentMaxTokens = maxTokens; // Use UI value instead of base default
         
@@ -559,6 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
             } else if (data.type === 'done') {
+                streamCompleted = true; // Mark stream as successfully completed
                 hideThinking();
                 clearInterval(statsUpdateInterval);
                 const duration = Date.now() - startTime;
@@ -823,6 +845,17 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         eventSource.onerror = (error) => {
+            // If stream completed successfully, this is just SSE connection closing (not a real error)
+            if (streamCompleted) {
+                eventSource?.close();
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('d-none');
+                stopBtn?.classList.add('d-none');
+                messageInput.disabled = false;
+                return; // Exit silently - stream finished OK
+            }
+            
+            // Real error - stream didn't complete
             console.error('EventSource error:', error);
             hideThinking();
             clearInterval(statsUpdateInterval);

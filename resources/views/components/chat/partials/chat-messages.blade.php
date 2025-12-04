@@ -162,7 +162,7 @@
                 <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <span class="text-muted fw-semibold fs-7">Thinking<span class="streaming-cursor">|</span></span>
+                <span class="text-muted fw-semibold fs-7"><span id="thinking-model-info-{{ $session?->id ?? 'default' }}">Thinking</span><span class="streaming-cursor">|</span></span>
             </div>
             <div class="text-gray-500 fw-semibold fs-8 mt-2 d-flex align-items-center gap-3">
                 <span><i class="ki-duotone ki-calculator fs-7 text-gray-400"><span class="path1"></span><span class="path2"></span></i> <span class="thinking-tokens">0</span> tokens</span>
