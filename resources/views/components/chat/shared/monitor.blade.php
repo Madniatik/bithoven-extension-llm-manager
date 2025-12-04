@@ -15,14 +15,65 @@
     {{-- Monitor Header --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Monitor</h5>
-        <div>
-            <button class="btn btn-sm btn-light-primary" onclick="window.LLMMonitorFactory.get({{ $monitorId }})?.refresh()">
-                <i class="ki-duotone ki-arrows-circle fs-5"><span class="path1"></span><span class="path2"></span></i>
-                Refresh
+        <div class="d-flex gap-2">
+            {{-- Download Logs (Green) --}}
+            <button class="btn btn-sm btn-icon btn-light-success" 
+                    onclick="window.LLMMonitorFactory.get('{{ $monitorId }}')?.downloadLogs()"
+                    data-bs-toggle="tooltip"
+                    title="Download logs as .txt file">
+                <i class="ki-duotone ki-file-down fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
             </button>
-            <button class="btn btn-sm btn-light-danger" onclick="window.LLMMonitorFactory.get({{ $monitorId }})?.clear()">
-                <i class="ki-duotone ki-trash fs-5"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i>
-                Clear
+
+            {{-- Copy Logs (Blue) --}}
+            <button class="btn btn-sm btn-icon btn-light-primary" 
+                    onclick="window.LLMMonitorFactory.get('{{ $monitorId }}')?.copyLogs()"
+                    data-bs-toggle="tooltip"
+                    title="Copy logs to clipboard">
+                <i class="ki-duotone ki-copy fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </button>
+
+            {{-- Clear Logs Only (Orange) --}}
+            <button class="btn btn-sm btn-icon btn-light-warning" 
+                    onclick="window.LLMMonitorFactory.get('{{ $monitorId }}')?.clearLogs()"
+                    data-bs-toggle="tooltip"
+                    title="Clear console logs only">
+                <i class="ki-duotone ki-eraser fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span>
+                </i>
+            </button>
+
+            {{-- Clear All (Red) --}}
+            <button class="btn btn-sm btn-icon btn-light-danger" 
+                    onclick="window.LLMMonitorFactory.get('{{ $monitorId }}')?.clear()"
+                    data-bs-toggle="tooltip"
+                    title="Clear all monitoring data">
+                <i class="ki-duotone ki-trash fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span>
+                    <span class="path5"></span>
+                </i>
+            </button>
+
+            {{-- Refresh (Gray) --}}
+            <button class="btn btn-sm btn-icon btn-light" 
+                    onclick="window.LLMMonitorFactory.get('{{ $monitorId }}')?.refresh()"
+                    data-bs-toggle="tooltip"
+                    title="Refresh monitor display">
+                <i class="ki-duotone ki-arrows-circle fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
             </button>
         </div>
     </div>
