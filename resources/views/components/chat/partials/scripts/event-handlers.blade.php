@@ -797,6 +797,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 addMonitorLog('', 'info');
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                 
+                // Complete monitor tracking
+                const provider = selectedOption?.dataset.provider || 'unknown';
+                const model = selectedOption?.dataset.model || 'unknown';
+                if (window.LLMMonitor) {
+                    window.LLMMonitor.complete(provider, model, monitorId);
+                }
+                
                 eventSource?.close();
                 eventSource = null;
                 sendBtn.disabled = false;
@@ -822,6 +829,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 addMonitorLog('', 'info');
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
+                
+                // Log error in monitor
+                if (window.LLMMonitor) {
+                    window.LLMMonitor.error(data.message || 'Unknown error', monitorId);
+                }
+                
                 toastr.error(data.message);
                 
                 // Update bubble with error content (backend saves error message)
