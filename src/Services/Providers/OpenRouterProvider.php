@@ -100,7 +100,9 @@ class OpenRouterProvider implements LLMProviderInterface
             // Otherwise, silently ignore the cosmetic error
         }
 
-        // Extract usage metrics from last response
+        // IMPORTANT: OpenRouter streams don't include usage data in the final chunk
+        // Usage data must be retrieved from response headers or a separate generation request
+        // For now, return placeholder values - actual usage will be fetched via generation endpoint
         return [
             'usage' => [
                 'prompt_tokens' => $lastResponse->usage->promptTokens ?? 0,
@@ -119,6 +121,8 @@ class OpenRouterProvider implements LLMProviderInterface
             'generation_id' => $lastResponse->id ?? null,
             'system_fingerprint' => $lastResponse->systemFingerprint ?? null,
             'created_at' => $lastResponse->created ?? null,
+            // Raw response for debugging and analysis
+            'raw_response' => json_decode(json_encode($lastResponse), true),
         ];
     }
 

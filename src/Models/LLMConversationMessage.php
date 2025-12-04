@@ -26,6 +26,7 @@ class LLMConversationMessage extends Model
         'role',
         'content',
         'metadata',
+        'raw_response',
         'tokens',
         'response_time',
         'cost_usd',
@@ -37,6 +38,7 @@ class LLMConversationMessage extends Model
 
     protected $casts = [
         'metadata' => 'array',
+        'raw_response' => 'array',
         'tokens' => 'integer',
         'response_time' => 'float',
         'cost_usd' => 'float',

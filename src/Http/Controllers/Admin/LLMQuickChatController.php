@@ -225,6 +225,7 @@ class LLMQuickChatController extends Controller
                     'tokens' => $metrics['usage']['total_tokens'] ?? $tokenCount,
                     'response_time' => $responseTime,
                     'cost_usd' => null, // Will be updated after usageLog creation
+                    'raw_response' => $metrics['raw_response'] ?? null,
                     'metadata' => [
                         'model' => $configuration->model,
                         'provider' => $configuration->provider,
