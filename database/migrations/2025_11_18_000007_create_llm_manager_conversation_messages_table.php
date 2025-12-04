@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('metadata')->nullable(); // Tool calls, function results, LLM config, streaming info, etc.
             $table->integer('tokens')->unsigned()->nullable();
             $table->decimal('response_time', 8, 3)->nullable(); // Response time in seconds (e.g., 2.456s)
+            $table->decimal('cost_usd', 10, 6)->nullable(); // Cost in USD (e.g., 0.001234)
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('sent_at')->nullable(); // When user/system sent the message
             $table->timestamp('started_at')->nullable(); // When LLM started processing

@@ -224,6 +224,7 @@ class LLMQuickChatController extends Controller
                     'content' => $fullResponse,
                     'tokens' => $metrics['usage']['total_tokens'] ?? $tokenCount,
                     'response_time' => $responseTime,
+                    'cost_usd' => null, // Will be updated after usageLog creation
                     'metadata' => [
                         'model' => $configuration->model,
                         'provider' => $configuration->provider,
@@ -238,10 +239,18 @@ class LLMQuickChatController extends Controller
                         'is_streaming' => true,
                         'time_to_first_chunk' => $ttft,
                         'response_time' => $responseTime,
+                        // OpenRouter-specific metadata
+                        'generation_id' => $metrics['generation_id'] ?? null,
+                        'native_tokens_prompt' => $metrics['usage']['native_tokens_prompt'] ?? null,
+                        'native_tokens_completion' => $metrics['usage']['native_tokens_completion'] ?? null,
+                        'system_fingerprint' => $metrics['system_fingerprint'] ?? null,
                     ],
                 ]);
 
                 $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics);
+
+                // Update message with cost from usage log
+                $assistantMessage->update(['cost_usd' => $usageLog->cost_usd]);
 
                 // Note: Session totals (tokens/cost) can be calculated from messages and usage_logs
                 // No need to store redundant data in session table

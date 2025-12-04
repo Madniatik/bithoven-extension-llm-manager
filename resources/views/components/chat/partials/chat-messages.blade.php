@@ -120,6 +120,21 @@
                                 TTFT: {{ number_format($message->metadata['time_to_first_chunk'], 2) }}s
                             </span>
                         @endif
+
+                        {{-- Cost in USD --}}
+                        @php
+                            $cost = $message->cost_usd ?? ($message->metadata['cost_usd'] ?? null);
+                        @endphp
+                        @if ($cost && $cost > 0)
+                            <span title="Cost in USD">
+                                <i class="ki-duotone ki-dollar fs-7 text-gray-400">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                                ${{ number_format($cost, 6) }}
+                            </span>
+                        @endif
                     </div>
                 @endif
             </div>

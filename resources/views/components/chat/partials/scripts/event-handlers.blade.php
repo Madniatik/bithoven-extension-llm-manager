@@ -106,6 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             </i>
                             TTFT: ...
                         </span>
+                        <span class="footer-cost text-gray-400">
+                            <i class="ki-duotone ki-dollar fs-7 text-gray-400">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                            $...
+                        </span>
                     </div>
                 ` : ''}
             </div>
@@ -688,6 +696,21 @@ document.addEventListener('DOMContentLoaded', () => {
                                 `;
                                 ttftSpan.classList.remove('text-gray-400');
                                 ttftSpan.classList.add('text-warning');
+                            }
+                            
+                            // Cost
+                            const costSpan = footer.querySelector('.footer-cost');
+                            if (costSpan && data.cost) {
+                                costSpan.innerHTML = `
+                                    <i class="ki-duotone ki-dollar fs-7 text-primary">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                    $${data.cost.toFixed(6)}
+                                `;
+                                costSpan.classList.remove('text-gray-400');
+                                costSpan.classList.add('text-primary');
                             }
                         }
                     }

@@ -106,9 +106,16 @@ class OpenRouterProvider implements LLMProviderInterface
                 'prompt_tokens' => $lastResponse->usage->promptTokens ?? 0,
                 'completion_tokens' => $lastResponse->usage->completionTokens ?? 0,
                 'total_tokens' => $lastResponse->usage->totalTokens ?? 0,
+                // OpenRouter-specific: native tokens (actual model usage)
+                'native_tokens_prompt' => $lastResponse->usage->native_tokens_prompt ?? null,
+                'native_tokens_completion' => $lastResponse->usage->native_tokens_completion ?? null,
             ],
             'model' => $lastResponse->model ?? $this->configuration->model,
             'finish_reason' => $lastResponse->choices[0]->finishReason ?? 'stop',
+            // Additional OpenRouter metadata
+            'generation_id' => $lastResponse->id ?? null,
+            'system_fingerprint' => $lastResponse->system_fingerprint ?? null,
+            'created_at' => $lastResponse->created ?? null,
         ];
     }
 
