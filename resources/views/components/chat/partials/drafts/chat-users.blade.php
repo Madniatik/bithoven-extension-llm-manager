@@ -1,5 +1,5 @@
 <!--begin::Users-->
-<div class="symbol-group symbol-hover">
+<div class="symbol-group symbol-hover d-none">
     <!--begin::Avatar-->
     <div class="symbol symbol-35px symbol-circle">
         <img alt="Pic" src="{{ metronicAsset('media/avatars/300-5.jpg') }}" />

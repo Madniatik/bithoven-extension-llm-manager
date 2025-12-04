@@ -20,9 +20,14 @@ class LLMQuickChatController extends Controller
     
     /**
      * Display the Quick Chat interface with ChatWorkspace component.
-     * Reuses last active session or creates a new one.
+     * 
+     * @param int|null $sessionId Optional session ID to load specific session
+     * 
+     * Behavior:
+     * - If $sessionId provided: Load that specific session (if user owns it)
+     * - If no $sessionId: Reuse last active session or create new one
      */
-    public function index()
+    public function index($sessionId = null)
     {
         $configurations = LLMConfiguration::active()->get();
         $defaultConfig = $configurations->first();
@@ -32,22 +37,35 @@ class LLMQuickChatController extends Controller
                 ->with('error', 'No active LLM configuration found.');
         }
         
-        // Reutilizar última sesión activa del usuario (Quick Chat behavior)
-        $session = LLMConversationSession::where('user_id', auth()->id())
-            ->where('extension_slug', null) // Quick Chat sessions
-            ->where('is_active', true)
-            ->latest('last_activity_at')
-            ->first();
-        
-        // Si no hay sesión activa, crear una nueva
-        if (!$session) {
-            $session = LLMConversationSession::create([
-                'session_id' => 'quick_chat_' . uniqid(),
-                'title' => 'Quick Chat - ' . now()->format('Y-m-d H:i'),
-                'user_id' => auth()->id(),
-                'llm_configuration_id' => $defaultConfig->id,
-                'extension_slug' => null,
-            ]);
+        // If session ID provided, load that specific session
+        if ($sessionId) {
+            $session = LLMConversationSession::where('id', $sessionId)
+                ->where('user_id', auth()->id()) // Security: only user's own sessions
+                ->where('extension_slug', null) // Only Quick Chat sessions
+                ->first();
+            
+            if (!$session) {
+                return redirect()->route('admin.llm.quick-chat')
+                    ->with('error', 'Session not found or access denied.');
+            }
+        } else {
+            // Reutilizar última sesión activa del usuario (Quick Chat behavior)
+            $session = LLMConversationSession::where('user_id', auth()->id())
+                ->where('extension_slug', null) // Quick Chat sessions
+                ->where('is_active', true)
+                ->latest('last_activity_at')
+                ->first();
+            
+            // Si no hay sesión activa, crear una nueva
+            if (!$session) {
+                $session = LLMConversationSession::create([
+                    'session_id' => 'quick_chat_' . uniqid(),
+                    'title' => 'Quick Chat - ' . now()->format('Y-m-d H:i'),
+                    'user_id' => auth()->id(),
+                    'llm_configuration_id' => $defaultConfig->id,
+                    'extension_slug' => null,
+                ]);
+            }
         }
         
         // Actualizar last_activity_at
