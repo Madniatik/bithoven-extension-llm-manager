@@ -41,6 +41,11 @@ class AnthropicProvider implements LLMProviderInterface
                 'completion_tokens' => $data['usage']['output_tokens'] ?? 0,
                 'total_tokens' => ($data['usage']['input_tokens'] ?? 0) + ($data['usage']['output_tokens'] ?? 0),
             ],
+            // Anthropic-specific metadata
+            'stop_reason' => $data['stop_reason'] ?? null,
+            'stop_sequence' => $data['stop_sequence'] ?? null,
+            // Complete raw response for debugging and analysis
+            'raw_response' => $data,
         ];
     }
 

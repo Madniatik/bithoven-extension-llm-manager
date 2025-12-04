@@ -124,6 +124,11 @@ class OpenAIProvider implements LLMProviderInterface
             ],
             'model' => $lastResponse->model ?? $this->configuration->model,
             'finish_reason' => $lastResponse->choices[0]->finishReason ?? 'stop',
+            // OpenAI-specific metadata
+            'system_fingerprint' => $lastResponse->systemFingerprint ?? null,
+            'created' => $lastResponse->created ?? null,
+            // Complete raw response for debugging and analysis
+            'raw_response' => $lastResponse->toArray(),
         ];
     }
 

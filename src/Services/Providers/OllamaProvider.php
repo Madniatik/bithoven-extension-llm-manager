@@ -173,6 +173,15 @@ class OllamaProvider implements LLMProviderInterface
             ],
             'model' => $this->configuration->model,
             'finish_reason' => $finalData['done_reason'] ?? 'stop',
+            // Ollama-specific metadata (useful for performance analysis)
+            'durations' => [
+                'total' => $finalData['total_duration'] ?? null,
+                'load' => $finalData['load_duration'] ?? null,
+                'prompt_eval' => $finalData['prompt_eval_duration'] ?? null,
+                'eval' => $finalData['eval_duration'] ?? null,
+            ],
+            // Complete raw response for debugging and analysis
+            'raw_response' => $finalData,
         ];
     }
 
