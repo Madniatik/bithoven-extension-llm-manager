@@ -13,17 +13,14 @@
                     @endif
 
                     <div>
-                        <span class="text-gray-600 fw-semibold fs-8">
-                            @if ($message->role === 'user')
-                                {{ $session->user->name ?? 'User' }}
+                        @if ($message->role === 'user')
+                            <span class="text-gray-600 fw-semibold fs-8">{{ $session->user->name ?? 'User' }}</span>
+                        @else
+                            @if ($message->llmConfiguration)
+                                <span class="text-gray-600 fw-semibold fs-8">{{ ucfirst($message->llmConfiguration->provider) }} / {{ $message->llmConfiguration->model }}</span>
                             @else
-                                Assistant
+                                <span class="text-gray-600 fw-semibold fs-8">Assistant</span>
                             @endif
-                        </span>
-                        @if ($message->role === 'assistant' && $message->llmConfiguration)
-                            <span
-                                class="badge badge-light-primary badge-sm ms-2">{{ ucfirst($message->llmConfiguration->provider) }}</span>
-                            <span class="badge badge-light-info badge-sm">{{ $message->llmConfiguration->model }}</span>
                         @endif
                         @if ($message->role === 'assistant' && isset($message->metadata['is_error']) && $message->metadata['is_error'])
                             <span class="badge badge-light-warning badge-sm ms-2" title="This message contains an error explanation">

@@ -71,11 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="d-flex align-items-center mb-2">
                     ${role === 'assistant' ? '<div class="symbol symbol-35px symbol-circle me-3"><span class="symbol-label bg-light-primary text-primary fw-bold">AI</span></div>' : ''}
                     <div>
-                        <span class="text-gray-600 fw-semibold fs-8">${role === 'user' ? '{{ auth()->user()->name ?? "User" }}' : 'Assistant'}</span>
-                        ${role === 'assistant' && provider ? `
-                            <span class="badge badge-light-primary badge-sm ms-2">${provider.charAt(0).toUpperCase() + provider.slice(1)}</span>
-                            <span class="badge badge-light-info badge-sm">${model}</span>
-                        ` : ''}
+                        ${role === 'assistant' && provider && model ? `
+                            <span class="text-gray-600 fw-semibold fs-8">${provider} / ${model}</span>
+                        ` : `
+                            <span class="text-gray-600 fw-semibold fs-8">${role === 'user' ? '{{ auth()->user()->name ?? "User" }}' : 'Assistant'}</span>
+                        `}
                         <span class="text-gray-500 fw-semibold fs-8 ms-2">${timestamp}</span>
                     </div>
                     ${role === 'user' ? `
@@ -722,14 +722,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             // Cost
                             const costSpan = footer.querySelector('.footer-cost');
-                            if (costSpan && data.cost) {
+                            if (costSpan && data.cost !== undefined) {
+                                const costValue = parseFloat(data.cost).toFixed(6);
                                 costSpan.innerHTML = `
                                     <i class="ki-duotone ki-dollar fs-7 text-primary">
                                         <span class="path1"></span>
                                         <span class="path2"></span>
                                         <span class="path3"></span>
                                     </i>
-                                    $${data.cost.toFixed(6)}
+                                    $${costValue}
                                 `;
                                 costSpan.classList.remove('text-gray-400');
                                 costSpan.classList.add('text-primary');
