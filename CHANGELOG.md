@@ -7,6 +7,115 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased] - Work in Progress Towards v1.0.7
+
+### Quick Chat Feature Enhancements (95% Complete)
+
+**30+ commits implementados** trabajando hacia v1.0.7:
+
+#### Enhanced Data Capture (commits 721e271, 0cd80d4)
+- **Added** `model` field to messages table - Captures actual model used (not just config)
+- **Added** `raw_response` field (JSON) - Complete provider response for analysis
+- **Enhanced** Raw Data Modal with Tabs UI:
+  - "Formatted JSON" tab with syntax highlighting
+  - "Raw Text" tab for debugging
+  - Copy buttons for each tab
+  - Modal now shows complete provider metadata
+
+#### Thinking Tokens Display (commit 0cd80d4)
+- **Improved** Token display from start of streaming (not just completion)
+- **Added** `input_tokens` display from metadata event (before first chunk)
+- **Enhanced** Progress bar shows real-time token accumulation
+- **Removed** "Streaming complete" toast (less disruptive UX)
+
+#### Stop Stream Feature (commits multiple)
+- **Added** Intelligent stream cancellation with cleanup:
+  - DELETE orphaned user messages if stopped before first chunk
+  - Restore prompt to input for retry
+  - Preserve conversation context if stopped during streaming
+- **Added** Global scope variables for cross-function access:
+  - `userMessageId`, `savedUserPrompt`, `chunkCount`
+- **Fixed** Bubble removal with reliable Array-based selector
+- **Fixed** Variable scope issues preventing Stop functionality
+
+#### OpenRouter Provider Integration (commits 8a00921, afe895e, a95c2ec)
+- **Added** Complete OpenRouter provider implementation with HTTP direct
+- **Added** Usage metadata extraction from final SSE chunk
+- **Added** `cost_usd` column to messages table
+- **Added** Support for model variations (slash vs colon format)
+- **Fixed** Token extraction from OpenRouter response format
+- **Documented** Provider response format comparison guide
+
+#### Token Breakdown & Real-time Metrics (commits c5fa989, 4b4d214, f547809)
+- **Added** Persistent footer with token breakdown:
+  - Prompt tokens (↑ sent)
+  - Completion tokens (↓ received)
+  - Total tokens
+- **Added** Real-time updates during streaming:
+  - Response time (live calculation)
+  - TTFT (Time to First Token)
+  - Cost in USD (calculated from usage)
+- **Fixed** Number formatting in token display
+- **Fixed** Duplicate footer update code causing JS errors
+
+#### Session Management (commits 5f6fbd7, c08d78e)
+- **Added** Access to specific quick-chat sessions by ID: `/admin/llm/quick-chat/{id}`
+- **Added** Custom title modal for new conversations
+- **Added** Settings persistence via localStorage:
+  - Model selection
+  - Temperature
+  - Max tokens
+  - Context limit
+- **Fixed** Select2 visual refresh from localStorage (jQuery .on() compatibility)
+
+#### UI Polish & Bug Fixes
+- **Improved** Bubble title format (simplified provider/model display)
+- **Fixed** $0.00 cost display (show zero instead of empty)
+- **Fixed** Response time display in old messages with fallback
+- **Fixed** Clear Chat button restoration (clearBtn error)
+- **Fixed** Partial response visibility when stopping stream
+- **Removed** Duplicate New Chat header toolbar
+- **Removed** Colors from footer metrics in static bubbles (cleaner look)
+
+#### Code Quality & Production Readiness (commit 907494c)
+- **Removed** 25+ debugging console.log statements:
+  - `settings-manager.blade.php` - 18 debug logs
+  - `message-renderer.blade.php` - 1 debug log
+  - `chat-workspace.blade.php` - 3 debug logs
+  - `split-resizer.blade.php` - 2 debug logs
+  - `event-handlers.blade.php` - 1 debug log
+- **Kept** Essential error logging only:
+  - Markdown parsing errors
+  - Prism highlighting errors
+  - EventSource connection errors
+  - DELETE request errors
+  - Initialization confirmation
+- **Result** Clean console for production use
+
+#### Documentation Updates (commit 523f663)
+- **Updated** `PLAN-v1.0.7.md` with actual progress:
+  - Quick Chat Feature: 95% complete (FASE 1-4,6-7 done)
+  - UI/UX Optimizations: 80% complete
+  - 30+ commits documented
+  - Metrics and timelines updated
+  - Roadmap for remaining work defined
+
+### Migration Notes
+
+**Database Changes:**
+```sql
+-- New columns added to llm_messages table
+ALTER TABLE llm_messages ADD COLUMN model VARCHAR(255) NULL;
+ALTER TABLE llm_messages ADD COLUMN raw_response JSON NULL;
+ALTER TABLE llm_messages ADD COLUMN cost_usd DECIMAL(10,6) NULL;
+```
+
+**Breaking Changes:** None - All changes are backward compatible
+
+**Upgrade Path:** Run migrations to add new columns. Existing messages will have NULL values for new fields.
+
+---
+
 ## [1.0.6] - 2025-12-03
 
 ### Added - Multi-Instance Support for ChatWorkspace Component
