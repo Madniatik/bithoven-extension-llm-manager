@@ -250,23 +250,6 @@ class LLMQuickChatController extends Controller
                     ],
                 ]);
 
-                // DEBUG: Log what was actually saved to metadata
-                \Log::info('QuickChat - Message created with metadata:', [
-                    'message_id' => $assistantMessage->id,
-                    'metadata_input_tokens' => $assistantMessage->metadata['input_tokens'] ?? 'MISSING',
-                    'metadata_output_tokens' => $assistantMessage->metadata['output_tokens'] ?? 'MISSING',
-                    'full_metadata' => $assistantMessage->metadata,
-                ]);
-
-                // DEBUG: Log metrics structure before saving
-                \Log::info('QuickChat - Metrics structure before save:', [
-                    'full_metrics' => $metrics,
-                    'usage' => $metrics['usage'] ?? 'MISSING',
-                    'prompt_tokens' => $metrics['usage']['prompt_tokens'] ?? 'MISSING',
-                    'completion_tokens' => $metrics['usage']['completion_tokens'] ?? 'MISSING',
-                    'raw_response_usage' => $metrics['raw_response']['usage'] ?? 'MISSING',
-                ]);
-
                 $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics);
 
                 // Update message with cost from usage log
