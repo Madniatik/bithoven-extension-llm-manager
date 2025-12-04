@@ -91,7 +91,7 @@
                             </i>
                             {{ number_format($totalTokens) }} tokens
                             @if ($promptTokens > 0 && $completionTokens > 0)
-                                <span class="text-gray-400" title="Sent / Received">(↑{{ $promptTokens }} / ↓{{ $completionTokens }})</span>
+                                <span class="text-gray-400" title="Sent / Received">(↑{{ number_format($promptTokens) }} / ↓{{ number_format($completionTokens) }})</span>
                             @endif
                         </span>
 
