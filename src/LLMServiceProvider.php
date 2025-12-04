@@ -132,6 +132,11 @@ class LLMServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/lang' => lang_path('vendor/llm-manager'),
         ], 'llm-lang');
 
+        // Publish public assets (JS, CSS, images)
+        $this->publishes([
+            __DIR__ . '/../public' => public_path('vendor/bithoven/llm-manager'),
+        ], 'llm-assets');
+
         // Load migrations
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 

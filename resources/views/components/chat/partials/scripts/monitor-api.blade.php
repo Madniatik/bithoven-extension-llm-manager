@@ -7,20 +7,221 @@
 --}}
 
 <script type="module">
+    // Base path for monitor modules (extension public folder)
+    const basePath = '/vendor/bithoven/llm-manager/js/monitor';
+    
     // Import monitor modules
-    import MonitorStorage from '/vendor/llm-manager/js/monitor/core/MonitorStorage.js';
-    import MonitorInstance from '/vendor/llm-manager/js/monitor/core/MonitorInstance.js';
-    import MonitorFactory from '/vendor/llm-manager/js/monitor/core/MonitorFactory.js';
+    const { default: MonitorStorage } = await import(`${basePath}/core/MonitorStorage.js`);
+    const { default: MonitorUI } = await import(`${basePath}/ui/render.js`);
+    const { clearLogs, clearAll } = await import(`${basePath}/actions/clear.js`);
+    const { copyLogs } = await import(`${basePath}/actions/copy.js`);
+    const { downloadLogs } = await import(`${basePath}/actions/download.js`);
+    
+    // MonitorInstance class (inline because it needs all imports)
+    class MonitorInstance {
+        constructor(sessionId) {
+            this.sessionId = sessionId;
+            this.storage = new MonitorStorage(sessionId);
+            this.ui = new MonitorUI(sessionId);
+            
+            this.currentMetrics = {
+                tokens: 0,
+                chunks: 0,
+                cost: 0,
+                duration: 0,
+                startTime: null
+            };
+            
+            this.history = [];
+            this.durationInterval = null;
+        }
+        
+        init() {
+            this.history = this.storage.loadHistory();
+            this.ui.renderActivityTable(this.history);
+            this.ui.log('Monitor ready', 'info');
+        }
+        
+        start() {
+            this.currentMetrics = {
+                tokens: 0,
+                chunks: 0,
+                cost: 0,
+                duration: 0,
+                startTime: Date.now()
+            };
+            
+            this.ui.updateStatus('Streaming...', 'primary');
+            
+            this.durationInterval = setInterval(() => {
+                if (this.currentMetrics.startTime) {
+                    this.currentMetrics.duration = Math.floor((Date.now() - this.currentMetrics.startTime) / 1000);
+                    this.ui.updateDuration(this.currentMetrics.duration);
+                }
+            }, 1000);
+            
+            this.ui.log('Stream started', 'success');
+            this.emitEvent('llm-streaming-started', { timestamp: Date.now() });
+        }
+        
+        trackChunk(chunk, tokens = 0) {
+            this.currentMetrics.chunks++;
+            this.currentMetrics.tokens += tokens;
+            
+            this.ui.updateMetrics({
+                chunks: this.currentMetrics.chunks,
+                tokens: this.currentMetrics.tokens
+            });
+            
+            this.ui.log(`Chunk received: ${tokens} tokens`, 'info');
+            
+            this.emitEvent('llm-streaming-chunk', {
+                chunk,
+                tokens,
+                totalTokens: this.currentMetrics.tokens,
+                totalChunks: this.currentMetrics.chunks
+            });
+        }
+        
+        complete(provider, model) {
+            clearInterval(this.durationInterval);
+            
+            const costPerToken = 0.000002;
+            this.currentMetrics.cost = this.currentMetrics.tokens * costPerToken;
+            
+            this.ui.updateCost(this.currentMetrics.cost);
+            this.ui.updateStatus('Complete', 'success');
+            
+            const activity = {
+                timestamp: new Date().toISOString(),
+                provider,
+                model,
+                tokens: this.currentMetrics.tokens,
+                cost: this.currentMetrics.cost,
+                duration: this.currentMetrics.duration
+            };
+            
+            this.history = this.storage.addActivity(activity);
+            this.ui.renderActivityTable(this.history);
+            
+            this.ui.log(`Stream complete: ${this.currentMetrics.tokens} tokens, $${this.currentMetrics.cost.toFixed(4)}`, 'success');
+            
+            this.emitEvent('llm-streaming-completed', {
+                provider,
+                model,
+                totalTokens: this.currentMetrics.tokens,
+                totalChunks: this.currentMetrics.chunks,
+                duration: this.currentMetrics.duration,
+                cost: this.currentMetrics.cost
+            });
+        }
+        
+        error(message) {
+            clearInterval(this.durationInterval);
+            this.ui.updateStatus('Error', 'danger');
+            this.ui.log(message, 'error');
+            
+            this.emitEvent('llm-streaming-error', {
+                error: message,
+                timestamp: Date.now()
+            });
+        }
+        
+        refresh() {
+            this.ui.renderActivityTable(this.history);
+            this.ui.log('Monitor refreshed', 'info');
+        }
+        
+        reset() {
+            clearInterval(this.durationInterval);
+            this.currentMetrics = {
+                tokens: 0,
+                chunks: 0,
+                cost: 0,
+                duration: 0,
+                startTime: null
+            };
+            
+            this.ui.updateMetrics({ tokens: 0, chunks: 0 });
+            this.ui.updateDuration(0);
+            this.ui.updateCost(0);
+            this.ui.updateStatus('Idle', 'secondary');
+        }
+        
+        emitEvent(eventName, detail) {
+            window.dispatchEvent(new CustomEvent(eventName, {
+                detail: {
+                    sessionId: this.sessionId,
+                    ...detail
+                }
+            }));
+        }
+        
+        // Action Methods
+        clearLogs() {
+            return clearLogs(this.sessionId, this.ui);
+        }
+        
+        clear() {
+            return clearAll(this.sessionId, this.storage, this.ui, () => this.reset());
+        }
+        
+        async copyLogs() {
+            return copyLogs(this.sessionId, this.ui);
+        }
+        
+        downloadLogs() {
+            return downloadLogs(this.sessionId, this.ui);
+        }
+    }
+    
+    // MonitorFactory (Singleton)
+    class MonitorFactory {
+        constructor() {
+            this.instances = {};
+        }
+        
+        create(sessionId) {
+            if (this.instances[sessionId]) {
+                return this.instances[sessionId];
+            }
+            
+            this.instances[sessionId] = new MonitorInstance(sessionId);
+            return this.instances[sessionId];
+        }
+        
+        get(sessionId) {
+            return this.instances[sessionId];
+        }
+        
+        getOrCreate(sessionId) {
+            return this.get(sessionId) || this.create(sessionId);
+        }
+        
+        destroy(sessionId) {
+            const instance = this.instances[sessionId];
+            if (instance && instance.durationInterval) {
+                clearInterval(instance.durationInterval);
+            }
+            delete this.instances[sessionId];
+        }
+        
+        getActiveInstances() {
+            return Object.keys(this.instances);
+        }
+    }
+    
+    // Create singleton instance
+    const factory = new MonitorFactory();
     
     // Make factory available globally
-    window.LLMMonitorFactory = MonitorFactory;
+    window.LLMMonitorFactory = factory;
     
     // Auto-initialize monitors on page load
     document.addEventListener('DOMContentLoaded', () => {
-        // Find all monitor elements and initialize them
         document.querySelectorAll('.llm-monitor').forEach(monitorEl => {
             const sessionId = monitorEl.dataset.monitorId || 'default';
-            const monitor = MonitorFactory.create(sessionId);
+            const monitor = factory.create(sessionId);
             monitor.init();
         });
     });
@@ -29,7 +230,7 @@
     if (!window.LLMMonitor) {
         Object.defineProperty(window, 'LLMMonitor', {
             get() {
-                return MonitorFactory.getOrCreate('default');
+                return factory.getOrCreate('default');
             }
         });
     }
