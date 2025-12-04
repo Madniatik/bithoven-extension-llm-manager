@@ -39,8 +39,8 @@
                     data-control="select2" 
                     data-hide-search="true" 
                     data-placeholder="Select context limit">
-                    <option value="5">Last 5 messages</option>
-                    <option value="10" selected>Last 10 messages</option>
+                    <option value="5" selected>Last 5 messages</option>
+                    <option value="10">Last 10 messages</option>
                     <option value="20">Last 20 messages</option>
                     <option value="50">Last 50 messages</option>
                     <option value="0">All messages</option>

@@ -22,10 +22,14 @@
             if (savedSettings) {
                 const settings = JSON.parse(savedSettings);
                 
-                // Restore context limit
+                // Restore context limit (with Select2 refresh)
                 if (settings.context_limit !== undefined) {
                     const contextSelect = document.getElementById('quick-chat-context-limit');
-                    if (contextSelect) contextSelect.value = settings.context_limit;
+                    if (contextSelect) {
+                        contextSelect.value = settings.context_limit;
+                        // Trigger Select2 to update visually
+                        $(contextSelect).trigger('change');
+                    }
                 }
                 
                 // Restore temperature
@@ -42,10 +46,14 @@
                     if (maxTokensInput) maxTokensInput.value = settings.max_tokens;
                 }
                 
-                // Restore configuration (footer selector)
+                // Restore configuration (footer selector with Select2 refresh)
                 if (settings.configuration_id !== undefined) {
                     const configSelect = document.getElementById('quick-chat-model-selector');
-                    if (configSelect) configSelect.value = settings.configuration_id;
+                    if (configSelect) {
+                        configSelect.value = settings.configuration_id;
+                        // Trigger Select2 to update visually
+                        $(configSelect).trigger('change');
+                    }
                 }
             }
         }
