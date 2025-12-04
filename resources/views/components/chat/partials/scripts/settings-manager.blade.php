@@ -101,24 +101,35 @@
                 if (tempDisplay) tempDisplay.textContent = e.target.value;
                 saveQuickChatSettings();
             });
+            console.log('✅ Temperature listener attached');
         }
         
-        // Context limit listener
+        // Context limit listener (Select2 requires jQuery 'change' event)
         const contextSelect = document.getElementById('quick-chat-context-limit');
         if (contextSelect) {
-            contextSelect.addEventListener('change', saveQuickChatSettings);
+            $(contextSelect).on('change', function() {
+                console.log('🔄 Context limit changed to:', this.value);
+                saveQuickChatSettings();
+            });
+            console.log('✅ Context limit listener attached');
+        } else {
+            console.warn('⚠️ Context limit select not found');
         }
         
         // Max tokens listener
         const maxTokensInput = document.getElementById('quick-chat-max-tokens');
         if (maxTokensInput) {
             maxTokensInput.addEventListener('input', saveQuickChatSettings);
+            console.log('✅ Max tokens listener attached');
         }
         
-        // Configuration selector listener (footer selector)
+        // Configuration selector listener (Select2 requires jQuery 'change' event)
         const configSelect = document.getElementById('quick-chat-model-selector-' + sessionId);
         if (configSelect) {
-            configSelect.addEventListener('change', saveQuickChatSettings);
+            $(configSelect).on('change', function() {
+                console.log('🔄 Model changed to:', this.value);
+                saveQuickChatSettings();
+            });
             console.log('✅ Model selector listener attached to:', 'quick-chat-model-selector-' + sessionId);
         } else {
             console.warn('⚠️ Could not attach listener - model selector not found:', 'quick-chat-model-selector-' + sessionId);
