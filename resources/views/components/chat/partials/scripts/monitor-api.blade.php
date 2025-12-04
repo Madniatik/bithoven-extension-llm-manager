@@ -227,11 +227,145 @@
     });
     
     // Backward compatibility: window.LLMMonitor points to default instance
-    if (!window.LLMMonitor) {
-        Object.defineProperty(window, 'LLMMonitor', {
-            get() {
-                return factory.getOrCreate('default');
+    // ====================================================================
+    // HYBRID ADAPTER PATTERN (Opción 3)
+    // Permite llamadas con/sin sessionId explícito
+    // Soporta múltiples chats simultáneos en misma página
+    // ====================================================================
+    window.LLMMonitor = {
+        _currentSessionId: null,
+        _debugMode: true, // Cambiar a false en producción
+        
+        /**
+         * Set fallback session ID
+         */
+        setSession(sessionId) {
+            this._currentSessionId = sessionId;
+            if (this._debugMode) {
+                console.log(`[LLMMonitor] Session set to: ${sessionId}`);
             }
-        });
-    }
+        },
+        
+        /**
+         * Get monitor instance (with auto-detection)
+         */
+        _getMonitor(sessionId) {
+            // Priority order:
+            // 1. Explicit sessionId parameter
+            // 2. Fallback _currentSessionId
+            // 3. Default 'default'
+            const sid = sessionId || this._currentSessionId || 'default';
+            
+            if (!window.LLMMonitorFactory) {
+                if (this._debugMode) {
+                    console.warn('[LLMMonitor] LLMMonitorFactory not found');
+                }
+                return null;
+            }
+            
+            const monitor = window.LLMMonitorFactory.get(sid);
+            
+            if (!monitor && this._debugMode) {
+                console.warn(`[LLMMonitor] No monitor instance found for session: ${sid}`);
+            }
+            
+            return monitor;
+        },
+        
+        /**
+         * Start monitoring (optional sessionId)
+         */
+        start(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) {
+                monitor.start();
+                if (this._debugMode) {
+                    console.log(`[LLMMonitor] Started: ${sessionId || this._currentSessionId || 'default'}`);
+                }
+            }
+        },
+        
+        /**
+         * Track chunk (optional sessionId)
+         */
+        trackChunk(chunk, tokens = 0, sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) {
+                monitor.trackChunk(chunk, tokens);
+            }
+        },
+        
+        /**
+         * Complete monitoring (optional sessionId)
+         */
+        complete(provider, model, sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) {
+                monitor.complete(provider, model);
+                if (this._debugMode) {
+                    console.log(`[LLMMonitor] Completed: ${sessionId || this._currentSessionId || 'default'}`);
+                }
+            }
+        },
+        
+        /**
+         * Log error (optional sessionId)
+         */
+        error(message, sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) {
+                monitor.error(message);
+                if (this._debugMode) {
+                    console.error(`[LLMMonitor] Error: ${message}`);
+                }
+            }
+        },
+        
+        /**
+         * Clear logs (optional sessionId)
+         */
+        clearLogs(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) monitor.clearLogs();
+        },
+        
+        /**
+         * Copy logs (optional sessionId)
+         */
+        copyLogs(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) monitor.copyLogs();
+        },
+        
+        /**
+         * Download logs (optional sessionId)
+         */
+        downloadLogs(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) monitor.downloadLogs();
+        },
+        
+        /**
+         * Refresh monitor UI (optional sessionId)
+         */
+        refresh(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor && monitor.refresh) monitor.refresh();
+        },
+        
+        /**
+         * Clear all data (optional sessionId)
+         */
+        clear(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor && monitor.clear) monitor.clear();
+        },
+        
+        /**
+         * Get monitor instance directly (for advanced usage)
+         */
+        getInstance(sessionId = null) {
+            return this._getMonitor(sessionId);
+        }
+    };
 </script>

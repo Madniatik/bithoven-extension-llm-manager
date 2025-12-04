@@ -29,7 +29,7 @@
                 const data = JSON.parse(event.data);
                 
                 if (window.LLMMonitor) {
-                    window.LLMMonitor.start();
+                    window.LLMMonitor.start(params.sessionId);
                 }
                 
                 if (callbacks.onStart) {
@@ -42,7 +42,7 @@
                 const data = JSON.parse(event.data);
                 
                 if (window.LLMMonitor) {
-                    window.LLMMonitor.trackChunk(data.chunk, data.tokens || 0);
+                    window.LLMMonitor.trackChunk(data.chunk, data.tokens || 0, params.sessionId);
                 }
                 
                 if (callbacks.onChunk) {
@@ -64,7 +64,7 @@
                 const data = JSON.parse(event.data);
                 
                 if (window.LLMMonitor) {
-                    window.LLMMonitor.complete(data.provider || 'unknown', data.model || 'unknown');
+                    window.LLMMonitor.complete(data.provider || 'unknown', data.model || 'unknown', params.sessionId);
                 }
                 
                 if (callbacks.onComplete) {
@@ -87,7 +87,7 @@
                 }
                 
                 if (window.LLMMonitor) {
-                    window.LLMMonitor.error(errorData.message);
+                    window.LLMMonitor.error(errorData.message, params.sessionId);
                 }
                 
                 if (callbacks.onError) {
@@ -102,7 +102,7 @@
                 console.error('EventSource error:', error);
                 
                 if (window.LLMMonitor) {
-                    window.LLMMonitor.error('Connection error');
+                    window.LLMMonitor.error('Connection error', params.sessionId);
                 }
                 
                 this.stop();
