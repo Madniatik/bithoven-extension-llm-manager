@@ -457,6 +457,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Update message DOM with Markdown rendering
                 updateMessage(assistantMessageId, fullResponse, currentTokens);
                 
+                // Update footer with real-time metrics during streaming
+                const assistantBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
+                if (assistantBubble) {
+                    const footer = assistantBubble.querySelector('.bubble-footer');
+                    
+                    // Update response time in real-time
+                    const currentResponseTime = ((Date.now() - startTime) / 1000).toFixed(2);
+                    const responseTimeSpan = footer?.querySelector('.footer-response-time');
+                    if (responseTimeSpan) {
+                        responseTimeSpan.innerHTML = `
+                            <i class="ki-duotone ki-timer fs-7 text-warning">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                            ${currentResponseTime}s
+                        `;
+                        responseTimeSpan.classList.remove('text-gray-400');
+                        responseTimeSpan.classList.add('text-warning');
+                    }
+                    
+                    // Update TTFT once it's available
+                    if (firstChunkTime) {
+                        const ttft = ((firstChunkTime - startTime) / 1000).toFixed(2);
+                        const ttftSpan = footer?.querySelector('.footer-ttft');
+                        if (ttftSpan) {
+                            ttftSpan.innerHTML = `
+                                <i class="ki-duotone ki-flash-circle fs-7 text-success">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                                TTFT: ${ttft}s
+                            `;
+                            ttftSpan.classList.remove('text-gray-400');
+                            ttftSpan.classList.add('text-success');
+                        }
+                    }
+                }
+                
                 if (chunkCount % 50 === 0) {
                     addMonitorLog(`📥 Received ${chunkCount} chunks (${currentTokens} tokens)`, 'info');
                 }
