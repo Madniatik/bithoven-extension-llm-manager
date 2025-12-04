@@ -492,6 +492,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (assistantBubble) {
                         assistantBubble.dataset.messageId = data.message_id;
                         
+                        // Add error badge if this is an error message
+                        if (data.metadata?.is_error) {
+                            const headerDiv = assistantBubble.querySelector('.text-gray-600')?.parentElement;
+                            if (headerDiv && !headerDiv.querySelector('.badge-warning')) {
+                                const errorBadge = document.createElement('span');
+                                errorBadge.className = 'badge badge-light-warning badge-sm ms-2';
+                                errorBadge.title = 'This message contains an error explanation';
+                                errorBadge.innerHTML = `
+                                    <i class="ki-duotone ki-information-5 fs-7">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                    Error Message
+                                `;
+                                
+                                // Insert after model badge, before timestamp
+                                const timeSpan = headerDiv.querySelector('.text-gray-500.fs-8');
+                                if (timeSpan) {
+                                    headerDiv.insertBefore(errorBadge, timeSpan);
+                                } else {
+                                    headerDiv.appendChild(errorBadge);
+                                }
+                            }
+                        }
+                        
                         // Add raw data button now that we have real DB ID
                         const bubbleContent = assistantBubble.querySelector('.bubble-content-wrapper');
                         const btnContainer = bubbleContent?.querySelector('.message-actions-container');

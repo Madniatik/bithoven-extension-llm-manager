@@ -25,6 +25,16 @@
                                 class="badge badge-light-primary badge-sm ms-2">{{ ucfirst($session->configuration->provider) }}</span>
                             <span class="badge badge-light-info badge-sm">{{ $session->configuration->model }}</span>
                         @endif
+                        @if ($message->role === 'assistant' && isset($message->metadata['is_error']) && $message->metadata['is_error'])
+                            <span class="badge badge-light-warning badge-sm ms-2" title="This message contains an error explanation">
+                                <i class="ki-duotone ki-information-5 fs-7">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                                Error Message
+                            </span>
+                        @endif
                         <span class="text-gray-500 fw-semibold fs-8 ms-2">
                             {{ $message->created_at->format('H:i:s') }}
                         </span>
