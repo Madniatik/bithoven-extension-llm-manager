@@ -150,7 +150,39 @@ class LLMQuickChatController extends Controller
                 $responseTime = round($endTime - $startTime, 3);
                 $ttft = $firstChunkTime ? round($firstChunkTime - $startTime, 3) : null;
 
-                // Save assistant message to DB
+                // Check if response is empty (stream cut before generating content)
+                if (empty($fullResponse) || trim($fullResponse) === '') {
+                    \Log::warning('LLMQuickChat: Empty response received', [
+                        'session_id' => $session->id,
+                        'max_tokens' => $params['max_tokens'],
+                        'finish_reason' => $metrics['finish_reason'] ?? 'unknown',
+                        'token_count' => $tokenCount,
+                    ]);
+                    
+                    echo "data: " . json_encode([
+                        'type' => 'done',
+                        'usage' => $metrics['usage'] ?? ['prompt_tokens' => 0, 'completion_tokens' => 0, 'total_tokens' => 0],
+                        'message_id' => null, // No message saved
+                        'response_time' => $responseTime,
+                        'ttft' => $ttft,
+                        'metadata' => [
+                            'provider' => $configuration->provider,
+                            'model' => $configuration->model,
+                            'finish_reason' => $metrics['finish_reason'] ?? 'empty_response',
+                        ],
+                    ]) . "\n\n";
+                    
+                    if (ob_get_level()) ob_flush();
+                    flush();
+                    
+                    return response()->stream(function() {}, 200, [
+                        'Content-Type' => 'text/event-stream',
+                        'Cache-Control' => 'no-cache',
+                        'X-Accel-Buffering' => 'no',
+                    ]);
+                }
+
+                // Save assistant message to DB (only if response has content)
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),

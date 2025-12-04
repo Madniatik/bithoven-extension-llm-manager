@@ -453,6 +453,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     addMonitorLog('⚠️  EMPTY RESPONSE DETECTED', 'header');
                     addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                     addMonitorLog('Stream completed but no content was received', 'warning');
+                    if (data.metadata?.finish_reason) {
+                        addMonitorLog(`   Finish Reason: ${data.metadata.finish_reason}`, 'debug');
+                    }
+                    addMonitorLog(`   Max Tokens: ${currentMaxTokens}`, 'debug');
                     addMonitorLog('This can happen if token limit was exceeded before first chunk', 'debug');
                     addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                     
