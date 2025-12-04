@@ -105,6 +105,7 @@ class LLMQuickChatController extends Controller
                 $provider = $this->llmManager->config($configuration->id)->getProvider();
                 
                 // Build context from previous messages (apply context_limit)
+                // Skip error messages from context (is_error flag in metadata)
                 $contextLimit = $validated['context_limit'] ?? 10;
                 $query = $session->messages()->orderBy('id');
                 
@@ -114,7 +115,12 @@ class LLMQuickChatController extends Controller
                 }
                 
                 $context = $query->get()
+                    ->filter(function($m) {
+                        // Skip messages marked as errors
+                        return !($m->metadata['is_error'] ?? false);
+                    })
                     ->map(fn($m) => ['role' => $m->role, 'content' => $m->content])
+                    ->values() // Reset array keys after filter
                     ->toArray();
 
                 $fullResponse = '';

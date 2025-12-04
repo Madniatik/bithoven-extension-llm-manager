@@ -1,5 +1,9 @@
 {{-- Action Buttons --}}
-<div class="d-flex align-items-center gap-2">
+<div class="d-flex align-items-center gap-1">
+    <button id="new-chat-btn-{{ $session?->id ?? 'default' }}" class="btn btn-sm btn-icon btn-active-light-primary" type="button" data-bs-toggle="tooltip"
+        title="New Chat" onclick="if(confirm('Start a new chat? This will reload the page.')) { window.location.href='{{ route('admin.llm.quick-chat.new') }}'; }">
+        {!! getIcon('ki-plus', 'fs-3', '', 'i') !!}
+    </button>
     @include('llm-manager::components.chat.partials.buttons.chat-settings')
     <button class="btn btn-sm btn-icon btn-active-light-primary" type="button" data-bs-toggle="tooltip"
         title="Record Voice">

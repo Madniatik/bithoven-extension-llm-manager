@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const sendBtn = document.getElementById(`send-btn-${sessionId}`);
     const stopBtn = document.getElementById(`stop-btn-${sessionId}`);
-    const clearBtn = document.getElementById(`clear-btn-${sessionId}`);
     const messageInput = document.getElementById(`quick-chat-message-input-${sessionId}`);
     const modelSelector = document.getElementById(`quick-chat-model-selector-${sessionId}`);
     const messagesContainer = document.getElementById(`messages-container-${sessionId}`);
@@ -658,21 +657,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 addMonitorLog('❌ ERROR OCCURRED', 'header');
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                 addMonitorLog('', 'info');
-                addMonitorLog(`Error: ${data.message}`, 'error');
+                addMonitorLog('Error: ' + data.message, 'error');
                 if (fullResponse) {
-                    addMonitorLog(`   Partial response received: ${fullResponse.length} chars`, 'debug');
-                    addMonitorLog(`   Chunks received: ${chunkCount}`, 'debug');
-                    // Keep partial response visible (don't remove bubble)
+                    addMonitorLog('   Partial response received: ' + fullResponse.length + ' chars', 'debug');
+                    addMonitorLog('   Chunks received: ' + chunkCount, 'debug');
                 } else {
-                    addMonitorLog(`   No response received before error`, 'debug');
+                    addMonitorLog('   No response received before error', 'debug');
                 }
                 addMonitorLog('', 'info');
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                 toastr.error(data.message);
                 
-                // Only remove bubble if NO response was received
-                if (!fullResponse) {
-                    const assistantMessageDiv = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
+                // Update bubble with error content (backend saves error message)
+                if (data.message_id) {
+                    const assistantBubble = messagesContainer.querySelector('[data-message-id="' + assistantMessageId + '"]');
+                    if (assistantBubble) {
+                        // Update message ID
+                        assistantBubble.dataset.messageId = data.message_id;
+                        
+                        // Update content with error message
+                        if (data.content) {
+                            updateMessage(data.message_id, data.content, 0);
+                        }
+                        
+                        // Add error badge
+                        const headerDiv = assistantBubble.querySelector('.text-gray-600')?.parentElement;
+                        if (headerDiv && !headerDiv.querySelector('.badge-warning')) {
+                            const errorBadge = document.createElement('span');
+                            errorBadge.className = 'badge badge-light-warning badge-sm ms-2';
+                            errorBadge.title = 'This message contains an error explanation';
+                            errorBadge.innerHTML = '<i class="ki-duotone ki-information-5 fs-7"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Error Message';
+                            const timeSpan = headerDiv.querySelector('.text-gray-500.fs-8');
+                            if (timeSpan) {
+                                headerDiv.insertBefore(errorBadge, timeSpan);
+                            } else {
+                                headerDiv.appendChild(errorBadge);
+                            }
+                        }
+                        
+                        // Add retry button
+                        const bubbleContent = assistantBubble.querySelector('.bubble-content-wrapper');
+                        const contentDiv = bubbleContent?.querySelector('.message-content');
+                        if (contentDiv && !contentDiv.parentElement.querySelector('.retry-error-btn')) {
+                            const retryContainer = document.createElement('div');
+                            retryContainer.className = 'mt-3 pt-3 border-top border-gray-300';
+                            const retryBtn = document.createElement('button');
+                            retryBtn.type = 'button';
+                            retryBtn.className = 'btn btn-sm btn-light-warning retry-error-btn';
+                            retryBtn.onclick = function() { retryErrorMessage(data.message_id); };
+                            retryBtn.innerHTML = '<i class="ki-duotone ki-arrows-circle fs-6"><span class="path1"></span><span class="path2"></span></i> Retry with Higher Token Limit';
+                            retryContainer.appendChild(retryBtn);
+                            contentDiv.parentElement.appendChild(retryContainer);
+                        }
+                    }
+                } else if (!fullResponse) {
+                    // Only remove bubble if NO response AND no message_id (truly failed)
+                    const assistantMessageDiv = messagesContainer.querySelector('[data-message-id="' + assistantMessageId + '"]');
                     assistantMessageDiv?.remove();
                 }
                 
@@ -706,12 +746,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
     
-    const clearConversation = () => {
-        if (confirm('Start a new chat? This will reload the page.')) {
-            window.location.href = '{{ route("admin.llm.quick-chat.new") }}';
-        }
-    };
-    
     sendBtn.addEventListener('click', sendMessage);
     stopBtn?.addEventListener('click', () => {
         if (eventSource) {
@@ -723,8 +757,16 @@ document.addEventListener('DOMContentLoaded', () => {
             sendBtn.classList.remove('d-none');
             stopBtn.classList.add('d-none');
             messageInput.disabled = false;
-            addMonitorLog('⏸️  Streaming stopped by user', 'info');
-            toastr.info('Streaming stopped');
+            addMonitorLog('⏸️  Streaming stopped by user (connection closed)', 'info');
+            addMonitorLog('   Note: Ollama may continue processing in background', 'debug');
+            addMonitorLog('   No message saved (partial response discarded)', 'debug');
+            toastr.warning('Stream stopped. No message saved.');
+            
+            // Remove partial assistant bubble
+            const partialBubble = messagesContainer.querySelector('[data-message-id="' + assistantMessageId + '"]');
+            if (partialBubble) {
+                partialBubble.remove();
+            }
         }
     });
     clearBtn?.addEventListener('click', clearConversation);
@@ -737,50 +779,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Renderizar Markdown en mensajes pre-existentes al cargar la página
-    const renderExistingMessages = () => {
-        if (!messagesContainer) return;
-        
-        const messageContents = messagesContainer.querySelectorAll('.message-content .markdown-content');
-        
-        messageContents.forEach(contentDiv => {
-            const rawContent = contentDiv.textContent;
-            
-            if (typeof marked !== 'undefined' && rawContent) {
-                try {
-                    const renderedHTML = marked.parse(rawContent);
-                    contentDiv.innerHTML = renderedHTML;
-                    
-                    // Apply syntax highlighting
-                    if (typeof Prism !== 'undefined') {
-                        contentDiv.querySelectorAll('pre code').forEach(block => {
-                            try {
-                                Prism.highlightElement(block);
-                            } catch (e) {
-                                console.warn('Prism highlighting failed:', e);
-                            }
-                        });
-                    }
-                } catch (e) {
-                    console.warn('Markdown parsing failed for existing message:', e);
-                    contentDiv.innerHTML = rawContent.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-                }
-            }
-        });
-        
-        console.log(`✅ Rendered ${messageContents.length} existing messages with Markdown`);
-    };
-    
-    // Ejecutar después de que Marked y Prism estén disponibles
-    if (typeof marked !== 'undefined') {
-        renderExistingMessages();
-    } else {
-        // Esperar un poco si Marked aún no está cargado
-        setTimeout(renderExistingMessages, 500);
-    }
-    
-    console.log('✅ Quick Chat ready - Press Enter or Send button');
-    
     /**
      * Retry functionality for error messages
      */
@@ -789,7 +787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addMonitorLog('🔄 Fetching error message data...', 'info');
             
             // Fetch error message data
-            const response = await fetch(`{{ url('admin/llm/messages') }}/${errorMessageId}`);
+            const response = await fetch('{{ url("admin/llm/messages") }}/' + errorMessageId);
             if (!response.ok) {
                 throw new Error('Failed to fetch message data');
             }
@@ -801,8 +799,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            addMonitorLog(`📝 Original prompt: "${data.previous_user_message.content.substring(0, 50)}..."`, 'debug');
-            addMonitorLog(`⚙️  Original max_tokens: ${data.max_tokens}`, 'debug');
+            addMonitorLog('📝 Original prompt: "' + data.previous_user_message.content.substring(0, 50) + '..."', 'debug');
+            addMonitorLog('⚙️  Original max_tokens: ' + data.max_tokens, 'debug');
             
             // Calculate suggested max_tokens (triple the original if it was 'length' error)
             let suggestedMaxTokens = data.max_tokens;
@@ -812,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 suggestedMaxTokens = Math.min(data.max_tokens * 2, 8000);
             }
             
-            addMonitorLog(`💡 Suggested max_tokens: ${suggestedMaxTokens}`, 'success');
+            addMonitorLog('💡 Suggested max_tokens: ' + suggestedMaxTokens, 'success');
             
             // Show confirmation dialog with editable max_tokens
             const result = await Swal.fire({
@@ -868,12 +866,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                 addMonitorLog('🔄 RETRY IN PROGRESS', 'header');
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                addMonitorLog(`   New max_tokens: ${newMaxTokens}`, 'success');
-                addMonitorLog(`   Previous max_tokens: ${data.max_tokens}`, 'debug');
-                addMonitorLog(`   Increase: +${newMaxTokens - data.max_tokens} tokens (${Math.round((newMaxTokens / data.max_tokens - 1) * 100)}%)`, 'info');
+                addMonitorLog('   New max_tokens: ' + newMaxTokens, 'success');
+                addMonitorLog('   Previous max_tokens: ' + data.max_tokens, 'debug');
+                addMonitorLog('   Increase: +' + (newMaxTokens - data.max_tokens) + ' tokens (' + Math.round((newMaxTokens / data.max_tokens - 1) * 100) + '%)', 'info');
                 addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                 
-                toastr.success(\`Retrying with max_tokens=\${newMaxTokens}\`);
+                toastr.success('Retrying with max_tokens=' + newMaxTokens);
                 
                 // Trigger send
                 setTimeout(() => sendMessage(), 300);
@@ -881,10 +879,54 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Retry error:', error);
-            addMonitorLog(\`❌ Retry failed: \${error.message}\`, 'error');
+            addMonitorLog('❌ Retry failed: ' + error.message, 'error');
             toastr.error('Failed to retry message. Please try manually.');
         }
     };
+    
+    // Renderizar Markdown en mensajes pre-existentes al cargar la página
+    const renderExistingMessages = () => {
+        if (!messagesContainer) return;
+        
+        const messageContents = messagesContainer.querySelectorAll('.message-content .markdown-content');
+        
+        messageContents.forEach(contentDiv => {
+            const rawContent = contentDiv.textContent;
+            
+            if (typeof marked !== 'undefined' && rawContent) {
+                try {
+                    const renderedHTML = marked.parse(rawContent);
+                    contentDiv.innerHTML = renderedHTML;
+                    
+                    // Apply syntax highlighting
+                    if (typeof Prism !== 'undefined') {
+                        contentDiv.querySelectorAll('pre code').forEach(block => {
+                            try {
+                                Prism.highlightElement(block);
+                            } catch (e) {
+                                console.warn('Prism highlighting failed:', e);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.warn('Markdown parsing failed for existing message:', e);
+                    contentDiv.innerHTML = rawContent.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                }
+            }
+        });
+        
+        console.log(`✅ Rendered ${messageContents.length} existing messages with Markdown`);
+    };
+    
+    // Ejecutar después de que Marked y Prism estén disponibles
+    if (typeof marked !== 'undefined') {
+        renderExistingMessages();
+    } else {
+        // Esperar un poco si Marked aún no está cargado
+        setTimeout(renderExistingMessages, 500);
+    }
+    
+    console.log('✅ Quick Chat ready - Press Enter or Send button');
 });
 </script>
 @endpush
