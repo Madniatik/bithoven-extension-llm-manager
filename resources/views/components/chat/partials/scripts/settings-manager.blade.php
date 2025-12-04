@@ -19,24 +19,16 @@
         function loadQuickChatSettings() {
             const savedSettings = localStorage.getItem(`quick_chat_session_${sessionId}_settings`);
             
-            console.log('🔍 Loading settings for session:', sessionId);
-            console.log('📦 Raw localStorage data:', savedSettings);
-            
             if (savedSettings) {
                 const settings = JSON.parse(savedSettings);
-                console.log('✅ Parsed settings:', settings);
                 
                 // Restore context limit (with Select2 refresh)
                 if (settings.context_limit !== undefined) {
                     const contextSelect = document.getElementById('quick-chat-context-limit');
-                    console.log('🔧 Context select element:', contextSelect);
-                    console.log('🔧 Setting context_limit to:', settings.context_limit);
                     if (contextSelect) {
                         contextSelect.value = settings.context_limit;
-                        console.log('🔧 Context value after set:', contextSelect.value);
                         // Trigger Select2 to update visually
                         $(contextSelect).trigger('change');
-                        console.log('✅ Select2 triggered for context_limit');
                     }
                 }
                 
@@ -44,7 +36,6 @@
                 if (settings.temperature !== undefined) {
                     const tempInput = document.getElementById('quick-chat-temperature');
                     const tempDisplay = document.getElementById('quick-chat-temp-display');
-                    console.log('🔧 Setting temperature to:', settings.temperature);
                     if (tempInput) tempInput.value = settings.temperature;
                     if (tempDisplay) tempDisplay.textContent = settings.temperature;
                 }
@@ -52,27 +43,18 @@
                 // Restore max tokens
                 if (settings.max_tokens !== undefined) {
                     const maxTokensInput = document.getElementById('quick-chat-max-tokens');
-                    console.log('🔧 Setting max_tokens to:', settings.max_tokens);
                     if (maxTokensInput) maxTokensInput.value = settings.max_tokens;
                 }
                 
                 // Restore configuration (footer selector with Select2 refresh)
                 if (settings.configuration_id !== undefined) {
                     const configSelect = document.getElementById('quick-chat-model-selector-' + sessionId);
-                    console.log('🔧 Model select element:', configSelect);
-                    console.log('🔧 Setting configuration_id to:', settings.configuration_id);
                     if (configSelect) {
                         configSelect.value = settings.configuration_id;
-                        console.log('🔧 Model value after set:', configSelect.value);
                         // Trigger Select2 to update visually
                         $(configSelect).trigger('change');
-                        console.log('✅ Select2 triggered for model selector');
-                    } else {
-                        console.warn('⚠️ Model selector not found with ID: quick-chat-model-selector-' + sessionId);
                     }
                 }
-            } else {
-                console.log('ℹ️ No saved settings found in localStorage');
             }
         }
         
@@ -89,8 +71,6 @@
             };
             
             localStorage.setItem(`quick_chat_session_${sessionId}_settings`, JSON.stringify(settings));
-            console.log('💾 Quick Chat settings saved:', settings);
-            console.log('📍 Saved to key:', `quick_chat_session_${sessionId}_settings`);
         }
         
         // Temperature slider listener
@@ -101,44 +81,32 @@
                 if (tempDisplay) tempDisplay.textContent = e.target.value;
                 saveQuickChatSettings();
             });
-            console.log('✅ Temperature listener attached');
         }
         
         // Context limit listener (Select2 requires jQuery 'change' event)
         const contextSelect = document.getElementById('quick-chat-context-limit');
         if (contextSelect) {
             $(contextSelect).on('change', function() {
-                console.log('🔄 Context limit changed to:', this.value);
                 saveQuickChatSettings();
             });
-            console.log('✅ Context limit listener attached');
-        } else {
-            console.warn('⚠️ Context limit select not found');
         }
         
         // Max tokens listener
         const maxTokensInput = document.getElementById('quick-chat-max-tokens');
         if (maxTokensInput) {
             maxTokensInput.addEventListener('input', saveQuickChatSettings);
-            console.log('✅ Max tokens listener attached');
         }
         
         // Configuration selector listener (Select2 requires jQuery 'change' event)
         const configSelect = document.getElementById('quick-chat-model-selector-' + sessionId);
         if (configSelect) {
             $(configSelect).on('change', function() {
-                console.log('🔄 Model changed to:', this.value);
                 saveQuickChatSettings();
             });
-            console.log('✅ Model selector listener attached to:', 'quick-chat-model-selector-' + sessionId);
-        } else {
-            console.warn('⚠️ Could not attach listener - model selector not found:', 'quick-chat-model-selector-' + sessionId);
         }
         
         // Load settings on init
         loadQuickChatSettings();
-        
-        console.log('✅ Settings manager initialized for session:', sessionId);
     });
 </script>
 @endpush

@@ -108,13 +108,11 @@ document.addEventListener('alpine:init', () => {
         const sessionId = el.dataset.sessionId || 'default';
         const componentName = `splitResizer_${sessionId}`;
         Alpine.data(componentName, createSplitResizer(sessionId));
-        console.log(`[SplitResizer] Registered component: ${componentName}`);
     });
     
     // Fallback: Register default session
     if (!document.querySelector('[data-session-id]')) {
         Alpine.data('splitResizer_default', createSplitResizer('default'));
-        console.log('[SplitResizer] Registered component: splitResizer_default (fallback)');
     }
 });
 </script>

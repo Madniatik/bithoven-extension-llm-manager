@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let eventSource = null;
     let statsUpdateInterval = null;
     
+    // Track user message for deletion if stopped before first chunk (GLOBAL SCOPE)
+    let userMessageId = null;
+    let savedUserPrompt = '';
+    let chunkCount = 0;
+    
     // Configure Marked.js for proper Markdown rendering (including code blocks)
     if (typeof marked !== 'undefined') {
         marked.setOptions({
@@ -439,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
         
         let fullResponse = '';
-        let chunkCount = 0;
+        chunkCount = 0; // Reset global chunkCount
         let startTime = Date.now();
         let warningShown = false;
         let firstChunkTime = null;
@@ -449,6 +454,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Initialize thinking tokens with input_tokens (prompt tokens)
         let inputTokens = 0;
+        
+        // Reset tracking variables for new message
+        userMessageId = null;
+        savedUserPrompt = '';
         
         // Update streaming stats in real-time (every 100ms)
         statsUpdateInterval = setInterval(() => {
@@ -475,6 +484,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.input_tokens) {
                     inputTokens = data.input_tokens;
                     addMonitorLog(`📥 Input tokens: ${inputTokens}`, 'debug');
+                }
+                // Capture user message ID and prompt for potential deletion/restoration
+                if (data.user_message_id) {
+                    userMessageId = data.user_message_id;
+                    savedUserPrompt = data.user_prompt || '';
+                    addMonitorLog(`💾 User message ID: ${userMessageId}`, 'debug');
                 }
             } else if (data.type === 'chunk') {
                 fullResponse += data.content;
@@ -888,7 +903,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     sendBtn.addEventListener('click', sendMessage);
-    stopBtn?.addEventListener('click', () => {
+    stopBtn?.addEventListener('click', async () => {
         if (eventSource) {
             clearInterval(statsUpdateInterval);
             eventSource.close();
@@ -898,12 +913,73 @@ document.addEventListener('DOMContentLoaded', () => {
             sendBtn.classList.remove('d-none');
             stopBtn.classList.add('d-none');
             messageInput.disabled = false;
-            addMonitorLog('⏸️  Streaming stopped by user (connection closed)', 'info');
-            addMonitorLog('   Partial response kept visible (not saved to DB)', 'debug');
-            addMonitorLog('   Will disappear on page refresh', 'debug');
-            toastr.warning('Stream stopped. Partial response not saved.');
             
-            // Keep partial response visible (DON'T remove bubble)
+            const stoppedBeforeFirstChunk = chunkCount === 0;
+            
+            if (stoppedBeforeFirstChunk) {
+                // Case 1: Stopped during "Thinking..." (before first chunk)
+                addMonitorLog('⏸️  Streaming stopped BEFORE first chunk', 'info');
+                addMonitorLog('   → Deleting user message from DB', 'debug');
+                addMonitorLog('   → Removing user bubble from UI', 'debug');
+                addMonitorLog('   → Restoring prompt to input', 'debug');
+                
+                // Delete user message from database
+                if (userMessageId) {
+                    try {
+                        await fetch(`/admin/llm/messages/${userMessageId}`, {
+                            method: 'DELETE',
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                'Accept': 'application/json',
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Failed to delete user message:', error);
+                    }
+                }
+                
+                // Remove user bubble from UI (find last visible user bubble before thinking message)
+                const allUserBubbles = Array.from(messagesContainer.querySelectorAll('.message-bubble.justify-content-end'));
+                const userBubble = allUserBubbles[allUserBubbles.length - 1]; // Get the last one
+                if (userBubble) {
+                    userBubble.remove();
+                }
+                
+                // Restore prompt to input
+                if (savedUserPrompt) {
+                    messageInput.value = savedUserPrompt;
+                }
+                
+                toastr.info('Stream stopped. Prompt restored to input.');
+                
+            } else {
+                // Case 2: Stopped AFTER first chunk (streaming already started)
+                addMonitorLog('⏸️  Streaming stopped AFTER first chunk', 'info');
+                addMonitorLog('   → Deleting user message from DB', 'debug');
+                addMonitorLog('   → Keeping user bubble visible', 'debug');
+                addMonitorLog('   → Partial response kept visible (not saved to DB)', 'debug');
+                
+                // Delete user message from database (even though bubble stays visible)
+                if (userMessageId) {
+                    try {
+                        await fetch(`/admin/llm/messages/${userMessageId}`, {
+                            method: 'DELETE',
+                            credentials: 'same-origin',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                'Accept': 'application/json',
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Failed to delete user message:', error);
+                    }
+                }
+                
+                toastr.warning('Stream stopped. User message not saved. Partial response will disappear on refresh.');
+            }
+            
+            // Keep partial assistant response visible (DON'T remove bubble)
             // It will disappear naturally on page refresh since it's not in DB
         }
     });
@@ -1076,8 +1152,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        
-        console.log(`✅ Rendered ${messageContents.length} existing messages with Markdown`);
     };
     
     // Ejecutar después de que Marked y Prism estén disponibles

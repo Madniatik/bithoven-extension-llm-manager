@@ -22,12 +22,6 @@ document.addEventListener('alpine:init', () => {
                 this.monitorOpen = saved === 'true';
             }
             
-            console.log('[ChatWorkspace] Initialized', {
-                showMonitor: this.showMonitor,
-                monitorOpen: this.monitorOpen,
-                layout: this.layout
-            });
-            
             // On mobile, bind toggle to modal
             if (this.isMobile()) {
                 this.$watch('monitorOpen', (value) => {
@@ -68,11 +62,6 @@ document.addEventListener('alpine:init', () => {
             this.monitorOpen = !this.monitorOpen;
             const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
             localStorage.setItem(storageKey, this.monitorOpen);
-            
-            console.log('[ChatWorkspace] Monitor toggled:', {
-                open: this.monitorOpen,
-                layout: this.layout
-            });
         },
         
         isMobile() {
@@ -86,13 +75,11 @@ document.addEventListener('alpine:init', () => {
         const sessionId = el.dataset.sessionId || 'default';
         const componentName = `chatWorkspace_${sessionId}`;
         Alpine.data(componentName, createChatWorkspace(sessionId));
-        console.log(`[ChatWorkspace] Registered component: ${componentName}`);
     });
     
     // Fallback: Register default session
     if (!document.querySelector('[data-session-id]')) {
         Alpine.data('chatWorkspace_default', createChatWorkspace('default'));
-        console.log('[ChatWorkspace] Registered component: chatWorkspace_default (fallback)');
     }
 });
 </script>

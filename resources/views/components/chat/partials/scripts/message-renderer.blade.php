@@ -91,8 +91,6 @@
         // Re-initialize tooltips for dynamically added buttons
         const newTooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         newTooltips.map(el => new bootstrap.Tooltip(el));
-        
-        console.log('✅ Message renderer initialized');
     });
 </script>
 @endpush

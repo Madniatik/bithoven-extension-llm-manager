@@ -62,6 +62,7 @@ Route::prefix('admin/llm')
         // Messages API
         Route::get('messages/{messageId}/raw', [LLMQuickChatController::class, 'getRawMessage'])->name('messages.raw')->where('messageId', '[0-9]+');
         Route::get('messages/{messageId}', [LLMQuickChatController::class, 'getMessage'])->name('messages.get')->where('messageId', '[0-9]+');
+        Route::delete('messages/{messageId}', [LLMQuickChatController::class, 'deleteUserMessage'])->name('messages.delete')->where('messageId', '[0-9]+');
         
         // Knowledge Base
         Route::resource('knowledge-base', LLMKnowledgeBaseController::class)->parameters([

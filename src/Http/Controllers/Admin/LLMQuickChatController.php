@@ -154,6 +154,8 @@ class LLMQuickChatController extends Controller
                 
                 echo "data: " . json_encode([
                     'type' => 'metadata',
+                    'user_message_id' => $userMessage->id, // For deletion if user stops before first chunk
+                    'user_prompt' => $validated['prompt'], // For restoration to input if stopped early
                     'input_tokens' => $estimatedInputTokens,
                     'context_size' => count($context),
                 ]) . "\n\n";
@@ -448,6 +450,33 @@ class LLMQuickChatController extends Controller
                 'content' => $previousUserMessage->content,
             ] : null,
         ]);
+    }
+    
+    /**
+     * Delete user message when streaming is stopped before first chunk
+     * This prevents orphaned user messages in DB when user cancels during "Thinking..."
+     */
+    public function deleteUserMessage($messageId)
+    {
+        $message = LLMConversationMessage::with('session')->find($messageId);
+        
+        if (!$message) {
+            return response()->json(['success' => false, 'error' => 'Message not found'], 404);
+        }
+        
+        // Security: Ensure user owns this message
+        if ($message->session && $message->session->user_id !== auth()->id()) {
+            return response()->json(['success' => false, 'error' => 'Unauthorized'], 403);
+        }
+        
+        // Security: Only allow deletion of user role messages (not assistant responses)
+        if ($message->role !== 'user') {
+            return response()->json(['success' => false, 'error' => 'Can only delete user messages'], 400);
+        }
+        
+        $message->delete();
+        
+        return response()->json(['success' => true]);
     }
 }
 
