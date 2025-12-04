@@ -87,13 +87,13 @@
                             {{ number_format($message->tokens ?? 0) }} tokens
                         </span>
 
-                        {{-- Response Time (column or metadata fallback) --}}
+                        {{-- Response Time (column or metadata fallback) - Sin color en bubbles antiguos --}}
                         @php
                             $responseTime = $message->response_time ?? ($message->metadata['response_time'] ?? null);
                         @endphp
                         @if ($responseTime)
-                            <span class="text-success">
-                                <i class="ki-duotone ki-timer fs-7 text-success">
+                            <span>
+                                <i class="ki-duotone ki-timer fs-7 text-gray-400">
                                     <span class="path1"></span>
                                     <span class="path2"></span>
                                     <span class="path3"></span>
@@ -102,10 +102,10 @@
                             </span>
                         @endif
 
-                        {{-- Time to First Chunk (TTFT) --}}
+                        {{-- Time to First Chunk (TTFT) - Sin color en bubbles antiguos --}}
                         @if (isset($message->metadata['time_to_first_chunk']) && $message->metadata['time_to_first_chunk'])
-                            <span class="text-warning" title="Time to first token">
-                                <i class="ki-duotone ki-flash-circle fs-7 text-warning">
+                            <span title="Time to first token">
+                                <i class="ki-duotone ki-flash-circle fs-7 text-gray-400">
                                     <span class="path1"></span>
                                     <span class="path2"></span>
                                 </i>
