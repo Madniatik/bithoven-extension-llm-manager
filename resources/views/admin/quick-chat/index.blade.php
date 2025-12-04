@@ -15,7 +15,7 @@
         :session="$session"
         :configurations="$configurations"
         :show-monitor="true"
-        :monitor-open="false"
+        :monitor-open="true"
         monitor-layout="split-horizontal"
     />
 </x-default-layout>

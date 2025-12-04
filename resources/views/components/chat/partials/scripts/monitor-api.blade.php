@@ -6,7 +6,33 @@
     Each session gets its own monitor instance
 --}}
 
-<script type="module">
+<script>
+// ============================================================================
+// PLACEHOLDER: Define window.LLMMonitor immediately to avoid "undefined" errors
+// This gets replaced with the full API once modules load
+// ============================================================================
+window.LLMMonitor = {
+    _loading: true,
+    start: () => console.warn('[LLMMonitor] Still loading...'),
+    trackChunk: () => console.warn('[LLMMonitor] Still loading...'),
+    complete: () => console.warn('[LLMMonitor] Still loading...'),
+    error: () => console.warn('[LLMMonitor] Still loading...'),
+    clearLogs: () => console.warn('[LLMMonitor] Still loading...'),
+    copyLogs: () => console.warn('[LLMMonitor] Still loading...'),
+    downloadLogs: () => console.warn('[LLMMonitor] Still loading...'),
+    refresh: () => console.warn('[LLMMonitor] Still loading...'),
+    clear: () => console.warn('[LLMMonitor] Still loading...'),
+    setSession: () => console.warn('[LLMMonitor] Still loading...'),
+    getInstance: () => null
+};
+
+window.LLMMonitorFactory = null;
+window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
+
+// ============================================================================
+// ASYNC INITIALIZATION: Load modules and replace placeholder with real API
+// ============================================================================
+(async function() {
     // Base path for monitor modules (extension public folder)
     const basePath = '/vendor/bithoven/llm-manager/js/monitor';
     
@@ -230,9 +256,8 @@
             const monitor = factory.create(sessionId);
             monitor.init();
             
-            if (window.LLMMonitor._debugMode) {
-                console.log(`[LLMMonitor] Auto-initialized monitor: ${sessionId}`);
-            }
+            // Log initialization (debug mode)
+            console.log(`[LLMMonitor] Auto-initialized monitor: ${sessionId}`);
         });
     }
     
@@ -408,4 +433,5 @@
             return this._getMonitor(sessionId);
         }
     };
+})();
 </script>
