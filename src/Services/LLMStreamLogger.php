@@ -40,7 +40,9 @@ class LLMStreamLogger
         $executionTimeMs = (int) ((microtime(true) - $session['start_time']) * 1000);
 
         $usage = $metrics['usage'] ?? [];
-        $cost = $this->calculateCost(
+        
+        // Use provider-calculated cost if available (e.g., OpenRouter), otherwise calculate
+        $cost = $metrics['cost'] ?? $this->calculateCost(
             $session['configuration']->provider,
             $metrics['model'] ?? $session['configuration']->model,
             $usage

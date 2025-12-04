@@ -245,7 +245,26 @@ class LLMQuickChatController extends Controller
                         'native_tokens_prompt' => $metrics['usage']['native_tokens_prompt'] ?? null,
                         'native_tokens_completion' => $metrics['usage']['native_tokens_completion'] ?? null,
                         'system_fingerprint' => $metrics['system_fingerprint'] ?? null,
+                        // Provider-calculated cost (e.g., OpenRouter)
+                        'provider_cost' => $metrics['cost'] ?? null,
                     ],
+                ]);
+
+                // DEBUG: Log what was actually saved to metadata
+                \Log::info('QuickChat - Message created with metadata:', [
+                    'message_id' => $assistantMessage->id,
+                    'metadata_input_tokens' => $assistantMessage->metadata['input_tokens'] ?? 'MISSING',
+                    'metadata_output_tokens' => $assistantMessage->metadata['output_tokens'] ?? 'MISSING',
+                    'full_metadata' => $assistantMessage->metadata,
+                ]);
+
+                // DEBUG: Log metrics structure before saving
+                \Log::info('QuickChat - Metrics structure before save:', [
+                    'full_metrics' => $metrics,
+                    'usage' => $metrics['usage'] ?? 'MISSING',
+                    'prompt_tokens' => $metrics['usage']['prompt_tokens'] ?? 'MISSING',
+                    'completion_tokens' => $metrics['usage']['completion_tokens'] ?? 'MISSING',
+                    'raw_response_usage' => $metrics['raw_response']['usage'] ?? 'MISSING',
                 ]);
 
                 $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics);

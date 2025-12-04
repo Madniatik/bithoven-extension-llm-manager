@@ -164,8 +164,7 @@ class OpenRouterProvider implements LLMProviderInterface
         curl_close($ch);
 
         // Extract usage metrics from final chunk
-        // Note: OpenRouter streams don't include usage in final chunk
-        // We need to fetch it via generation endpoint using the generation_id
+        // OpenRouter DOES include usage in final SSE chunk, but also provides generation endpoint as fallback
         $usage = [
             'prompt_tokens' => 0,
             'completion_tokens' => 0,
@@ -176,8 +175,25 @@ class OpenRouterProvider implements LLMProviderInterface
             'native_tokens_completion' => null,
         ];
 
-        // Fetch actual usage data from generation endpoint
-        if ($generationId) {
+        // First, try to get usage from final chunk (most reliable)
+        if ($finalData && isset($finalData['usage'])) {
+            $usage = [
+                'prompt_tokens' => $finalData['usage']['prompt_tokens'] ?? 0,
+                'completion_tokens' => $finalData['usage']['completion_tokens'] ?? 0,
+                'total_tokens' => $finalData['usage']['total_tokens'] ?? 0,
+                'input_tokens' => $finalData['usage']['prompt_tokens'] ?? 0,
+                'output_tokens' => $finalData['usage']['completion_tokens'] ?? 0,
+                'native_tokens_prompt' => $finalData['native_tokens_prompt'] ?? null,
+                'native_tokens_completion' => $finalData['native_tokens_completion'] ?? null,
+            ];
+            
+            \Log::info('OpenRouter: Usage data from final SSE chunk', [
+                'generation_id' => $generationId,
+                'usage' => $usage,
+            ]);
+        }
+        // Fallback: Fetch usage data from generation endpoint if not in final chunk
+        elseif ($generationId) {
             try {
                 $generationResponse = Http::withHeaders([
                     'Authorization' => 'Bearer ' . $this->configuration->api_key,
@@ -215,6 +231,8 @@ class OpenRouterProvider implements LLMProviderInterface
             'generation_id' => $generationId,
             'system_fingerprint' => $finalData['system_fingerprint'] ?? null,
             'created_at' => $finalData['created'] ?? null,
+            // OpenRouter-specific: use provider's calculated cost (more accurate than our estimation)
+            'cost' => $finalData['usage']['cost'] ?? null,
             // Raw response for debugging and analysis
             'raw_response' => $finalData,
         ];
