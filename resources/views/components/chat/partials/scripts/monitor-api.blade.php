@@ -217,14 +217,54 @@
     // Make factory available globally
     window.LLMMonitorFactory = factory;
     
-    // Auto-initialize monitors on page load
-    document.addEventListener('DOMContentLoaded', () => {
+    // Auto-initialize monitors (immediate + delayed for Alpine.js)
+    function initializeMonitors() {
         document.querySelectorAll('.llm-monitor').forEach(monitorEl => {
             const sessionId = monitorEl.dataset.monitorId || 'default';
+            
+            // Skip if already initialized
+            if (factory.get(sessionId)) {
+                return;
+            }
+            
             const monitor = factory.create(sessionId);
             monitor.init();
+            
+            if (window.LLMMonitor._debugMode) {
+                console.log(`[LLMMonitor] Auto-initialized monitor: ${sessionId}`);
+            }
         });
+    }
+    
+    // Try immediate initialization
+    initializeMonitors();
+    
+    // Retry on DOMContentLoaded (for late-loaded elements)
+    document.addEventListener('DOMContentLoaded', initializeMonitors);
+    
+    // Retry after Alpine.js initialization (for x-show elements)
+    document.addEventListener('alpine:init', () => {
+        setTimeout(initializeMonitors, 100);
     });
+    
+    // Expose manual initialization helper
+    window.initLLMMonitor = function(sessionId) {
+        const monitorEl = document.querySelector(`.llm-monitor[data-monitor-id="${sessionId}"]`);
+        if (!monitorEl) {
+            console.warn(`[LLMMonitor] No monitor element found for session: ${sessionId}`);
+            return null;
+        }
+        
+        if (factory.get(sessionId)) {
+            console.log(`[LLMMonitor] Monitor already initialized: ${sessionId}`);
+            return factory.get(sessionId);
+        }
+        
+        const monitor = factory.create(sessionId);
+        monitor.init();
+        console.log(`[LLMMonitor] Manually initialized monitor: ${sessionId}`);
+        return monitor;
+    };
     
     // Backward compatibility: window.LLMMonitor points to default instance
     // ====================================================================

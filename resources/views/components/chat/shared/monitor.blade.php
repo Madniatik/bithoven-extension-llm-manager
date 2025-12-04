@@ -50,6 +50,15 @@
     // Get monitorId
     $monitorId = $monitorId ?? ($session?->id ?? 'default');
     
+    // Debug: Log monitorId value
+    if (config('app.debug')) {
+        \Log::debug('[Monitor Component] monitorId resolved to: ' . $monitorId, [
+            'passed_monitorId' => $monitorId ?? 'NULL',
+            'session_id' => $session?->id ?? 'NULL',
+            'final_monitorId' => $monitorId,
+        ]);
+    }
+    
     // Get preset (default: 'full')
     $preset = $preset ?? 'full';
     
@@ -72,7 +81,16 @@
     $showCloseButton = $showCloseButton ?? false;
 @endphp
 
-<div class="llm-monitor" data-monitor-id="{{ $monitorId }}">
+<div class="llm-monitor" 
+     data-monitor-id="{{ $monitorId }}"
+     x-data="{ monitorId: '{{ $monitorId }}' }"
+     x-init="
+         $nextTick(() => {
+             if (window.initLLMMonitor) {
+                 window.initLLMMonitor('{{ $monitorId }}');
+             }
+         });
+     ">
     {{-- Monitor Header --}}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">
