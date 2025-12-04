@@ -71,6 +71,11 @@ class LLMConversationMessage extends Model
         return $this->belongsTo(\App\Models\User::class);
     }
 
+    public function llmConfiguration(): BelongsTo
+    {
+        return $this->belongsTo(LLMConfiguration::class, 'llm_configuration_id');
+    }
+
     /**
      * Scopes
      */

@@ -85,7 +85,7 @@ class ChatWorkspace extends Component
 
         // Handle Eloquent model (Conversation)
         return $this->session->messages()
-            ->with('user')
+            ->with(['user', 'llmConfiguration'])
             ->orderBy('created_at')
             ->get();
     }

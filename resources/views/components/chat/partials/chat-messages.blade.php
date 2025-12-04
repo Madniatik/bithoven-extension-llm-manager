@@ -20,10 +20,10 @@
                                 Assistant
                             @endif
                         </span>
-                        @if ($message->role === 'assistant' && $session->configuration)
+                        @if ($message->role === 'assistant' && $message->llmConfiguration)
                             <span
-                                class="badge badge-light-primary badge-sm ms-2">{{ ucfirst($session->configuration->provider) }}</span>
-                            <span class="badge badge-light-info badge-sm">{{ $session->configuration->model }}</span>
+                                class="badge badge-light-primary badge-sm ms-2">{{ ucfirst($message->llmConfiguration->provider) }}</span>
+                            <span class="badge badge-light-info badge-sm">{{ $message->llmConfiguration->model }}</span>
                         @endif
                         @if ($message->role === 'assistant' && isset($message->metadata['is_error']) && $message->metadata['is_error'])
                             <span class="badge badge-light-warning badge-sm ms-2" title="This message contains an error explanation">
