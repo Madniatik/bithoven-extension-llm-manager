@@ -16,6 +16,6 @@
         :configurations="$configurations"
         :show-monitor="true"
         :monitor-open="true"
-        monitor-layout="split-horizontal"
+        monitor-layout="sidebar"
     />
 </x-default-layout>
