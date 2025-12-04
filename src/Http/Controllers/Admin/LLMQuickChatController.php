@@ -306,4 +306,46 @@ class LLMQuickChatController extends Controller
             ],
         ]);
     }
+    
+    /**
+     * Get message data for retry functionality
+     */
+    public function getMessage($messageId)
+    {
+        $message = LLMConversationMessage::with('session')->find($messageId);
+        
+        if (!$message) {
+            return response()->json([
+                'error' => 'Message not found'
+            ], 404);
+        }
+        
+        // Ensure user can only access their own messages
+        if (!$message->session || $message->session->user_id !== auth()->id()) {
+            return response()->json([
+                'error' => 'Unauthorized access to message'
+            ], 403);
+        }
+        
+        // Find previous user message in same session
+        $previousUserMessage = LLMConversationMessage::where('session_id', $message->session_id)
+            ->where('role', 'user')
+            ->where('id', '<', $message->id)
+            ->orderBy('id', 'desc')
+            ->first();
+        
+        return response()->json([
+            'id' => $message->id,
+            'content' => $message->content,
+            'metadata' => $message->metadata,
+            'is_error' => $message->metadata['is_error'] ?? false,
+            'finish_reason' => $message->metadata['finish_reason'] ?? null,
+            'max_tokens' => $message->metadata['max_tokens'] ?? null,
+            'previous_user_message' => $previousUserMessage ? [
+                'id' => $previousUserMessage->id,
+                'content' => $previousUserMessage->content,
+            ] : null,
+        ]);
+    }
 }
+

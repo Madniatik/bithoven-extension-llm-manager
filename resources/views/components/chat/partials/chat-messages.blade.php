@@ -55,11 +55,24 @@
                     @endif
                 </div>
 
-                <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }} bubble-content-wrapper"
+                <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }} bubble-content-wrapper position-relative"
                     style="max-width: 85%">
                     <div class="text-gray-800 fw-semibold fs-6 message-content"
                         @if ($message->role === 'assistant') data-role="assistant" @endif
                         data-raw-content="{{ base64_encode($message->content) }}">{{ $message->content }}</div>
+                    
+                    {{-- Retry button for error messages --}}
+                    @if ($message->role === 'assistant' && isset($message->metadata['is_error']) && $message->metadata['is_error'])
+                        <div class="mt-3 pt-3 border-top border-gray-300">
+                            <button type="button" class="btn btn-sm btn-light-warning" onclick="retryErrorMessage({{ $message->id }})">
+                                <i class="ki-duotone ki-arrows-circle fs-6">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                                Retry with Higher Token Limit
+                            </button>
+                        </div>
+                    @endif
                 </div>
 
                 @if ($message->role === 'assistant')
