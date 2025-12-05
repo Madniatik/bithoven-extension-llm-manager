@@ -15,10 +15,11 @@
             mangle: false
         });
         
-        // Render existing assistant messages
-        document.querySelectorAll('.message-content[data-role="assistant"]').forEach(element => {
+        // Render existing assistant messages (OLD bubbles)
+        document.querySelectorAll('.message-content[data-role="assistant"]:not([data-rendered="true"])').forEach(element => {
             const markdownText = element.textContent.trim();
             element.innerHTML = marked.parse(markdownText);
+            element.setAttribute('data-rendered', 'true');
             
             // Apply syntax highlighting to code blocks
             element.querySelectorAll('pre code').forEach(block => {
