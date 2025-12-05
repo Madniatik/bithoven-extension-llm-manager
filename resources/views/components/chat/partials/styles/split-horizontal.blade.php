@@ -27,6 +27,24 @@
     flex: 30%;
     min-height: 150px;
     background: var(--bs-body-bg);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Monitor Header Sticky */
+.monitor-header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+
+/* Monitor Console Body (scrollable) */
+.monitor-console-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
 }
 
 .split-resizer {

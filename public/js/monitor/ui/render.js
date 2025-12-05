@@ -54,13 +54,31 @@ export default class MonitorUI {
      */
     updateMetrics(metrics) {
         if (metrics.tokens !== undefined) {
+            // Desktop/sidebar view
             const tokenEl = this.getElement('monitor-token-count');
             if (tokenEl) tokenEl.textContent = metrics.tokens;
+            
+            // Split-horizontal header view
+            const tokensHeaderEl = this.getElement('monitor-tokens');
+            if (tokensHeaderEl) tokensHeaderEl.textContent = metrics.tokens;
+            
+            // Mobile view
+            const tokensMobileEl = this.getElement('monitor-tokens-mobile');
+            if (tokensMobileEl) tokensMobileEl.textContent = metrics.tokens;
         }
         
         if (metrics.chunks !== undefined) {
+            // Desktop/sidebar view
             const chunkEl = this.getElement('monitor-chunk-count');
             if (chunkEl) chunkEl.textContent = metrics.chunks;
+            
+            // Split-horizontal header view
+            const chunksHeaderEl = this.getElement('monitor-chunks');
+            if (chunksHeaderEl) chunksHeaderEl.textContent = metrics.chunks;
+            
+            // Mobile view
+            const chunksMobileEl = this.getElement('monitor-chunks-mobile');
+            if (chunksMobileEl) chunksMobileEl.textContent = metrics.chunks;
         }
     }
 
@@ -69,9 +87,16 @@ export default class MonitorUI {
      * @param {number} duration - in seconds
      */
     updateDuration(duration) {
+        // Desktop/sidebar view
         const durationEl = this.getElement('monitor-duration');
         if (durationEl) {
             durationEl.textContent = duration + 's';
+        }
+        
+        // Mobile view
+        const durationMobileEl = this.getElement('monitor-duration-mobile');
+        if (durationMobileEl) {
+            durationMobileEl.textContent = duration + 's';
         }
     }
 
@@ -80,9 +105,16 @@ export default class MonitorUI {
      * @param {number} cost
      */
     updateCost(cost) {
+        // Desktop/sidebar view
         const costEl = this.getElement('monitor-cost');
         if (costEl) {
             costEl.textContent = '$' + cost.toFixed(4);
+        }
+        
+        // Mobile view
+        const costMobileEl = this.getElement('monitor-cost-mobile');
+        if (costMobileEl) {
+            costMobileEl.textContent = '$' + cost.toFixed(4);
         }
     }
 
@@ -92,9 +124,22 @@ export default class MonitorUI {
      * @param {string} type - primary|success|danger|secondary
      */
     updateStatus(text, type) {
+        // Desktop/sidebar view (with badge)
         const statusEl = this.getElement('monitor-status');
         if (statusEl) {
             statusEl.innerHTML = `<span class="badge badge-light-${type}">${text}</span>`;
+        }
+        
+        // Split-horizontal header view (text only)
+        const statusHeaderEl = this.getElement('monitor-status');
+        if (statusHeaderEl && !statusHeaderEl.querySelector('.badge')) {
+            statusHeaderEl.textContent = text;
+        }
+        
+        // Mobile view (text only)
+        const statusMobileEl = this.getElement('monitor-status-mobile');
+        if (statusMobileEl) {
+            statusMobileEl.textContent = text;
         }
     }
 
