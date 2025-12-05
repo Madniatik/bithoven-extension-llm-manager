@@ -1,151 +1,15 @@
 @if ($session && $session->messages->count() > 0)
     @foreach ($session->messages as $message)
-        {{-- {{ $message->role === 'user' ? 'Usuario' : 'Asistente' }} --}}
-        <div class="d-flex {{ $message->role === 'user' ? 'justify-content-end' : 'justify-content-start' }} mb-10 message-bubble"
-            data-message-id="{{ $message->id }}" data-message-role="{{ $message->role }}">
-            <div class="d-flex flex-column align-items-{{ $message->role === 'user' ? 'end' : 'start' }}"
-                style="width: 100%; max-width: 85%;">
-                <div class="d-flex align-items-center mb-2">
-                    @if ($message->role === 'assistant')
-                        <div class="symbol symbol-35px symbol-circle me-3">
-                            <span class="symbol-label bg-light-primary text-primary fw-bold">AI</span>
-                        </div>
-                    @endif
-
-                    <div>
-                        @if ($message->role === 'user')
-                            <span class="text-gray-600 fw-semibold fs-8">{{ $session->user->name ?? 'User' }}</span>
-                        @else
-                            @if ($message->llmConfiguration)
-                                <span class="text-gray-600 fw-semibold fs-8">{{ ucfirst($message->llmConfiguration->provider) }} / {{ $message->llmConfiguration->model }}</span>
-                            @else
-                                <span class="text-gray-600 fw-semibold fs-8">Assistant</span>
-                            @endif
-                        @endif
-                        @if ($message->role === 'assistant' && isset($message->metadata['is_error']) && $message->metadata['is_error'])
-                            <span class="badge badge-light-warning badge-sm ms-2" title="This message contains an error explanation">
-                                <i class="ki-duotone ki-information-5 fs-7">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                    <span class="path3"></span>
-                                </i>
-                                Error Message
-                            </span>
-                        @endif
-                        <span class="text-gray-500 fw-semibold fs-8 ms-2">
-                            {{ $message->created_at->format('H:i:s') }}
-                        </span>
-                    </div>
-
-                    @if ($message->role === 'user')
-                        <div class="symbol symbol-35px symbol-circle ms-3">
-                            @if ($session->user && $session->user->avatar)
-                                <img src="{{ asset('storage/' . $session->user->avatar) }}"
-                                    alt="{{ $session->user->name }}" />
-                            @elseif($session->user)
-                                <span
-                                    class="symbol-label bg-light-success text-success fw-bold">{{ strtoupper(substr($session->user->name, 0, 1)) }}</span>
-                            @else
-                                <span class="symbol-label bg-light-success text-success fw-bold">U</span>
-                            @endif
-                        </div>
-                    @endif
-                </div>
-
-                <div class="p-5 rounded {{ $message->role === 'user' ? 'bg-light-success' : 'bg-light-primary' }} bubble-content-wrapper position-relative"
-                    style="max-width: 85%">
-                    <div class="text-gray-800 fw-semibold fs-6 message-content"
-                        @if ($message->role === 'assistant') data-role="assistant" @endif
-                        data-raw-content="{{ base64_encode($message->content) }}">{{ $message->content }}</div>
-                    
-                    {{-- Retry button for error messages --}}
-                    @if ($message->role === 'assistant' && isset($message->metadata['is_error']) && $message->metadata['is_error'])
-                        <div class="mt-3 pt-3 border-top border-gray-300">
-                            <button type="button" class="btn btn-sm btn-light-warning" onclick="retryErrorMessage({{ $message->id }})">
-                                <i class="ki-duotone ki-arrows-circle fs-6">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                </i>
-                                Retry with Higher Token Limit
-                            </button>
-                        </div>
-                    @endif
-                </div>
-
-                @if ($message->role === 'assistant')
-                    <div class="text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap">
-                        {{-- Tokens with breakdown --}}
-                        @php
-                            $totalTokens = $message->tokens ?? 0;
-                            $promptTokens = $message->metadata['input_tokens'] ?? 0;
-                            $completionTokens = $message->metadata['output_tokens'] ?? 0;
-                        @endphp
-                        <span>
-                            <i class="ki-duotone ki-calculator fs-7 text-gray-400">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
-                            {{ number_format($totalTokens) }} tokens
-                            @if ($promptTokens > 0 && $completionTokens > 0)
-                                <span class="text-gray-400" title="Sent / Received">(↑{{ number_format($promptTokens) }} / ↓{{ number_format($completionTokens) }})</span>
-                            @endif
-                        </span>
-
-                        {{-- Response Time (column or metadata fallback) - Sin color en bubbles antiguos --}}
-                        @php
-                            $responseTime = $message->response_time ?? ($message->metadata['response_time'] ?? null);
-                        @endphp
-                        @if ($responseTime)
-                            <span>
-                                <i class="ki-duotone ki-timer fs-7 text-gray-400">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                    <span class="path3"></span>
-                                </i>
-                                {{ number_format($responseTime, 2) }}s
-                            </span>
-                        @endif
-
-                        {{-- Time to First Chunk (TTFT) - Sin color en bubbles antiguos --}}
-                        @if (isset($message->metadata['time_to_first_chunk']) && $message->metadata['time_to_first_chunk'])
-                            <span title="Time to first token">
-                                <i class="ki-duotone ki-flash-circle fs-7 text-gray-400">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                </i>
-                                TTFT: {{ number_format($message->metadata['time_to_first_chunk'], 2) }}s
-                            </span>
-                        @endif
-
-                        {{-- Cost in USD --}}
-                        @php
-                            $cost = $message->cost_usd ?? ($message->metadata['cost_usd'] ?? null);
-                        @endphp
-                        @if ($cost && $cost > 0)
-                            <span title="Cost in USD">
-                                <i class="ki-duotone ki-dollar fs-7 text-gray-400">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                    <span class="path3"></span>
-                                </i>
-                                ${{ number_format($cost, 6) }}
-                            </span>
-                        @endif
-                    </div>
-                @endif
-            </div>
-        </div>
+        @include('llm-manager::components.chat.partials.bubble.message-bubble-template', [
+            'message' => $message,
+            'session' => $session,
+        ])
     @endforeach
 @else
     {{-- Empty state --}}
     <div class="text-center py-10">
         <div class="text-gray-400 fs-3">
-            <i class="ki-duotone ki-message-text-2 fs-3x mb-5">
-                <span class="path1"></span>
-                <span class="path2"></span>
-                <span class="path3"></span>
-            </i>
+            {!! getIcon('ki-message-text-2', 'fs-5x mb-5', '', 'i') !!}
             <div class="fw-semibold">No hay mensajes en esta conversación</div>
         </div>
     </div>
@@ -159,12 +23,28 @@
                 <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <span class="text-muted fw-semibold fs-7"><span id="thinking-model-info-{{ $session?->id ?? 'default' }}">Thinking</span><span class="streaming-cursor">|</span></span>
+                <span class="text-muted fw-semibold fs-7"><span
+                        id="thinking-model-info-{{ $session?->id ?? 'default' }}">Thinking</span><span
+                        class="streaming-cursor">|</span></span>
             </div>
             <div class="text-gray-500 fw-semibold fs-8 mt-2 d-flex align-items-center gap-3">
-                <span><i class="ki-duotone ki-calculator fs-7 text-gray-400"><span class="path1"></span><span class="path2"></span></i> <span class="thinking-tokens">0</span> tokens</span>
-                <span class="text-info"><i class="ki-duotone ki-timer fs-7 text-info"><span class="path1"></span><span class="path2"></span></i> <span class="thinking-time">0.00</span>s</span>
-                <span class="text-warning"><i class="ki-duotone ki-flash-circle fs-7 text-warning"><span class="path1"></span><span class="path2"></span></i> TTFT: <span class="thinking-ttft">...</span>s</span>
+                <span>
+                    <i class="bi bi-calculator fs-8"></i>
+                    <span class="thinking-tokens">0</span>
+                    tokens <span class="text-gray-400" title="Sent / Received">(↑0 / ↓0)</span>
+                </span>
+                <span class="text-gray-800">
+                    <i class="bi bi-hourglass-split fs-7 text-gray-800"></i>
+                    <span class="thinking-time">0.00</span>s
+                </span>
+                <span class="text-warning fs-8">
+                    <i class="bi bi-stopwatch text-warning fs-9"></i> TTFT:
+                    <span class="thinking-ttft fs-8">0.00</span>s
+                </span>
+                <span class="text-gray-400 fs-8">
+                    <i class="bi bi-coin fs-8 text-gray-400"></i>
+                    0.000000
+                </span>
             </div>
         </div>
     </div>

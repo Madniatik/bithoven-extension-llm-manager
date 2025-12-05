@@ -32,7 +32,7 @@
     </div>
     
     {{-- Card Body --}}
-    <div class="card-body py-0" id="kt_chat_messenger_body">
+    <div class="card-body py-0 pt-4" id="kt_chat_messenger_body">
         @include('llm-manager::components.chat.partials.messages-container')
     </div>
     
