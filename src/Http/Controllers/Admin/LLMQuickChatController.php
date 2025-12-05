@@ -100,6 +100,10 @@ class LLMQuickChatController extends Controller
             if (ob_get_level()) ob_end_clean();
 
             try {
+                // Estimate prompt tokens (before sending to provider)
+                // Rule of thumb: ~1 token per 4 characters for English text
+                $promptTokensEstimate = (int) ceil(mb_strlen($validated['prompt']) / 4);
+                
                 // Save user message to DB
                 $userMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
@@ -107,9 +111,9 @@ class LLMQuickChatController extends Controller
                     'llm_configuration_id' => $configuration->id,
                     'role' => 'user',
                     'content' => $validated['prompt'],
-                    'tokens' => 0,
+                    'tokens' => $promptTokensEstimate, // Estimated tokens of prompt only
                     'metadata' => [
-                        'input_tokens' => 0,
+                        'input_tokens' => $promptTokensEstimate, // Prompt tokens only (estimated)
                         'context_messages_count' => $session->messages()->count(),
                     ],
                 ]);
