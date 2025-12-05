@@ -1,12 +1,12 @@
 # 🔄 HANDOFF: Implementación de PLAN v1.0.7
 
-**Fecha:** 05 de diciembre de 2025, 18:50  
+**Fecha:** 06 de diciembre de 2025, 00:55  
 **AI Agent Anterior:** Claude (Claude Sonnet, 4.5, Anthropic)  
-**Sesión ID:** 20251205-session  
-**Último Commit:** `1306d8e` - refactor: remove redundant debug_console.enabled field, use level !== 'none' instead  
+**Sesión ID:** 20251206-session  
+**Último Commit:** `45c4ca9` - feat(ui): unify Markdown rendering with marked.js for all bubbles  
 **Repositorio:** bithoven-extension-llm-manager  
 **Rama:** main  
-**Estado:** v1.0.7 - 75% completado (Quick Chat + Monitor System v2.0 completos)
+**Estado:** v1.0.7 - 78% completado (Quick Chat + Monitor v2.0 + Markdown Unification completos)
 
 ---
 
@@ -37,14 +37,15 @@
    - Alpine.js compatibility completa
    - Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
 
-3. ✅ **UI/UX Optimizations - 90% COMPLETADO**
+3. ✅ **UI/UX Optimizations - 92% COMPLETADO**
    - Real-time token display con progress bar
    - Enhanced message bubbles (provider/model badges, timestamps)
    - Footer metrics persistente durante streaming
    - Raw Data modal con tabs (Formatted + Raw)
    - Thinking indicator desde inicio
    - Stop Stream UX con cleanup inteligente
-   - **PENDIENTE (10%):**
+   - **✅ NUEVO (6 dic):** Unified Markdown rendering (marked.js para ALL bubbles)
+   - **PENDIENTE (8%):**
      - Efecto typewriter (delay entre caracteres)
      - Auto-scroll mejorado (detectar scroll manual)
      - Keyboard shortcuts (Ctrl/Cmd + Enter)
@@ -59,9 +60,16 @@
    - Documentation completely rewritten ([CONFIGURATION.md](../../DOCS/CORE/Debug-Console/CONFIGURATION.md), [README.md](../../DOCS/CORE/Debug-Console/README.md))
    - 10+ commits de refactoring y documentación
 
-**⏳ TRABAJO PENDIENTE (25%):**
+5. ✅ **Markdown Rendering Unification - COMPLETADO** (trabajo extra, fuera de plan)
+   - Removed Str::markdown() from backend templates
+   - ALL bubbles now use marked.js (JavaScript parser)
+   - Consistent visual rendering (OLD and NEW messages)
+   - Better spacing, code block styling with Prism.js
+   - Commit: 45c4ca9
 
-1. ⏳ **UI/UX Finishing Touches** (10% restante) - 1-2h
+**⏳ TRABAJO PENDIENTE (22%):**
+
+1. ⏳ **UI/UX Finishing Touches** (8% restante) - 1h
    - Efecto typewriter para streaming chunks
    - Detectar scroll manual (no auto-scroll si usuario está leyendo)
    - Keyboard shortcuts (Ctrl/Cmd + Enter para enviar)
@@ -85,9 +93,9 @@
    - Actualizar [CHANGELOG.md](CHANGELOG.md)
    - Crear tag y publicar
 
-**Progreso General:** **75% COMPLETADO**  
-**Tiempo Invertido:** ~20-24 horas (40+ commits)  
-**Tiempo Restante:** 6-8 horas
+**Progreso General:** **78% COMPLETADO**  
+**Tiempo Invertido:** ~22-26 horas (42+ commits)  
+**Tiempo Restante:** 5-7 horas
 
 ---
 
@@ -113,14 +121,15 @@
 - ✅ Sidebar layout + Alpine.js compatibility
 - ✅ 10 commits de refactoring
 
-#### 3. ✅ UI/UX Optimizations (6-8h) - COMPLETADO 90%
+#### 3. ✅ UI/UX Optimizations (6-8h) - COMPLETADO 92%
 - ✅ Animaciones de streaming (fade-in, spinner, progress bar)
 - ✅ Mejoras visuales (avatares, copy buttons, syntax highlighting, tooltips)
 - ✅ Indicadores visuales (progress bar, velocidad, footer métricas)
 - ✅ Auto-scroll suave, textarea auto-resize
-- ⏳ **PENDIENTE (10%):** Typewriter effect, detectar scroll manual, keyboard shortcuts, notificación sonora, microinteracciones
+- ✅ **NUEVO:** Unified Markdown rendering con marked.js (commits e3af979, 45c4ca9)
+- ⏳ **PENDIENTE (8%):** Typewriter effect, detectar scroll manual, keyboard shortcuts, notificación sonora, microinteracciones
 
-### ⏳ CATEGORÍAS PENDIENTES (25%)
+### ⏳ CATEGORÍAS PENDIENTES (22%)
 
 #### 4. ⏳ Testing Suite (4-5h) - PRIORIDAD ALTA
 **Subcategorías:**

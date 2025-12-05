@@ -1,10 +1,10 @@
 # LLM Manager Extension - Plan v1.0.7
 
 **Fecha de Creación:** 3 de diciembre de 2025  
-**Fecha de Actualización:** 5 de diciembre de 2025  
+**Fecha de Actualización:** 6 de diciembre de 2025  
 **Versión Actual:** v1.0.6  
 **Versión Objetivo:** v1.0.7  
-**Estado:** In Progress (40+ commits desde v1.0.6)
+**Estado:** In Progress (42+ commits desde v1.0.6)
 
 ---
 
@@ -15,14 +15,14 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 **Categorías:**
 1. ✅ **Quick Chat Feature** (7-10 horas) - **COMPLETADO 100%**
 2. ✅ **Monitor System v2.0** (8-10 horas) - **COMPLETADO 100%** (NO estaba en plan original)
-3. ✅ **UI/UX Optimizations** (6-8 horas) - **COMPLETADO 90%**
-4. ✅ **Testing Suite** (4-5 horas) - **PENDIENTE**
-5. ✅ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
-6. ✅ **GitHub Release Management** (1 hora) - **PENDIENTE**
+3. ✅ **UI/UX Optimizations** (6-8 horas) - **COMPLETADO 92%**
+4. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
+5. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
+6. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
 
 **Tiempo Total Estimado:** 27.5-34.5 horas (ajustado por Monitor System v2.0)  
-**Tiempo Invertido:** ~20-24 horas (40+ commits)  
-**Progreso General:** **75%**
+**Tiempo Invertido:** ~22-26 horas (42+ commits)  
+**Progreso General:** **78%**
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 
@@ -521,6 +521,12 @@ Optimizar la experiencia de usuario en componentes de chat existentes (Conversat
   - Aplicar Prism.js en tiempo real ✅
   - Code blocks con syntax highlighting ✅
 
+- [x] **Unified Markdown Rendering** (Commit 45c4ca9 - 6 dic 2025) ✅
+  - Removed Str::markdown() from backend template ✅
+  - ALL bubbles use marked.js (JavaScript parser) ✅
+  - Consistent visual rendering (OLD and NEW messages) ✅
+  - Better spacing and code block styling ✅
+
 - [x] **Tooltips con info adicional**
   - Timestamp completo ✅
   - Tokens usados (breakdown) ✅
@@ -558,8 +564,9 @@ Optimizar la experiencia de usuario en componentes de chat existentes (Conversat
   - Sound sutil (ding.mp3)
   - LocalStorage para recordar preferencia
 
-**Entregable:** ⏳ PARCIAL (50% completado)
+**Entregable:** ⏳ PARCIAL (60% completado)
 - Auto-scroll funcional ✅
+- Unified Markdown rendering ✅
 - Keyboard shortcuts pendientes
 - Notificación sonora pendiente
 
