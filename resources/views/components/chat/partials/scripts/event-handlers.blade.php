@@ -68,7 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (messageId) bubbleDiv.dataset.messageId = messageId;
         if (hidden) bubbleDiv.classList.add('d-none');
         
-        // Alignment
+        // Justify content (alignment at bubble level)
+        if (role === 'user') {
+            bubbleDiv.classList.add('justify-content-end');
+        } else {
+            bubbleDiv.classList.add('justify-content-start');
+        }
+        
+        // Alignment (inner wrapper)
         const alignment = role === 'user' ? 'align-items-end' : 'align-items-start';
         const innerWrapper = bubble.querySelector('[data-bubble-alignment]');
         innerWrapper.classList.add(alignment);
