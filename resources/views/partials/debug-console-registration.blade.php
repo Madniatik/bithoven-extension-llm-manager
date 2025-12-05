@@ -11,7 +11,7 @@
 @push('debug-console-extensions')
 <script>
     // Auto-registro de LLM Manager en Debug Console
-    @if(setting('debug_console.enabled', true) && config('llm-manager.debug_console.level', 'none') !== 'none')
+    @if(config('llm-manager.debug_console.level', 'none') !== 'none')
     window.DEBUG_CONSOLE_CONFIG = window.DEBUG_CONSOLE_CONFIG || {};
     window.DEBUG_CONSOLE_CONFIG['llm-manager'] = {
         enabled: true,

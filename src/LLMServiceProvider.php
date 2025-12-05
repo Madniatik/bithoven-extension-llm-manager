@@ -152,7 +152,7 @@ class LLMServiceProvider extends ServiceProvider
         // Register Debug Console for extension (global via view share)
         \Illuminate\Support\Facades\View::composer('*', function ($view) {
             static $registered = false;
-            if (!$registered && config('llm-manager.debug_console.enabled', false)) {
+            if (!$registered && config('llm-manager.debug_console.level', 'none') !== 'none') {
                 $registered = true;
                 $view->with('__llmDebugConsoleRegistration', view('llm-manager::partials.debug-console-registration')->render());
             }
