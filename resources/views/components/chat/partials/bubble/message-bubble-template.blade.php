@@ -108,19 +108,6 @@
                     {!! Str::markdown($content) !!}
                 @endif
             </div>
-            
-            {{-- Retry button for error messages --}}
-            @if ($isError && $message)
-                <div class="mt-3 pt-3 border-top border-gray-300">
-                    <button type="button" class="btn btn-sm btn-light-warning" onclick="retryErrorMessage({{ $messageId }})">
-                        <i class="ki-duotone ki-arrows-circle fs-6">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                        Retry with Higher Token Limit
-                    </button>
-                </div>
-            @endif
         </div>
         
         {{-- Footer (solo assistant) --}}

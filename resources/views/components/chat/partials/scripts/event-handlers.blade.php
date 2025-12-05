@@ -617,8 +617,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(statsUpdateInterval);
                 const duration = Date.now() - startTime;
                 
-                // Note: Backend now saves error messages, so we don't remove bubble
-                // Error messages contain helpful info about what went wrong
+                // If no chunks received (empty response / error), create bubble now
+                if (chunkCount === 0 && data.content) {
+                    appendMessage('assistant', data.content, 0, assistantMessageId, false);
+                }
                 
                 // Update message bubble with real DB message ID
                 if (data.message_id) {
@@ -649,30 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else {
                                     headerDiv.appendChild(errorBadge);
                                 }
-                            }
-                        }
-                        
-                        // Add retry button for error messages
-                        if (data.metadata?.is_error) {
-                            const contentDiv = bubbleContent?.querySelector('.message-content');
-                            if (contentDiv && !contentDiv.parentElement.querySelector('.retry-error-btn')) {
-                                const retryContainer = document.createElement('div');
-                                retryContainer.className = 'mt-3 pt-3 border-top border-gray-300';
-                                
-                                const retryBtn = document.createElement('button');
-                                retryBtn.type = 'button';
-                                retryBtn.className = 'btn btn-sm btn-light-warning retry-error-btn';
-                                retryBtn.onclick = function() { retryErrorMessage(data.message_id); };
-                                retryBtn.innerHTML = `
-                                    <i class="ki-duotone ki-arrows-circle fs-6">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                    Retry with Higher Token Limit
-                                `;
-                                
-                                retryContainer.appendChild(retryBtn);
-                                contentDiv.parentElement.appendChild(retryContainer);
                             }
                         }
                         
@@ -1041,110 +1019,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    /**
-     * Retry functionality for error messages
-     */
-    window.retryErrorMessage = async function(errorMessageId) {
-        try {
-            addMonitorLog('🔄 Fetching error message data...', 'info');
-            
-            // Fetch error message data
-            const response = await fetch('{{ url("admin/llm/messages") }}/' + errorMessageId);
-            if (!response.ok) {
-                throw new Error('Failed to fetch message data');
-            }
-            
-            const data = await response.json();
-            
-            if (!data.previous_user_message) {
-                toastr.error('Cannot retry: No previous user message found');
-                return;
-            }
-            
-            addMonitorLog('📝 Original prompt: "' + data.previous_user_message.content.substring(0, 50) + '..."', 'debug');
-            addMonitorLog('⚙️  Original max_tokens: ' + data.max_tokens, 'debug');
-            
-            // Calculate suggested max_tokens (triple the original if it was 'length' error)
-            let suggestedMaxTokens = data.max_tokens;
-            if (data.finish_reason === 'length') {
-                suggestedMaxTokens = Math.min(data.max_tokens * 3, 8000);
-            } else {
-                suggestedMaxTokens = Math.min(data.max_tokens * 2, 8000);
-            }
-            
-            addMonitorLog('💡 Suggested max_tokens: ' + suggestedMaxTokens, 'success');
-            
-            // Show confirmation dialog with editable max_tokens
-            const result = await Swal.fire({
-                title: 'Retry with Different Settings',
-                html: `
-                    <div class="text-start">
-                        <p class="mb-3">Retry this prompt with adjusted token limit:</p>
-                        
-                        <div class="alert alert-light-warning mb-3">
-                            <strong>Previous Error:</strong><br>
-                            <span class="text-muted">${data.finish_reason === 'length' ? 'Response cut due to token limit' : 'Empty response generated'}</span>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Max Tokens:</label>
-                            <input type="number" id="retry-max-tokens" class="form-control" 
-                                   value="${suggestedMaxTokens}" min="150" max="8000" step="50">
-                            <div class="form-text">
-                                Previous: ${data.max_tokens} tokens<br>
-                                Suggested: ${suggestedMaxTokens} tokens (${data.finish_reason === 'length' ? '3x' : '2x'} original)
-                            </div>
-                        </div>
-                        
-                        <div class="alert alert-light-info">
-                            <strong>Original Prompt:</strong><br>
-                            <span class="text-muted">"${data.previous_user_message.content.substring(0, 100)}${data.previous_user_message.content.length > 100 ? '...' : ''}"</span>
-                        </div>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '<i class="ki-duotone ki-arrows-circle"><span class="path1"></span><span class="path2"></span></i> Retry Now',
-                cancelButtonText: 'Cancel',
-                customClass: {
-                    confirmButton: 'btn btn-primary',
-                    cancelButton: 'btn btn-light'
-                },
-                preConfirm: () => {
-                    const newMaxTokens = document.getElementById('retry-max-tokens').value;
-                    return parseInt(newMaxTokens, 10);
-                }
-            });
-            
-            if (result.isConfirmed) {
-                const newMaxTokens = result.value;
-                
-                // Update max_tokens input
-                document.getElementById('quick-chat-max-tokens').value = newMaxTokens;
-                
-                // Set prompt in input
-                messageInput.value = data.previous_user_message.content;
-                
-                // Send message automatically
-                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                addMonitorLog('🔄 RETRY IN PROGRESS', 'header');
-                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                addMonitorLog('   New max_tokens: ' + newMaxTokens, 'success');
-                addMonitorLog('   Previous max_tokens: ' + data.max_tokens, 'debug');
-                addMonitorLog('   Increase: +' + (newMaxTokens - data.max_tokens) + ' tokens (' + Math.round((newMaxTokens / data.max_tokens - 1) * 100) + '%)', 'info');
-                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                
-                toastr.success('Retrying with max_tokens=' + newMaxTokens);
-                
-                // Trigger send
-                setTimeout(() => sendMessage(), 300);
-            }
-            
-        } catch (error) {
-            console.error('Retry error:', error);
-            addMonitorLog('❌ Retry failed: ' + error.message, 'error');
-            toastr.error('Failed to retry message. Please try manually.');
-        }
-    };
+
     
     // Renderizar Markdown en mensajes pre-existentes al cargar la página
     const renderExistingMessages = () => {

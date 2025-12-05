@@ -286,9 +286,11 @@ class LLMQuickChatController extends Controller
                     'message_id' => $assistantMessage->id,
                     'response_time' => $responseTime,
                     'ttft' => $ttft,
+                    'content' => $fullResponse, // Include content for error messages (when no chunks sent)
                     'metadata' => [
                         'provider' => $configuration->provider,
                         'model' => $configuration->model,
+                        'is_error' => $isEmptyResponse, // Flag error messages
                     ],
                 ]) . "\n\n";
 
