@@ -4,6 +4,32 @@
  */
 
 /**
+ * Show themed toast notification
+ * @param {object} options - Swal options
+ */
+function showToast(options) {
+    const theme = document.documentElement.getAttribute('data-bs-theme');
+    const isDark = theme === 'dark';
+    
+    console.log('Theme detected:', theme, 'isDark:', isDark); // Debug
+    
+    const defaultOptions = {
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        background: isDark ? '#1e1e2d' : '#ffffff',
+        color: isDark ? '#ffffff' : '#181c32',
+        iconColor: isDark ? '#ffffff' : '#181c32'
+    };
+    
+    if (window.Swal) {
+        Swal.fire({ ...defaultOptions, ...options });
+    }
+}
+
+/**
  * Download logs as text file
  * @param {string} sessionId
  * @param {MonitorUI} ui
@@ -12,18 +38,11 @@
 export function downloadLogs(sessionId, ui) {
     // Check if logs exist
     if (!ui.hasLogs()) {
-        if (window.Swal) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No Logs',
-                text: 'Console is empty. Send a message first.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2500,
-                timerProgressBar: true
-            });
-        }
+        showToast({
+            icon: 'warning',
+            title: 'No Logs',
+            text: 'Console is empty. Send a message first.'
+        });
         return false;
     }
     
@@ -56,18 +75,12 @@ export function downloadLogs(sessionId, ui) {
         URL.revokeObjectURL(url);
         
         // Success notification
-        if (window.Swal) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Downloaded!',
-                text: 'Monitor logs downloaded successfully',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true
-            });
-        }
+        showToast({
+            icon: 'success',
+            title: 'Downloaded!',
+            text: 'Monitor logs downloaded successfully',
+            timer: 2000
+        });
         
         // Emit event
         window.dispatchEvent(new CustomEvent('llm-monitor-logs-downloaded', {
@@ -84,18 +97,12 @@ export function downloadLogs(sessionId, ui) {
     } catch (error) {
         console.error('Failed to download logs:', error);
         
-        if (window.Swal) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Download Failed',
-                text: 'Could not download logs. Please try again.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true
-            });
-        }
+        showToast({
+            icon: 'error',
+            title: 'Download Failed',
+            text: 'Could not download logs. Please try again.',
+            timer: 3000
+        });
         
         return false;
     }

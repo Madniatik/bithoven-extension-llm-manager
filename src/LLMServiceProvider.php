@@ -149,6 +149,15 @@ class LLMServiceProvider extends ServiceProvider
         // Register Blade class-based components
         \Illuminate\Support\Facades\Blade::component('llm-manager-chat-workspace', \Bithoven\LLMManager\View\Components\Chat\ChatWorkspace::class);
 
+        // Register Debug Console for extension (global via view share)
+        \Illuminate\Support\Facades\View::composer('*', function ($view) {
+            static $registered = false;
+            if (!$registered && config('llm-manager.debug_console.enabled', false)) {
+                $registered = true;
+                $view->with('__llmDebugConsoleRegistration', view('llm-manager::partials.debug-console-registration')->render());
+            }
+        });
+
         // Load routes
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');

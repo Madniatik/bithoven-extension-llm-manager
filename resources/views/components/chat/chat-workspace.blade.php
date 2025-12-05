@@ -13,6 +13,9 @@
     - $monitorId: string (generado por componente)
 --}}
 
+{{-- Debug Console auto-loaded via View Composer globally --}}
+{!! $__llmDebugConsoleRegistration ?? '' !!}
+
 <div class="llm-chat-workspace" 
      data-session-id="{{ $session?->id }}" 
      data-monitor-layout="{{ $monitorLayout }}"

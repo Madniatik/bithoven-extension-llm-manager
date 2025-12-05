@@ -436,4 +436,20 @@ return [
         'batch_operations' => true,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Debug Console Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configura el sistema de logging para desarrollo/debugging
+    | - level: Nivel de logs (none = disabled, debug, info, warn, error)
+    |   'none' = No aparece en Debug Console
+    |   Cualquier otro = Aparece con ese nivel de logging
+    |
+    */
+
+    'debug_console' => [
+        'level' => env('LLM_MANAGER_DEBUG_LEVEL', 'debug'),
+    ],
+
 ];

@@ -1,4 +1,4 @@
-# 🚀 LLM Manager Extension v1.0.6
+# 🚀 LLM Manager Extension v1.0.6 YEP
 
 **Multi-Provider LLM Orchestration Platform**
 

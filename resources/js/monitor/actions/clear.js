@@ -4,6 +4,32 @@
  */
 
 /**
+ * Show themed toast notification
+ * @param {object} options - Swal options
+ */
+function showToast(options) {
+    const theme = document.documentElement.getAttribute('data-bs-theme');
+    const isDark = theme === 'dark';
+    
+    console.log('Theme detected:', theme, 'isDark:', isDark); // Debug
+    
+    const defaultOptions = {
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        background: isDark ? '#1e1e2d' : '#ffffff',
+        color: isDark ? '#ffffff' : '#181c32',
+        iconColor: isDark ? '#ffffff' : '#181c32'
+    };
+    
+    if (window.Swal) {
+        Swal.fire({ ...defaultOptions, ...options });
+    }
+}
+
+/**
  * Clear logs only (preserve metrics and history)
  * @param {string} sessionId
  * @param {MonitorUI} ui
@@ -21,18 +47,12 @@ export function clearLogs(sessionId, ui) {
     }));
     
     // Success notification
-    if (window.Swal) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Console Cleared',
-            text: 'Monitor logs cleared successfully',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true
-        });
-    }
+    showToast({
+        icon: 'success',
+        title: 'Console Cleared',
+        text: 'Monitor logs cleared successfully',
+        timer: 2000
+    });
 }
 
 /**
@@ -70,16 +90,10 @@ export function clearAll(sessionId, storage, ui, resetCallback) {
     }));
     
     // Success notification
-    if (window.Swal) {
-        Swal.fire({
-            icon: 'success',
-            title: 'Monitor Cleared',
-            text: 'All monitoring data has been cleared',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true
-        });
-    }
+    showToast({
+        icon: 'success',
+        title: 'Monitor Cleared',
+        text: 'All monitoring data has been cleared',
+        timer: 2000
+    });
 }

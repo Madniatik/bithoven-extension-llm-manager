@@ -4,6 +4,30 @@
  */
 
 /**
+ * Show themed toast notification
+ * @param {object} options - Swal options
+ */
+function showToast(options) {
+    const theme = document.documentElement.getAttribute('data-bs-theme');
+    const isDark = theme === 'dark';
+    
+    const defaultOptions = {
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        background: isDark ? '#1e1e2d' : '#ffffff',
+        color: isDark ? '#ffffff' : '#181c32',
+        iconColor: isDark ? '#ffffff' : '#181c32'
+    };
+    
+    if (window.Swal) {
+        Swal.fire({ ...defaultOptions, ...options });
+    }
+}
+
+/**
  * Copy logs to clipboard
  * @param {string} sessionId
  * @param {MonitorUI} ui
@@ -12,18 +36,11 @@
 export async function copyLogs(sessionId, ui) {
     // Check if logs exist
     if (!ui.hasLogs()) {
-        if (window.Swal) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No Logs',
-                text: 'Console is empty. Send a message first.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2500,
-                timerProgressBar: true
-            });
-        }
+        showToast({
+            icon: 'warning',
+            title: 'No Logs',
+            text: 'Console is empty. Send a message first.'
+        });
         return false;
     }
     
@@ -39,18 +56,12 @@ export async function copyLogs(sessionId, ui) {
         await navigator.clipboard.writeText(fullText);
         
         // Success notification
-        if (window.Swal) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Copied!',
-                text: 'Monitor logs copied to clipboard',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true
-            });
-        }
+        showToast({
+            icon: 'success',
+            title: 'Copied!',
+            text: 'Monitor logs copied to clipboard',
+            timer: 2000
+        });
         
         // Emit event
         window.dispatchEvent(new CustomEvent('llm-monitor-logs-copied', {
@@ -66,18 +77,12 @@ export async function copyLogs(sessionId, ui) {
     } catch (error) {
         console.error('Failed to copy logs:', error);
         
-        if (window.Swal) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Copy Failed',
-                text: 'Could not copy to clipboard. Please try again.',
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true
-            });
-        }
+        showToast({
+            icon: 'error',
+            title: 'Copy Failed',
+            text: 'Could not copy to clipboard. Please try again.',
+            timer: 3000
+        });
         
         return false;
     }

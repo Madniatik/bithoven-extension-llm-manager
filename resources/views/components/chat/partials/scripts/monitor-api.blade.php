@@ -13,21 +13,44 @@
 // ============================================================================
 window.LLMMonitor = {
     _loading: true,
-    start: () => console.warn('[LLMMonitor] Still loading...'),
-    trackChunk: () => console.warn('[LLMMonitor] Still loading...'),
-    complete: () => console.warn('[LLMMonitor] Still loading...'),
-    error: () => console.warn('[LLMMonitor] Still loading...'),
-    clearLogs: () => console.warn('[LLMMonitor] Still loading...'),
-    copyLogs: () => console.warn('[LLMMonitor] Still loading...'),
-    downloadLogs: () => console.warn('[LLMMonitor] Still loading...'),
-    refresh: () => console.warn('[LLMMonitor] Still loading...'),
-    clear: () => console.warn('[LLMMonitor] Still loading...'),
-    setSession: () => console.warn('[LLMMonitor] Still loading...'),
-    getInstance: () => null
+    start: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.start() called (placeholder, modules loading...)');
+    },
+    trackChunk: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.trackChunk() called (placeholder, modules loading...)');
+    },
+    complete: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.complete() called (placeholder, modules loading...)');
+    },
+    error: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.error() called (placeholder, modules loading...)');
+    },
+    clearLogs: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.clearLogs() called (placeholder, modules loading...)');
+    },
+    copyLogs: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.copyLogs() called (placeholder, modules loading...)');
+    },
+    downloadLogs: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.downloadLogs() called (placeholder, modules loading...)');
+    },
+    refresh: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.refresh() called (placeholder, modules loading...)');
+    },
+    clear: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.clear() called (placeholder, modules loading...)');
+    },
+    setSession: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.setSession() called (placeholder, modules loading...)');
+    },
+    getInstance: () => {
+        if (window.MonitorLogger) MonitorLogger.debug('LLMMonitor.getInstance() called (placeholder, modules loading...)');
+        return null;
+    }
 };
 
 window.LLMMonitorFactory = null;
-window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
+window.initLLMMonitor = () => {};
 
 // ============================================================================
 // ASYNC INITIALIZATION: Load modules and replace placeholder with real API
@@ -256,8 +279,11 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
             const monitor = factory.create(sessionId);
             monitor.init();
             
-            // Log initialization (debug mode)
+            // Log initialization
             console.log(`[LLMMonitor] Auto-initialized monitor: ${sessionId}`);
+            if (window.MonitorLogger) {
+                MonitorLogger.info(`Monitor auto-initialized: ${sessionId}`);
+            }
         });
     }
     
@@ -277,17 +303,26 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
         const monitorEl = document.querySelector(`.llm-monitor[data-monitor-id="${sessionId}"]`);
         if (!monitorEl) {
             console.warn(`[LLMMonitor] No monitor element found for session: ${sessionId}`);
+            if (window.MonitorLogger) {
+                MonitorLogger.warn(`No monitor element found for session: ${sessionId}`);
+            }
             return null;
         }
         
         if (factory.get(sessionId)) {
             console.log(`[LLMMonitor] Monitor already initialized: ${sessionId}`);
+            if (window.MonitorLogger) {
+                MonitorLogger.debug(`Monitor already initialized: ${sessionId}`);
+            }
             return factory.get(sessionId);
         }
         
         const monitor = factory.create(sessionId);
         monitor.init();
         console.log(`[LLMMonitor] Manually initialized monitor: ${sessionId}`);
+        if (window.MonitorLogger) {
+            MonitorLogger.info(`Monitor manually initialized: ${sessionId}`);
+        }
         return monitor;
     };
     
@@ -299,15 +334,14 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
     // ====================================================================
     window.LLMMonitor = {
         _currentSessionId: null,
-        _debugMode: true, // Cambiar a false en producción
         
         /**
          * Set fallback session ID
          */
         setSession(sessionId) {
             this._currentSessionId = sessionId;
-            if (this._debugMode) {
-                console.log(`[LLMMonitor] Session set to: ${sessionId}`);
+            if (window.MonitorLogger) {
+                MonitorLogger.info(`Session set to: ${sessionId}`);
             }
         },
         
@@ -322,16 +356,16 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
             const sid = sessionId || this._currentSessionId || 'default';
             
             if (!window.LLMMonitorFactory) {
-                if (this._debugMode) {
-                    console.warn('[LLMMonitor] LLMMonitorFactory not found');
+                if (window.MonitorLogger) {
+                    MonitorLogger.warn('LLMMonitorFactory not found');
                 }
                 return null;
             }
             
             const monitor = window.LLMMonitorFactory.get(sid);
             
-            if (!monitor && this._debugMode) {
-                console.warn(`[LLMMonitor] No monitor instance found for session: ${sid}`);
+            if (!monitor && window.MonitorLogger) {
+                MonitorLogger.warn('No monitor instance found for session:', sid);
             }
             
             return monitor;
@@ -342,10 +376,11 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
          */
         start(sessionId = null) {
             const monitor = this._getMonitor(sessionId);
+            const sid = sessionId || this._currentSessionId || 'default';
             if (monitor) {
                 monitor.start();
-                if (this._debugMode) {
-                    console.log(`[LLMMonitor] Started: ${sessionId || this._currentSessionId || 'default'}`);
+                if (window.MonitorLogger) {
+                    MonitorLogger.info(`LLMMonitor started for session: ${sid}`);
                 }
             }
         },
@@ -365,10 +400,11 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
          */
         complete(provider, model, sessionId = null) {
             const monitor = this._getMonitor(sessionId);
+            const sid = sessionId || this._currentSessionId || 'default';
             if (monitor) {
                 monitor.complete(provider, model);
-                if (this._debugMode) {
-                    console.log(`[LLMMonitor] Completed: ${sessionId || this._currentSessionId || 'default'}`);
+                if (window.MonitorLogger) {
+                    MonitorLogger.info(`LLMMonitor completed for session: ${sid} (${provider}/${model})`);
                 }
             }
         },
@@ -380,8 +416,8 @@ window.initLLMMonitor = () => console.warn('[LLMMonitor] Still loading...');
             const monitor = this._getMonitor(sessionId);
             if (monitor) {
                 monitor.error(message);
-                if (this._debugMode) {
-                    console.error(`[LLMMonitor] Error: ${message}`);
+                if (window.MonitorLogger) {
+                    MonitorLogger.error(`LLMMonitor error: ${message}`);
                 }
             }
         },
