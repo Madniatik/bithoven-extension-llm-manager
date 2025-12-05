@@ -101,9 +101,9 @@
                             <div class="text-muted fs-7 fw-normal d-none d-md-flex align-items-center gap-2">
                                 <span>Status: <span id="monitor-status-{{ $monitorId }}" class="text-gray-800 fw-semibold">Idle</span></span>
                                 <span>•</span>
-                                <span>Tokens: <span id="monitor-tokens-{{ $monitorId }}" class="text-gray-800 fw-semibold">0</span></span>
+                                <span>Tokens: <span id="monitor-token-count-{{ $monitorId }}" class="text-gray-800 fw-semibold">0</span></span>
                                 <span>•</span>
-                                <span>Chunks: <span id="monitor-chunks-{{ $monitorId }}" class="text-gray-800 fw-semibold">0</span></span>
+                                <span>Chunks: <span id="monitor-chunk-count-{{ $monitorId }}" class="text-gray-800 fw-semibold">0</span></span>
                                 <span>•</span>
                                 <span id="monitor-duration-{{ $monitorId }}" class="text-gray-800 fw-semibold">0s</span>
                                 <span>•</span>
@@ -199,7 +199,7 @@
                 
                 {{-- Console Body (scrollable) - Black Background --}}
                 <div class="monitor-console-body">
-                    @include('llm-manager::components.chat.shared.monitor-console')
+                    @include('llm-manager::components.chat.shared.monitor-console', ['monitorId' => $monitorId])
                 </div>
             </div>
         @endif
