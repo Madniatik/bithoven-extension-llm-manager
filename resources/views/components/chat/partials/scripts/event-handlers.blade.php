@@ -97,41 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="p-5 rounded ${role === 'user' ? 'bg-light-success' : 'bg-light-primary'} bubble-content-wrapper" style="max-width: 85%">
                     <div class="message-content text-gray-800 fw-semibold fs-6"${role === 'assistant' ? ' data-role="assistant"' : ''}>${renderedContent}</div>
                 </div>
-                ${role === 'assistant' ? `
-                    <div class="bubble-footer text-gray-500 fw-semibold fs-8 mt-1 d-flex align-items-center gap-3 flex-wrap">
-                        <span class="footer-tokens">
-                            <i class="ki-duotone ki-calculator fs-7 text-gray-400">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
-                            ${tokens > 0 ? tokens + ' tokens' : 'Calculating...'}
-                        </span>
-                        <span class="footer-response-time text-gray-400">
-                            <i class="ki-duotone ki-timer fs-7 text-gray-400">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
-                            ...
-                        </span>
-                        <span class="footer-ttft text-gray-400">
-                            <i class="ki-duotone ki-flash-circle fs-7 text-gray-400">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                            </i>
-                            TTFT: ...
-                        </span>
-                        <span class="footer-cost text-gray-400">
-                            <i class="ki-duotone ki-dollar fs-7 text-gray-400">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                            </i>
-                            $...
-                        </span>
-                    </div>
-                ` : ''}
+                ${role === 'assistant' ? `@include('llm-manager::components.chat.partials.bubble-footer')` : ''}
             </div>
         `;
         
@@ -475,8 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeSpan = thinkingMessage.querySelector('.thinking-time');
                 const ttftSpan = thinkingMessage.querySelector('.thinking-ttft');
                 
-                // Show input_tokens + current chunks (total tokens so far)
-                if (tokensSpan) tokensSpan.textContent = inputTokens + chunkCount;
+                // Show only chunks received (not total tokens)
+                if (tokensSpan) tokensSpan.textContent = chunkCount;
                 if (timeSpan) timeSpan.textContent = elapsed;
                 if (ttftSpan) ttftSpan.textContent = ttft;
             }
