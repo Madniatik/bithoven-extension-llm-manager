@@ -211,4 +211,9 @@
     </div>
 </div>
 
+{{-- Message Bubble Template (hidden, for cloning via JS) --}}
+<template id="message-bubble-template-{{ $session?->id ?? 'default' }}">
+    @include('llm-manager::components.chat.partials.bubble.message-bubble-template')
+</template>
+
 {{-- Styles y scripts ahora en partials incluidos desde chat-workspace.blade.php --}}

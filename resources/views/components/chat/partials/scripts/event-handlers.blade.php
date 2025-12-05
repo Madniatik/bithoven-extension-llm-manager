@@ -53,17 +53,60 @@ document.addEventListener('DOMContentLoaded', () => {
         const provider = selectedOption?.dataset.provider || '';
         const model = selectedOption?.dataset.model || '';
         
-        const div = document.createElement('div');
-        div.className = `d-flex mb-10 message-bubble ${role === 'user' ? 'justify-content-end' : 'justify-content-start'}${hidden ? ' d-none' : ''}`;
-        if (messageId) div.dataset.messageId = messageId;
+        // Clone template
+        const template = document.getElementById('message-bubble-template-{{ $session?->id ?? "default" }}');
+        if (!template) {
+            console.error('Message bubble template not found');
+            return;
+        }
         
+        const bubble = template.content.cloneNode(true);
+        const bubbleDiv = bubble.querySelector('.message-bubble');
+        
+        // Set role and message ID
+        bubbleDiv.dataset.role = role;
+        if (messageId) bubbleDiv.dataset.messageId = messageId;
+        if (hidden) bubbleDiv.classList.add('d-none');
+        
+        // Alignment
+        const alignment = role === 'user' ? 'align-items-end' : 'align-items-start';
+        const innerWrapper = bubble.querySelector('[data-bubble-alignment]');
+        innerWrapper.classList.add(alignment);
+        
+        // Avatar visibility
+        if (role === 'assistant') {
+            bubble.querySelector('.assistant-avatar')?.classList.remove('d-none');
+        } else {
+            bubble.querySelector('.user-avatar')?.classList.remove('d-none');
+        }
+        
+        // Header text (name/model)
+        const headerText = bubble.querySelector('[data-bubble-header-text]');
+        if (role === 'assistant' && provider && model) {
+            headerText.textContent = `${provider} / ${model}`;
+        } else {
+            headerText.textContent = role === 'user' ? '{{ auth()->user()->name ?? "User" }}' : 'Assistant';
+        }
+        
+        // Timestamp
         const timestamp = new Date().toLocaleTimeString();
+        bubble.querySelector('[data-bubble-timestamp]').textContent = timestamp;
         
-        // Renderizar Markdown para ambos roles
+        // Background color
+        const bgClass = role === 'user' ? 'bg-light-success' : 'bg-light-primary';
+        bubble.querySelector('.bubble-content-wrapper').classList.add(bgClass);
+        
+        // Content
+        const contentDiv = bubble.querySelector('.message-content');
+        if (role === 'assistant') {
+            contentDiv.dataset.role = 'assistant';
+        }
+        
+        // Renderizar Markdown
         let renderedContent = content.trim();
-        if (typeof marked !== 'undefined') {
+        if (typeof marked !== 'undefined' && renderedContent) {
             try {
-                renderedContent = marked.parse(content.trim());
+                renderedContent = marked.parse(renderedContent);
             } catch (e) {
                 console.warn('Markdown parsing failed:', e);
                 renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
@@ -72,37 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
             renderedContent = content.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
         }
         
-        div.innerHTML = `
-            <div class="d-flex flex-column align-items-${role === 'user' ? 'end' : 'start'}" style="width: 100%; max-width: 85%;">
-                <div class="d-flex align-items-center mb-2">
-                    ${role === 'assistant' ? '<div class="symbol symbol-35px symbol-circle me-3"><span class="symbol-label bg-light-primary text-primary fw-bold">AI</span></div>' : ''}
-                    <div>
-                        ${role === 'assistant' && provider && model ? `
-                            <span class="text-gray-600 fw-semibold fs-8">${provider} / ${model}</span>
-                        ` : `
-                            <span class="text-gray-600 fw-semibold fs-8">${role === 'user' ? '{{ auth()->user()->name ?? "User" }}' : 'Assistant'}</span>
-                        `}
-                        <span class="text-gray-500 fw-semibold fs-8 ms-2">${timestamp}</span>
-                    </div>
-                    ${role === 'user' ? `
-                        <div class="symbol symbol-35px symbol-circle ms-3">
-                            @if(auth()->user() && auth()->user()->avatar)
-                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" />
-                            @else
-                                <span class="symbol-label bg-light-success text-success fw-bold">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
-                            @endif
-                        </div>
-                    ` : ''}
-                </div>
-                <div class="p-5 rounded ${role === 'user' ? 'bg-light-success' : 'bg-light-primary'} bubble-content-wrapper" style="max-width: 85%">
-                    <div class="message-content text-gray-800 fw-semibold fs-6"${role === 'assistant' ? ' data-role="assistant"' : ''}>${renderedContent}</div>
-                </div>
-                ${role === 'assistant' ? `@include('llm-manager::components.chat.partials.bubble-footer')` : ''}
-            </div>
-        `;
+        contentDiv.innerHTML = renderedContent;
         
-        // Apply syntax highlighting + add copy buttons to code blocks
-        const contentDiv = div.querySelector('.message-content');
+        // Show footer for assistant
+        if (role === 'assistant') {
+            bubble.querySelector('.bubble-footer-container')?.classList.remove('d-none');
+        }
+        
+        // Insert into DOM
+        const insertedBubble = bubble.querySelector('.message-bubble');
+        if (thinkingMessage) {
+            messagesContainer.insertBefore(bubble, thinkingMessage);
+        } else {
+            messagesContainer.appendChild(bubble);
+        }
+        
+        // Apply syntax highlighting AFTER DOM insertion
         if (contentDiv && typeof Prism !== 'undefined') {
             contentDiv.querySelectorAll('pre code').forEach(block => {
                 try {
@@ -131,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Add action buttons to bubble content wrapper (copy + raw)
         if (role === 'assistant') {
-            const bubbleContent = div.querySelector('.bubble-content-wrapper');
+            const bubbleContent = messagesContainer.querySelector(`[data-message-id="${messageId}"] .bubble-content-wrapper`);
             if (bubbleContent && !bubbleContent.querySelector('.message-actions-container')) {
                 const btnContainer = document.createElement('div');
                 btnContainer.className = 'message-actions-container position-absolute top-0 end-0 m-2 d-flex gap-1';
@@ -161,13 +189,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        if (thinkingMessage) {
-            messagesContainer.insertBefore(div, thinkingMessage);
-        } else {
-            messagesContainer.appendChild(div);
-        }
         scrollToBottom();
-        return div;
+        return messagesContainer.querySelector(`[data-message-id="${messageId}"]`);
     };
     
     /**
