@@ -69,8 +69,17 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform translate-y-4"
-                class="split-pane split-monitor" 
+                class="split-pane split-monitor llm-monitor" 
                 id="split-monitor-pane-{{ $session?->id ?? 'default' }}"
+                data-monitor-id="{{ $monitorId }}"
+                x-data="{ monitorId: '{{ $monitorId }}' }"
+                x-init="
+                    $nextTick(() => {
+                        if (window.initLLMMonitor) {
+                            window.initLLMMonitor('{{ $monitorId }}');
+                        }
+                    });
+                "
                 style="display: none;">
                 
                 {{-- Console Header (sticky) - NO SCROLL --}}

@@ -3,11 +3,8 @@
     Solo la consola con fondo negro para el panel inferior
     
     Note: JavaScript API loaded globally via chat-workspace.blade.php
+    Note: $monitorId DEBE venir del padre (split-horizontal-layout.blade.php)
 --}}
-
-@php
-    $monitorId = $session?->id ?? 'default';
-@endphp
 
 <div id="monitor-console-{{ $monitorId }}" 
      class="monitor-console-dark" 
