@@ -756,16 +756,20 @@ document.addEventListener('DOMContentLoaded', () => {
                             const costSpan = footer.querySelector('.footer-cost');
                             if (costSpan && data.cost !== undefined) {
                                 const costValue = parseFloat(data.cost).toFixed(6);
-                                costSpan.innerHTML = `
-                                    <i class="ki-duotone ki-dollar fs-7 text-primary">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                    </i>
-                                    $${costValue}
-                                `;
-                                costSpan.classList.remove('text-gray-400');
-                                costSpan.classList.add('text-primary');
+                                if (costValue > 0) {
+                                    costSpan.innerHTML = `
+                                        <i class="ki-duotone ki-dollar fs-7 text-primary">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                        $${costValue}
+                                    `;
+                                    costSpan.classList.remove('text-gray-400', 'd-none');
+                                    costSpan.classList.add('text-primary');
+                                } else {
+                                    costSpan.classList.add('d-none');
+                                }
                             }
                         }
                     }
