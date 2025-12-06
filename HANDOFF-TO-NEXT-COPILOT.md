@@ -1,12 +1,14 @@
 # 🔄 HANDOFF: Implementación de PLAN v1.0.7
 
-**Fecha:** 06 de diciembre de 2025, 00:55  
+**Fecha:** 06 de diciembre de 2025, 06:30  
 **AI Agent Anterior:** Claude (Claude Sonnet, 4.5, Anthropic)  
 **Sesión ID:** 20251206-session  
-**Último Commit:** `45c4ca9` - feat(ui): unify Markdown rendering with marked.js for all bubbles  
+**Último Commit:** `f24d957` - feat(ui): implement Activity Logs tab system in monitor (Option A - dual buttons)  
 **Repositorio:** bithoven-extension-llm-manager  
 **Rama:** main  
-**Estado:** v1.0.7 - 78% completado (Quick Chat + Monitor v2.0 + Markdown Unification completos)
+**Estado:** v1.0.7 - 75% completado (Quick Chat + Monitor v2.0 completos, Activity Logs con localStorage)
+
+**⚠️ NOTA CRÍTICA:** Se revirtieron 7 commits (cc94a7d-f8fb81c) de implementación INCORRECTA de DB persistence. Ver sección "Lecciones Críticas" punto 16.
 
 ---
 
@@ -37,17 +39,19 @@
    - Alpine.js compatibility completa
    - Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
 
-3. ✅ **UI/UX Optimizations - 92% COMPLETADO**
+3. ✅ **UI/UX Optimizations - 88% COMPLETADO**
    - Real-time token display con progress bar
    - Enhanced message bubbles (provider/model badges, timestamps)
    - Footer metrics persistente durante streaming
    - Raw Data modal con tabs (Formatted + Raw)
    - Thinking indicator desde inicio
    - Stop Stream UX con cleanup inteligente
-   - **✅ NUEVO (6 dic):** Unified Markdown rendering (marked.js para ALL bubbles)
-   - **PENDIENTE (8%):**
+   - **✅ NUEVO (6 dic, 05:07):** Activity Logs tab system in monitor (dual buttons, localStorage)
+   - **❌ REVERTIDO (6 dic, 06:25):** DB persistence implementation (7 commits incorrectos)
+   - **PENDIENTE (12%):**
      - Efecto typewriter (delay entre caracteres)
      - Auto-scroll mejorado (detectar scroll manual)
+     - ⚠️ **DB persistence correcto** (usar llm_manager_usage_logs, NO conversation_logs)
      - Keyboard shortcuts (Ctrl/Cmd + Enter)
      - Notificación sonora opcional
      - Microinteracciones (hover effects, checkmark animado)
@@ -270,14 +274,18 @@
     - Mensajes claros evitan confusión en git log
     - Separar refactors (refactor:), features (feat:), fixes (fix:), docs (docs:)
 
-4. **404 errors de scripts externos indican assets no publicados**
-   - Verificar `vendor:publish` o usar inline scripts
-
-5. **Markdown interpreta 4 espacios al inicio como código preformateado**
-   - Evitar espacios innecesarios en templates Blade
-
-6. **Diagnosticar correctamente ANTES de aplicar fixes**
-   - Problema de `<pre>` era renderizado HTML, no CSS
+16. **⚠️ CRÍTICO: Analizar COMPLETAMENTE la arquitectura ANTES de implementar**
+    - **Error cometido (6 dic, 05:41-06:18):** Implementar DB persistence sin investigar sistema existente
+    - **Tabla equivocada:** Usé `llm_manager_conversation_logs` en lugar de `llm_manager_usage_logs`
+    - **Sistema existente ignorado:** `/admin/llm/stream/test` ya usa `llm_manager_usage_logs` correctamente
+    - **Consecuencia:** 7 commits (cc94a7d-f8fb81c) revertidos con `git reset --hard f24d957`
+    - **Lección:** SIEMPRE revisar cómo funciona código similar existente antes de implementar
+    - **Protocolo correcto:**
+      1. Buscar funcionalidad similar en el proyecto (`/admin/llm/stream/test`)
+      2. Analizar qué tabla usa, qué endpoints, qué estructura
+      3. Verificar esquema de DB con `DESCRIBE table_name`
+      4. Copiar arquitectura existente, NO reinventar
+      5. Implementar en pequeños commits verificables
 
 ---
 
@@ -285,12 +293,25 @@
 
 ### Commits Recientes (últimos 5)
 ```
-dece26b - docs: update version references in documentation (v2.2.0 → v1.0.6, v1.1.0 → v1.0.4)
-9b1d282 - refactor: correct semantic versioning (v2.2.0 → v1.0.6, v1.1.0 → v1.0.4, v1.2.0 → v1.0.7)
-2fab9a7 - chore: remove obsolete v1.1.0 completion plan
-c985256 - docs: remove redundant technical guides (covered in /docs)
-0511285 - chore: remove obsolete v1.1.0 work protocol
+f24d957 - feat(ui): implement Activity Logs tab system in monitor (Option A - dual buttons)
+8f7eb75 - refactor(ui): additional design improvements and refinements
+549f9d0 - refactor(ui): improve responsive layout and mobile modal
+88a6bbf - fix(modal): add modal-monitor partial for mobile view
+a7b1f7b - refactor(ui): improve monitor header design and button styling
 ```
+
+**⚠️ Commits Revertidos (6 dic, 06:25):**
+```
+f8fb81c - fix(monitor): stringify event_data as JSON string for DB storage [REVERTED]
+4c2c4b8 - refactor(monitor): remove Activity Logs from modal, keep only in split [REVERTED]
+87d8623 - fix(monitor): separate sessionId (API) from monitorId (UI elements) [REVERTED]
+d8a25e3 - fix(monitor): update inline MonitorInstance with DB persistence logic [REVERTED]
+1c05ce1 - fix(monitor): render activity table in both split and modal views [REVERTED]
+ef0b49d - fix(monitor): update source MonitorInstance.js with DB persistence logic [REVERTED]
+cc94a7d - feat(monitor): persist activity logs to DB with message_id [REVERTED]
+```
+
+**Razón del revert:** Implementación incorrecta usando tabla equivocada (`llm_manager_conversation_logs` en lugar de `llm_manager_usage_logs`)
 
 ### Tags Existentes
 - `v1.0.0` (18 nov 2025) - Initial release

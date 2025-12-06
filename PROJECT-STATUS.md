@@ -1,10 +1,12 @@
 # LLM Manager Extension - Estado del Proyecto
 
-**Última Actualización:** 6 de diciembre de 2025
+**Última Actualización:** 6 de diciembre de 2025, 06:30
 **Versión Actual:** v1.0.6 ✅ **RELEASED**
-**Próxima Versión:** v1.0.7 🔄 **IN PROGRESS (78% complete)**
+**Próxima Versión:** v1.0.7 🔄 **IN PROGRESS (75% complete)**
 **Branch Activo:** main
-**Estado:** 🟢 **PRODUCCIÓN + Quick Chat Feature 100% + Markdown Unification Complete**
+**Estado:** 🟢 **PRODUCCIÓN + Quick Chat Feature 100% + Activity Logs Tab (localStorage)**
+
+**⚠️ NOTA CRÍTICA:** Se revirtieron 7 commits (cc94a7d-f8fb81c) de implementación INCORRECTA de DB persistence para Activity Logs. Sistema actual usa localStorage correctamente. Ver sección "Bugs & Known Issues" para detalles.
 
 ---
 
@@ -178,38 +180,56 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
   - Token breakdown en tiempo real
   - Session management por ID
   - Console cleanup (production-ready)
-  - Unified Markdown rendering (marked.js)
 
-**2. ✅ UI/UX Optimizations (92% complete)** - 6-7h invertidas
+**2. ✅ UI/UX Optimizations (88% complete)** - 6-7h invertidas
 - ✅ Real-time token display con progress bar
 - ✅ Enhanced message bubbles (provider/model badges)
 - ✅ Footer metrics persistente durante streaming
 - ✅ Raw data modal con tabs
 - ✅ Thinking indicator desde inicio
 - ✅ Stop Stream UX completo
-- ✅ **NUEVO:** Unified Markdown rendering con marked.js (commits e3af979, 45c4ca9)
-- ⏳ Typewriter effect pendiente
-- ⏳ Keyboard shortcuts pendiente
-- ⏳ Microinteracciones pendiente
+- ✅ **Activity Logs Tab System** (commit f24d957, 6 dic 05:07)
+  - Dual buttons (Console + Activity Logs) en monitor
+  - Alpine.js tabs con x-show
+  - localStorage persistence (10 logs max, auto-cleanup)
+  - Modal simplified (solo Console, sin Activity Logs)
+- ❌ **DB Persistence REVERTIDA** (7 commits cc94a7d-f8fb81c)
+  - Implementación incorrecta usando tabla equivocada
+  - Usó `llm_manager_conversation_logs` en lugar de `llm_manager_usage_logs`
+  - Revertido con `git reset --hard f24d957`
+- ⏳ **PENDIENTE (12%):**
+  - Typewriter effect
+  - Keyboard shortcuts
+  - Microinteracciones
+  - ⚠️ **DB persistence correcto** (analizar `/admin/llm/stream/test` primero)
 
 **3. ⏳ Testing Suite (0%)** - PENDIENTE (bloqueante para release)
 
 **4. ⏳ Streaming Documentation (0%)** - PENDIENTE
 
-**5. ⏳ GitHub Release (0%)** - PENDIENTE (42+ commits sin push)
+**5. ⏳ GitHub Release (0%)** - PENDIENTE (35+ commits sin push desde v1.0.6)
 
 **Tiempo Invertido:** 22-26 horas de 27.5-34.5h estimadas
 **Tiempo Restante:** 5-7 horas
 
-#### Commits Destacados (últimas 48h):
+#### Commits Destacados (últimas 72h):
 ```
-45c4ca9 - Unified Markdown rendering (marked.js for ALL bubbles)
-e3af979 - Pre-Markdown unification checkpoint
+f24d957 - Activity Logs tab system (localStorage) [CURRENT HEAD]
+8f7eb75 - Design improvements
+549f9d0 - Responsive layout + mobile modal
 907494c - Console cleanup (production-ready)
 0cd80d4 - Enhanced data capture (model + raw_response + tabs)
-721e271 - Raw response capture para análisis
-8a00921 - OpenRouter integration completa
-c5fa989 - Token breakdown persistente
+```
+
+#### Commits Revertidos (6 dic, 06:25):
+```
+f8fb81c - stringify event_data [REVERTED - tabla equivocada]
+4c2c4b8 - remove Activity Logs from modal [REVERTED]
+87d8623 - separate sessionId from monitorId [REVERTED]
+d8a25e3 - inline MonitorInstance DB logic [REVERTED]
+1c05ce1 - render activity table split+modal [REVERTED]
+ef0b49d - source MonitorInstance.js DB [REVERTED]
+cc94a7d - persist activity logs to DB [REVERTED - INICIO ERROR]
 ```
 
 ---
