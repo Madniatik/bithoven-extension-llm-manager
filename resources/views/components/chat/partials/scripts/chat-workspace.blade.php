@@ -11,6 +11,7 @@ document.addEventListener('alpine:init', () => {
         sessionId: sid || sessionId,
         showMonitor: initialShowMonitor,
         monitorOpen: initialMonitorOpen,
+        activeTab: 'console', // Default tab: console
         layout: layout,
         logs: [], // Monitor logs array
         
@@ -20,6 +21,13 @@ document.addEventListener('alpine:init', () => {
             const saved = localStorage.getItem(storageKey);
             if (saved !== null && this.showMonitor) {
                 this.monitorOpen = saved === 'true';
+            }
+            
+            // Load saved tab
+            const tabKey = `llm_chat_monitor_tab_${this.sessionId}`;
+            const savedTab = localStorage.getItem(tabKey);
+            if (savedTab) {
+                this.activeTab = savedTab;
             }
         },
         
@@ -55,6 +63,32 @@ document.addEventListener('alpine:init', () => {
             
             // En mobile, abrir modal en lugar de split-pane
             if (this.isMobile() && this.monitorOpen) {
+                this.$nextTick(() => {
+                    const modalEl = document.getElementById('monitorModal');
+                    if (modalEl) {
+                        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        bsModal.show();
+                    }
+                });
+            }
+        },
+        
+        openMonitorTab(tab) {
+            // Si ya está abierto con este tab, cerrar
+            if (this.monitorOpen && this.activeTab === tab) {
+                this.monitorOpen = false;
+                localStorage.setItem(`llm_chat_monitor_open_${this.sessionId}`, 'false');
+                return;
+            }
+            
+            // Cambiar tab y abrir si estaba cerrado
+            this.activeTab = tab;
+            this.monitorOpen = true;
+            localStorage.setItem(`llm_chat_monitor_tab_${this.sessionId}`, tab);
+            localStorage.setItem(`llm_chat_monitor_open_${this.sessionId}`, 'true');
+            
+            // En mobile, abrir modal
+            if (this.isMobile()) {
                 this.$nextTick(() => {
                     const modalEl = document.getElementById('monitorModal');
                     if (modalEl) {
