@@ -9,7 +9,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v1.0.7
 
-### Quick Chat Feature Enhancements (95% Complete)
+### ⚠️ CRITICAL UPDATE (6 diciembre 2025) - DB Persistence Revert
+
+**7 commits revertidos** (cc94a7d-f8fb81c) por implementación incorrecta de DB persistence para Activity Logs.
+
+**Root Cause:** Uso de tabla incorrecta (`llm_manager_conversation_logs` en lugar de `llm_manager_usage_logs`)
+
+**Lesson Learned (#16):** SIEMPRE analizar arquitectura existente completamente antes de implementar features similares. Referencia correcta: `/admin/llm/stream/test` usa `llm_manager_usage_logs`.
+
+**Current State (commit 1bd668e):**
+- ✅ Activity Logs tab funcional con localStorage (dual-button system)
+- ⏳ DB persistence pendiente (requiere análisis de /stream/test endpoints)
+- ✅ Documentation updated (HANDOFF, PROJECT-STATUS, session achievements)
+
+**Progreso General:** **75%** (no 95% - ajustado por revert)
+
+---
+
+### Activity Logs Tab System (commit f24d957, docs update 1bd668e)
+
+**NEW FEATURE:** Monitor now supports dual-tab system (Console + Activity Logs)
+
+#### Features Implemented
+- **Added** Dual-button tab system in monitor:
+  - Console tab (existing functionality)
+  - Activity Logs tab (NEW - localStorage-based)
+- **Added** Alpine.js tab switching (`activeTab` state, `x-show` directives)
+- **Added** `openMonitorTab(tab)` method for programmatic tab control
+- **Added** Activity Logs localStorage persistence:
+  - Max 10 logs, auto-cleanup oldest
+  - Stores: timestamp, event, details, sessionId, messageId
+  - Survives page refresh
+- **Simplified** Modal monitor (Console only, no Activity Logs tab)
+- **Enhanced** Split-horizontal layout with tab UI in monitor section
+
+#### Files Modified
+- `resources/views/components/chat/layouts/split-horizontal-layout.blade.php` - Tab buttons + activeTab state
+- `resources/views/components/chat/partials/modals/modal-monitor.blade.php` - Simplified (Console only)
+- `public/js/monitor/ui/render.js` - renderActivityTable() for split view
+- `public/js/monitor/core/MonitorInstance.js` - localStorage-based init/complete methods
+
+#### Documentation
+- `HANDOFF-TO-NEXT-COPILOT.md` - Lesson 16 added, revert documented
+- `PROJECT-STATUS.md` - Progress updated to 75%, 7 commits listed
+
+---
+
+### Quick Chat Feature Enhancements (90% Complete)
 
 **30+ commits implementados** trabajando hacia v1.0.7:
 
@@ -110,9 +156,16 @@ ALTER TABLE llm_messages ADD COLUMN raw_response JSON NULL;
 ALTER TABLE llm_messages ADD COLUMN cost_usd DECIMAL(10,6) NULL;
 ```
 
+**⚠️ Reverted Changes (NOT in current codebase):**
+- `message_id` column in `llm_manager_conversation_logs` - REVERTED (wrong table)
+- Activity Logs DB persistence endpoints - REVERTED (incorrect implementation)
+- **Correct approach:** Use `llm_manager_usage_logs` table (see /admin/llm/stream/test)
+
 **Breaking Changes:** None - All changes are backward compatible
 
 **Upgrade Path:** Run migrations to add new columns. Existing messages will have NULL values for new fields.
+
+**Revert Details:** 7 commits (cc94a7d through f8fb81c) were removed via `git reset --hard f24d957` on 6 Dec 2025. System reverted to clean Activity Logs localStorage implementation.
 
 ---
 

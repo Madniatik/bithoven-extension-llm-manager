@@ -1,7 +1,7 @@
 # LLM Manager Extension - Documentación
 
-**Versión:** 1.0.0  
-**Última actualización:** 3 diciembre 2025
+**Versión:** 1.0.7-dev (75% complete)  
+**Última actualización:** 6 diciembre 2025
 
 ---
 

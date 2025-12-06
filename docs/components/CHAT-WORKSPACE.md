@@ -1,8 +1,8 @@
 # Chat Workspace Component - Guía de Uso
 
-**Versión:** 1.0.6  
-**Estado:** ✅ Producción  
-**Última actualización:** 3 diciembre 2025
+**Versión:** 1.0.7-dev  
+**Estado:** ✅ Producción (75% complete)  
+**Última actualización:** 6 diciembre 2025
 
 ---
 
@@ -669,6 +669,107 @@ window.LLMMonitorFactory.getOrCreate('default').start();
     duration: 15  // segundos
 }
 ```
+
+---
+
+### Monitor Activity Logs Tab ⭐ **NEW in v1.0.7-dev**
+
+**Feature:** Dual-tab system en monitor (Console + Activity Logs)
+
+#### Availability
+
+| Layout | Console Tab | Activity Logs Tab |
+|--------|------------|-------------------|
+| Split-Horizontal | ✅ | ✅ |
+| Sidebar | ✅ | ❌ (coming soon) |
+| Modal | ✅ | ❌ (simplified) |
+
+#### Tab Switching API
+
+```javascript
+// Cambiar tab programáticamente
+Alpine.store('chatWorkspace_{{sessionId}}').openMonitorTab('console');
+Alpine.store('chatWorkspace_{{sessionId}}').openMonitorTab('activity-logs');
+
+// Obtener tab activo
+const activeTab = Alpine.store('chatWorkspace_{{sessionId}}').activeTab;
+// Returns: 'console' | 'activity-logs'
+```
+
+#### Activity Logs Data Structure
+
+```javascript
+// localStorage: llm_chat_monitor_history_{{sessionId}}
+[
+    {
+        timestamp: "2025-12-06T12:30:00+00:00",
+        event: "stream_started",
+        details: "Provider: OpenAI | Model: gpt-4",
+        sessionId: 123,
+        messageId: 456
+    },
+    {
+        timestamp: "2025-12-06T12:30:15+00:00",
+        event: "stream_completed",
+        details: "1250 tokens | $0.0025 | 15s",
+        sessionId: 123,
+        messageId: 456
+    }
+]
+
+// Constraints:
+// - Max 10 logs per session
+// - Auto-cleanup oldest entries
+// - Persists across page refreshes
+```
+
+#### Event Types Auto-Logged
+
+- `stream_started` - Stream iniciado (incluye provider/model)
+- `stream_completed` - Stream finalizado (tokens/cost/duration)
+- `stream_error` - Error durante streaming
+- `message_deleted` - Mensaje eliminado
+- Custom events via `monitor.log()`
+
+#### UI Components
+
+**Tab Buttons (header):**
+```html
+<button @click="activeTab = 'console'" :class="{'active': activeTab === 'console'}">
+    Console
+</button>
+<button @click="activeTab = 'activity-logs'" :class="{'active': activeTab === 'activity-logs'}">
+    Activity Logs
+</button>
+```
+
+**Activity Table (body):**
+```html
+<div x-show="activeTab === 'activity-logs'">
+    <table class="table">
+        <tr>
+            <td>12:30:00</td>
+            <td>stream_started</td>
+            <td>Provider: OpenAI | Model: gpt-4</td>
+        </tr>
+    </table>
+</div>
+```
+
+#### Database Persistence Roadmap
+
+**Current State (v1.0.7-dev):**
+- ✅ localStorage persistence functional
+- ⏳ DB persistence pending
+
+**Next Steps:**
+1. Analyze `/admin/llm/stream/test` (correct implementation reference)
+2. Implement POST/GET endpoints using `llm_manager_usage_logs` table
+3. Sync localStorage with DB on page load
+4. Real-time updates via AJAX
+
+**⚠️ Critical Lesson:**
+DO NOT use `llm_manager_conversation_logs` table. Correct table is `llm_manager_usage_logs` (used by `/admin/llm/stream/test`).
 
 ---
 

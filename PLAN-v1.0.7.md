@@ -22,13 +22,89 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 
 **Tiempo Total Estimado:** 27.5-34.5 horas (ajustado por Monitor System v2.0)  
 **Tiempo Invertido:** ~22-26 horas (42+ commits)  
-**Progreso General:** **78%**
+**Progreso General:** **75%** (ajustado por revert crítico - ver abajo)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 
 ---
 
+## ⚠️ REVERT CRÍTICO (6 diciembre 2025, 06:25)
+
+**7 commits eliminados** via `git reset --hard f24d957` por implementación incorrecta de DB persistence para Activity Logs.
+
+### Commits Revertidos (cc94a7d - f8fb81c)
+1. `cc94a7d` - Añadir message_id a llm_manager_conversation_logs (TABLA INCORRECTA)
+2. `ef0b49d` - Endpoints POST/GET activity-log
+3. `1c05ce1` - Métodos storeActivityLog/getActivityLogs en Controller
+4. `d8a25e3` - Async init/complete en MonitorInstance
+5. `87d8623` - renderActivityTable con soporte modal
+6. `4c2c4b8` - data-session-id attributes
+7. `f8fb81c` - LLMConversationLog model updates
+
+### Root Cause
+❌ **Error:** Usé `llm_manager_conversation_logs` (tabla para eventos de conversación)  
+✅ **Correcto:** Debo usar `llm_manager_usage_logs` (tabla para métricas de uso)
+
+### Lección Aprendida (#16)
+**SIEMPRE analizar COMPLETAMENTE la arquitectura ANTES de implementar:**
+1. Buscar funcionalidad similar existente
+2. Analizar tabla/endpoints usados
+3. Verificar schema de DB
+4. Copiar arquitectura probada
+5. Implementar incrementalmente
+
+**Referencia correcta:** `/admin/llm/stream/test` usa `llm_manager_usage_logs`
+
+### Estado Post-Revert (commit f24d957 → 1bd668e)
+- ✅ Activity Logs tab funcional con localStorage (dual-button system)
+- ⏳ DB persistence pendiente (requiere análisis de /stream/test)
+- ✅ Documentation updated (HANDOFF, PROJECT-STATUS, session achievements)
+
+**Documentación:** Ver HANDOFF-TO-NEXT-COPILOT.md Lesson 16 para detalles completos
+
+---
+
 ## 🎉 TRABAJO COMPLETADO (últimas 48 horas)
+
+### ✅ Activity Logs Tab System (Commits f24d957, 1bd668e) - **NUEVO**
+
+**NEW FEATURE:** Monitor con sistema de tabs duales (Console + Activity Logs)
+
+#### Features Implementadas
+- ✅ **Dual-Tab System** (Commit f24d957)
+  - Console tab (funcionalidad existente)
+  - Activity Logs tab (NUEVO - localStorage)
+  - Alpine.js tab switching con `activeTab` state
+  - `openMonitorTab(tab)` method para control programático
+
+- ✅ **Activity Logs localStorage** (Commit f24d957)
+  - Máximo 10 logs, auto-cleanup de los más antiguos
+  - Campos: timestamp, event, details, sessionId, messageId
+  - Persistencia entre refreshes de página
+  - renderActivityTable() actualiza UI desde localStorage
+
+- ✅ **UI Simplification** (Commit f24d957)
+  - Modal monitor simplificado (solo Console, sin Activity Logs)
+  - Split-horizontal layout con tabs completos
+  - Mejor UX con separación clara de funciones
+
+- ✅ **Documentation** (Commit 1bd668e)
+  - HANDOFF-TO-NEXT-COPILOT.md actualizado (Lesson 16, revert details)
+  - PROJECT-STATUS.md actualizado (75% progress, commits listed)
+  - session-manager.json con 3 achievements (Activity Logs, Critical Lesson, Docs Update)
+
+#### Files Modified
+- `resources/views/components/chat/layouts/split-horizontal-layout.blade.php`
+- `resources/views/components/chat/partials/modals/modal-monitor.blade.php`
+- `public/js/monitor/ui/render.js`
+- `public/js/monitor/core/MonitorInstance.js`
+- `HANDOFF-TO-NEXT-COPILOT.md`
+- `PROJECT-STATUS.md`
+
+#### Next Steps
+- ⏳ Analizar `/admin/llm/stream/test` implementation (tabla correcta: `llm_manager_usage_logs`)
+- ⏳ Implementar DB persistence correctamente (copiar arquitectura de /stream/test)
+- ⏳ Testing con datos reales de DB
 
 ### ✅ Monitor System v2.0 - Modular Architecture (Commits 12ee763, bd42546, c69e3fe) - **NUEVO**
 
