@@ -132,29 +132,6 @@
                             </button>
                         </div>
                     </div>
-
-                    {{-- Mobile-only: Metrics in 2nd row --}}
-                    <div class="d-md-none px-3 pb-2">
-                        <div class="text-muted fs-7 fw-normal">
-                            <div class="mb-1">
-                                <span>Status: <span id="monitor-status-mobile-{{ $monitorId }}"
-                                        class="text-gray-800 fw-semibold">Idle</span></span>
-                                <span class="mx-2">•</span>
-                                <span>Tokens: <span id="monitor-tokens-mobile-{{ $monitorId }}"
-                                        class="text-gray-800 fw-semibold">0</span></span>
-                                <span class="mx-2">•</span>
-                                <span>Chunks: <span id="monitor-chunks-mobile-{{ $monitorId }}"
-                                        class="text-gray-800 fw-semibold">0</span></span>
-                            </div>
-                            <div>
-                                <span>Duration: <span id="monitor-duration-mobile-{{ $monitorId }}"
-                                        class="text-gray-800 fw-semibold">0s</span></span>
-                                <span class="mx-2">•</span>
-                                <span>Cost: <span id="monitor-cost-mobile-{{ $monitorId }}"
-                                        class="text-gray-800 fw-semibold">$0.00</span></span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 {{-- Tabs Body (scrollable) --}}
@@ -209,11 +186,6 @@
         @include('llm-manager::components.chat.partials.form-elements.input-form', ['configurations' => $configurations])
     </div>
 </div>
-
-{{-- Mobile: Monitor Modal --}}
-@if ($showMonitor)
-    @include('llm-manager::components.chat.partials.modals.modal-monitor', ['monitorId' => $monitorId])
-@endif
 
 {{-- Message Bubble Template (hidden, for cloning via JS) --}}
 <template id="message-bubble-template-{{ $session?->id ?? 'default' }}">

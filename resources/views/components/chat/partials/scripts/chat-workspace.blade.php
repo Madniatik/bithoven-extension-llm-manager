@@ -1,6 +1,6 @@
 {{--
     Chat Workspace Alpine Component
-    Lógica principal para manejar el estado del workspace (monitor toggle, mobile, etc.)
+    Lógica principal para manejar el estado del workspace (monitor toggle, tabs, etc.)
 --}}
 
 @push('scripts')
@@ -60,17 +60,6 @@ document.addEventListener('alpine:init', () => {
             this.monitorOpen = !this.monitorOpen;
             const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
             localStorage.setItem(storageKey, this.monitorOpen);
-            
-            // En mobile, abrir modal en lugar de split-pane
-            if (this.isMobile() && this.monitorOpen) {
-                this.$nextTick(() => {
-                    const modalEl = document.getElementById('monitorModal');
-                    if (modalEl) {
-                        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                        bsModal.show();
-                    }
-                });
-            }
         },
         
         openMonitorTab(tab) {
@@ -86,21 +75,6 @@ document.addEventListener('alpine:init', () => {
             this.monitorOpen = true;
             localStorage.setItem(`llm_chat_monitor_tab_${this.sessionId}`, tab);
             localStorage.setItem(`llm_chat_monitor_open_${this.sessionId}`, 'true');
-            
-            // En mobile, abrir modal
-            if (this.isMobile()) {
-                this.$nextTick(() => {
-                    const modalEl = document.getElementById('monitorModal');
-                    if (modalEl) {
-                        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-                        bsModal.show();
-                    }
-                });
-            }
-        },
-        
-        isMobile() {
-            return window.innerWidth < 992; // Bootstrap lg breakpoint
         }
     });
     

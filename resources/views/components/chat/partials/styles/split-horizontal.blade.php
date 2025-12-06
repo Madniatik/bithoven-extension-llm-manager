@@ -101,10 +101,6 @@
         flex: none;
         height: auto;
     }
-    
-    .split-monitor {
-        display: none !important;
-    }
 }
 
 /* Drag state */

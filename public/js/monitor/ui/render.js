@@ -61,10 +61,6 @@ export default class MonitorUI {
             // Split-horizontal header view
             const tokensHeaderEl = this.getElement('monitor-tokens');
             if (tokensHeaderEl) tokensHeaderEl.textContent = metrics.tokens;
-            
-            // Mobile view
-            const tokensMobileEl = this.getElement('monitor-tokens-mobile');
-            if (tokensMobileEl) tokensMobileEl.textContent = metrics.tokens;
         }
         
         if (metrics.chunks !== undefined) {
@@ -75,10 +71,6 @@ export default class MonitorUI {
             // Split-horizontal header view
             const chunksHeaderEl = this.getElement('monitor-chunks');
             if (chunksHeaderEl) chunksHeaderEl.textContent = metrics.chunks;
-            
-            // Mobile view
-            const chunksMobileEl = this.getElement('monitor-chunks-mobile');
-            if (chunksMobileEl) chunksMobileEl.textContent = metrics.chunks;
         }
     }
 
@@ -92,12 +84,6 @@ export default class MonitorUI {
         if (durationEl) {
             durationEl.textContent = duration + 's';
         }
-        
-        // Mobile view
-        const durationMobileEl = this.getElement('monitor-duration-mobile');
-        if (durationMobileEl) {
-            durationMobileEl.textContent = duration + 's';
-        }
     }
 
     /**
@@ -109,12 +95,6 @@ export default class MonitorUI {
         const costEl = this.getElement('monitor-cost');
         if (costEl) {
             costEl.textContent = '$' + cost.toFixed(4);
-        }
-        
-        // Mobile view
-        const costMobileEl = this.getElement('monitor-cost-mobile');
-        if (costMobileEl) {
-            costMobileEl.textContent = '$' + cost.toFixed(4);
         }
     }
 
@@ -134,12 +114,6 @@ export default class MonitorUI {
         const statusHeaderEl = this.getElement('monitor-status');
         if (statusHeaderEl && !statusHeaderEl.querySelector('.badge')) {
             statusHeaderEl.textContent = text;
-        }
-        
-        // Mobile view (text only)
-        const statusMobileEl = this.getElement('monitor-status-mobile');
-        if (statusMobileEl) {
-            statusMobileEl.textContent = text;
         }
     }
 

@@ -10,7 +10,7 @@
 function showToast(options) {
     const theme = document.documentElement.getAttribute('data-bs-theme');
     const isDark = theme === 'dark';
-    
+        
     const defaultOptions = {
         toast: true,
         position: 'top-end',
