@@ -11,7 +11,7 @@
         <div class="d-flex align-items-center gap-2">
             @include('llm-manager::components.chat.partials.buttons.action-buttons')
         </div>
-        
+
         {{-- Model Selection + Send/Delete Buttons (same row on mobile, inline on desktop) --}}
         <div class="d-flex align-items-center gap-2 w-100 flex-lg-grow-1">
             {{-- Model Selection (flex-grow para ocupar espacio disponible) --}}
@@ -21,18 +21,20 @@
 
             {{-- Send/Stop/Clear Buttons --}}
             <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                <button class="btn btn-sm btn-icon btn-active-secondary" disabled type="button" data-bs-toggle="tooltip"
+                    title="Record Voice">
+                    <i class="bi bi-mic-fill fs-1"></i>
+                </button>
                 <button type="button" id="send-btn-{{ $session?->id ?? 'default' }}"
-                    class="btn btn-icon btn-sm btn-primary" data-bs-toggle="tooltip" title="Send Message">
-                    <i class="ki-duotone ki-send fs-4"><span class="path1"></span><span class="path2"></span></i>
+                    class="btn btn-icon btn-sm btn-active-light-primary" data-bs-toggle="tooltip" title="Send Message">
+                    {!! getIcon('ki-send', 'fs-2x', '', 'i') !!}
                 </button>
                 <button type="button" id="stop-btn-{{ $session?->id ?? 'default' }}"
-                    class="btn btn-icon btn-sm btn-danger d-none" data-bs-toggle="tooltip" title="Stop Streaming">
-                    <i class="ki-duotone ki-cross-circle fs-4"><span class="path1"></span><span class="path2"></span></i>
-                </button>
-                <button type="button" id="clear-btn-{{ $session?->id ?? 'default' }}"
-                    class="btn btn-icon btn-sm btn-light-danger" data-bs-toggle="tooltip" title="Delete Chat">
-                    <i class="ki-duotone ki-trash fs-4"><span class="path1"></span><span class="path2"></span><span
-                            class="path3"></span><span class="path4"></span><span class="path5"></span></i>
+                    class="btn btn-icon btn-sm btn-active-light-secondary pulse pulse-danger d-none" data-bs-toggle="tooltip" title="Stop Streaming">
+                    {{-- <div class="spinner-border spinner-border-sm fs-2x"></div> --}}
+                    <i class="bi bi-stop-fill fs-2hx text-danger"></i>
+                    <span class="pulse-ring border-4"></span>
+                    {{-- {!! getIcon('ki-cross', 'fs-4', '', 'i') !!} --}}
                 </button>
             </div>
         </div>
