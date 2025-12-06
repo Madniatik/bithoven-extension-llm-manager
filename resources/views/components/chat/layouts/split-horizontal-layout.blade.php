@@ -173,6 +173,11 @@
     </div>
 </div>
 
+{{-- Mobile: Monitor Modal --}}
+@if ($showMonitor)
+    @include('llm-manager::components.chat.partials.modals.modal-monitor', ['monitorId' => $monitorId])
+@endif
+
 {{-- Message Bubble Template (hidden, for cloning via JS) --}}
 <template id="message-bubble-template-{{ $session?->id ?? 'default' }}">
     @include('llm-manager::components.chat.partials.bubble.message-bubble-template')

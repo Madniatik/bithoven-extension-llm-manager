@@ -21,16 +21,6 @@ document.addEventListener('alpine:init', () => {
             if (saved !== null && this.showMonitor) {
                 this.monitorOpen = saved === 'true';
             }
-            
-            // On mobile, bind toggle to modal
-            if (this.isMobile()) {
-                this.$watch('monitorOpen', (value) => {
-                    if (value) {
-                        const modal = new bootstrap.Modal(document.getElementById('monitorModal'));
-                        modal.show();
-                    }
-                });
-            }
         },
         
         addLog(logEntry) {
@@ -62,6 +52,17 @@ document.addEventListener('alpine:init', () => {
             this.monitorOpen = !this.monitorOpen;
             const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
             localStorage.setItem(storageKey, this.monitorOpen);
+            
+            // En mobile, abrir modal en lugar de split-pane
+            if (this.isMobile() && this.monitorOpen) {
+                this.$nextTick(() => {
+                    const modalEl = document.getElementById('monitorModal');
+                    if (modalEl) {
+                        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        bsModal.show();
+                    }
+                });
+            }
         },
         
         isMobile() {
