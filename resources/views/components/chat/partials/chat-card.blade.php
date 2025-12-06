@@ -38,6 +38,6 @@
     
     {{-- Card Footer --}}
     <div class="card-footer pt-4" id="kt_chat_messenger_footer">
-        @include('llm-manager::components.chat.partials.input-form', ['configurations' => $configurations])
+        @include('llm-manager::components.chat.partials.form-elements.input-form', ['configurations' => $configurations])
     </div>
 </div>

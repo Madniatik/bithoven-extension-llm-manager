@@ -158,7 +158,7 @@
                 </div>
 
                 {{-- Console Body (scrollable) - Black Background --}}
-                <div class="monitor-console-body">
+                <div class="monitor-console-body p-0">
                     @include('llm-manager::components.chat.shared.monitor-console', [
                         'monitorId' => $monitorId,
                     ])
@@ -169,7 +169,7 @@
 
     {{-- Card Footer (fuera del split) - SIEMPRE VISIBLE --}}
     <div class="card-footer pt-4" id="kt_chat_messenger_footer">
-        @include('llm-manager::components.chat.partials.input-form', ['configurations' => $configurations])
+        @include('llm-manager::components.chat.partials.form-elements.input-form', ['configurations' => $configurations])
     </div>
 </div>
 

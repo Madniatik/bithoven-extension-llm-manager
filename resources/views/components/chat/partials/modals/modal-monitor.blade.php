@@ -12,7 +12,7 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-0">
                 @include('llm-manager::components.chat.shared.monitor-console', ['monitorId' => $monitorId])
             </div>
         </div>
