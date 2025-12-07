@@ -239,7 +239,11 @@ const ActivityHistory = {
 
 // Auto-load activity history on page load
 document.addEventListener('DOMContentLoaded', function() {
-    ActivityHistory.load();
+    @if(isset($sessionId) && $sessionId)
+        ActivityHistory.load({{ $sessionId }});
+    @else
+        ActivityHistory.load();
+    @endif
 });
 </script>
 @endpush
