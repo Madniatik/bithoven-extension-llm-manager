@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "version": "1.0.0",
+  "lastUpdate": "2025-12-07T04:15:00+00:00",
+  "description": "Quick navigation index for Copilot - Optimized for AI assistant file discovery",
+  "project": {
+    "name": "bithoven-extension-llm-manager",
+    "version": "1.0.7-dev",
+    "type": "laravel-extension",
+    "repository": "https://github.com/Madniatik/bithoven-extension-llm-manager"
+  },
+  "structure": {
+    "docs": {
+      "path": "docs/",
+      "description": "User and developer documentation",
+      "totalFiles": 14,
+      "totalLines": 15373,
+      "categories": {
+        "guides": {
+          "path": "docs/guides/",
+          "description": "User guides for installation, configuration, and usage",
+          "audience": "users",
+          "complexity": "basic",
+          "files": [
+            "INSTALLATION.md",
+            "USAGE-GUIDE.md",
+            "CONFIGURATION.md",
+            "EXAMPLES.md",
+            "FAQ.md"
+          ]
+        },
+        "reference": {
+          "path": "docs/reference/",
+          "description": "Technical API references and component documentation",
+          "audience": "developers",
+          "complexity": "intermediate",
+          "files": [
+            "API-REFERENCE.md",
+            "components/CHAT-WORKSPACE.md"
+          ]
+        },
+        "architecture": {
+          "path": "docs/architecture/",
+          "description": "System architecture and internal design documentation",
+          "audience": "developers",
+          "complexity": "advanced",
+          "files": [
+            "MONITOR-ARCHITECTURE-v2.md",
+            "OPENROUTER-RESPONSE-FORMAT.md"
+          ]
+        },
+        "debug": {
+          "path": "docs/debug/",
+          "description": "Debugging tools and troubleshooting guides",
+          "audience": "developers",
+          "complexity": "intermediate",
+          "files": [
+            "MONITOR-DEBUG-CHECKLIST.md",
+            "QUICK-DEBUG.js"
+          ]
+        },
+        "providers": {
+          "path": "docs/providers/",
+          "description": "Provider-specific documentation (OpenAI, OpenRouter, Ollama, etc.)",
+          "audience": "developers",
+          "complexity": "intermediate",
+          "files": [
+            "PROVIDER-COMPARISON.md"
+          ]
+        },
+        "development": {
+          "path": "docs/",
+          "description": "Development and contribution guides",
+          "audience": "contributors",
+          "complexity": "advanced",
+          "files": [
+            "CONTRIBUTING.md"
+          ]
+        }
+      }
+    },
+    "plans": {
+      "path": "plans/",
+      "description": "Implementation plans organized by status (new/in-progress/completed)",
+      "totalFiles": 4,
+      "categories": {
+        "new": {
+          "path": "plans/new/",
+          "description": "New plans not yet started or blocked by dependencies",
+          "files": [
+            {
+              "file": "ACTIVITY-LOG-MIGRATION-PLAN.md",
+              "status": "blocked",
+              "blockers": [
+                "session_id/message_id NULL in usage_logs",
+                "Endpoint architecture decision required",
+                "localStorage cleanup pending"
+              ],
+              "estimatedTime": "8-13h",
+              "priority": "high"
+            }
+          ]
+        },
+        "inProgress": {
+          "path": "plans/in-progress/",
+          "description": "Plans currently being implemented",
+          "files": []
+        },
+        "completed": {
+          "path": "plans/completed/",
+          "description": "Completed plans with implementation verified",
+          "files": [
+            {
+              "file": "CHAT-MONITOR-ENHANCEMENT-PLAN.md",
+              "completedAt": "2025-12-06",
+              "verifiedAt": "2025-12-07T03:42:00+00:00"
+            },
+            {
+              "file": "MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md",
+              "completedAt": "2025-12-04",
+              "verifiedAt": "2025-12-07T03:42:00+00:00"
+            },
+            {
+              "file": "DATABASE-LOGS-CONSOLIDATION-PLAN.md",
+              "completedAt": "2025-12-06",
+              "verifiedAt": "2025-12-07T03:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    "reports": {
+      "path": "reports/",
+      "description": "Analysis reports and implementation results organized by type",
+      "totalFiles": 8,
+      "categories": {
+        "activityLog": {
+          "path": "reports/activity-log/",
+          "description": "Activity Log feature analysis and reports",
+          "files": [
+            {
+              "file": "ACTIVITY-LOG-MIGRATION-REPORT-2025-12-07.md",
+              "type": "analysis",
+              "version": "2.0",
+              "criticalIssues": 3,
+              "status": "complete"
+            }
+          ]
+        },
+        "analysis": {
+          "path": "reports/analysis/",
+          "description": "Technical analysis and research reports",
+          "files": [
+            {
+              "file": "OLLAMA-TOKEN-CALCULATION-ANALYSIS.md",
+              "type": "technical-analysis"
+            },
+            {
+              "file": "openrouter-response-analysis.md",
+              "type": "provider-analysis"
+            }
+          ]
+        },
+        "fixes": {
+          "path": "reports/fixes/",
+          "description": "Bug fix implementation reports",
+          "files": [
+            {
+              "file": "QUICK-CHAT-MONITOR-FIX-REPORT.md",
+              "type": "bug-fixes",
+              "fixesCount": 3
+            }
+          ]
+        },
+        "general": {
+          "path": "reports/",
+          "description": "General reports not categorized elsewhere",
+          "files": [
+            "BUGS-ANALYSIS.md",
+            "CHAT-MONITOR-ENHANCEMENT-IMPLEMENTATION-REPORT.md",
+            "PROVIDER-RESPONSE-ANALYSIS.md"
+          ]
+        }
+      }
+    }
+  },
+  "quickSearch": {
+    "installation": "docs/guides/INSTALLATION.md",
+    "usage": "docs/guides/USAGE-GUIDE.md",
+    "configuration": "docs/guides/CONFIGURATION.md",
+    "examples": "docs/guides/EXAMPLES.md",
+    "faq": "docs/guides/FAQ.md",
+    "api": "docs/reference/API-REFERENCE.md",
+    "chatComponent": "docs/reference/components/CHAT-WORKSPACE.md",
+    "monitor": "docs/architecture/MONITOR-ARCHITECTURE-v2.md",
+    "openrouter": "docs/architecture/OPENROUTER-RESPONSE-FORMAT.md",
+    "debug": "docs/debug/MONITOR-DEBUG-CHECKLIST.md",
+    "debugSnippets": "docs/debug/QUICK-DEBUG.js",
+    "providers": "docs/providers/PROVIDER-COMPARISON.md",
+    "contributing": "docs/CONTRIBUTING.md",
+    "activityLogPlan": "plans/new/ACTIVITY-LOG-MIGRATION-PLAN.md",
+    "activityLogReport": "reports/activity-log/ACTIVITY-LOG-MIGRATION-REPORT-2025-12-07.md",
+    "chatMonitorPlan": "plans/completed/CHAT-MONITOR-ENHANCEMENT-PLAN.md",
+    "monitorSystemPlan": "plans/completed/MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md",
+    "databasePlan": "plans/completed/DATABASE-LOGS-CONSOLIDATION-PLAN.md"
+  },
+  "keywords": {
+    "streaming": [
+      "docs/architecture/MONITOR-ARCHITECTURE-v2.md",
+      "docs/reference/components/CHAT-WORKSPACE.md",
+      "docs/reference/API-REFERENCE.md"
+    ],
+    "monitor": [
+      "docs/architecture/MONITOR-ARCHITECTURE-v2.md",
+      "docs/debug/MONITOR-DEBUG-CHECKLIST.md",
+      "plans/completed/CHAT-MONITOR-ENHANCEMENT-PLAN.md"
+    ],
+    "providers": [
+      "docs/providers/PROVIDER-COMPARISON.md",
+      "docs/architecture/OPENROUTER-RESPONSE-FORMAT.md",
+      "reports/analysis/openrouter-response-analysis.md"
+    ],
+    "chat": [
+      "docs/reference/components/CHAT-WORKSPACE.md",
+      "docs/guides/EXAMPLES.md"
+    ],
+    "bugs": [
+      "reports/BUGS-ANALYSIS.md",
+      "reports/fixes/QUICK-CHAT-MONITOR-FIX-REPORT.md"
+    ],
+    "tokens": [
+      "reports/analysis/OLLAMA-TOKEN-CALCULATION-ANALYSIS.md",
+      "docs/providers/PROVIDER-COMPARISON.md"
+    ]
+  },
+  "metadata": {
+    "lastReorganization": "2025-12-07T04:12:00+00:00",
+    "lastPlanVerification": "2025-12-07T03:42:00+00:00",
+    "totalDocumentationFiles": 27,
+    "copilotOptimized": true,
+    "structure": "Opción B - docs/ categorizado, plans/ y reports/ en raíz"
+  },
+  "usage": {
+    "forCopilot": "Read this file first to quickly locate any documentation, plan, or report",
+    "forHumans": "Use docs/README.md for browseable index with descriptions",
+    "update": "Regenerate when adding/moving documentation files"
+  }
+}

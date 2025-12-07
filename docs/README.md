@@ -1,28 +1,59 @@
 # LLM Manager Extension - Documentación
 
-**Versión:** 1.0.7-dev (75% complete)  
-**Última actualización:** 6 diciembre 2025
+**Versión:** 1.0.7-dev  
+**Última actualización:** 7 diciembre 2025
+
+> 📋 **Quick Index:** Ver [QUICK-INDEX.json](../QUICK-INDEX.json) para navegación optimizada de Copilot
 
 ---
 
-## 📚 Índice General
+## 🚀 Quick Start
 
-### Guías de Usuario
+| Link | Descripción |
+|------|-------------|
+| [Installation](guides/INSTALLATION.md) | Setup inicial (5 min) |
+| [Usage Guide](guides/USAGE-GUIDE.md) | Uso básico |
+| [API Reference](reference/API-REFERENCE.md) | Referencia completa |
+| [FAQ](guides/FAQ.md) | Preguntas frecuentes |
 
-| Documento | Descripción | Audiencia |
-|-----------|-------------|-----------|
-| [Installation Guide](INSTALLATION.md) | Instalación y setup inicial | Usuarios nuevos |
-| [Usage Guide](USAGE-GUIDE.md) | Uso básico de la extensión | Usuarios generales |
-| [Configuration](CONFIGURATION.md) | Configuración de LLM providers | Administradores |
-| [Examples](EXAMPLES.md) | Ejemplos de uso comunes | Desarrolladores |
-| [FAQ](FAQ.md) | Preguntas frecuentes | Todos |
+---
 
-### Documentación Técnica
+## 📁 Estructura de Documentación
 
-| Documento | Descripción | Audiencia |
-|-----------|-------------|-----------|
-| [API Reference](API-REFERENCE.md) | Referencia completa de API | Desarrolladores |
-| [Contributing](CONTRIBUTING.md) | Guía de contribución | Contribuidores |
+### 📘 Guías (guides/)
+Documentación de usuario para instalación, configuración y uso básico.
+
+- [INSTALLATION.md](guides/INSTALLATION.md) - Instalación y setup inicial
+- [USAGE-GUIDE.md](guides/USAGE-GUIDE.md) - Uso básico de la extensión
+- [CONFIGURATION.md](guides/CONFIGURATION.md) - Configuración de providers
+- [EXAMPLES.md](guides/EXAMPLES.md) - Ejemplos prácticos
+- [FAQ.md](guides/FAQ.md) - Preguntas frecuentes
+
+### 📗 Referencias (reference/)
+Documentación técnica de API y componentes.
+
+- [API-REFERENCE.md](reference/API-REFERENCE.md) - Referencia completa de API
+- [components/CHAT-WORKSPACE.md](reference/components/CHAT-WORKSPACE.md) - Chat Workspace Component
+
+### 🏗️ Arquitectura (architecture/)
+Documentación de diseño interno y arquitecturas de sistemas.
+
+- [MONITOR-ARCHITECTURE-v2.md](architecture/MONITOR-ARCHITECTURE-v2.md) - Sistema Monitor v2.0
+- [OPENROUTER-RESPONSE-FORMAT.md](architecture/OPENROUTER-RESPONSE-FORMAT.md) - Formato OpenRouter
+
+### 🔧 Debug (debug/)
+Herramientas y guías de troubleshooting.
+
+- [MONITOR-DEBUG-CHECKLIST.md](debug/MONITOR-DEBUG-CHECKLIST.md) - Checklist debugging Monitor
+- [QUICK-DEBUG.js](debug/QUICK-DEBUG.js) - Snippets de debugging
+
+### 🌐 Providers (providers/)
+Documentación específica de providers LLM.
+
+- [PROVIDER-COMPARISON.md](providers/PROVIDER-COMPARISON.md) - Comparación de providers
+
+### 🤝 Contribución
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Guía para contribuidores
 
 ---
 
