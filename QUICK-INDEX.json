@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
-  "version": "1.0.0",
-  "lastUpdate": "2025-12-07T04:15:00+00:00",
+  "version": "1.1.0",
+  "lastUpdate": "2025-12-07T20:10:00+00:00",
   "description": "Quick navigation index for Copilot - Optimized for AI assistant file discovery",
   "project": {
     "name": "bithoven-extension-llm-manager",
@@ -104,17 +104,6 @@
               "purpose": "copilot-handoff"
             },
             {
-              "file": "ACTIVITY-LOG-MIGRATION-PLAN.md",
-              "status": "blocked",
-              "blockers": [
-                "session_id/message_id NULL in usage_logs",
-                "Endpoint architecture decision required",
-                "localStorage cleanup pending"
-              ],
-              "estimatedTime": "8-13h",
-              "priority": "high"
-            },
-            {
               "file": "QUICK-CHAT-IMPLEMENTATION-PLAN.md",
               "type": "feature-plan",
               "status": "new"
@@ -125,6 +114,11 @@
           "path": "plans/completed/",
           "description": "Completed plans with implementation verified",
           "files": [
+            {
+              "file": "ACTIVITY-LOG-MIGRATION-PLAN.md",
+              "completedAt": "2025-12-07",
+              "verifiedAt": "2025-12-07T21:45:00+00:00"
+            },
             {
               "file": "CHAT-MONITOR-ENHANCEMENT-PLAN.md",
               "completedAt": "2025-12-06",
@@ -216,7 +210,7 @@
     "planDevelopment": "plans/PLAN-v1.0.7.md",
     "planHandoff": "plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md",
     "planQuickChat": "plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md",
-    "activityLogPlan": "plans/ACTIVITY-LOG-MIGRATION-PLAN.md",
+    "activityLogPlan": "plans/completed/ACTIVITY-LOG-MIGRATION-PLAN.md",
     "activityLogReport": "reports/activity-log/ACTIVITY-LOG-MIGRATION-REPORT-2025-12-07.md",
     "chatMonitorPlan": "plans/completed/CHAT-MONITOR-ENHANCEMENT-PLAN.md",
     "monitorSystemPlan": "plans/completed/MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md",
@@ -253,10 +247,11 @@
   },
   "metadata": {
     "lastReorganization": "2025-12-07T04:12:00+00:00",
-    "lastPlanVerification": "2025-12-07T03:42:00+00:00",
-    "lastUpdate": "2025-12-07T04:30:00+00:00",
+    "lastPlanVerification": "2025-12-07T20:10:00+00:00",
+    "lastUpdate": "2025-12-07T20:10:00+00:00",
     "totalDocumentationFiles": 27,
     "totalPlans": 8,
+    "totalCompletedPlans": 4,
     "copilotOptimized": true,
     "structure": "Opción B - docs/ categorizado, plans/ raíz con subdirectorio completed/"
   },
