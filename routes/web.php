@@ -31,6 +31,7 @@ Route::prefix('admin/llm')
         // Configurations (Legacy routes - only keeping necessary ones)
         Route::get('configurations', [LLMConfigurationController::class, 'index'])->name('configurations.index');
         Route::post('configurations/test', [LLMConfigurationController::class, 'testConnection'])->name('configurations.test');
+        Route::post('configurations/load-models', [LLMConfigurationController::class, 'loadModels'])->name('configurations.load-models');
         Route::post('configurations/{configuration}/toggle', [LLMConfigurationController::class, 'toggleActive'])->name('configurations.toggle');
         Route::delete('configurations/{configuration}', [LLMConfigurationController::class, 'destroy'])->name('configurations.destroy');
         

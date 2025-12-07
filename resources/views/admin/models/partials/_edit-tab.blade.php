@@ -69,10 +69,14 @@
                         
                         <div class="form-text" id="model-hint">
                             @if($providerConfig['supports_dynamic_models'] ?? false)
-                                Click to load available models
-                                <button type="button" class="btn btn-sm btn-light-primary ms-2" onclick="loadDynamicModels()">
+                                <button type="button" class="btn btn-sm btn-light-primary" onclick="loadDynamicModels()">
+                                    <i class="ki-duotone ki-arrow-down fs-2">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
                                     Load Models
                                 </button>
+                                <span class="text-muted ms-2">Click to load available models from provider</span>
                             @else
                                 Enter the model identifier
                             @endif
@@ -319,52 +323,65 @@
         }
     }
     
-    // Load dynamic models
+    // Load dynamic models from provider via backend proxy
     function loadDynamicModels() {
         const provider = document.getElementById('provider-select').value;
         const providers = @json($providers);
         const providerConfig = providers[provider] || {};
         
         if (!providerConfig.supports_dynamic_models) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Not Supported',
+                text: 'This provider does not support dynamic model loading',
+                timer: 2000
+            });
             return;
         }
         
         const inputField = document.getElementById('model-input');
         const selectField = document.getElementById('model-select');
         const hintDiv = document.getElementById('model-hint');
+        const loadBtn = hintDiv.querySelector('button');
         
-        // Guardar el modelo actual para pre-seleccionarlo después
+        // Save current model to pre-select after loading
         const currentModel = inputField.value || selectField.value || '{{ $model->model }}';
         
-        hintDiv.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading models...';
+        // Show loading state
+        if (loadBtn) {
+            loadBtn.disabled = true;
+            loadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+        }
         
-        // Build endpoint
-        let endpoint = providerConfig.endpoint || '';
-        const modelsPath = providerConfig.endpoints?.models || '/models';
-        const fullUrl = endpoint + modelsPath;
+        // Get endpoint and API key
+        const endpoint = document.querySelector('input[name="api_endpoint"]')?.value || providerConfig.endpoint || '';
+        const apiKey = document.querySelector('input[name="api_key"]')?.value || '';
         
-        // Get API key if required
-        const apiKey = document.querySelector('input[name="api_key"]').value;
-        
-        fetch(fullUrl, {
-            headers: apiKey ? {
-                'Authorization': `Bearer ${apiKey}`,
+        // Call backend proxy
+        fetch('{{ route("admin.llm.configurations.load-models") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
                 'Accept': 'application/json'
-            } : {
-                'Accept': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                provider: provider,
+                api_endpoint: endpoint,
+                api_key: apiKey,
+                use_cache: true
+            })
         })
         .then(response => response.json())
-        .then(data => {
-            let models = [];
+        .then(result => {
+            if (!result.success) {
+                throw new Error(result.message || 'Failed to load models');
+            }
             
-            // Handle different response formats
-            if (Array.isArray(data)) {
-                models = data;
-            } else if (data.data && Array.isArray(data.data)) {
-                models = data.data;
-            } else if (data.models && Array.isArray(data.models)) {
-                models = data.models;
+            const models = result.models || [];
+            
+            if (models.length === 0) {
+                throw new Error('No models returned from provider');
             }
             
             // Convert to select
@@ -377,7 +394,7 @@
                 option.value = modelId;
                 option.textContent = modelId;
                 
-                // Pre-seleccionar el modelo actual si existe en la lista
+                // Pre-select current model if exists
                 if (modelId === currentModel) {
                     option.selected = true;
                     modelFound = true;
@@ -392,17 +409,48 @@
             selectField.required = true;
             inputField.required = false;
             
-            if (modelFound) {
-                hintDiv.innerHTML = `${models.length} models loaded <span class="badge badge-success ms-2">Current model found</span>`;
-            } else if (currentModel) {
-                hintDiv.innerHTML = `${models.length} models loaded <span class="badge badge-warning ms-2">Current model "${currentModel}" not found in list</span>`;
-            } else {
-                hintDiv.textContent = `${models.length} models loaded`;
+            // Update hint with success message
+            let successMsg = `${models.length} models loaded`;
+            if (result.cached) {
+                successMsg += ' <span class="badge badge-light-info ms-2">Cached</span>';
             }
+            if (modelFound) {
+                successMsg += ' <span class="badge badge-success ms-2">Current model found</span>';
+            } else if (currentModel) {
+                successMsg += ` <span class="badge badge-warning ms-2">Current model "${currentModel}" not in list</span>`;
+            }
+            
+            hintDiv.innerHTML = successMsg + ' <button type="button" class="btn btn-sm btn-light-primary ms-3" onclick="loadDynamicModels()"><i class="ki-duotone ki-arrows-circle fs-2"><span class="path1"></span><span class="path2"></span></i> Reload</button>';
+            
+            // Show success toast
+            Swal.fire({
+                icon: 'success',
+                title: 'Models Loaded!',
+                text: `${models.length} models available`,
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
         })
         .catch(error => {
             console.error('Error loading models:', error);
-            hintDiv.innerHTML = '<span class="text-danger">Failed to load models. Check API key and endpoint.</span>';
+            
+            // Reset button
+            if (loadBtn) {
+                loadBtn.disabled = false;
+                loadBtn.innerHTML = '<i class="ki-duotone ki-arrow-down fs-2"><span class="path1"></span><span class="path2"></span></i> Load Models';
+            }
+            
+            // Show error
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to Load Models',
+                text: error.message || 'Check API key and endpoint configuration',
+                timer: 3000
+            });
+            
+            hintDiv.innerHTML = '<span class="text-danger">' + (error.message || 'Failed to load models') + '</span> <button type="button" class="btn btn-sm btn-light-primary ms-3" onclick="loadDynamicModels()"><i class="ki-duotone ki-arrows-circle fs-2"><span class="path1"></span><span class="path2"></span></i> Retry</button>';
         });
     }
 </script>
