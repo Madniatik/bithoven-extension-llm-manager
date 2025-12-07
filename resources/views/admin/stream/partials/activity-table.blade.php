@@ -245,5 +245,15 @@ document.addEventListener('DOMContentLoaded', function() {
         ActivityHistory.load();
     @endif
 });
+
+// Auto-refresh activity history when streaming completes
+document.addEventListener('llm-streaming-completed', function(event) {
+    console.log('🔄 Streaming completed, refreshing Activity History...', event.detail);
+    @if(isset($sessionId) && $sessionId)
+        ActivityHistory.load({{ $sessionId }});
+    @else
+        ActivityHistory.load();
+    @endif
+});
 </script>
 @endpush
