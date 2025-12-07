@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v1.0.7
 
-### 🎉 Activity Log Migration Complete (7 diciembre 2025)
+### 🎉 Activity Log Migration Complete (7 diciembre 2025, 21:45)
 
-**Database-driven Activity History implemented successfully!**
+**Database-driven Activity History implemented successfully!** ✅
+
+**Total:** 9 commits (230ba0a → b8ef595), 6 hours, 3 bugs fixed
 
 **What Changed:**
 - ✅ Test Monitor now loads Activity History from database (replaces localStorage)
@@ -50,15 +52,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ No localStorage limitations (5MB cap, browser-specific)
 - ✅ Clean, maintainable code
 
+#### Phase 4 - Quick Chat Integration (commits 1458cce, d81afea, 28087be, e2d963a)
+- **Replaced** Hardcoded Activity table in split-horizontal-layout.blade.php with @include partial
+- **Added** sessionId filtering for Quick Chat (shows only current conversation logs)
+- **Fixed** sessionId filter not working - pass sessionId to ActivityHistory.load()
+- **Fixed** Auto-refresh not working - add llm-streaming-completed event listener
+- **Fixed** Event listener not capturing - change document to window.addEventListener
+- **Verified** Test Monitor shows all logs (no sessionId filter)
+- **Verified** Quick Chat shows only session logs (sessionId filter working)
+
 **Testing:** Manual testing 100% successful (5/5 criteria passed)
 
-**Related:** `plans/ACTIVITY-LOG-MIGRATION-PLAN.md`
+**Related:** `plans/completed/ACTIVITY-LOG-MIGRATION-PLAN.md`
 
 **Commits:**
 - `17c2c82` - Punto de restauración
 - `230ba0a` - Blocker #1 fix
 - `d3a9108` - Blocker #3 + Phases 1-3
 - `3dd6bf4` - Hotfix 500 error
+- `716a3ea` - Test Monitor integration (localStorage deprecated)
+- `1458cce` - Quick Chat integration (replace hardcoded table)
+- `d81afea` - Fix sessionId filter
+- `28087be` - Fix auto-refresh
+- `e2d963a` - Fix event listener (window vs document)
 
 ---
 

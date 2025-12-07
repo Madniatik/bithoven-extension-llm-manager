@@ -1,13 +1,15 @@
-# 🚀 LLM Manager Extension v1.0.6 YEP
+# 🚀 LLM Manager Extension v1.0.7-dev
 
 **Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.6-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Version](https://img.shields.io/badge/version-1.0.7--dev-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
 [![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, and comprehensive admin UI.
+Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, database-driven activity logs, and comprehensive admin UI.
+
+**✨ NEW in v1.0.7:** Database-driven Activity History with cross-device persistence, auto-refresh, and unlimited history (completed 7 Dec 2025)
 
 ---
 
@@ -31,7 +33,7 @@ Enterprise-grade LLM management platform for Laravel applications with real-time
 - ✅ **Conversations** - Persistent multi-turn sessions with context management
 - ✅ **RAG System** - Document chunking + embeddings + semantic search
 - ✅ **Multi-Agent Workflows** - State machine orchestration (planned v1.2.0)
-- ✅ **Activity Monitoring** - Real-time execution logs with export (CSV/JSON)
+- ✅ **Activity Monitoring** - Database-driven execution logs with auto-refresh, cross-device persistence, and unlimited history (NEW v1.0.7)
 
 ### 🛠️ Hybrid Tools System (Planned v1.2.0)
 - ⏳ **Function Calling** - Native OpenAI/Anthropic/Gemini support
@@ -61,11 +63,12 @@ Complete documentation available in the `docs/` directory:
 - **[Chat Workspace Component](docs/components/CHAT-WORKSPACE.md)** - Complete usage guide for ChatWorkspace v2.2 (Multi-Instance Support)
 
 ### 📊 Project Status
-- **[Changelog](CHANGELOG.md)** - Complete version history (v1.0.0 - v2.2.0)
+- **[Changelog](CHANGELOG.md)** - Complete version history with Activity Log Migration details (v1.0.0 - v1.0.7)
+- **[Project Status](PROJECT-STATUS.md)** - Current development progress (82% v1.0.7 complete)
 - **[Testing Status](#-testing-status)** - Manual testing coverage (33/33 features - 100%)
 - **[Roadmap](#-roadmap)** - Future features and releases
 
-### 🎨 Component Features (v2.2.0)
+### 🎨 Component Features (v2.2.0 + v1.0.7)
 - **ChatWorkspace v2.2** - Multi-Instance Support + 63% code reduction (740 → 270 lines)
   - ✅ Multi-instance architecture: Múltiples chats en la misma página
   - ✅ Alpine.js scopes únicos: `chatWorkspace_{{sessionId}}`, `splitResizer_{{sessionId}}`
@@ -77,15 +80,25 @@ Complete documentation available in the `docs/` directory:
   - 10 reusable partials created
   - [Full documentation](docs/components/CHAT-WORKSPACE.md)
 
+- **Activity Log System v1.0.7** - Database-driven Activity History (NEW)
+  - ✅ Cross-device persistence: Access history from any device
+  - ✅ Unlimited history: No localStorage 5MB cap limitation
+  - ✅ Auto-refresh: Real-time updates after streaming completion
+  - ✅ Server-side filtering: Filter by sessionId in Quick Chat
+  - ✅ Shared partial: activity-table.blade.php with AJAX loading
+  - 9 commits total (230ba0a → b8ef595)
+  - [Migration plan](plans/completed/ACTIVITY-LOG-MIGRATION-PLAN.md)
+
 ---
 
 ## 🎯 What Makes This Special
 
 1. **🚀 Real-Time Streaming** - Only Laravel LLM manager with SSE-based streaming and live metrics
-2. **📊 Production-Ready** - Complete testing (33/33 features), permissions v2.0, activity monitoring
+2. **📊 Production-Ready** - Complete testing (33/33 features), permissions v2.0, database-driven activity logs
 3. **🎨 Laravel-Native** - Built for Laravel 11+ with Blade components, Eloquent, and Artisan commands
 4. **🔒 Enterprise Security** - Granular RBAC (12 permissions across 4 roles), encrypted API keys
 5. **📦 Zero-Config Installation** - One command setup via BITHOVEN Extension Manager
+6. **🔄 Cross-Device Persistence** - Database-driven Activity History accessible from any device (NEW v1.0.7)
 
 ---
 
@@ -370,10 +383,10 @@ php artisan permission:cache-reset                    # Clear permission cache
 
 ### Manual Testing Coverage: 100% ✅
 
-**Version:** v2.2.0  
-**Completed:** 3 de diciembre de 2025  
+**Version:** v1.0.7-dev  
+**Completed:** 7 de diciembre de 2025  
 **Features Tested:** 33/33 (100%)  
-**Bugs Fixed:** 15
+**Bugs Fixed:** 18 (including 3 Activity Log bugs)
 
 | Module | Features | Status | Documentation |
 |--------|----------|--------|---------------|
@@ -382,7 +395,8 @@ php artisan permission:cache-reset                    # Clear permission cache
 | **Tool Definitions** | 7/7 | ✅ Complete | Registry, schemas, handlers |
 | **Conversations** | 4/4 | ✅ Complete | Sessions, messages, export |
 | **Statistics** | 6/6 | ✅ Complete | Charts, filters, export |
-| **Streaming (v1.1.0)** | ✅ | ✅ Complete | SSE, metrics, activity logs |
+| **Streaming (v1.0.4)** | ✅ | ✅ Complete | SSE, metrics, activity logs |
+| **Activity Logs (v1.0.7)** | ✅ | ✅ Complete | Database-driven, auto-refresh, filtering |
 
 ### Test Reports
 - **Testing Guide:** `CPANEL/reports/llm-manager-testing-guide.md`
@@ -675,8 +689,9 @@ See [LICENSE](LICENSE) file for full details.
 
 ---
 
-**Version:** 2.2.0  
-**Last Updated:** 3 de diciembre de 2025  
-**Status:** ✅ Production Ready - Multi-Instance Support
+**Version:** v1.0.7-dev (82% complete)  
+**Last Updated:** 7 de diciembre de 2025, 21:45  
+**Status:** ✅ Production Ready - Multi-Instance Support + Database-driven Activity Logs  
+**Latest Feature:** Activity Log DB Migration (7 dic 2025) - cross-device persistence complete
 
 **GitHub:** https://github.com/Madniatik/bithoven-extension-llm-manager

@@ -352,6 +352,7 @@ curl http://localhost:8000/vendor/bithoven/llm-manager/js/monitor/core/MonitorSt
 
 ---
 
-**Version:** v1.0.7  
-**Last Updated:** 4 de diciembre de 2025, 16:04  
-**Critical Note:** Always publish assets after composer update!
+**Version:** v1.0.7-dev (82% complete)  
+**Last Updated:** 7 de diciembre de 2025, 21:45  
+**Critical Note:** Always publish assets after composer update!  
+**Latest Feature:** Activity Log DB Migration (7 dic 2025) - database-driven history complete
