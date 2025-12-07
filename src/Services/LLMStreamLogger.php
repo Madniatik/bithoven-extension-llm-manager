@@ -14,12 +14,21 @@ class LLMStreamLogger
      * @param LLMConfiguration $configuration
      * @param string $prompt
      * @param array $parameters
+     * @param int|null $sessionId DB session_id for conversation tracking (optional)
+     * @param int|null $messageId DB message_id for message tracking (optional)
      * @return array Session data with session_id and start_time
      */
-    public function startSession(LLMConfiguration $configuration, string $prompt, array $parameters): array
-    {
+    public function startSession(
+        LLMConfiguration $configuration,
+        string $prompt,
+        array $parameters,
+        ?int $sessionId = null,
+        ?int $messageId = null
+    ): array {
         return [
-            'session_id' => Str::uuid()->toString(),
+            'session_id' => Str::uuid()->toString(), // Temporary UUID for logger tracking
+            'db_session_id' => $sessionId, // Real DB session_id
+            'db_message_id' => $messageId, // Real DB message_id
             'start_time' => microtime(true),
             'configuration' => $configuration,
             'prompt' => $prompt,
@@ -51,6 +60,8 @@ class LLMStreamLogger
         return LLMUsageLog::create([
             'llm_configuration_id' => $session['configuration']->id,
             'user_id' => auth()->id(),
+            'session_id' => $session['db_session_id'] ?? null, // Real DB session_id (if provided)
+            'message_id' => $session['db_message_id'] ?? null, // Real DB message_id (if provided)
             'extension_slug' => 'llm-manager', // Can be overridden
             'prompt' => $session['prompt'],
             'response' => $response,
@@ -115,6 +126,8 @@ class LLMStreamLogger
         return LLMUsageLog::create([
             'llm_configuration_id' => $session['configuration']->id,
             'user_id' => auth()->id(),
+            'session_id' => $session['db_session_id'] ?? null, // Real DB session_id (if provided)
+            'message_id' => $session['db_message_id'] ?? null, // Real DB message_id (if provided)
             'extension_slug' => 'llm-manager',
             'prompt' => $session['prompt'],
             'response' => '',

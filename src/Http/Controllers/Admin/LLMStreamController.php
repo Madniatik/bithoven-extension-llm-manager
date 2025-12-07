@@ -187,7 +187,9 @@ class LLMStreamController extends Controller
             $logSession = $this->streamLogger->startSession(
                 $configuration,
                 $validated['message'],
-                $params
+                $params,
+                $session->id, // DB session_id
+                null // No message_id yet (message created after stream completes)
             );
 
             $provider = $this->llmManager

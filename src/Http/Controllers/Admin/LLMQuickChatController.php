@@ -123,7 +123,14 @@ class LLMQuickChatController extends Controller
                     'max_tokens' => $validated['max_tokens'] ?? $configuration->default_parameters['max_tokens'] ?? 8000,
                 ];
 
-                $logSession = $this->streamLogger->startSession($configuration, $validated['prompt'], $params);
+                // Pass real DB session_id and message_id for usage tracking
+                $logSession = $this->streamLogger->startSession(
+                    $configuration,
+                    $validated['prompt'],
+                    $params,
+                    $session->id, // DB session_id
+                    $userMessage->id // DB message_id (user message)
+                );
                 
                 $provider = $this->llmManager->config($configuration->id)->getProvider();
                 
