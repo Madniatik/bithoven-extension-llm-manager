@@ -34,13 +34,13 @@ plans/
 ## 📋 Planes Actuales
 
 ### new/
-- **ACTIVITY-LOG-MIGRATION-PLAN.md** - Migrar Activity Log a database (🔴 Bloqueado por issues críticos)
 - **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
 
 ### in-progress/
 - *(vacío - ningún plan en ejecución activa)*
 
 ### completed/
+- **ACTIVITY-LOG-MIGRATION-PLAN.md** - Database-driven Activity History (✅ Completado 7 dic 2025, 21:45)
 - **CHAT-MONITOR-ENHANCEMENT-PLAN.md** - Upgrade Monitor UI (✅ 8/8 fases completadas)
 - **MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md** - Hybrid Adapter + Configurable UI (✅ Completado)
 
@@ -123,4 +123,4 @@ Puede permanecer en `new/` o `in-progress/` hasta resolver blocker.
 
 ---
 
-**Last Updated:** 7 de diciembre de 2025, 03:36
+**Last Updated:** 7 de diciembre de 2025, 21:45
