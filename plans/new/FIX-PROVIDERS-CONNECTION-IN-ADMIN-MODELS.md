@@ -1,10 +1,12 @@
 # Plan: Fix Providers Connection in Admin Models
 
-**Status:** NEW  
+**Status:** IN PROGRESS  
 **Priority:** HIGH  
-**Estimated Time:** 2-3 hours  
+**Estimated Time:** 2 horas 15 min  
 **Created:** 2025-12-07  
-**Assignee:** Claude (AI Agent)
+**Updated:** 2025-12-08  
+**Assignee:** Claude (AI Agent)  
+**Architecture:** Service Layer (Opción A - Aprobada)
 
 ---
 
@@ -34,22 +36,61 @@ En la sección de administración de modelos LLM (`/admin/llm/models/{model}`), 
 
 ## 🎯 Objetivos
 
-1. **Mostrar correctamente el botón "Load Models"** en el estado inicial del formulario
-2. **Implementar carga dinámica de modelos** vía backend (proxy) en lugar de frontend directo
-3. **Reutilizar arquitectura de test de conexión** existente en `LLMConfigurationController::testConnection()`
-4. **Añadir endpoint dedicado** para cargar modelos de proveedores
-5. **Mejorar UX** con estados de carga, errores y modelos pre-seleccionados
+1. **Crear Service Layer reutilizable** (`LLMProviderService`) para operaciones de proveedores
+2. **Refactorizar `testConnection()`** para usar nuevo Service
+3. **Implementar `loadModels()`** con cache y parsing flexible
+4. **Mostrar correctamente el botón "Load Models"** en el estado inicial del formulario
+5. **Implementar carga dinámica de modelos** vía backend (proxy) en lugar de frontend directo
+6. **Mejorar UX** con estados de carga, errores y modelos pre-seleccionados
 
 ---
 
-## 📐 Arquitectura Propuesta
+## 📐 Arquitectura Aprobada: Service Layer (Opción A)
 
-### 1. Backend: Nuevo Endpoint `loadModels()`
+**Referencia:** Ver análisis completo en `reports/analysis/PROVIDER-CONNECTION-ARCHITECTURE-ANALYSIS.md`
 
-**Ubicación:** `LLMConfigurationController.php`
+### Ventajas del Service Layer:
+
+- ✅ **Reutilizable** por cualquier controller/componente (Chat, Admin, API)
+- ✅ **Testeable** sin mocks complejos
+- ✅ **Cacheable** (TTL configurable, evita requests repetidos)
+- ✅ **Extensible** (fácil añadir nuevos métodos)
+- ✅ **Separación de responsabilidades** (SRP)
+- ✅ **Bajo impacto** (1 archivo nuevo, 2 modificaciones)
+
+### Comparación vs Plan Original:
+
+| Aspecto | Service Layer | Plan Original (Controller) |
+|---------|--------------|---------------------------|
+| **Archivos afectados** | 3 (1 nuevo) | 2 |
+| **Reutilizable** | ✅✅ Muy alta | ⚠️ Media |
+| **Cacheable** | ✅ Built-in | ⚠️ Manual |
+| **Testeable** | ✅ Fácil | ✅ Fácil |
+| **Tiempo** | 2h 15min | 2h |
+
+---
+
+## 🏗️ Componentes a Implementar
+
+### 1. Service Layer: `LLMProviderService`
+
+**Crear:** `src/Services/LLMProviderService.php`
+
+**Responsabilidades:**
+- ✅ `testConnection($provider, $endpoint, $apiKey)` - Prueba conexión con proveedor
+- ✅ `loadModels($provider, $endpoint, $apiKey, $useCache)` - Carga lista de modelos
+- ✅ `parseModelsResponse($data, $provider)` - Parsing flexible de respuestas
+- ✅ `clearModelsCache($provider)` - Gestión de cache
+- ✅ `makeRequest($url, $method, $headers, $body)` - HTTP requests vía cURL
+
+**Métodos públicos:**
 
 ```php
-public function loadModels(Request $request)
+namespace Bithoven\LLMManager\Services;
+
+use Illuminate\Support\Facades\Cache;
+
+class LLMProviderService
 {
     $validated = $request->validate([
         'provider' => 'required|string',
