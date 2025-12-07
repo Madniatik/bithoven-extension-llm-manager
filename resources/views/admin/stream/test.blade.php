@@ -772,7 +772,7 @@
                         <td><span class="badge badge-light-primary">${activity.provider}</span></td>
                         <td><span class="text-gray-800 fs-7">${activity.model}</span></td>
                         <td class="text-end fw-bold">${activity.tokens.toLocaleString()}</td>
-                        <td class="text-end fw-bold ${activity.cost > 0 ? 'text-warning' : 'text-success'}">$${activity.cost.toFixed(6)}</td>
+                        <td class="text-end fw-bold ${activity.cost > 0 ? 'text-warning' : 'text-success'}">$${parseFloat(activity.cost || 0).toFixed(6)}</td>
                         <td class="text-end">${activity.duration}s</td>
                         <td>${statusBadge}</td>
                         <td class="text-center">

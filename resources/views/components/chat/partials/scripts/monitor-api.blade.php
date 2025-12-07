@@ -210,7 +210,8 @@ window.initLLMMonitor = () => {};
                 this.ui.log(`📦 Total tokens: ${this.currentMetrics.tokens}`, 'debug');
             }
             
-            this.ui.log(`💰 Cost: $${this.currentMetrics.cost.toFixed(6)}`, 'debug');
+            const costValue = parseFloat(this.currentMetrics.cost) || 0;
+            this.ui.log(`💰 Cost: $${costValue.toFixed(6)}`, 'debug');
             
             if (executionTimeMs) {
                 this.ui.log(`⚡ Execution time: ${executionTimeMs}ms`, 'debug');

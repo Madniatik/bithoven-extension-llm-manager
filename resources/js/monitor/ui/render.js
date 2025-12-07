@@ -94,7 +94,8 @@ export default class MonitorUI {
         // Desktop/sidebar view
         const costEl = this.getElement('monitor-cost');
         if (costEl) {
-            costEl.textContent = '$' + cost.toFixed(4);
+            const costValue = parseFloat(cost) || 0;
+            costEl.textContent = '$' + costValue.toFixed(4);
         }
     }
 
@@ -130,15 +131,17 @@ export default class MonitorUI {
             return;
         }
         
-        tbody.innerHTML = history.map(activity => `
+        tbody.innerHTML = history.map(activity => {
+            const costValue = parseFloat(activity.cost) || 0;
+            return `
             <tr>
                 <td class="ps-4">${new Date(activity.timestamp).toLocaleTimeString()}</td>
                 <td><span class="badge badge-light-primary">${activity.provider}</span></td>
                 <td>${activity.tokens.toLocaleString()}</td>
-                <td>$${activity.cost.toFixed(4)}</td>
+                <td>$${costValue.toFixed(4)}</td>
                 <td>${activity.duration}s</td>
             </tr>
-        `).join('');
+        `}).join('');
     }
 
     /**
