@@ -197,55 +197,9 @@
     </div>
     <!--end::Connection Monitor Card-->
 
-    <!--begin::Activity Card-->
-    <div class="card mt-10">
-        <!--begin::Card header-->
-        <div class="card-header">
-            <h3 class="card-title">Recent Activity</h3>
-            <div class="card-toolbar">
-                <button type="button" class="btn btn-sm btn-light-primary me-2" id="refreshActivityBtn">
-                    <i class="ki-outline ki-arrows-circle fs-4"></i>
-                    Refresh
-                </button>
-                <button type="button" class="btn btn-sm btn-light-danger" id="clearActivityBtn">
-                    <i class="ki-outline ki-trash fs-4"></i>
-                    Clear History
-                </button>
-            </div>
-        </div>
-        <!--end::Card header-->
-
-        <!--begin::Card body-->
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4" id="activityTable">
-                    <thead>
-                        <tr class="fw-bold text-muted">
-                            <th class="w-25px">#</th>
-                            <th class="min-w-150px">Time</th>
-                            <th class="min-w-120px">Provider</th>
-                            <th class="min-w-100px">Model</th>
-                            <th class="min-w-80px text-end">Tokens</th>
-                            <th class="min-w-80px text-end">Cost</th>
-                            <th class="min-w-80px text-end">Duration</th>
-                            <th class="min-w-100px">Status</th>
-                            <th class="min-w-100px text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="activityTableBody">
-                        <tr>
-                            <td colspan="9" class="text-center text-muted py-10">
-                                <i class="ki-outline ki-information-5 fs-3x mb-3"></i>
-                                <p class="mb-0">No activity yet. Start a streaming test above.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!--end::Card body-->
-    </div>
-    <!--end::Activity Card-->
+    <!--begin::Activity History (Database-driven)-->
+    @include('llm-manager::admin.stream.partials.activity-table')
+    <!--end::Activity History-->
 
     @push('scripts')
     <style>
@@ -271,9 +225,10 @@
         const costEl = document.getElementById('cost');
         const logIdEl = document.getElementById('logId');
         const viewLogBtn = document.getElementById('viewLogBtn');
-        const activityTableBody = document.getElementById('activityTableBody');
-        const refreshActivityBtn = document.getElementById('refreshActivityBtn');
-        const clearActivityBtn = document.getElementById('clearActivityBtn');
+        // DEPRECATED: const activityTableBody = document.getElementById('activityTableBody');
+        // DEPRECATED: localStorage-based activity buttons (replaced by activity-table.blade.php)
+        // const refreshActivityBtn = document.getElementById('refreshActivityBtn');
+        // const clearActivityBtn = document.getElementById('clearActivityBtn');
         const clearMonitorBtn = document.getElementById('clearMonitorBtn');
         const monitorLogs = document.getElementById('monitorLogs');
         const monitorConsole = document.getElementById('monitorConsole');
@@ -286,10 +241,11 @@
         let chunkCount = 0;
         let currentLogId = null;
         let finalMetrics = null;
-        let activityHistory = JSON.parse(localStorage.getItem('llm_activity_history') || '[]');
+        // DEPRECATED: localStorage-based activity history (replaced by database-driven)
+        // let activityHistory = JSON.parse(localStorage.getItem('llm_activity_history') || '[]');
 
-        // Load activity history on page load
-        renderActivityTable();
+        // DEPRECATED: Load activity history on page load (now loaded by activity-table.blade.php)
+        // renderActivityTable();
 
         // Start streaming
         form.addEventListener('submit', function(e) {
@@ -442,19 +398,10 @@
                     // Streaming complete
                     stopStreaming(false); // false = don't reset metrics
                     
-                    // Add to activity history
-                    addToActivityHistory({
-                        timestamp: new Date().toISOString(),
-                        provider: provider,
-                        model: model,
-                        tokens: tokenCount,
-                        cost: parseFloat(data.cost || 0),
-                        duration: (data.execution_time_ms / 1000).toFixed(2),
-                        status: 'completed',
-                        log_id: data.log_id,
-                        prompt: prompt.substring(0, 100),
-                        response: responseDiv.textContent.substring(0, 100)
-                    });
+                    // Refresh activity history from database
+                    if (typeof ActivityHistory !== 'undefined') {
+                        ActivityHistory.refresh();
+                    }
                     
                     Swal.fire({
                         icon: 'success',
@@ -489,19 +436,10 @@
                     // Handle error
                     stopStreaming(true);
                     
-                    // Add error to activity history
-                    addToActivityHistory({
-                        timestamp: new Date().toISOString(),
-                        provider: provider,
-                        model: model,
-                        tokens: 0,
-                        cost: 0,
-                        duration: 0,
-                        status: 'error',
-                        log_id: null,
-                        prompt: prompt.substring(0, 100),
-                        response: data.message
-                    });
+                    // Refresh activity history from database
+                    if (typeof ActivityHistory !== 'undefined') {
+                        ActivityHistory.refresh();
+                    }
                     
                     Swal.fire({
                         icon: 'error',
@@ -594,13 +532,16 @@
             }
         });
 
-        // Refresh activity table
+        // DEPRECATED: Refresh activity table (now handled by ActivityHistory.refresh())
+        /*
         refreshActivityBtn.addEventListener('click', function() {
             renderActivityTable();
             toastr.success('Activity table refreshed');
         });
+        */
 
-        // Clear activity history
+        // DEPRECATED: Clear activity history (localStorage-based)
+        /*
         clearActivityBtn.addEventListener('click', function() {
             Swal.fire({
                 title: 'Clear Activity History?',
@@ -618,6 +559,7 @@
                 }
             });
         });
+        */
 
         // Clear Monitor
         clearMonitorBtn.addEventListener('click', function() {
@@ -719,7 +661,8 @@
             }
         }
 
-        // Add to activity history
+        // DEPRECATED: Add to activity history (replaced by database-driven ActivityHistory.refresh())
+        /*
         function addToActivityHistory(activity) {
             // Add to beginning of array (most recent first)
             activityHistory.unshift(activity);
@@ -735,8 +678,10 @@
             // Update table
             renderActivityTable();
         }
+        */
 
-        // Render activity table
+        // DEPRECATED: Render activity table (replaced by activity-table.blade.php partial)
+        /*
         function renderActivityTable() {
             if (activityHistory.length === 0) {
                 activityTableBody.innerHTML = `
@@ -825,6 +770,7 @@
                 });
             });
         }
+        */
     });
     </script>
     @endpush

@@ -28,6 +28,53 @@ class LLMStreamController extends Controller
     }
 
     /**
+     * Get activity history from database (replaces localStorage)
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getActivityHistory(Request $request)
+    {
+        $validated = $request->validate([
+            'session_id' => 'nullable|integer|exists:llm_manager_conversation_sessions,id',
+            'limit' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $query = \Bithoven\LLMManager\Models\LLMUsageLog::with('llmConfiguration')
+            ->where('user_id', auth()->id());
+
+        // Filter by session_id if provided
+        if (isset($validated['session_id'])) {
+            $query->where('session_id', $validated['session_id']);
+        }
+
+        $logs = $query->orderBy('executed_at', 'desc')
+            ->limit($validated['limit'] ?? 10)
+            ->get();
+
+        $activityHistory = $logs->map(function ($log) {
+            return [
+                'timestamp' => $log->executed_at?->toIso8601String() ?? null,
+                'provider' => $log->llmConfiguration?->provider ?? 'unknown',
+                'model' => $log->llmConfiguration?->model ?? 'unknown',
+                'tokens' => $log->total_tokens,
+                'cost' => round($log->cost_usd, 6),
+                'duration' => round($log->execution_time_ms / 1000, 2), // ms to seconds
+                'status' => $log->status,
+                'log_id' => $log->id,
+                'prompt' => substr($log->prompt, 0, 100), // Truncate to 100 chars
+                'response' => substr($log->response, 0, 100), // Truncate to 100 chars
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $activityHistory,
+            'count' => $activityHistory->count(),
+        ]);
+    }
+
+    /**
      * Stream LLM response using Server-Sent Events (SSE)
      */
     public function stream(Request $request)

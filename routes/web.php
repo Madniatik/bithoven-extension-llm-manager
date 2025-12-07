@@ -77,6 +77,7 @@ Route::prefix('admin/llm')
         Route::get('stream/test', [LLMStreamController::class, 'test'])->name('stream.test');
         Route::get('stream/stream', [LLMStreamController::class, 'stream'])->name('stream.stream');
         Route::get('stream/conversation', [LLMStreamController::class, 'conversationStream'])->name('stream.conversation');
+        Route::get('stream/activity-history', [LLMStreamController::class, 'getActivityHistory'])->name('stream.activity-history');
         
         // Activity Logs
         Route::get('activity', [LLMActivityController::class, 'index'])->name('activity.index');
