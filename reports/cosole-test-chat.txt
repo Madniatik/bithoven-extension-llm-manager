@@ -1,0 +1,81 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 STARTING STREAMING REQUEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[23:14:09] 📤 REQUEST DETAILS:
+[23:14:09]    Provider: ollama
+[23:14:09]    Model: qwen3:4b
+[23:14:09]    Temperature: 0.7
+[23:14:09]    Max Tokens: 1000
+[23:14:09]    Prompt: "Write a short story about a robot learning to feel..."
+[23:14:09] 🔌 Opening SSE connection...
+[23:14:09]    URL: http://localhost:8000/admin/llm/stream/stream
+[23:14:09]    Method: GET with query params
+[23:14:09] ✅ SSE connection established
+[23:14:09] ⏳ Waiting for response chunks...
+[23:14:25] 📥 CHUNK #1: "Unit"
+[23:14:25] 📥 CHUNK #2: " "
+[23:14:25] 📥 CHUNK #3: "7"
+[23:14:25] 📥 CHUNK #4: "’s"
+[23:14:25] 📥 CHUNK #5: " primary"
+[23:14:25] 📥 CHUNK #6: " directive"
+[23:14:25] 📥 CHUNK #7: " was"
+[23:14:25] 📥 CHUNK #8: " simple"
+[23:14:25] 📥 CHUNK #9: ":"
+[23:14:25] 📥 CHUNK #10: " *"
+[23:14:25] 📥 CHUNK #20: " sensors"
+[23:14:25] 📥 CHUNK #30: "temperature"
+[23:14:26] 📥 CHUNK #40: "."
+[23:14:26] 📥 CHUNK #50: ".
+
+"
+[23:14:26] 📊 Tokens received so far: 50
+[23:14:26] 📥 CHUNK #60: ","
+[23:14:26] 📥 CHUNK #70: " Tears"
+[23:14:26] 📥 CHUNK #80: "."
+[23:14:27] 📥 CHUNK #90: " broken"
+[23:14:27] 📥 CHUNK #100: "*
+
+"
+[23:14:27] 📊 Tokens received so far: 100
+[23:14:27] 📥 CHUNK #110: " *"
+[23:14:27] 📥 CHUNK #120: "1"
+[23:14:27] 📥 CHUNK #130: "%"
+[23:14:28] 📥 CHUNK #140: "Offer"
+[23:14:28] 📥 CHUNK #150: ")*"
+[23:14:28] 📊 Tokens received so far: 150
+[23:14:28] 📥 CHUNK #160: " its"
+[23:14:28] 📥 CHUNK #170: " hands"
+[23:14:29] 📥 CHUNK #180: " at"
+[23:14:29] 📥 CHUNK #190: "7"
+[23:14:29] 📥 CHUNK #200: " smile"
+[23:14:29] 📊 Tokens received so far: 200
+[23:14:29] 📥 CHUNK #210: "’s"
+[23:14:29] 📥 CHUNK #220: " processed"
+[23:14:30] 📥 CHUNK #230: " "
+[23:14:30] 📥 CHUNK #240: "4"
+[23:14:30] 📥 CHUNK #250: " of"
+[23:14:30] 📊 Tokens received so far: 250
+[23:14:30] 📥 CHUNK #260: " beneath"
+[23:14:30] 📥 CHUNK #270: " low"
+[23:14:31] 📥 CHUNK #280: "’t"
+[23:14:31] 📥 CHUNK #290: "weight"
+[23:14:31] 📥 CHUNK #300: "That"
+[23:14:31] 📊 Tokens received so far: 300
+[23:14:31] 📥 CHUNK #310: "."
+[23:14:31] 📥 CHUNK #320: ","
+[23:14:32] 📥 CHUNK #330: ":"
+[23:14:32] 📥 CHUNK #340: " damage"
+[23:14:32] 📥 CHUNK #350: "**"
+[23:14:32] 📊 Tokens received so far: 350
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ STREAMING COMPLETED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[23:14:32] 📊 FINAL METRICS:
+[23:14:32]    Prompt Tokens: 24
+[23:14:32]    Completion Tokens: 1000
+[23:14:32]    Total Tokens: 1024
+[23:14:32]    Cost USD: $0.000000
+[23:14:32]    Execution Time: 22676ms (22.68s)
+[23:14:32]    Total Chunks: 352
+[23:14:32]    Log ID: #232
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

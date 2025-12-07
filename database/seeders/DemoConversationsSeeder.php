@@ -3,10 +3,10 @@
 namespace Bithoven\LLMManager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Bithoven\LLMManager\Models\LLMConversationSession;
-use Bithoven\LLMManager\Models\LLMConversationMessage;
-use Bithoven\LLMManager\Models\LLMConversationLog;
 use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMConversationMessage;
+use Bithoven\LLMManager\Models\LLMConversationSession;
+use App\Models\User;
 
 class DemoConversationsSeeder extends Seeder
 {
@@ -144,13 +144,6 @@ class DemoConversationsSeeder extends Seeder
             ],
         ]);
 
-        LLMConversationLog::insert([
-            ['session_id' => $session1->id, 'event_type' => 'message_sent', 'event_data' => 'User asked: What is Laravel?', 'tokens_used' => 15, 'execution_time_ms' => 125, 'cost_usd' => 0.000050, 'created_at' => now()],
-            ['session_id' => $session1->id, 'event_type' => 'response_received', 'event_data' => 'Assistant responded about Laravel framework', 'tokens_used' => 85, 'execution_time_ms' => 1850, 'cost_usd' => 0.000450, 'created_at' => now()],
-            ['session_id' => $session1->id, 'event_type' => 'message_sent', 'event_data' => 'User asked: What are its main features?', 'tokens_used' => 20, 'execution_time_ms' => 145, 'cost_usd' => 0.000060, 'created_at' => now()],
-            ['session_id' => $session1->id, 'event_type' => 'response_received', 'event_data' => 'Assistant explained Laravel features', 'tokens_used' => 230, 'execution_time_ms' => 2100, 'cost_usd' => 0.001000, 'created_at' => now()],
-        ]);
-
         // Session 2: Machine Learning Basics
         $session2 = LLMConversationSession::create([
             'session_id' => 'demo-session-002',
@@ -214,11 +207,6 @@ class DemoConversationsSeeder extends Seeder
                 'context_messages_count' => 1,
                 'context_size' => 156,
             ],
-        ]);
-
-        LLMConversationLog::insert([
-            ['session_id' => $session2->id, 'event_type' => 'message_sent', 'event_data' => 'User asked about machine learning', 'tokens_used' => 25, 'execution_time_ms' => 180, 'cost_usd' => 0.000075, 'created_at' => now()],
-            ['session_id' => $session2->id, 'event_type' => 'response_received', 'event_data' => 'Assistant explained ML concepts', 'tokens_used' => 155, 'execution_time_ms' => 2800, 'cost_usd' => 0.000725, 'created_at' => now()],
         ]);
 
         // Session 3: Web Development Best Practices
@@ -377,15 +365,6 @@ class DemoConversationsSeeder extends Seeder
                 'context_messages_count' => 5,
                 'context_size' => 1234,
             ],
-        ]);
-
-        LLMConversationLog::insert([
-            ['session_id' => $session3->id, 'event_type' => 'message_sent', 'event_data' => 'User asked about RESTful API practices', 'tokens_used' => 30, 'execution_time_ms' => 165, 'cost_usd' => 0.000090, 'created_at' => now()],
-            ['session_id' => $session3->id, 'event_type' => 'response_received', 'event_data' => 'Assistant explained REST best practices', 'tokens_used' => 140, 'execution_time_ms' => 2200, 'cost_usd' => 0.000650, 'created_at' => now()],
-            ['session_id' => $session3->id, 'event_type' => 'message_sent', 'event_data' => 'User asked about authentication', 'tokens_used' => 25, 'execution_time_ms' => 145, 'cost_usd' => 0.000075, 'created_at' => now()],
-            ['session_id' => $session3->id, 'event_type' => 'response_received', 'event_data' => 'Assistant explained auth methods', 'tokens_used' => 120, 'execution_time_ms' => 1900, 'cost_usd' => 0.000550, 'created_at' => now()],
-            ['session_id' => $session3->id, 'event_type' => 'message_sent', 'event_data' => 'User asked about security', 'tokens_used' => 18, 'execution_time_ms' => 190, 'cost_usd' => 0.000055, 'created_at' => now()],
-            ['session_id' => $session3->id, 'event_type' => 'response_received', 'event_data' => 'Assistant explained security essentials', 'tokens_used' => 187, 'execution_time_ms' => 2450, 'cost_usd' => 0.000880, 'created_at' => now()],
         ]);
 
         $this->command->info('✅ Created 3 demo conversation sessions');

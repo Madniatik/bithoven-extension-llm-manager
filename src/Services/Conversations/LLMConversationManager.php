@@ -5,7 +5,6 @@ namespace Bithoven\LLMManager\Services\Conversations;
 use Bithoven\LLMManager\Models\LLMConfiguration;
 use Bithoven\LLMManager\Models\LLMConversationSession;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
-use Bithoven\LLMManager\Models\LLMConversationLog;
 use Bithoven\LLMManager\Services\LLMExecutor;
 use Illuminate\Support\Facades\App;
 
@@ -195,7 +194,7 @@ class LLMConversationManager
     }
 
     /**
-     * Log conversation event
+     * Log conversation event (deprecated - now using usage_logs)
      */
     protected function logEvent(
         LLMConversationSession $session,
@@ -205,14 +204,8 @@ class LLMConversationManager
         ?float $cost = null,
         ?int $executionTime = null
     ): void {
-        LLMConversationLog::create([
-            'session_id' => $session->id,
-            'event_type' => $eventType,
-            'event_data' => $eventData,
-            'tokens_used' => $tokensUsed,
-            'cost_usd' => $cost,
-            'execution_time_ms' => $executionTime,
-        ]);
+        // Event logging moved to usage_logs table
+        // This method is deprecated but kept for backward compatibility
     }
 
     /**

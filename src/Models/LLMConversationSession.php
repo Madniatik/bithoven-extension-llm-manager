@@ -77,9 +77,9 @@ class LLMConversationSession extends Model
         return $this->hasMany(LLMConversationMessage::class, 'session_id');
     }
 
-    public function logs(): HasMany
+    public function usageLogs(): HasMany
     {
-        return $this->hasMany(LLMConversationLog::class, 'session_id');
+        return $this->hasMany(LLMUsageLog::class, 'session_id');
     }
 
     public function toolExecutions(): HasMany
