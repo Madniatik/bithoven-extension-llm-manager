@@ -145,36 +145,9 @@
 
                     {{-- Activity Logs Tab --}}
                     <div x-show="activeTab === 'activity'" x-cloak style="height: 100%;">
-                        <div class="h-100 d-flex flex-column" style="background: #1e1e2d; color: #92929f; padding: 1rem;">
-                            <h6 class="text-white mb-3">
-                                <i class="ki-duotone ki-chart-pie-simple fs-3 me-2">
-                                    <span class="path1"></span>
-                                    <span class="path2"></span>
-                                    <span class="path3"></span>
-                                </i>
-                                Activity History
-                            </h6>
-                            <div class="flex-grow-1" style="overflow-y: auto;">
-                                <div class="table-responsive">
-                                    <table class="table table-row-bordered align-middle gy-4 gs-9" id="monitor-activity-table-{{ $monitorId }}">
-                                        <thead class="border-gray-200 fs-7 fw-bold" style="background: #15151e; color: #92929f;">
-                                            <tr>
-                                                <th class="ps-4">Time</th>
-                                                <th>Provider</th>
-                                                <th>Tokens</th>
-                                                <th>Cost</th>
-                                                <th>Duration</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="monitor-activity-body-{{ $monitorId }}" class="fs-7" style="color: #92929f;">
-                                            <tr>
-                                                <td colspan="5" class="text-center py-4" style="color: #565674;">No activity yet</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                        @include('llm-manager::admin.stream.partials.activity-table', [
+                            'sessionId' => $session?->id ?? null,
+                        ])
                     </div>
                 </div>
             </div>
