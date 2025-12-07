@@ -9,6 +9,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v1.0.7
 
+### 🎉 Activity Log Migration Complete (7 diciembre 2025)
+
+**Database-driven Activity History implemented successfully!**
+
+**What Changed:**
+- ✅ Test Monitor now loads Activity History from database (replaces localStorage)
+- ✅ `session_id` and `message_id` now properly saved in `llm_manager_usage_logs`
+- ✅ Auto-refresh after stream completion
+- ✅ Cross-device persistence, unlimited history
+- ✅ Server-side filtering by session_id (optional)
+
+**Implementation Details:**
+
+#### Blocker #1 - session_id/message_id NULL Fix (commit 230ba0a)
+- **Modified** `LLMStreamLogger@startSession()` - Added optional `$sessionId`, `$messageId` params
+- **Modified** `LLMStreamLogger@endSession()` - Save real DB IDs to usage_logs
+- **Modified** `LLMStreamLogger@logError()` - Save real DB IDs on errors
+- **Updated** `LLMQuickChatController@stream()` - Pass `$session->id`, `$userMessage->id`
+- **Updated** `LLMStreamController@conversationStream()` - Pass `$session->id`
+- **Preserved** `LLMStreamController@stream()` - Keeps NULL (Test Monitor, no session)
+
+#### Blocker #2 - Endpoint Architecture Decision
+- **Decision:** Keep 3 separate endpoints (Opción A)
+- **Reason:** Quick Chat has unique complex features (TTFT, error handling, metadata events)
+- **Result:** No duplicación crítica, código DRY dentro de cada endpoint
+
+#### Blocker #3 + Phases 1-3 - Database Migration (commits d3a9108, 3dd6bf4)
+- **Added** `LLMStreamController@getActivityHistory()` endpoint
+- **Added** Route `GET /admin/llm/stream/activity-history`
+- **Created** `activity-table.blade.php` partial with ActivityHistory JavaScript API
+- **Integrated** Database-driven AJAX loading in test.blade.php
+- **Deprecated** localStorage functions (addToActivityHistory, renderActivityTable)
+- **Fixed** Model import and relation name (`configuration` not `llmConfiguration`)
+
+**Benefits:**
+- ✅ Cross-device persistence
+- ✅ Unlimited history (DB storage)
+- ✅ Server-side filtering by session_id
+- ✅ No localStorage limitations (5MB cap, browser-specific)
+- ✅ Clean, maintainable code
+
+**Testing:** Manual testing 100% successful (5/5 criteria passed)
+
+**Related:** `plans/ACTIVITY-LOG-MIGRATION-PLAN.md`
+
+**Commits:**
+- `17c2c82` - Punto de restauración
+- `230ba0a` - Blocker #1 fix
+- `d3a9108` - Blocker #3 + Phases 1-3
+- `3dd6bf4` - Hotfix 500 error
+
+---
+
 ### ⚠️ CRITICAL UPDATE (6 diciembre 2025) - DB Persistence Revert
 
 **7 commits revertidos** (cc94a7d-f8fb81c) por implementación incorrecta de DB persistence para Activity Logs.
