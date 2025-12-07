@@ -91,13 +91,15 @@ window.initLLMMonitor = () => {};
             this.ui.log('Monitor ready', 'info');
         }
         
-        start() {
+        start(provider = null, model = null) {
             this.currentMetrics = {
                 tokens: 0,
                 chunks: 0,
                 cost: 0,
                 duration: 0,
-                startTime: Date.now()
+                startTime: Date.now(),
+                provider: provider,
+                model: model
             };
             
             this.ui.updateStatus('Streaming...', 'primary');
@@ -109,8 +111,26 @@ window.initLLMMonitor = () => {};
                 }
             }, 1000);
             
-            this.ui.log('Stream started', 'success');
-            this.emitEvent('llm-streaming-started', { timestamp: Date.now() });
+            // Structured logging with REQUEST DETAILS section
+            this.ui.log('━'.repeat(60), 'separator');
+            this.ui.log('🚀 STREAM STARTED', 'header');
+            this.ui.log('━'.repeat(60), 'separator');
+            
+            if (provider || model) {
+                this.ui.log('', 'info'); // Empty line
+                this.ui.log('📤 REQUEST DETAILS:', 'info');
+                if (provider) {
+                    this.ui.log(`🔌 Provider: ${provider}`, 'debug');
+                }
+                if (model) {
+                    this.ui.log(`✅ Model: ${model}`, 'debug');
+                }
+                this.ui.log('⏳ Waiting for response...', 'info');
+            } else {
+                this.ui.log('⏳ Waiting for response...', 'info');
+            }
+            
+            this.emitEvent('llm-streaming-started', { timestamp: Date.now(), provider, model });
         }
         
         trackChunk(chunk, tokens = 0) {
@@ -122,7 +142,18 @@ window.initLLMMonitor = () => {};
                 tokens: this.currentMetrics.tokens
             });
             
-            this.ui.log(`Chunk received: ${tokens} tokens`, 'info');
+            // Milestone logging (primeros 10 chunks, luego cada 10)
+            if (this.currentMetrics.chunks <= 10 || this.currentMetrics.chunks % 10 === 0) {
+                const preview = chunk.length > 30 
+                    ? chunk.substring(0, 30) + '...' 
+                    : chunk;
+                this.ui.log(`📥 CHUNK #${this.currentMetrics.chunks}: "${preview}"`, 'chunk');
+            }
+            
+            // Token milestones (cada 50 tokens)
+            if (this.currentMetrics.tokens % 50 === 0 && this.currentMetrics.tokens > 0) {
+                this.ui.log(`📊 Tokens received so far: ${this.currentMetrics.tokens}`, 'info');
+            }
             
             this.emitEvent('llm-streaming-chunk', {
                 chunk,
@@ -132,19 +163,28 @@ window.initLLMMonitor = () => {};
             });
         }
         
-        complete(provider, model) {
+        complete(provider = null, model = null, usage = null, cost = null, executionTimeMs = null) {
             clearInterval(this.durationInterval);
             
-            const costPerToken = 0.000002;
-            this.currentMetrics.cost = this.currentMetrics.tokens * costPerToken;
+            // Calculate cost if not provided
+            if (!cost && this.currentMetrics.tokens) {
+                const costPerToken = 0.000002;
+                this.currentMetrics.cost = this.currentMetrics.tokens * costPerToken;
+            } else if (cost) {
+                this.currentMetrics.cost = cost;
+            }
             
             this.ui.updateCost(this.currentMetrics.cost);
             this.ui.updateStatus('Complete', 'success');
             
+            // Use provider/model from metrics if not passed
+            const finalProvider = provider || this.currentMetrics.provider || 'unknown';
+            const finalModel = model || this.currentMetrics.model || 'unknown';
+            
             const activity = {
                 timestamp: new Date().toISOString(),
-                provider,
-                model,
+                provider: finalProvider,
+                model: finalModel,
                 tokens: this.currentMetrics.tokens,
                 cost: this.currentMetrics.cost,
                 duration: this.currentMetrics.duration
@@ -153,22 +193,57 @@ window.initLLMMonitor = () => {};
             this.history = this.storage.addActivity(activity);
             this.ui.renderActivityTable(this.history);
             
-            this.ui.log(`Stream complete: ${this.currentMetrics.tokens} tokens, $${this.currentMetrics.cost.toFixed(4)}`, 'success');
+            // Structured logging with FINAL METRICS section
+            this.ui.log('', 'info'); // Empty line
+            this.ui.log('━'.repeat(60), 'separator');
+            this.ui.log('✅ STREAM COMPLETED', 'header');
+            this.ui.log('━'.repeat(60), 'separator');
+            this.ui.log('', 'info'); // Empty line
+            
+            this.ui.log('📊 FINAL METRICS:', 'info');
+            
+            if (usage) {
+                this.ui.log(`📝 Prompt tokens: ${usage.prompt_tokens || 0}`, 'debug');
+                this.ui.log(`✍️  Completion tokens: ${usage.completion_tokens || 0}`, 'debug');
+                this.ui.log(`📦 Total tokens: ${usage.total_tokens || this.currentMetrics.tokens}`, 'debug');
+            } else {
+                this.ui.log(`📦 Total tokens: ${this.currentMetrics.tokens}`, 'debug');
+            }
+            
+            this.ui.log(`💰 Cost: $${this.currentMetrics.cost.toFixed(6)}`, 'debug');
+            
+            if (executionTimeMs) {
+                this.ui.log(`⚡ Execution time: ${executionTimeMs}ms`, 'debug');
+            }
+            
+            this.ui.log(`🔢 Chunks received: ${this.currentMetrics.chunks}`, 'debug');
+            this.ui.log(`⏱️  Total duration: ${this.currentMetrics.duration}s`, 'debug');
+            this.ui.log('', 'info'); // Empty line
             
             this.emitEvent('llm-streaming-completed', {
-                provider,
-                model,
+                provider: finalProvider,
+                model: finalModel,
                 totalTokens: this.currentMetrics.tokens,
                 totalChunks: this.currentMetrics.chunks,
                 duration: this.currentMetrics.duration,
-                cost: this.currentMetrics.cost
+                cost: this.currentMetrics.cost,
+                usage,
+                executionTimeMs
             });
         }
         
         error(message) {
             clearInterval(this.durationInterval);
             this.ui.updateStatus('Error', 'danger');
-            this.ui.log(message, 'error');
+            
+            // Structured error logging
+            this.ui.log('', 'info'); // Empty line
+            this.ui.log('━'.repeat(60), 'separator');
+            this.ui.log('❌ ERROR OCCURRED', 'header');
+            this.ui.log('━'.repeat(60), 'separator');
+            this.ui.log('', 'info'); // Empty line
+            this.ui.log(`⚠️  ${message}`, 'error');
+            this.ui.log('', 'info'); // Empty line
             
             this.emitEvent('llm-streaming-error', {
                 error: message,
@@ -373,14 +448,17 @@ window.initLLMMonitor = () => {};
         
         /**
          * Start monitoring (optional sessionId)
+         * @param {string|null} provider - LLM provider name
+         * @param {string|null} model - LLM model name
+         * @param {string|null} sessionId - Optional session ID
          */
-        start(sessionId = null) {
+        start(provider = null, model = null, sessionId = null) {
             const monitor = this._getMonitor(sessionId);
             const sid = sessionId || this._currentSessionId || 'default';
             if (monitor) {
-                monitor.start();
+                monitor.start(provider, model);
                 if (window.MonitorLogger) {
-                    MonitorLogger.info(`LLMMonitor started for session: ${sid}`);
+                    MonitorLogger.info(`LLMMonitor started for session: ${sid} (${provider}/${model})`);
                 }
             }
         },
@@ -397,12 +475,18 @@ window.initLLMMonitor = () => {};
         
         /**
          * Complete monitoring (optional sessionId)
+         * @param {string|null} provider - LLM provider name
+         * @param {string|null} model - LLM model name
+         * @param {object|null} usage - Token usage object {prompt_tokens, completion_tokens, total_tokens}
+         * @param {number|null} cost - Cost in USD
+         * @param {number|null} executionTimeMs - Execution time in milliseconds
+         * @param {string|null} sessionId - Optional session ID
          */
-        complete(provider, model, sessionId = null) {
+        complete(provider = null, model = null, usage = null, cost = null, executionTimeMs = null, sessionId = null) {
             const monitor = this._getMonitor(sessionId);
             const sid = sessionId || this._currentSessionId || 'default';
             if (monitor) {
-                monitor.complete(provider, model);
+                monitor.complete(provider, model, usage, cost, executionTimeMs);
                 if (window.MonitorLogger) {
                     MonitorLogger.info(`LLMMonitor completed for session: ${sid} (${provider}/${model})`);
                 }
