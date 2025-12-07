@@ -58,9 +58,9 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 ### Estado Post-Revert (commit f24d957 → 1bd668e)
 - ✅ Activity Logs tab funcional con localStorage (dual-button system)
 - ⏳ DB persistence pendiente (requiere análisis de /stream/test)
-- ✅ Documentation updated (HANDOFF, PROJECT-STATUS, session achievements)
+- ✅ Documentation updated (plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT, PROJECT-STATUS, session achievements)
 
-**Documentación:** Ver HANDOFF-TO-NEXT-COPILOT.md Lesson 16 para detalles completos
+**Documentación:** Ver plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md Lesson 16 para detalles completos
 
 ---
 
@@ -89,7 +89,7 @@ Este documento consolida **todos los items pendientes reales** para la versión 
   - Mejor UX con separación clara de funciones
 
 - ✅ **Documentation** (Commit 1bd668e)
-  - HANDOFF-TO-NEXT-COPILOT.md actualizado (Lesson 16, revert details)
+  - plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md actualizado (Lesson 16, revert details)
   - PROJECT-STATUS.md actualizado (75% progress, commits listed)
   - session-manager.json con 3 achievements (Activity Logs, Critical Lesson, Docs Update)
 
@@ -98,7 +98,7 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 - `resources/views/components/chat/partials/modals/modal-monitor.blade.php`
 - `public/js/monitor/ui/render.js`
 - `public/js/monitor/core/MonitorInstance.js`
-- `HANDOFF-TO-NEXT-COPILOT.md`
+- `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md`
 - `PROJECT-STATUS.md`
 
 #### Next Steps
@@ -230,7 +230,7 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 
 **Prioridad:** ALTA  
 **Tiempo Estimado:** 7-10 horas  
-**Fuente:** `QUICK-CHAT-IMPLEMENTATION-PLAN.md`
+**Fuente:** `plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md`
 
 ### Objetivo
 Implementar feature de "Quick Chat" - chat rápido sin persistencia en DB, solo localStorage opcional.
@@ -1092,7 +1092,7 @@ Una tarea se considera completada cuando:
 ## 📚 REFERENCIAS
 
 **Documentos relacionados:**
-- `QUICK-CHAT-IMPLEMENTATION-PLAN.md` - Plan detallado Quick Chat
+- `plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md` - Plan detallado Quick Chat
 - `CHAT RESUME.md` - Optimizaciones UI/UX identificadas
 - `CHANGELOG.md` - Historial de versiones
 - `PROJECT-STATUS.md` - Estado actual del proyecto

@@ -29,7 +29,7 @@
    - OpenRouter integration completa
    - Token breakdown en tiempo real
    - Session management por ID
-   - Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 1
+   - Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 1
 
 2. ✅ **Monitor System v2.0 - 100% COMPLETADO** (NO estaba en plan original)
    - Modular Architecture (partitioned JS, export functions)
@@ -37,7 +37,7 @@
    - Asset Publishing System
    - Sidebar layout para Quick Chat
    - Alpine.js compatibility completa
-   - Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
+   - Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
 
 3. ✅ **UI/UX Optimizations - 88% COMPLETADO**
    - Real-time token display con progress bar
@@ -55,7 +55,7 @@
      - Keyboard shortcuts (Ctrl/Cmd + Enter)
      - Notificación sonora opcional
      - Microinteracciones (hover effects, checkmark animado)
-   - Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
+   - Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
 
 4. ✅ **Debug Console Refactor - COMPLETADO** (trabajo extra, fuera de plan)
    - Two-tier architecture (global enabled + per-component level)
@@ -107,7 +107,7 @@
 
 **Completar PLAN v1.0.7 (25% restante)** según el archivo:
 ```
-/Users/madniatik/CODE/LARAVEL/BITHOVEN/EXTENSIONS/bithoven-extension-llm-manager/PLAN-v1.0.7.md
+/Users/madniatik/CODE/LARAVEL/BITHOVEN/EXTENSIONS/bithoven-extension-llm-manager/plans/PLAN-v1.0.7.md
 ```
 
 ### ✅ CATEGORÍAS COMPLETADAS (75%)
@@ -252,7 +252,7 @@
     - ~600 líneas de documentación reescritas
     - [README.md](README.md) también necesitaba arquitectura actualizada
 
-12. **[PLAN-v1.0.7.md](PLAN-v1.0.7.md) es el source of truth para tracking**
+12. **[plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) es el source of truth para tracking**
     - Monitor System v2.0 NO estaba en plan original (8-10h trabajo)
     - Siempre actualizar PLAN cuando se completa trabajo extra
     - Documentar tiempo invertido y commits reales
@@ -327,7 +327,7 @@ cc94a7d - feat(monitor): persist activity logs to DB with message_id [REVERTED]
 ## 🔧 ARCHIVOS CLAVE A CONSULTAR
 
 ### Documentación del Proyecto
-1. **[PLAN-v1.0.7.md](PLAN-v1.0.7.md)** - Roadmap completo de la release
+1. **[plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md)** - Roadmap completo de la release
 2. **[PROJECT-STATUS.md](PROJECT-STATUS.md)** - Estado consolidado del proyecto
 3. **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios
 4. **[README.md](README.md)** - Overview y quick start
@@ -351,10 +351,10 @@ cc94a7d - feat(monitor): persist activity logs to DB with message_id [REVERTED]
 
 ```bash
 # Leer este archivo primero
-read_file('HANDOFF-TO-NEXT-COPILOT.md')
+read_file('plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md')
 
 # Luego cargar el plan de trabajo
-read_file('PLAN-v1.0.7.md')
+read_file('plans/PLAN-v1.0.7.md')
 
 # Consultar estado actual
 read_file('PROJECT-STATUS.md')
@@ -397,7 +397,7 @@ git diff
   3. Keyboard shortcuts (Ctrl/Cmd + Enter para enviar)
   4. Notificación sonora opcional al completar
   5. Microinteracciones (hover effects, checkmark animado)
-- Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 3 (sección 2.3, 2.5)
+- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 3 (sección 2.3, 2.5)
 
 #### Opción B: Testing Suite (RECOMENDADO para producción)
 - **Tiempo:** 4-5 horas
@@ -408,7 +408,7 @@ git diff
   2. Unit tests (LLMStreamLoggerTest, LLMProviderFactoryTest)
   3. GitHub Actions CI/CD workflow
   4. Testing documentation
-- Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 4
+- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 4
 
 #### Opción C: Streaming Documentation
 - **Tiempo:** 1.5 horas
@@ -418,7 +418,7 @@ git diff
   1. Crear docs/STREAMING.md (~600-800 líneas)
   2. Actualizar [docs/USAGE-GUIDE.md](docs/USAGE-GUIDE.md)
   3. Actualizar [docs/API-REFERENCE.md](docs/API-REFERENCE.md)
-- Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 5
+- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 5
 
 #### Opción D: GitHub Release v1.0.7
 - **Tiempo:** 1 hora
@@ -428,7 +428,7 @@ git diff
   1. Preparar release notes (Quick Chat, Monitor System v2.0, UI/UX, Debug Console)
   2. Actualizar [CHANGELOG.md](CHANGELOG.md)
   3. Crear tag v1.0.7 y publicar
-- Ver: [PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 6
+- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 6
 
 **Recomendación de orden:**
 1. **Testing Suite** (bloqueante para release, 4-5h)
@@ -445,7 +445,7 @@ manage_todo_list({
     todoList: [
         {
             id: 1,
-            title: "Analizar PLAN-v1.0.7 Categoría 4 (Testing)",
+            title: "Analizar plans/PLAN-v1.0.7 Categoría 4 (Testing)",
             status: "in-progress"
         },
         {
@@ -512,7 +512,8 @@ manage_todo_list({
 
 ```
 bithoven-extension-llm-manager/
-├── PLAN-v1.0.7.md              # ← TU ROADMAP PRINCIPAL
+├── plans/
+│   └── plans/PLAN-v1.0.7.md     # ← TU ROADMAP PRINCIPAL
 ├── PROJECT-STATUS.md            # Estado consolidado
 ├── CHANGELOG.md                 # Historial de cambios
 ├── README.md                    # Overview
@@ -750,8 +751,8 @@ grep_search('pattern', isRegexp=true)
 
 Antes de empezar a codificar, verifica:
 
-- [x] Leído HANDOFF-TO-NEXT-COPILOT.md completo (este archivo)
-- [x] Leído [PLAN-v1.0.7.md](PLAN-v1.0.7.md) completo (estado actualizado a 75%)
+- [x] Leído PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md completo (este archivo)
+- [x] Leído [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) completo (estado actualizado a 75%)
 - [x] Revisado lecciones aprendidas (15 lecciones críticas arriba)
 - [x] Verificado git status (clean tree esperado)
 - [ ] Decidido categoría de inicio:
@@ -762,7 +763,7 @@ Antes de empezar a codificar, verifica:
 - [ ] Creado manage_todo_list con tareas específicas
 - [x] Entendido estructura del proyecto
 - [x] Consultado docs/ si trabajas en documentación
-- [x] Revisado [PLAN-v1.0.7.md](PLAN-v1.0.7.md) categorías completadas (Quick Chat, Monitor System v2.0)
+- [x] Revisado [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) categorías completadas (Quick Chat, Monitor System v2.0)
 
 ---
 
@@ -824,7 +825,7 @@ scripts/troubleshooting/validate-git-commit.sh
 
 Cuando completes tu trabajo o necesites pasar a otro Copilot:
 
-1. **Actualizar [PLAN-v1.0.7.md](PLAN-v1.0.7.md)** con progreso actualizado
+1. **Actualizar [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md)** con progreso actualizado
    - Marcar categorías completadas
    - Actualizar progreso general (75% → X%)
    - Añadir commits realizados
@@ -838,7 +839,7 @@ Cuando completes tu trabajo o necesites pasar a otro Copilot:
    - Solo si hay cambios significativos en arquitectura
    - Actualizar métricas (Testing coverage, Documentation %)
 
-4. **Crear nuevo HANDOFF-TO-NEXT-COPILOT.md** si es necesario
+4. **Crear nuevo PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md** si es necesario
    - Solo si hay cambios mayores en contexto
    - Actualizar último commit, fecha, progreso
 
@@ -854,7 +855,7 @@ Cuando completes tu trabajo o necesites pasar a otro Copilot:
 
 ## 💡 TIPS FINALES
 
-1. **Consulta [PLAN-v1.0.7.md](PLAN-v1.0.7.md) frecuentemente** - es tu biblia, actualizado con 75% completado
+1. **Consulta [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) frecuentemente** - es tu biblia, actualizado con 75% completado
 2. **Usa manage_todo_list extensivamente** - mantén visibilidad del progreso
 3. **Lee las 15 lecciones aprendidas** - evita errores previos (two-tier architecture, setting() vs config(), etc.)
 4. **Testea en browser** - especialmente JavaScript/Alpine.js (Chrome DevTools Console)

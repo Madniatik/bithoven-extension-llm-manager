@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `public/js/monitor/core/MonitorInstance.js` - localStorage-based init/complete methods
 
 #### Documentation
-- `HANDOFF-TO-NEXT-COPILOT.md` - Lesson 16 added, revert documented
+- `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md` - Lesson 16 added, revert documented
 - `PROJECT-STATUS.md` - Progress updated to 75%, 7 commits listed
 
 ---
@@ -139,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Result** Clean console for production use
 
 #### Documentation Updates (commit 523f663)
-- **Updated** `PLAN-v1.0.7.md` with actual progress:
+- **Updated** `plans/PLAN-v1.0.7.md` with actual progress:
   - Quick Chat Feature: 95% complete (FASE 1-4,6-7 done)
   - UI/UX Optimizations: 80% complete
   - 30+ commits documented

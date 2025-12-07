@@ -82,12 +82,27 @@
     "plans": {
       "path": "plans/",
       "description": "Implementation plans organized by status (new/in-progress/completed)",
-      "totalFiles": 4,
+      "totalFiles": 8,
       "categories": {
-        "new": {
-          "path": "plans/new/",
-          "description": "New plans not yet started or blocked by dependencies",
+        "root": {
+          "path": "plans/",
+          "description": "General plans and documentation",
           "files": [
+            {
+              "file": "README.md",
+              "type": "documentation"
+            },
+            {
+              "file": "PLAN-v1.0.7.md",
+              "type": "development-plan",
+              "version": "1.0.7",
+              "status": "active"
+            },
+            {
+              "file": "PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md",
+              "type": "documentation",
+              "purpose": "copilot-handoff"
+            },
             {
               "file": "ACTIVITY-LOG-MIGRATION-PLAN.md",
               "status": "blocked",
@@ -98,13 +113,13 @@
               ],
               "estimatedTime": "8-13h",
               "priority": "high"
+            },
+            {
+              "file": "QUICK-CHAT-IMPLEMENTATION-PLAN.md",
+              "type": "feature-plan",
+              "status": "new"
             }
           ]
-        },
-        "inProgress": {
-          "path": "plans/in-progress/",
-          "description": "Plans currently being implemented",
-          "files": []
         },
         "completed": {
           "path": "plans/completed/",
@@ -198,7 +213,10 @@
     "debugSnippets": "docs/debug/QUICK-DEBUG.js",
     "providers": "docs/providers/PROVIDER-COMPARISON.md",
     "contributing": "docs/CONTRIBUTING.md",
-    "activityLogPlan": "plans/new/ACTIVITY-LOG-MIGRATION-PLAN.md",
+    "planDevelopment": "plans/PLAN-v1.0.7.md",
+    "planHandoff": "plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md",
+    "planQuickChat": "plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md",
+    "activityLogPlan": "plans/ACTIVITY-LOG-MIGRATION-PLAN.md",
     "activityLogReport": "reports/activity-log/ACTIVITY-LOG-MIGRATION-REPORT-2025-12-07.md",
     "chatMonitorPlan": "plans/completed/CHAT-MONITOR-ENHANCEMENT-PLAN.md",
     "monitorSystemPlan": "plans/completed/MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md",
@@ -236,9 +254,11 @@
   "metadata": {
     "lastReorganization": "2025-12-07T04:12:00+00:00",
     "lastPlanVerification": "2025-12-07T03:42:00+00:00",
+    "lastUpdate": "2025-12-07T04:30:00+00:00",
     "totalDocumentationFiles": 27,
+    "totalPlans": 8,
     "copilotOptimized": true,
-    "structure": "Opción B - docs/ categorizado, plans/ y reports/ en raíz"
+    "structure": "Opción B - docs/ categorizado, plans/ raíz con subdirectorio completed/"
   },
   "usage": {
     "forCopilot": "Read this file first to quickly locate any documentation, plan, or report",

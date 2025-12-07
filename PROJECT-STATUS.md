@@ -164,7 +164,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 **Focus:** Quick Chat Feature + UI/UX Optimizations + Markdown Unification + Testing Suite + Streaming Documentation
 
-**Ver detalles completos en:** `PLAN-v1.0.7.md`
+**Ver detalles completos en:** `plans/PLAN-v1.0.7.md`
 
 #### Progreso por Categoría:
 
@@ -245,10 +245,10 @@ cc94a7d - persist activity logs to DB [REVERTED - INICIO ERROR]
 - `extension.json` - Metadata actualizado (version 1.0.6)
 - `docs/README.md` - Documentation index actualizado
 - `docs/components/CHAT-WORKSPACE.md` - Complete guide v1.0.6 (1,705 lines)
-- `PLAN-v1.0.7.md` - Roadmap próxima versión
+- `plans/PLAN-v1.0.7.md` - Roadmap próxima versión
 
 **📝 Para Eliminar:**
-- `LLM-MANAGER-PENDING-WORK.md` - ⚠️ OBSOLETO (reemplazado por PLAN-v1.0.7.md)
+- `LLM-MANAGER-PENDING-WORK.md` - ⚠️ OBSOLETO (reemplazado por plans/PLAN-v1.0.7.md)
 - `STREAMING-IMPLEMENTATION-STATUS.md` - ⚠️ OBSOLETO (streaming 100% done en v1.0.4)
 - `PENDING-WORK-ANALYSIS.md` - ⚠️ OBSOLETO (era para v1.0.0)
 
@@ -355,7 +355,6 @@ bithoven-extension-llm-manager/
 ├── PROJECT-STATUS.md                      # ✅ Estado consolidado v1.0.6
 ├── CHANGELOG.md                           # ✅ Actualizado (v1.0.6)
 ├── README.md                              # ✅ Features overview v1.0.6
-├── PLAN-v1.0.7.md                         # ✅ Roadmap próxima versión
 ├── extension.json                         # ✅ Version 1.0.6
 ├── composer.json                          # ✅ PSR-4 autoload
 │
@@ -367,6 +366,9 @@ bithoven-extension-llm-manager/
 │   ├── EXAMPLES.md
 │   ├── FAQ.md
 │   └── CONTRIBUTING.md
+│
+├── plans/                                 # ✅ Planificación de versiones
+│   └── PLAN-v1.0.7.md                     # ✅ Roadmap próxima versión
 │
 ├── src/                                   # Backend implementation
 │   ├── Data/
