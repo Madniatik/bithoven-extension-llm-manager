@@ -440,9 +440,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
         
-        // Start monitor tracking
+        // Start monitor tracking with provider/model
         if (window.LLMMonitor) {
-            window.LLMMonitor.start(monitorId);
+            window.LLMMonitor.start(thinkingProvider, thinkingModel, monitorId);
         }
         
         let fullResponse = '';
@@ -753,33 +753,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                addMonitorLog('', 'info');
-                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                addMonitorLog('✅ STREAMING COMPLETED', 'header');
-                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
-                addMonitorLog('', 'info');
-                addMonitorLog('📊 FINAL METRICS:', 'info');
-                if (data.usage) {
-                    addMonitorLog(`   Prompt Tokens: ${data.usage.prompt_tokens || 0}`, 'debug');
-                    addMonitorLog(`   Completion Tokens: ${data.usage.completion_tokens || 0}`, 'debug');
-                    addMonitorLog(`   Total Tokens: ${data.usage.total_tokens || 0}`, 'debug');
-                }
-                if (data.cost !== undefined) {
-                    addMonitorLog(`   Cost USD: $${parseFloat(data.cost).toFixed(6)}`, 'debug');
-                }
-                addMonitorLog(`   Total Chunks: ${chunkCount}`, 'debug');
-                addMonitorLog(`   Duration: ${(duration / 1000).toFixed(2)}s`, 'debug');
+                // Custom log for message ID (not in standard monitor output)
                 if (data.message_id) {
-                    addMonitorLog(`   Message ID: #${data.message_id}`, 'debug');
+                    addMonitorLog(`💾 Message ID: #${data.message_id}`, 'debug');
                 }
-                addMonitorLog('', 'info');
-                addMonitorLog('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'separator');
                 
-                // Complete monitor tracking
+                // Complete monitor tracking with full metrics
                 const provider = selectedOption?.dataset.provider || 'unknown';
                 const model = selectedOption?.dataset.model || 'unknown';
                 if (window.LLMMonitor) {
-                    window.LLMMonitor.complete(provider, model, monitorId);
+                    window.LLMMonitor.complete(
+                        provider, 
+                        model, 
+                        data.usage || null, 
+                        data.cost || null, 
+                        data.execution_time_ms || null, 
+                        monitorId
+                    );
                 }
                 
                 eventSource?.close();
