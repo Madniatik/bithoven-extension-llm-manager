@@ -3,6 +3,7 @@
 namespace Bithoven\LLMManager\Http\Controllers\Admin;
 
 use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMUsageLog;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Response;
@@ -40,7 +41,7 @@ class LLMStreamController extends Controller
             'limit' => 'nullable|integer|min:1|max:100',
         ]);
 
-        $query = \Bithoven\LLMManager\Models\LLMUsageLog::with('llmConfiguration')
+        $query = LLMUsageLog::with('configuration')
             ->where('user_id', auth()->id());
 
         // Filter by session_id if provided
@@ -55,8 +56,8 @@ class LLMStreamController extends Controller
         $activityHistory = $logs->map(function ($log) {
             return [
                 'timestamp' => $log->executed_at?->toIso8601String() ?? null,
-                'provider' => $log->llmConfiguration?->provider ?? 'unknown',
-                'model' => $log->llmConfiguration?->model ?? 'unknown',
+                'provider' => $log->configuration?->provider ?? 'unknown',
+                'model' => $log->configuration?->model ?? 'unknown',
                 'tokens' => $log->total_tokens,
                 'cost' => round($log->cost_usd, 6),
                 'duration' => round($log->execution_time_ms / 1000, 2), // ms to seconds
