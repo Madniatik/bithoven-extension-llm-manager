@@ -34,7 +34,6 @@ plans/
 ## 📋 Planes Actuales
 
 ### new/
-- **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
 
 ### in-progress/
 - *(vacío - ningún plan en ejecución activa)*
@@ -43,6 +42,7 @@ plans/
 - **ACTIVITY-LOG-MIGRATION-PLAN.md** - Database-driven Activity History (✅ Completado 7 dic 2025, 21:45)
 - **CHAT-MONITOR-ENHANCEMENT-PLAN.md** - Upgrade Monitor UI (✅ 8/8 fases completadas)
 - **MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md** - Hybrid Adapter + Configurable UI (✅ Completado)
+- **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
 
 ---
 
