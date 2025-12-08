@@ -17,13 +17,14 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 2. ✅ **Monitor System v2.0** (8-10 horas) - **COMPLETADO 100%** (NO estaba en plan original)
 3. ✅ **UI/UX Optimizations** (6-8 horas) - **COMPLETADO 92%**
 4. ✅ **Provider Connection Service Layer** (4-5 horas) - **COMPLETADO 100%** (8 dic 2025)
-5. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
-6. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
-7. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
+5. ⏳ **Request Inspector Tab** (2-3 horas) - **PENDIENTE** (9 dic 2025 - NUEVO)
+6. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
+7. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
+8. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
 
-**Tiempo Total Estimado:** 35.5-43.5 horas (ajustado por implementaciones extra)  
+**Tiempo Total Estimado:** 38.5-46.5 horas (ajustado por Request Inspector)  
 **Tiempo Invertido:** ~32-36 horas (110+ commits)  
-**Progreso General:** **85%** (ajustado por Provider Connection Service Layer)
+**Progreso General:** **83%** (ajustado por nueva categoría Request Inspector)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 
@@ -304,7 +305,591 @@ api_key: apiKey || null  // ✅ Envía valor real
 
 ---
 
-## 🔧 CATEGORÍA 4: Provider Connection Service Layer
+## 🔍 CATEGORÍA 5: Request Inspector Tab (Monitor Enhancement)
+
+**Prioridad:** ALTA  
+**Tiempo Estimado:** 2-3 horas  
+**Fecha de Propuesta:** 9 de diciembre de 2025  
+**Fuente:** Necesidad de debugging de payloads enviados al modelo
+
+### Problema Identificado
+
+**Situación actual:**
+- ✅ Monitor tiene tabs "Console" y "Activity Logs"
+- ❌ NO hay manera de ver los datos exactos enviados al modelo LLM
+- ❌ Imposible debuggear problemas de context, system instructions, o parámetros
+
+**Información invisible actualmente:**
+- Prompt final procesado (con context concatenado)
+- System instructions (chat-instructions)
+- Context size real (número de mensajes previos incluidos)
+- Parámetros finales (temperature, max_tokens, top_p, etc.)
+- Metadata de la request (model, provider, API endpoint)
+- Headers HTTP enviados
+- Body completo del request JSON
+
+**Casos de uso:**
+1. **Debugging:** Verificar que context_limit funciona correctamente
+2. **Testing:** Comprobar que chat-instructions se aplican
+3. **Optimization:** Ver tamaño real del payload (evitar exceder límites)
+4. **Education:** Entender cómo se construye el request al provider
+
+---
+
+### Propuesta de Solución
+
+#### Opción A: Nuevo Tab "Request Inspector" (RECOMENDADO)
+
+**Ventajas:**
+- ✅ Consistente con arquitectura actual (Console + Activity Logs)
+- ✅ No interfiere con tabs existentes
+- ✅ Espacio dedicado para datos complejos
+- ✅ Fácil implementación (reutiliza sistema de tabs)
+
+**Ubicación:** `split-horizontal-layout.blade.php` - agregar 3er tab
+
+**UI Propuesta:**
+```
+┌─────────────────────────────────────────────────┐
+│ Tabs: [Console] [Activity Logs] [Request] ←NEW │
+├─────────────────────────────────────────────────┤
+│ Request Inspector (visible solo cuando activeTab === 'request')
+│
+│ ┌─ Request Metadata ─────────────────────────┐
+│ │ Provider: OpenAI                           │
+│ │ Model: gpt-4-turbo-preview                 │
+│ │ Endpoint: https://api.openai.com/v1/...   │
+│ │ Timestamp: 2025-12-09 12:34:56             │
+│ └────────────────────────────────────────────┘
+│
+│ ┌─ Parameters ───────────────────────────────┐
+│ │ temperature: 0.7                           │
+│ │ max_tokens: 2000                           │
+│ │ top_p: 1.0                                 │
+│ │ context_limit: 10 (last 10 messages)       │
+│ └────────────────────────────────────────────┘
+│
+│ ┌─ System Instructions ─────────────────────┐
+│ │ You are a helpful assistant...            │
+│ │ [Expandable textarea - read-only]         │
+│ └────────────────────────────────────────────┘
+│
+│ ┌─ Context Messages (10) ───────────────────┐
+│ │ [1] User: Previous question...            │
+│ │ [2] Assistant: Previous answer...         │
+│ │ ... (collapsible list)                    │
+│ └────────────────────────────────────────────┘
+│
+│ ┌─ Final Prompt ────────────────────────────┐
+│ │ Current user message being sent           │
+│ │ [Read-only textarea with copy button]     │
+│ └────────────────────────────────────────────┘
+│
+│ ┌─ Full Request Body (JSON) ────────────────┐
+│ │ {                                          │
+│ │   "model": "gpt-4-turbo-preview",         │
+│ │   "messages": [...],                       │
+│ │   "temperature": 0.7,                      │
+│ │   ...                                      │
+│ │ }                                          │
+│ │ [Copy JSON] [Download JSON]               │
+│ └────────────────────────────────────────────┘
+└─────────────────────────────────────────────────┘
+```
+
+**Componentes UI:**
+1. **Metadata Card** - Provider, model, endpoint, timestamp
+2. **Parameters Card** - Todos los parámetros finales aplicados
+3. **System Instructions Card** - Chat instructions (si existen)
+4. **Context Messages Card** - Lista collapsible de mensajes previos
+5. **Final Prompt Card** - Prompt del usuario actual
+6. **Full Request Body** - JSON completo con syntax highlighting
+
+---
+
+#### Opción B: Modal Popup (DESCARTADO)
+
+**Desventajas:**
+- ❌ Requiere cerrar modal para ver console/activity
+- ❌ Menos espacio visual
+- ❌ No persistente durante sesión
+
+---
+
+### Fases de Implementación
+
+#### FASE 1: Backend - Captura de Request Data (1 hora) ⏳ PENDIENTE
+
+**Objetivo:** Capturar y estructurar datos del request ANTES de enviarlo al provider
+
+**Archivos a modificar:**
+1. **`LLMQuickChatController::stream()`**
+   - Capturar request completo después de construir context
+   - Emitir evento SSE `request_data` con toda la info
+   
+2. **`LLMConversationController::streamReply()`**
+   - Misma lógica para conversaciones normales
+
+**Estructura de datos a emitir:**
+```php
+// Evento SSE: "request_data"
+$requestData = [
+    'metadata' => [
+        'provider' => $configuration->provider,
+        'model' => $configuration->model,
+        'endpoint' => $provider->getEndpoint(),
+        'timestamp' => now()->toIso8601String(),
+        'session_id' => $session->id,
+        'message_id' => $userMessage->id,
+    ],
+    'parameters' => [
+        'temperature' => $params['temperature'],
+        'max_tokens' => $params['max_tokens'],
+        'top_p' => $params['top_p'] ?? 1.0,
+        'context_limit' => $contextLimit,
+        'actual_context_size' => $context->count(),
+    ],
+    'system_instructions' => $configuration->system_instructions ?? null,
+    'context_messages' => $context->map(fn($m) => [
+        'id' => $m->id,
+        'role' => $m->role,
+        'content' => Str::limit($m->content, 100), // Truncado para preview
+        'tokens' => $m->tokens,
+        'created_at' => $m->created_at->toIso8601String(),
+    ])->toArray(),
+    'current_prompt' => $validated['prompt'],
+    'full_request_body' => [
+        'model' => $configuration->model,
+        'messages' => $provider->formatMessages($context, $validated['prompt']),
+        'temperature' => $params['temperature'],
+        'max_tokens' => $params['max_tokens'],
+        // ... otros parámetros según provider
+    ],
+];
+
+// Emitir evento SSE
+echo "event: request_data\n";
+echo "data: " . json_encode($requestData) . "\n\n";
+flush();
+```
+
+**Checklist:**
+- [ ] Modificar `LLMQuickChatController::stream()` para capturar data
+- [ ] Modificar `LLMConversationController::streamReply()` para capturar data
+- [ ] Emitir evento SSE `request_data` ANTES del primer chunk
+- [ ] Testing con Ollama, OpenAI, OpenRouter
+
+**Entregable:** ⏳ PENDIENTE
+- Backend emite `request_data` event correctamente
+- Datos completos y estructurados
+
+---
+
+#### FASE 2: Frontend - UI del Tab "Request" (1 hora) ⏳ PENDIENTE
+
+**Objetivo:** Crear UI del tab Request Inspector en monitor
+
+**Archivos a crear:**
+1. **`resources/views/components/chat/shared/monitor-request-inspector.blade.php`**
+   - Blade component con estructura HTML del tab
+   - Cards para metadata, parameters, context, etc.
+   - Syntax highlighting para JSON (usar Prism.js)
+
+**Estructura HTML:**
+```blade
+{{-- Request Inspector Tab Content --}}
+<div class="request-inspector-container p-4" style="height: 100%; overflow-y: auto;">
+    {{-- Metadata Card --}}
+    <div class="card card-flush mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Request Metadata</h3>
+        </div>
+        <div class="card-body pt-0">
+            <div class="table-responsive">
+                <table class="table table-row-dashed">
+                    <tbody id="request-metadata-{{ $monitorId }}">
+                        <tr><td colspan="2" class="text-muted">No request data yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {{-- Parameters Card --}}
+    <div class="card card-flush mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Parameters</h3>
+        </div>
+        <div class="card-body pt-0">
+            <div class="table-responsive">
+                <table class="table table-row-dashed">
+                    <tbody id="request-parameters-{{ $monitorId }}">
+                        <tr><td colspan="2" class="text-muted">No parameters yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {{-- System Instructions Card (collapsible) --}}
+    <div class="card card-flush mb-4">
+        <div class="card-header collapsible cursor-pointer">
+            <h3 class="card-title">System Instructions</h3>
+            <div class="card-toolbar rotate" data-bs-toggle="collapse">
+                {!! getIcon('ki-down', 'fs-1') !!}
+            </div>
+        </div>
+        <div class="collapse" id="system-instructions-collapse-{{ $monitorId }}">
+            <div class="card-body pt-0">
+                <textarea class="form-control form-control-sm" 
+                          id="request-system-instructions-{{ $monitorId }}" 
+                          rows="4" readonly>No system instructions</textarea>
+            </div>
+        </div>
+    </div>
+
+    {{-- Context Messages Card (collapsible) --}}
+    <div class="card card-flush mb-4">
+        <div class="card-header collapsible cursor-pointer">
+            <h3 class="card-title">Context Messages <span id="request-context-count-{{ $monitorId }}" class="badge badge-light-primary">0</span></h3>
+            <div class="card-toolbar rotate" data-bs-toggle="collapse">
+                {!! getIcon('ki-down', 'fs-1') !!}
+            </div>
+        </div>
+        <div class="collapse" id="context-messages-collapse-{{ $monitorId }}">
+            <div class="card-body pt-0">
+                <div id="request-context-messages-{{ $monitorId }}" class="text-muted">
+                    No context messages
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Current Prompt Card --}}
+    <div class="card card-flush mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Current Prompt</h3>
+            <div class="card-toolbar">
+                <button class="btn btn-sm btn-light-primary" onclick="copyToClipboard('request-current-prompt-{{ $monitorId }}')">
+                    {!! getIcon('ki-copy', 'fs-3') !!} Copy
+                </button>
+            </div>
+        </div>
+        <div class="card-body pt-0">
+            <textarea class="form-control form-control-sm" 
+                      id="request-current-prompt-{{ $monitorId }}" 
+                      rows="3" readonly>No prompt yet</textarea>
+        </div>
+    </div>
+
+    {{-- Full Request Body (JSON) --}}
+    <div class="card card-flush mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Full Request Body (JSON)</h3>
+            <div class="card-toolbar gap-2">
+                <button class="btn btn-sm btn-light-primary" onclick="copyRequestJSON('{{ $monitorId }}')">
+                    {!! getIcon('ki-copy', 'fs-3') !!} Copy JSON
+                </button>
+                <button class="btn btn-sm btn-light-success" onclick="downloadRequestJSON('{{ $monitorId }}')">
+                    {!! getIcon('ki-cloud-download', 'fs-3') !!} Download
+                </button>
+            </div>
+        </div>
+        <div class="card-body pt-0">
+            <pre><code class="language-json" id="request-full-body-{{ $monitorId }}">{ "message": "No request data yet" }</code></pre>
+        </div>
+    </div>
+</div>
+```
+
+**Modificar `split-horizontal-layout.blade.php`:**
+```blade
+{{-- Tabs Body (scrollable) --}}
+<div class="monitor-console-body p-0">
+    {{-- Console Tab --}}
+    <div x-show="activeTab === 'console'" style="height: 100%;">
+        @include('llm-manager::components.chat.shared.monitor-console', ['monitorId' => $monitorId])
+    </div>
+
+    {{-- Activity Logs Tab --}}
+    <div x-show="activeTab === 'activity'" x-cloak style="height: 100%;">
+        @include('llm-manager::admin.stream.partials.activity-table', ['sessionId' => $session?->id ?? null])
+    </div>
+
+    {{-- Request Inspector Tab (NUEVO) --}}
+    <div x-show="activeTab === 'request'" x-cloak style="height: 100%;">
+        @include('llm-manager::components.chat.shared.monitor-request-inspector', ['monitorId' => $monitorId])
+    </div>
+</div>
+```
+
+**Checklist:**
+- [ ] Crear `monitor-request-inspector.blade.php`
+- [ ] Agregar tab "Request" en split-horizontal-layout
+- [ ] Agregar botón "Request" en action-buttons.blade.php
+- [ ] Testing visual (cards, collapsibles, syntax highlighting)
+
+**Entregable:** ⏳ PENDIENTE
+- UI completa del tab Request Inspector
+- Responsive y consistente con diseño actual
+
+---
+
+#### FASE 3: JavaScript - Procesamiento de Eventos SSE (45 min) ⏳ PENDIENTE
+
+**Objetivo:** Capturar evento `request_data` y renderizar en UI
+
+**Archivos a modificar:**
+1. **`public/js/monitor/core/MonitorInstance.js`** (o `event-handlers.js`)
+   - Agregar handler para evento `request_data`
+   - Parsear JSON y popular elementos HTML
+
+**Código JavaScript:**
+```javascript
+// En MonitorInstance.js o event-handlers.js
+function handleRequestDataEvent(data, monitorId) {
+    const requestData = JSON.parse(data);
+    
+    // 1. Popular Metadata table
+    const metadataTable = document.getElementById(`request-metadata-${monitorId}`);
+    if (metadataTable) {
+        metadataTable.innerHTML = `
+            <tr><th width="30%">Provider</th><td>${requestData.metadata.provider}</td></tr>
+            <tr><th>Model</th><td>${requestData.metadata.model}</td></tr>
+            <tr><th>Endpoint</th><td class="text-break">${requestData.metadata.endpoint}</td></tr>
+            <tr><th>Timestamp</th><td>${requestData.metadata.timestamp}</td></tr>
+            <tr><th>Session ID</th><td>${requestData.metadata.session_id}</td></tr>
+            <tr><th>Message ID</th><td>${requestData.metadata.message_id}</td></tr>
+        `;
+    }
+    
+    // 2. Popular Parameters table
+    const parametersTable = document.getElementById(`request-parameters-${monitorId}`);
+    if (parametersTable) {
+        const params = requestData.parameters;
+        parametersTable.innerHTML = `
+            <tr><th width="30%">Temperature</th><td>${params.temperature}</td></tr>
+            <tr><th>Max Tokens</th><td>${params.max_tokens}</td></tr>
+            <tr><th>Top P</th><td>${params.top_p}</td></tr>
+            <tr><th>Context Limit</th><td>${params.context_limit}</td></tr>
+            <tr><th>Actual Context Size</th><td><span class="badge badge-light-primary">${params.actual_context_size} messages</span></td></tr>
+        `;
+    }
+    
+    // 3. System Instructions
+    const systemInstructions = document.getElementById(`request-system-instructions-${monitorId}`);
+    if (systemInstructions) {
+        systemInstructions.value = requestData.system_instructions || 'No system instructions configured';
+    }
+    
+    // 4. Context Messages
+    const contextCount = document.getElementById(`request-context-count-${monitorId}`);
+    const contextMessages = document.getElementById(`request-context-messages-${monitorId}`);
+    if (contextMessages && requestData.context_messages.length > 0) {
+        if (contextCount) contextCount.textContent = requestData.context_messages.length;
+        
+        let html = '<div class="timeline">';
+        requestData.context_messages.forEach((msg, idx) => {
+            const roleClass = msg.role === 'user' ? 'primary' : 'success';
+            html += `
+                <div class="timeline-item">
+                    <div class="timeline-badge bg-light-${roleClass}">
+                        <i class="ki-duotone ki-${msg.role === 'user' ? 'user' : 'robot'} text-${roleClass} fs-2"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="fw-bold text-gray-800">[${idx + 1}] ${msg.role.charAt(0).toUpperCase() + msg.role.slice(1)}</div>
+                        <div class="text-muted fs-7">${msg.content}</div>
+                        <div class="text-muted fs-8 mt-1">
+                            <span class="badge badge-light-info">${msg.tokens} tokens</span>
+                            <span class="text-gray-600 ms-2">${msg.created_at}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        contextMessages.innerHTML = html;
+    } else if (contextMessages) {
+        contextMessages.innerHTML = '<div class="text-muted">No context messages included</div>';
+    }
+    
+    // 5. Current Prompt
+    const currentPrompt = document.getElementById(`request-current-prompt-${monitorId}`);
+    if (currentPrompt) {
+        currentPrompt.value = requestData.current_prompt;
+    }
+    
+    // 6. Full Request Body (JSON con syntax highlighting)
+    const fullBody = document.getElementById(`request-full-body-${monitorId}`);
+    if (fullBody) {
+        const jsonString = JSON.stringify(requestData.full_request_body, null, 2);
+        fullBody.textContent = jsonString;
+        
+        // Apply Prism.js syntax highlighting si está disponible
+        if (window.Prism) {
+            Prism.highlightElement(fullBody);
+        }
+    }
+    
+    // Guardar requestData en instancia para copy/download functions
+    if (window.LLMMonitor && window.LLMMonitor.instances) {
+        const instance = window.LLMMonitor.instances[monitorId];
+        if (instance) {
+            instance.lastRequestData = requestData;
+        }
+    }
+}
+
+// Agregar al EventSource listener
+eventSource.addEventListener('request_data', (event) => {
+    handleRequestDataEvent(event.data, monitorId);
+});
+```
+
+**Funciones auxiliares:**
+```javascript
+// Copy Request JSON
+function copyRequestJSON(monitorId) {
+    const instance = window.LLMMonitor.instances[monitorId];
+    if (instance && instance.lastRequestData) {
+        const jsonString = JSON.stringify(instance.lastRequestData.full_request_body, null, 2);
+        navigator.clipboard.writeText(jsonString).then(() => {
+            toastr.success('Request JSON copied to clipboard');
+        });
+    }
+}
+
+// Download Request JSON
+function downloadRequestJSON(monitorId) {
+    const instance = window.LLMMonitor.instances[monitorId];
+    if (instance && instance.lastRequestData) {
+        const jsonString = JSON.stringify(instance.lastRequestData.full_request_body, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `request-${instance.lastRequestData.metadata.message_id}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
+
+// Copy to clipboard (genérico)
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        navigator.clipboard.writeText(element.value).then(() => {
+            toastr.success('Copied to clipboard');
+        });
+    }
+}
+```
+
+**Checklist:**
+- [ ] Agregar `handleRequestDataEvent()` function
+- [ ] Agregar EventSource listener para `request_data`
+- [ ] Implementar `copyRequestJSON()` y `downloadRequestJSON()`
+- [ ] Testing con datos reales (Ollama primero)
+
+**Entregable:** ⏳ PENDIENTE
+- Request data renderizado correctamente en UI
+- Copy/Download funcionan
+
+---
+
+#### FASE 4: Integration & Testing (30 min) ⏳ PENDIENTE
+
+**Testing checklist:**
+- [ ] **Quick Chat:**
+  - [ ] Request tab muestra datos correctos
+  - [ ] Context messages se muestran completos
+  - [ ] JSON syntax highlighting funciona
+  - [ ] Copy/Download JSON funcionan
+  
+- [ ] **Conversations:**
+  - [ ] Misma funcionalidad que Quick Chat
+  - [ ] Context limit respetado
+  
+- [ ] **Multi-Provider:**
+  - [ ] Ollama (local, sin API key)
+  - [ ] OpenAI (con API key)
+  - [ ] OpenRouter (con API key)
+  
+- [ ] **Edge Cases:**
+  - [ ] Request sin system instructions
+  - [ ] Request sin context (primer mensaje)
+  - [ ] Request con context_limit=0 (todos los mensajes)
+  - [ ] Long JSON body (scroll funciona)
+
+**Documentación:**
+- [ ] Actualizar `docs/components/CHAT-WORKSPACE.md` con Request Inspector
+- [ ] Screenshots del nuevo tab
+- [ ] Ejemplo de uso en debugging
+
+**Entregable:** ⏳ PENDIENTE
+- Feature completamente funcional
+- Testing exhaustivo realizado
+- Documentación actualizada
+
+---
+
+### Git Commits Sugeridos
+
+```bash
+feat(monitor): add request inspector tab (backend) - Emit request_data SSE event
+feat(monitor): add request inspector tab (UI) - Blade component and split-horizontal integration
+feat(monitor): add request inspector tab (JS) - Handle request_data event and render UI
+docs(monitor): document request inspector feature in CHAT-WORKSPACE.md
+```
+
+---
+
+### Beneficios de la Feature
+
+1. **Debugging Mejorado:** Ver exactamente qué se envía al modelo
+2. **Transparencia:** Usuarios entienden cómo funcionan los LLMs
+3. **Optimización:** Identificar payloads grandes o ineficientes
+4. **Education:** Aprender construcción de prompts y context management
+5. **Testing:** Validar configuración de system instructions y context_limit
+
+---
+
+### Alternativas Consideradas
+
+#### Opción C: Integrar en Console Tab (DESCARTADO)
+- ❌ Console ya tiene mucha información (events)
+- ❌ Mezclar request data con console logs confunde
+
+#### Opción D: Sidebar Flotante (DESCARTADO)
+- ❌ Requiere más espacio UI
+- ❌ No consistente con arquitectura de tabs actual
+
+---
+
+### Dependencias
+
+- ✅ Monitor System v2.0 (completado)
+- ✅ Split-horizontal layout con tabs (completado)
+- ✅ EventSource SSE streaming (completado)
+- ✅ Prism.js para syntax highlighting (ya integrado)
+
+### Estimación Final
+
+**Tiempo Total:** 2-3 horas
+- FASE 1 (Backend): 1h
+- FASE 2 (UI): 1h
+- FASE 3 (JavaScript): 45min
+- FASE 4 (Testing): 30min
+
+**Prioridad:** ALTA (debugging crítico para desarrollo)
+
+**Target:** Incluir en v1.0.7 si tiempo lo permite, o mover a v1.0.8
+
+---
+
+## 🧪 CATEGORÍA 6: Testing Suite
 
 **Prioridad:** ALTA  
 **Tiempo Estimado:** 4-5 horas  
@@ -902,7 +1487,7 @@ feat(llm): add microinteractions and hover effects
 
 ---
 
-## 🧪 CATEGORÍA 5: Testing Suite
+## 🧪 CATEGORÍA 6: Testing Suite
 
 **Prioridad:** ALTA (Bloqueante para release)  
 **Tiempo Estimado:** 4-5 horas  
@@ -1083,7 +1668,7 @@ Alcanzar cobertura de tests automatizados para streaming, permisos y componentes
 
 ---
 
-## 🚀 CATEGORÍA 7: GitHub Release v1.0.7
+## 🚀 CATEGORÍA 8: GitHub Release v1.0.7
 
 **Prioridad:** ALTA (Publicar trabajo completado)  
 **Tiempo Estimado:** 1 hora  
@@ -1490,7 +2075,7 @@ docs(llm): document testing guidelines
 
 ---
 
-## 📚 CATEGORÍA 6: Streaming Documentation
+## 📚 CATEGORÍA 7: Streaming Documentation
 
 **Prioridad:** MEDIA  
 **Tiempo Estimado:** 1.5 horas  
@@ -1997,9 +2582,10 @@ Una tarea se considera completada cuando:
 - ✅ Multi-layout system
 - ✅ Asset publishing workflow
 
-**Trabajo Pendiente (15%):**
+**Trabajo Pendiente (20%):**
 - ⏳ Testing Suite (4-5h) - CRÍTICO para release
 - ⏳ UI/UX finishing touches (1-2h) - Typewriter effect, keyboard shortcuts
+- ⏳ Request Inspector Tab (2-3h) - NUEVO - Debug de payloads enviados al modelo
 - ⏳ Streaming Documentation (1.5h)
 - ⏳ GitHub Release v1.0.7 (1h)
 
