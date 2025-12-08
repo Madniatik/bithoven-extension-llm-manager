@@ -174,6 +174,55 @@ class LLMQuickChatController extends Controller
                 if (ob_get_level()) ob_flush();
                 flush();
 
+                // Emit request_data event for Request Inspector tab
+                $requestData = [
+                    'metadata' => [
+                        'provider' => $configuration->provider,
+                        'model' => $configuration->model,
+                        'endpoint' => $provider->getBaseUrl() ?? 'N/A',
+                        'timestamp' => now()->toIso8601String(),
+                        'session_id' => $session->id,
+                        'message_id' => $userMessage->id,
+                    ],
+                    'parameters' => [
+                        'temperature' => $params['temperature'],
+                        'max_tokens' => $params['max_tokens'],
+                        'top_p' => $params['top_p'] ?? 1.0,
+                        'context_limit' => $contextLimit,
+                        'actual_context_size' => count($context),
+                    ],
+                    'system_instructions' => $configuration->system_instructions ?? null,
+                    'context_messages' => collect($context)->map(function($m, $idx) use ($session) {
+                        // Get original message from DB to get metadata
+                        $originalMsg = $session->messages()->skip($idx)->first();
+                        return [
+                            'id' => $originalMsg->id ?? $idx,
+                            'role' => $m['role'],
+                            'content' => \Illuminate\Support\Str::limit($m['content'], 200),
+                            'tokens' => $originalMsg->tokens ?? 0,
+                            'created_at' => $originalMsg->created_at?->toIso8601String() ?? now()->toIso8601String(),
+                        ];
+                    })->toArray(),
+                    'current_prompt' => $validated['prompt'],
+                    'full_request_body' => [
+                        'model' => $configuration->model,
+                        'messages' => array_merge(
+                            $configuration->system_instructions ? [['role' => 'system', 'content' => $configuration->system_instructions]] : [],
+                            $context,
+                            [['role' => 'user', 'content' => $validated['prompt']]]
+                        ),
+                        'temperature' => $params['temperature'],
+                        'max_tokens' => $params['max_tokens'],
+                        'stream' => true,
+                    ],
+                ];
+
+                echo "event: request_data\n";
+                echo "data: " . json_encode($requestData) . "\n\n";
+                
+                if (ob_get_level()) ob_flush();
+                flush();
+
                 $metrics = $provider->stream(
                     $validated['prompt'],
                     $context,
