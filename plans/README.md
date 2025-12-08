@@ -43,6 +43,8 @@ plans/
 - **CHAT-MONITOR-ENHANCEMENT-PLAN.md** - Upgrade Monitor UI (✅ 8/8 fases completadas)
 - **MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md** - Hybrid Adapter + Configurable UI (✅ Completado)
 - **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
+- **FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md** - Service Layer para conexión LLM (✅ Completado 8 dic 2025)
+- **FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md** - Fix Load Models en Admin (✅ Completado 8 dic 2025)
 
 ---
 
@@ -123,4 +125,4 @@ Puede permanecer en `new/` o `in-progress/` hasta resolver blocker.
 
 ---
 
-**Last Updated:** 7 de diciembre de 2025, 21:45
+**Last Updated:** 8 de diciembre de 2025, 16:32
