@@ -66,7 +66,7 @@
                 });" style="display: none;">
 
                 {{-- Console Header (sticky) - NO SCROLL --}}
-                <div class="monitor-header-sticky border-bottom border-gray-300" x-data="{ activeTab: 'console' }">
+                <div class="monitor-header-sticky border-bottom border-gray-300">
                     <div class="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 gap-2">
                         {{-- Left: Title + Inline Metrics --}}
                         <div class="d-flex align-items-center gap-10 flex-grow-1">
@@ -94,33 +94,8 @@
                             </div>
                         </div>
 
-                        {{-- Right: Tab Switcher + Action Buttons --}}
-                        <div class="d-flex gap-2 flex-shrink-0">
-                            {{-- Tab Pills --}}
-                            <div class="btn-group" role="group">
-                                <button type="button" @click="activeTab = 'console'" 
-                                        :class="{ 'btn-primary': activeTab === 'console', 'btn-light-primary': activeTab !== 'console' }" 
-                                        class="btn btn-sm btn-active-light-primary">
-                                    {!! getIcon('ki-monitor-mobile', 'fs-4 me-1', '', 'i') !!}
-                                    Console
-                                </button>
-                                <button type="button" @click="activeTab = 'activity'" 
-                                        :class="{ 'btn-primary': activeTab === 'activity', 'btn-light-primary': activeTab !== 'activity' }" 
-                                        class="btn btn-sm btn-active-light-primary">
-                                    {!! getIcon('ki-abstract-35', 'fs-4 me-1', '', 'i') !!}
-                                    Activity
-                                </button>
-                                <button type="button" @click="activeTab = 'request'" 
-                                        :class="{ 'btn-primary': activeTab === 'request', 'btn-light-primary': activeTab !== 'request' }" 
-                                        class="btn btn-sm btn-active-light-primary">
-                                    {!! getIcon('ki-code', 'fs-4 me-1', '', 'i') !!}
-                                    Request
-                                </button>
-                            </div>
-
-                            {{-- Divider --}}
-                            <div class="border-end border-gray-300 mx-1"></div>
-
+                        {{-- Right: Action Buttons --}}
+                        <div class="d-flex gap-1 flex-shrink-0">
                             {{-- Refresh --}}
                             <button type="button" class="btn btn-icon btn-sm btn-active-secondary"
                                 onclick="window.LLMMonitor.refresh('{{ $monitorId }}')" data-bs-toggle="tooltip"
@@ -157,29 +132,30 @@
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    {{-- Tabs Body (scrollable) --}}
-                    <div class="monitor-console-body p-0">
-                        {{-- Console Tab --}}
-                        <div x-show="activeTab === 'console'" style="height: 100%;">
-                            @include('llm-manager::components.chat.shared.monitor-console', [
-                                'monitorId' => $monitorId,
-                            ])
-                        </div>
+                {{-- Tabs Body (scrollable) --}}
+                <div class="monitor-console-body p-0">
+                    {{-- Console Tab --}}
+                    <div x-show="activeTab === 'console'" style="height: 100%;">
+                        @include('llm-manager::components.chat.shared.monitor-console', [
+                            'monitorId' => $monitorId,
+                        ])
+                    </div>
 
-                        {{-- Activity Logs Tab --}}
-                        <div x-show="activeTab === 'activity'" x-cloak style="height: 100%;">
-                            @include('llm-manager::admin.stream.partials.activity-table', [
-                                'sessionId' => $session?->id ?? null,
-                            ])
-                        </div>
+                    {{-- Activity Logs Tab --}}
+                    <div x-show="activeTab === 'activity'" x-cloak style="height: 100%;">
+                        @include('llm-manager::admin.stream.partials.activity-table', [
+                            'sessionId' => $session?->id ?? null,
+                        ])
+                    </div>
 
-                        {{-- Request Inspector Tab --}}
-                        <div x-show="activeTab === 'request'" x-cloak style="height: 100%; overflow-y: auto;">
-                            @include('llm-manager::components.chat.shared.monitor-request-inspector')
-                        </div>
+                    {{-- Request Inspector Tab --}}
+                    <div x-show="activeTab === 'request'" x-cloak style="height: 100%; overflow-y: auto;">
+                        @include('llm-manager::components.chat.shared.monitor-request-inspector')
                     </div>
                 </div>
+            </div>
         @endif
     </div>
 
