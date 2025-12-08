@@ -99,6 +99,19 @@ window.LLMStreamingHandler = {
                 callbacks.onChunk(data);
             }
         });
+
+        // Event: request_data (Request Inspector)
+        this.eventSource.addEventListener('request_data', (event) => {
+            const data = JSON.parse(event.data);
+            console.log('[LLMStreamingHandler] Request data received', data);
+            
+            // Populate Request Inspector UI if function exists
+            if (typeof populateRequestInspector === 'function') {
+                populateRequestInspector(data);
+            } else {
+                console.warn('[LLMStreamingHandler] populateRequestInspector function not found');
+            }
+        });
         
         // Event: progress
         this.eventSource.addEventListener('progress', (event) => {
