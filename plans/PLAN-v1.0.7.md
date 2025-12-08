@@ -1,10 +1,10 @@
 # LLM Manager Extension - Plan v1.0.7
 
 **Fecha de Creación:** 3 de diciembre de 2025  
-**Fecha de Actualización:** 6 de diciembre de 2025  
+**Fecha de Actualización:** 8 de diciembre de 2025  
 **Versión Actual:** v1.0.6  
 **Versión Objetivo:** v1.0.7  
-**Estado:** In Progress (42+ commits desde v1.0.6)
+**Estado:** In Progress (110+ commits desde v1.0.6)
 
 ---
 
@@ -16,13 +16,14 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 1. ✅ **Quick Chat Feature** (7-10 horas) - **COMPLETADO 100%**
 2. ✅ **Monitor System v2.0** (8-10 horas) - **COMPLETADO 100%** (NO estaba en plan original)
 3. ✅ **UI/UX Optimizations** (6-8 horas) - **COMPLETADO 92%**
-4. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
-5. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
-6. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
+4. ✅ **Provider Connection Service Layer** (4-5 horas) - **COMPLETADO 100%** (8 dic 2025)
+5. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
+6. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
+7. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
 
-**Tiempo Total Estimado:** 27.5-34.5 horas (ajustado por Monitor System v2.0)  
-**Tiempo Invertido:** ~22-26 horas (42+ commits)  
-**Progreso General:** **75%** (ajustado por revert crítico - ver abajo)
+**Tiempo Total Estimado:** 35.5-43.5 horas (ajustado por implementaciones extra)  
+**Tiempo Invertido:** ~32-36 horas (110+ commits)  
+**Progreso General:** **85%** (ajustado por Provider Connection Service Layer)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 
@@ -64,9 +65,86 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 
 ---
 
-## 🎉 TRABAJO COMPLETADO (últimas 48 horas)
+## 🎉 TRABAJO COMPLETADO (Últimas Sesiones)
 
-### ✅ Activity Logs Tab System (Commits f24d957, 1bd668e) - **NUEVO**
+### ✅ Provider Connection Service Layer (8 dic 2025) - **NUEVO**
+
+**Commits:**
+- `99d9b60` - feat: implement provider connection service layer
+- `d01e100` - docs: add implementation summary
+- `16b30bf` - docs: update pending tasks and implementation summary
+- `ffbf0c1` - docs: add openai test connection fix report
+
+#### Features Implementadas
+- ✅ **LLMProviderService** (365 líneas)
+  - Service centralizado para provider operations
+  - Métodos públicos: `testConnection()`, `loadModels()`, `parseModelsResponse()`, `clearModelsCache()`
+  - Backend proxy (evita CORS, centraliza autenticación)
+  - Cache system (10min TTL con Carbon timestamps)
+  - Multi-format parser (OpenAI/Ollama/OpenRouter)
+
+- ✅ **Controller Refactoring**
+  - `testConnection()`: 150→20 líneas (88% reducción)
+  - `loadModels()`: Nuevo endpoint POST con cache
+  - Rutas registradas: `/models/{model}/test-connection`, `/models/{model}/load-models`
+
+- ✅ **Frontend Enhancement**
+  - Loading states (spinner durante request)
+  - Provider/Model badges visuales
+  - Error handling robusto (timeout, invalid response)
+  - Success/Error toasts con detalles
+
+- ✅ **Testing Completo**
+  - Ollama: 13 modelos cargados exitosamente
+  - OpenAI: Test Connection corregido (API key real enviada)
+  - OpenRouter: Sin regresiones
+  - Cache verification (TTL 10min)
+
+#### OpenAI Test Connection Fix
+**Issue:** HTTP 401 en OpenAI por API key no enviada
+
+**Root Cause:**
+- Frontend enviaba `"***"` literal en `testModelConnection()`
+- Lógica convertía `"***"` → `null` (sin autenticación)
+
+**Fix Aplicado:**
+```javascript
+// ANTES (show.blade.php línea 148)
+const apiKey = '{{ $model->api_key ? "***" : "" }}';
+api_key: apiKey === '***' ? null : apiKey  // ❌ Siempre null
+
+// DESPUÉS
+const apiKeyInput = document.getElementById('api-key-input');
+const apiKey = apiKeyInput ? apiKeyInput.value : '';
+api_key: apiKey || null  // ✅ Envía valor real
+```
+
+**Testing Realizado:**
+- ✅ OpenAI: API key enviada correctamente, autenticación exitosa (HTTP 200)
+- ✅ OpenAI con invalid key: Error correcto (HTTP 401)
+- ✅ OpenRouter: Sin regresiones
+- ✅ Ollama: Sin cambios (no requiere API key)
+
+#### Files Modified
+- NEW: `src/Services/LLMProviderService.php` (365 líneas)
+- MODIFIED: `src/Http/Controllers/Admin/LLMConfigurationController.php`
+- MODIFIED: `routes/web.php`
+- MODIFIED: `resources/views/admin/models/partials/_edit-tab.blade.php`
+- MODIFIED: `resources/views/admin/models/show.blade.php`
+
+#### Documentation
+- `plans/completed/FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md` (496 líneas)
+- `plans/completed/FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md` (511 líneas)
+- `IMPLEMENTATION-SUMMARY-SESSION-20251208.md` (actualizado)
+- `reports/fixes/OPENAI-TEST-CONNECTION-FIX-20251208.md` (312 líneas)
+- `reports/analysis/PROVIDER-CONNECTION-ARCHITECTURE-ANALYSIS.md` (269 líneas)
+
+#### Next Steps
+- ⏳ Unit tests para LLMProviderService
+- ⏳ Cross-browser testing
+- ⏳ Cache invalidation manual (opcional para v1.0.8)
+
+### ✅ Activity Logs Tab System (Commits f24d957, 1bd668e) - **COMPLETADO**
 
 **NEW FEATURE:** Monitor con sistema de tabs duales (Console + Activity Logs)
 
@@ -226,7 +304,132 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 
 ---
 
-## 🎯 CATEGORÍA 1: Quick Chat Feature
+## 🔧 CATEGORÍA 4: Provider Connection Service Layer
+
+**Prioridad:** ALTA  
+**Tiempo Estimado:** 4-5 horas  
+**Fuente:** `plans/completed/FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md`
+
+### Objetivo
+Centralizar lógica de conexión con providers LLM y carga de modelos en un service layer reutilizable.
+
+### Fases de Implementación
+
+#### FASE 1: Service Layer Architecture (2 horas) ✅ COMPLETADO
+- [x] Crear `LLMProviderService` (365 líneas)
+  - `testConnection()` - Test de conectividad con provider
+  - `loadModels()` - Carga de modelos disponibles con cache
+  - `parseModelsResponse()` - Parser multi-formato
+  - `clearModelsCache()` - Invalidación manual de cache
+  
+- [x] Implementar cache system
+  - 10 minutos TTL (configurable)
+  - Carbon timestamps para expiración
+  - Namespace por provider + config_id
+
+- [x] Backend proxy
+  - Evita CORS en frontend
+  - Centraliza autenticación
+  - Error handling robusto
+
+**Entregable:** ✅ COMPLETADO
+- Service centralizado y testeable
+- Cache system funcional
+- Código DRY (Don't Repeat Yourself)
+
+---
+
+#### FASE 2: Controller Integration (1 hora) ✅ COMPLETADO
+- [x] Refactor `LLMConfigurationController`
+  - `testConnection()`: 150→20 líneas (88% reducción)
+  - `loadModels()`: Nuevo endpoint POST
+  
+- [x] Registrar rutas
+  - `POST /admin/llm/models/{model}/test-connection`
+  - `POST /admin/llm/models/{model}/load-models`
+
+- [x] Error responses estandarizadas
+  - HTTP 500 con mensaje descriptivo
+  - Logging de errors
+  - Timeout handling (30 segundos)
+
+**Entregable:** ✅ COMPLETADO
+- Endpoints RESTful
+- Controller limpio y mantenible
+
+---
+
+#### FASE 3: Frontend Enhancement (1 hora) ✅ COMPLETADO
+- [x] Loading states
+  - Spinner durante request AJAX
+  - Disable buttons para evitar double-click
+  - Progress feedback visual
+
+- [x] Provider/Model badges
+  - Visual differentiation por provider
+  - Color coding (OpenAI: primary, Ollama: success, etc.)
+  - Model count display
+
+- [x] Error handling
+  - SweetAlert2 toasts informativos
+  - Timeout warnings
+  - Retry suggestions
+
+**Entregable:** ✅ COMPLETADO
+- UX mejorada con feedback claro
+- Error handling robusto
+
+---
+
+#### FASE 4: Testing & Bugfixes (1 hora) ✅ COMPLETADO
+- [x] Testing con Ollama
+  - 13 modelos cargados exitosamente
+  - Cache verification (TTL 10min)
+  
+- [x] Testing con OpenAI
+  - **Bug encontrado:** API key no enviada (HTTP 401)
+  - **Fix aplicado:** Leer API key de input field
+  - Test Connection exitoso (HTTP 200)
+  - Load Models funcional
+
+- [x] Testing con OpenRouter
+  - Sin regresiones
+  - Funcionalidad mantenida
+
+- [x] Cross-provider validation
+  - Todos los providers funcionan correctamente
+  - Cache independiente por provider
+  - Parsing correcto de diferentes formatos
+
+**Entregable:** ✅ COMPLETADO
+- Testing completo realizado
+- OpenAI fix aplicado y validado
+- Production ready
+
+### Git Commits Realizados (Provider Connection)
+```bash
+99d9b60 feat: implement provider connection service layer
+d01e100 docs: add implementation summary
+16b30bf docs: update pending tasks and implementation summary
+406e4e5 chore: cleanup duplicate plan files
+ffbf0c1 docs: add openai test connection fix report
+```
+
+**Impacto:**
+- ✅ Código 88% más limpio (150→20 líneas en controller)
+- ✅ Service reutilizable en múltiples contextos
+- ✅ Cache mejora performance (evita requests redundantes)
+- ✅ OpenAI fix crítico aplicado
+- ✅ Arquitectura escalable para nuevos providers
+
+---
+
+## 🎯 CATEGORÍA 1: Quick Chat Feature (COMPLETADO ✅)
+
+**Prioridad:** ALTA  
+**Tiempo Estimado:** 7-10 horas  
+**Tiempo Real:** ~8 horas (30+ commits)  
+**Fuente:** `plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md`
 
 **Prioridad:** ALTA  
 **Tiempo Estimado:** 7-10 horas  
@@ -699,7 +902,161 @@ feat(llm): add microinteractions and hover effects
 
 ---
 
-## ✅ CATEGORÍA 3: Testing Suite
+## 🧪 CATEGORÍA 5: Testing Suite
+
+**Prioridad:** ALTA (Bloqueante para release)  
+**Tiempo Estimado:** 4-5 horas  
+**Fuente:** Requerimiento para producción
+
+### Objetivo
+Crear suite de tests completa para garantizar estabilidad del código en producción.
+
+### Subcategorías
+
+#### 3.1 Feature Tests (2 horas) - ⏳ PENDIENTE
+**Archivo:** `tests/Feature/LLMStreamingTest.php`
+
+**Tests a implementar:**
+- `test_basic_streaming()` - Streaming básico funciona
+- `test_stream_error_handling()` - Manejo de errores
+- `test_concurrent_streams()` - Múltiples streams simultáneos
+- `test_stream_interruption()` - Stop stream funciona correctamente
+
+**Archivo:** `tests/Feature/LLMPermissionsTest.php`
+
+**Tests a implementar:**
+- `test_install_permissions()` - Permisos IDs 53-60 creados
+- `test_role_assignment()` - Roles asignados correctamente
+- `test_permission_checks()` - Gates funcionan
+
+**Entregable:** ⏳ PENDIENTE
+- 8+ feature tests pasando
+- Coverage de happy paths y edge cases
+
+---
+
+#### 3.2 Unit Tests (1.5 horas) - ⏳ PENDIENTE
+**Archivo:** `tests/Unit/Services/LLMStreamLoggerTest.php`
+
+**Tests a implementar:**
+- `test_log_creation()` - Logs se crean correctamente
+- `test_error_logging()` - Errors se loguean con stack trace
+- `test_log_rotation()` - Logs antiguos se limpian
+
+**Archivo:** `tests/Unit/Services/LLMProviderFactoryTest.php`
+
+**Tests a implementar:**
+- `test_provider_selection()` - Provider correcto seleccionado
+- `test_fallback_provider()` - Fallback si provider principal falla
+- `test_invalid_provider()` - Exception si provider inválido
+
+**Archivo:** `tests/Unit/Services/LLMProviderServiceTest.php` (NUEVO)
+
+**Tests a implementar:**
+- `test_connection_success()` - Test connection exitoso
+- `test_connection_failure()` - Test connection con timeout
+- `test_load_models_with_cache()` - Cache funciona (10min TTL)
+- `test_load_models_cache_miss()` - Cache miss recarga modelos
+- `test_parse_models_openai()` - Parsing formato OpenAI
+- `test_parse_models_ollama()` - Parsing formato Ollama
+- `test_parse_models_openrouter()` - Parsing formato OpenRouter
+
+**Entregable:** ⏳ PENDIENTE
+- 12+ unit tests pasando
+- Service layer completamente testeado
+
+---
+
+#### 3.3 GitHub Actions CI/CD (30 min) - ⏳ PENDIENTE
+**Archivo:** `.github/workflows/tests.yml`
+
+**Configuración:**
+```yaml
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.1, 8.2, 8.3]
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Install Dependencies
+        run: composer install
+      - name: Run Tests
+        run: vendor/bin/phpunit --coverage-clover coverage.xml
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+```
+
+**Entregable:** ⏳ PENDIENTE
+- CI/CD pipeline configurado
+- Tests ejecutan en push/PRs
+- Coverage report automático
+
+---
+
+#### 3.4 Testing Documentation (1 hora) - ⏳ PENDIENTE
+**Archivo:** `tests/README.md`
+
+**Contenido:**
+```markdown
+# Testing Guide
+
+## Running Tests
+
+# All tests
+vendor/bin/phpunit
+
+# Specific suite
+vendor/bin/phpunit --testsuite=Feature
+vendor/bin/phpunit --testsuite=Unit
+
+# With coverage
+vendor/bin/phpunit --coverage-html coverage/
+
+## Writing Tests
+
+[Guidelines para escribir tests...]
+
+## Coverage Goals
+
+- Overall: 70-80%
+- Services: 90%+
+- Controllers: 60%+
+```
+
+**Archivo:** `docs/CONTRIBUTING.md` (actualizar)
+
+**Añadir sección:**
+```markdown
+## Testing Requirements
+
+All PRs must:
+- [ ] Include tests for new features
+- [ ] Pass existing test suite
+- [ ] Maintain coverage above 70%
+```
+
+**Entregable:** ⏳ PENDIENTE
+- Documentación clara de testing
+- Guidelines para contributors
+
+---
+
+## 📚 CATEGORÍA 6: Streaming Documentation
 
 **Prioridad:** ALTA (Requisito para v1.2.0)  
 **Tiempo Estimado:** 4-5 horas  
@@ -724,23 +1081,367 @@ Alcanzar cobertura de tests automatizados para streaming, permisos y componentes
   - Test permission validation
   - Test role assignment
 
-**Entregable:**
-- Feature tests pasan al 100%
-- Coverage mínimo 70%
+---
+
+## 🚀 CATEGORÍA 7: GitHub Release v1.0.7
+
+**Prioridad:** ALTA (Publicar trabajo completado)  
+**Tiempo Estimado:** 1 hora  
+**Fuente:** Proceso de release estándar
+
+### Objetivo
+Publicar release oficial de v1.0.7 en GitHub con toda la documentación.
+
+### Tareas
+
+#### 5.1 Preparar Release Notes (30 min) - ⏳ PENDIENTE
+
+**Revisar commits desde v1.0.6:**
+```bash
+git log v1.0.6..HEAD --oneline
+```
+
+**Secciones del Release:**
+```markdown
+# v1.0.7 - Quick Chat + Provider Connection Service Layer
+
+## 🎉 New Features
+
+### Quick Chat (30+ commits)
+- Full streaming support with real-time feedback
+- Stop Stream with intelligent cleanup
+- Enhanced data capture (model, raw_response, cost_usd)
+- OpenRouter integration
+- Token breakdown (prompt/completion)
+- Session management (create, access by ID, delete, rename)
+- LocalStorage persistence
+- Multi-layout support (sidebar default)
+
+### Provider Connection Service Layer
+- Centralized `LLMProviderService` (365 lines)
+- Backend proxy (CORS-free, centralized auth)
+- Cache system (10min TTL)
+- Multi-format parser (OpenAI/Ollama/OpenRouter)
+- Controller refactoring (150→20 lines, 88% reduction)
+
+### Monitor System v2.0 (10+ commits)
+- Modular architecture (partitioned JS, export functions)
+- Hybrid Adapter Pattern (window.LLMMonitor API)
+- Asset publishing system
+- Configurable layouts (sidebar, split-horizontal)
+- Alpine.js compatibility
+- Export buttons (markdown, JSON, text)
+
+### Activity Logs System
+- Dual-tab monitor (Console + Activity Logs)
+- Database-driven persistence
+- Migration from localStorage
+- Event tracking with session correlation
+
+## 🐛 Bug Fixes
+
+- Fix OpenAI Test Connection (API key authentication)
+- Fix Markdown rendering consistency (marked.js unification)
+- Fix streaming progress bar edge cases
+- Fix Alpine.js initialization timing issues
+- Fix Select2 listeners in session restoration
+
+## 📚 Documentation
+
+- plans/completed/ (6 comprehensive plans)
+- IMPLEMENTATION-SUMMARY-SESSION-20251208.md
+- reports/fixes/OPENAI-TEST-CONNECTION-FIX-20251208.md
+- reports/analysis/PROVIDER-CONNECTION-ARCHITECTURE-ANALYSIS.md
+
+## ⚠️ Breaking Changes
+
+None - This is a PATCH release (fully backward compatible)
+
+## 🔄 Migration Guide
+
+No migrations required - v1.0.7 is drop-in compatible with v1.0.6
+
+## 📦 Dependencies
+
+- Laravel 11.46.1
+- Alpine.js 3.x
+- marked.js (Markdown parser)
+- Prism.js (Syntax highlighting)
+
+## 🙏 Contributors
+
+- Claude (Anthropic) - AI Agent primary developer
+- [Your name] - Project lead & code review
+```
+
+**Entregable:** ⏳ PENDIENTE
+- Release notes completas
+- Todos los cambios documentados
+- Breaking changes identificados (ninguno)
 
 ---
 
-#### 3.2 Unit Tests - 1.5 horas
-- [ ] **`tests/Unit/Services/LLMStreamLoggerTest.php`**
-  - Test log creation
-  - Test token counting
-  - Test processing time calculation
-  - Test error logging
-  
-- [ ] **`tests/Unit/Services/LLMProviderFactoryTest.php`**
-  - Test provider selection (Ollama, OpenAI)
-  - Test configuration validation
-  - Test fallback behavior
+#### 5.2 Actualizar CHANGELOG.md (15 min) - ⏳ PENDIENTE
+
+**Añadir sección:**
+```markdown
+## [1.0.7] - 2025-12-08
+
+### Added
+- Quick Chat feature (30+ commits)
+- Provider Connection Service Layer (4 commits)
+- Monitor System v2.0 (10+ commits)
+- Activity Logs database persistence
+- OpenRouter provider integration
+- Enhanced data capture (model, raw_response)
+- Multi-layout support (sidebar, split-horizontal)
+- Token breakdown display
+- Session management UI
+
+### Fixed
+- OpenAI Test Connection authentication
+- Markdown rendering consistency
+- Streaming progress bar edge cases
+- Alpine.js timing issues
+
+### Changed
+- Refactored LLMConfigurationController (150→20 lines)
+- Unified Markdown parsing with marked.js
+- Improved error handling in streaming
+
+### Documentation
+- Added 6 comprehensive plans in plans/completed/
+- Added implementation summary
+- Added OpenAI fix report
+- Added architecture analysis reports
+```
+
+**Entregable:** ⏳ PENDIENTE
+- CHANGELOG.md actualizado
+- Versionado semántico correcto
+
+---
+
+#### 5.3 Crear Tag y Publicar (15 min) - ⏳ PENDIENTE
+
+**Comandos:**
+```bash
+# Crear tag anotado
+git tag -a v1.0.7 -m "Release v1.0.7 - Quick Chat + Provider Connection Service Layer"
+
+# Push tag a GitHub
+git push origin v1.0.7
+
+# Crear GitHub Release
+# (Interfaz web de GitHub o gh CLI)
+gh release create v1.0.7 \
+  --title "v1.0.7 - Quick Chat + Provider Connection" \
+  --notes-file release-notes.md
+```
+
+**Attachments opcionales:**
+- Compilados de assets (si aplica)
+- Migration files (si hay nuevas)
+
+**Entregable:** ⏳ PENDIENTE
+- Tag v1.0.7 creado
+- GitHub Release publicado
+- Assets attachados (si aplica)
+
+---
+
+## 📜 HISTORIAL DE REVERTS Y DECISIONES CRÍTICAS
+
+### Revert #1: Activity Logs DB Persistence (6 diciembre 2025, 06:25)
+
+**Commits revertidos:** `cc94a7d` - `f8fb81c` (7 commits)  
+**Método:** `git reset --hard f24d957`
+
+**Root Cause:**
+- ❌ **Error:** Usé `llm_manager_conversation_logs` (tabla para eventos de conversación)
+- ✅ **Correcto:** Debo usar `llm_manager_usage_logs` (tabla para métricas de uso)
+
+**Commits Eliminados:**
+1. `cc94a7d` - Añadir message_id a llm_manager_conversation_logs (TABLA INCORRECTA)
+2. `ef0b49d` - Endpoints POST/GET activity-log
+3. `1c05ce1` - Métodos storeActivityLog/getActivityLogs en Controller
+4. `d8a25e3` - Async init/complete en MonitorInstance
+5. `87d8623` - renderActivityTable con soporte modal
+6. `4c2c4b8` - data-session-id attributes
+7. `f8fb81c` - LLMConversationLog model updates
+
+**Lección Aprendida (#16):**
+**SIEMPRE analizar COMPLETAMENTE la arquitectura ANTES de implementar:**
+1. Buscar funcionalidad similar existente
+2. Analizar tabla/endpoints usados
+3. Verificar schema de DB
+4. Copiar arquitectura probada
+5. Implementar incrementalmente
+
+**Referencia correcta:** `/admin/llm/stream/test` usa `llm_manager_usage_logs`
+
+**Estado Post-Revert:** 
+- ✅ Activity Logs tab funcional con localStorage (dual-button system)
+- ✅ DB persistence completada posteriormente (7 dic 2025) con tabla correcta
+
+**Documentación:** Ver `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md` Lesson 16 para detalles completos
+
+---
+
+## 📋 PLANES COMPLETADOS (Referencia)
+
+Durante el desarrollo de v1.0.7 se completaron los siguientes planes independientes que ahora están archivados en `plans/completed/`:
+
+### 1. FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md (496 líneas)
+**Completado:** 8 dic 2025  
+**Commits:** `99d9b60`, `d01e100`
+
+**Objetivo:** Centralizar lógica de conexión y carga de modelos en service layer.
+
+**Fases Completadas:**
+- ✅ FASE 1: Service Layer (LLMProviderService 365 líneas)
+- ✅ FASE 2: Controller Integration (refactor testConnection/loadModels)
+- ✅ FASE 3: Frontend Enhancement (loading states, badges, errors)
+- ✅ FASE 4: Testing & Bugfixes (Ollama, OpenAI, OpenRouter)
+
+**Impact:** Código 88% más limpio, cache 10min TTL, arquitectura DRY
+
+---
+
+### 2. FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md (511 líneas)
+**Completado:** 8 dic 2025  
+**Commits:** `99d9b60`
+
+**Objetivo:** Análisis de problema y propuesta de solución para provider connections.
+
+**Objetivos Completados:**
+- ✅ Análisis de arquitectura actual
+- ✅ Identificación de código duplicado
+- ✅ Diseño de service layer
+- ✅ Implementación y testing
+- ✅ OpenAI Test Connection fix
+- ✅ Documentación completa
+
+**Impact:** Arquitectura escalable para futuros providers
+
+---
+
+### 3. ACTIVITY-LOG-MIGRATION-PLAN.md
+**Completado:** 7 dic 2025  
+**Commits:** Multiple (migración completa)
+
+**Objetivo:** Migrar Activity Logs de localStorage a database.
+
+**Fases Completadas:**
+- ✅ Migration creation
+- ✅ Model setup
+- ✅ Backend implementation
+- ✅ Frontend adaptation
+- ✅ Data persistence verification
+
+**Impact:** Activity logs persistentes, mejor tracking de eventos
+
+---
+
+### 4. DATABASE-LOGS-CONSOLIDATION-PLAN.md
+**Completado:** Previamente
+
+**Objetivo:** Consolidar logs dispersos en estructura unificada.
+
+**Impact:** Logs centralizados, mejor debugging
+
+---
+
+### 5. CHAT-MONITOR-ENHANCEMENT-PLAN.md
+**Completado:** Previamente  
+**Commits:** Monitor System v2.0 (10+ commits)
+
+**Objetivo:** Mejorar UI/UX del monitor de chat.
+
+**Fases Completadas:**
+- ✅ Dual-tab system (Console + Activity Logs)
+- ✅ Export functionality
+- ✅ Modular architecture
+- ✅ Multi-layout support
+
+**Impact:** Monitor más usable y escalable
+
+---
+
+### 6. MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md
+**Completado:** 5 dic 2025  
+**Commits:** `12ee763`, `bd42546`, `c69e3fe`, otros
+
+**Objetivo:** Refactorizar monitor con arquitectura modular.
+
+**Fases Completadas:**
+- ✅ Modular JS architecture
+- ✅ Hybrid Adapter Pattern
+- ✅ Asset publishing system
+- ✅ Alpine.js compatibility
+
+**Impact:** Código 30% más limpio, mantenibilidad mejorada
+
+---
+
+## 🎓 LECCIONES CONSOLIDADAS (v1.0.7)
+
+### Lecciones Técnicas (1-15)
+
+**De sesiones anteriores (3-5 dic 2025):**
+
+1. **DRY (Don't Repeat Yourself) es crítico en scripts**
+2. **NUNCA declarar código completo sin testing en browser**
+3. **Multi-instance Alpine.js requiere registro ANTES de Alpine.start()**
+4. **404 errors de scripts externos indican assets no publicados**
+5. **Markdown interpreta 4 espacios al inicio como código preformateado**
+6. **Diagnosticar correctamente ANTES de aplicar fixes**
+7. **Two-Tier Architecture debe entenderse ANTES de refactorizar**
+8. **setting() helper NO funciona en Service Providers durante boot**
+9. **NUNCA remover campos sin entender su propósito completo**
+10. **Revert manual es más seguro que git revert en refactors complejos**
+11. **Documentación debe actualizarse INMEDIATAMENTE después de cambios**
+12. **Plan tracking es source of truth - actualizar siempre**
+13. **JavaScript refactoring debe ser sistemático**
+14. **Blade templates requieren doble check de lógica**
+15. **Git commits deben ser frecuentes pero descriptivos**
+
+### Lección Crítica #16 (6 dic 2025)
+
+**⚠️ CRÍTICO: Analizar COMPLETAMENTE la arquitectura ANTES de implementar**
+
+**Error cometido:** Implementar DB persistence sin investigar sistema existente
+
+**Tabla equivocada:** Usé `llm_manager_conversation_logs` en lugar de `llm_manager_usage_logs`
+
+**Sistema existente ignorado:** `/admin/llm/stream/test` ya usa `llm_manager_usage_logs` correctamente
+
+**Consecuencia:** 7 commits (cc94a7d-f8fb81c) revertidos con `git reset --hard f24d957`
+
+**Lección:** SIEMPRE revisar cómo funciona código similar existente antes de implementar
+
+**Protocolo correcto:**
+1. Buscar funcionalidad similar en el proyecto
+2. Analizar qué tabla usa, qué endpoints, qué estructura
+3. Verificar esquema de DB con `DESCRIBE table_name`
+4. Copiar arquitectura existente, NO reinventar
+5. Implementar en pequeños commits verificables
+
+### Lección OpenAI #17 (8 dic 2025)
+
+**Issue:** Test Connection enviaba `"***"` literal en lugar de API key real
+
+**Root Cause:** Hardcoded value en JavaScript no leía input field
+
+**Fix:** Leer API key dinámicamente de `apiKeyInput.value`
+
+**Lección:** Verificar que credentials se envíen correctamente, no solo que UI tenga valor
+
+**Testing:** Validar con provider real (OpenAI HTTP 200 con valid key, HTTP 401 con invalid)
+
+---
+
+## 📝 NOTAS IMPORTANTES
 
 **Entregable:**
 - Unit tests pasan al 100%
@@ -787,7 +1488,139 @@ docs(llm): document testing guidelines
 
 ---
 
-## 📚 CATEGORÍA 4: Streaming Documentation
+---
+
+## 📚 CATEGORÍA 6: Streaming Documentation
+
+**Prioridad:** MEDIA  
+**Tiempo Estimado:** 1.5 horas  
+**Fuente:** Requerimiento para developers
+
+### Objetivo
+Documentar completamente la arquitectura de streaming para desarrolladores.
+
+### Subcategorías
+
+#### 4.1 Crear docs/STREAMING.md (1 hora) - ⏳ PENDIENTE
+
+**Estructura del documento:**
+
+```markdown
+# Streaming Architecture
+
+## Overview
+- Qué es Server-Sent Events (SSE)
+- Ventajas sobre polling/websockets
+- Providers soportados (OpenAI, Anthropic, Ollama)
+
+## Backend Implementation
+- LLMStreamController arquitectura
+- Event types (chunk, done, error, metadata)
+- Error handling y timeouts
+- Rate limiting
+
+## Frontend Integration
+- EventSource API
+- Progress tracking
+- Stop stream functionality
+- Error handling
+
+## Examples
+### Quick Chat Streaming
+[Code snippet...]
+
+### Conversations Streaming
+[Code snippet...]
+
+### Custom Integration
+[Code snippet...]
+
+## Troubleshooting
+- Connection timeout
+- Chunk parsing errors
+- Browser compatibility
+- CORS issues
+```
+
+**Entregable:** ⏳ PENDIENTE
+- Documento completo (~600-800 líneas)
+- Code snippets funcionales
+- Troubleshooting exhaustivo
+
+---
+
+#### 4.2 Actualizar docs/USAGE-GUIDE.md (15 min) - ⏳ PENDIENTE
+
+**Añadir sección:**
+```markdown
+## Streaming Responses
+
+LLM Manager supports real-time streaming for:
+- Quick Chat
+- Conversations
+- Custom integrations
+
+[Link to STREAMING.md for details]
+
+### Basic Usage
+[Quick example...]
+```
+
+**Entregable:** ⏳ PENDIENTE
+- Sección añadida
+- Link a STREAMING.md
+
+---
+
+#### 4.3 Actualizar docs/API-REFERENCE.md (15 min) - ⏳ PENDIENTE
+
+**Añadir endpoints SSE:**
+```markdown
+## Streaming Endpoints
+
+### POST /admin/llm/stream/chat
+Stream chat response in real-time.
+
+**Event Types:**
+- `chunk`: Partial response data
+- `done`: Stream completed
+- `error`: Error occurred
+- `metadata`: Usage statistics
+
+**Request:**
+```json
+{
+  "message": "Hello",
+  "configuration_id": 1
+}
+```
+
+**Response (SSE):**
+```
+event: chunk
+data: {"content": "Hello"}
+
+event: done
+data: {"usage": {...}}
+```
+
+**Error Responses:**
+```json
+{
+  "error": "Connection timeout",
+  "code": 500
+}
+```
+```
+
+**Entregable:** ⏳ PENDIENTE
+- Endpoints documentados
+- Event types definidos
+- Error codes listados
+
+---
+
+## 🚀 CATEGORÍA 7: GitHub Release v1.0.7
 
 **Prioridad:** MEDIA (Nice-to-have para v1.2.0)  
 **Tiempo Estimado:** 1.5 horas  
@@ -1047,30 +1880,23 @@ Una tarea se considera completada cuando:
 
 1. ✅ **Código funcional** - Implementación completa y testeada
 2. ✅ **Tests passing** - Unit + Feature tests al 100%
-3. ✅ **Documentado** - README/docs actualizados
-4. ✅ **Revisado** - Code review (si aplica)
-5. ✅ **Commiteado** - Git commit con mensaje descriptivo
-6. ✅ **No regressions** - Tests existentes no fallan
-
 ---
 
 ## 📝 NOTAS IMPORTANTES
 
 ### Dependencias entre tareas
-- **Quick Chat FASE 6** depende de **FASE 5 aprobada**
-- **Quick Chat FASE 7** depende de **FASE 6 funcional**
-- **UI/UX Optimizations** pueden hacerse en paralelo
 - **Testing Suite** debe completarse antes de release v1.0.7
+- **Streaming Documentation** puede hacerse en paralelo
+- **GitHub Release** es el paso final después de testing
 
 ### Riesgos Identificados
-- ⚠️ **Tiempo estimado optimista** - Podría extenderse +20-30%
 - ⚠️ **Testing puede revelar bugs** - Requiere tiempo de fix
-- ⚠️ **Design-first puede iterar** - FASE 4 puede alargar FASE 2
+- ⚠️ **Documentation puede necesitar actualizaciones** - Basado en testing results
 
 ### Mitigaciones
-- ✅ Buffer de tiempo en estimaciones
-- ✅ Testing temprano (categoría 3 antes de 1)
-- ✅ Mock data para validación rápida
+- ✅ Testing temprano identifica issues rápido
+- ✅ Documentación incremental conforme se implementa
+- ✅ Code review antes de release
 
 ---
 
@@ -1084,7 +1910,8 @@ Una tarea se considera completada cuando:
 
 ### Qué incluye cada versión
 - **v1.0.6** (actual): Multi-instance + Legacy cleanup
-- **v1.0.7** (objetivo): Quick Chat + UI/UX + Tests + Docs
+- **v1.0.7** (objetivo): Quick Chat + Monitor v2.0 + Provider Connection + UI/UX
+- **v1.0.8** (futuro): Unit tests + Dual-Select Model Picker
 - **v1.1.0** (futuro): Statistics Dashboard, Workflow Builder UI
 
 ---
@@ -1092,23 +1919,41 @@ Una tarea se considera completada cuando:
 ## 📚 REFERENCIAS
 
 **Documentos relacionados:**
-- `plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md` - Plan detallado Quick Chat
-- `CHAT RESUME.md` - Optimizaciones UI/UX identificadas
+- `plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md` - Plan detallado Quick Chat (100% completado)
+- `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md` - Handoff documentation (78% completado)
+- `plans/completed/` - 6 planes completados (FIX-PROVIDERS, ACTIVITY-LOG, etc.)
+- `PENDIENTES.md` - Tareas pendientes actualizadas (8 dic 2025)
 - `CHANGELOG.md` - Historial de versiones
 - `PROJECT-STATUS.md` - Estado actual del proyecto
 - `docs/README.md` - Índice de documentación
 
 **Commits relevantes:**
-- `2fab9a7` - Remove obsolete v1.1.0 completion plan
-- `c985256` - Remove redundant technical guides
-- `00349e9` - Legacy cleanup (17 files, 1,213 lines)
+- `99d9b60` - Provider Connection Service Layer
+- `d01e100` - Implementation summary
+- `16b30bf` - OpenAI fix documentation
+- `ffbf0c1` - OpenAI test connection fix report
+- `907494c` - Console cleanup (producción ready)
+- `0cd80d4` - Enhanced data capture
+- `12ee763` - Monitor System v2.0
+- `bd42546` - Modular architecture v2.0
+
+**Documentación técnica:**
+- `reports/fixes/OPENAI-TEST-CONNECTION-FIX-20251208.md` (312 líneas)
+- `reports/analysis/PROVIDER-CONNECTION-ARCHITECTURE-ANALYSIS.md` (269 líneas)
+- `IMPLEMENTATION-SUMMARY-SESSION-20251208.md` (actualizado)
 
 ---
 
-**Estado Actual:** Plan v1.0.7 - 75% COMPLETADO (40+ commits realizados)  
-**Próximo Paso:** Finalizar UI/UX pendientes y completar Testing Suite  
+**Estado Actual:** Plan v1.0.7 - 85% COMPLETADO (110+ commits realizados)  
+**Próximo Paso:** Completar Testing Suite y Streaming Documentation  
 **Bloqueadores:** Testing Suite (prerequisito para release)  
-**ETA Release:** 6-8 horas de trabajo restantes
+**ETA Release:** 5-7 horas de trabajo restantes
+
+**Commits Destacados (Provider Connection):**
+- `99d9b60` - feat: implement provider connection service layer
+- `d01e100` - docs: add implementation summary
+- `16b30bf` - docs: update pending tasks and implementation summary
+- `ffbf0c1` - docs: add openai test connection fix report
 
 **Commits Destacados (Monitor System v2.0):**
 - `12ee763` - Monitor System v2.0 con Hybrid Adapter
@@ -1125,9 +1970,12 @@ Una tarea se considera completada cuando:
 
 **Logros Principales:**
 - ✅ Quick Chat totalmente funcional con streaming real (100%)
-- ✅ Monitor System v2.0 - Modular architecture completa
+- ✅ Provider Connection Service Layer (100%)
+- ✅ OpenAI Test Connection fix aplicado y validado (100%)
+- ✅ Monitor System v2.0 - Modular architecture completa (100%)
+- ✅ Activity Logs database persistence (100%)
 - ✅ Stop Stream con cleanup inteligente
-- ✅ Enhanced data capture (model, raw_response, tabs)
+- ✅ Enhanced data capture (model, raw_response, cost_usd)
 - ✅ OpenRouter provider integration
 - ✅ Token breakdown en tiempo real
 - ✅ Session management por ID
@@ -1137,14 +1985,32 @@ Una tarea se considera completada cuando:
 - ✅ Hybrid Adapter Pattern (Alpine.js + vanilla JS)
 - ✅ Asset publishing system
 - ✅ Console cleanup (código production-ready)
+- ✅ Unified Markdown rendering (marked.js)
 
 **Features NO Planeadas (Implementadas):**
 - ✅ Monitor System v2.0 (8-10h trabajo adicional)
+- ✅ Provider Connection Service Layer (4-5h trabajo adicional)
+- ✅ Activity Logs database migration
+- ✅ OpenAI Test Connection fix
 - ✅ Modular JS architecture
 - ✅ Hybrid Adapter Pattern
 - ✅ Multi-layout system
 - ✅ Asset publishing workflow
 
+**Trabajo Pendiente (15%):**
+- ⏳ Testing Suite (4-5h) - CRÍTICO para release
+- ⏳ UI/UX finishing touches (1-2h) - Typewriter effect, keyboard shortcuts
+- ⏳ Streaming Documentation (1.5h)
+- ⏳ GitHub Release v1.0.7 (1h)
+
+**Planes Completados y Archivados:**
+1. FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md (496 líneas)
+2. FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md (511 líneas)
+3. ACTIVITY-LOG-MIGRATION-PLAN.md
+4. DATABASE-LOGS-CONSOLIDATION-PLAN.md
+5. CHAT-MONITOR-ENHANCEMENT-PLAN.md
+6. MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md
+
 ---
 
-_Este documento se actualiza conforme avanza el desarrollo de v1.0.7. Última actualización: 5 de diciembre de 2025._
+_Este documento consolida el contenido de QUICK-CHAT-IMPLEMENTATION-PLAN.md y PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md en un único plan maestro. Última actualización: 8 de diciembre de 2025._

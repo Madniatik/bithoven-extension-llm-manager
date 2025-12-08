@@ -11,6 +11,8 @@ plans/
 ├── new/                 # Planes nuevos, no iniciados
 ├── in-progress/         # Planes en ejecución activa
 ├── completed/           # Planes completados (referencia histórica)
+├── archive/             # Planes archivados (integrados en master plan)
+├── PLAN-v1.0.7.md      # Plan maestro v1.0.7 (85% completado)
 └── README.md           # Este archivo
 ```
 
@@ -33,7 +35,18 @@ plans/
 
 ## 📋 Planes Actuales
 
+### Master Plan
+- **PLAN-v1.0.7.md** - Plan maestro consolidado (85% completado, 110+ commits)
+  - Quick Chat Feature (100%)
+  - Monitor System v2.0 (100%)
+  - Provider Connection Service Layer (100%)
+  - UI/UX Optimizations (92%)
+  - Testing Suite (Pendiente)
+  - Streaming Documentation (Pendiente)
+  - GitHub Release (Pendiente)
+
 ### new/
+- **DUAL-SELECT-MODEL-PICKER-PROPOSAL.md** - Propuesta para selector dual Provider+Model
 
 ### in-progress/
 - *(vacío - ningún plan en ejecución activa)*
@@ -45,6 +58,10 @@ plans/
 - **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
 - **FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md** - Service Layer para conexión LLM (✅ Completado 8 dic 2025)
 - **FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md** - Fix Load Models en Admin (✅ Completado 8 dic 2025)
+
+### archive/
+- **QUICK-CHAT-IMPLEMENTATION-PLAN.md** - Plan detallado Quick Chat (integrado en PLAN-v1.0.7.md)
+- **PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md** - Handoff documentation (integrado en PLAN-v1.0.7.md)
 
 ---
 
