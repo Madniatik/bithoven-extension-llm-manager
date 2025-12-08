@@ -3,7 +3,8 @@
 **Estado:** ✅ PRODUCTION READY  
 **Fecha:** 8 de diciembre de 2025  
 **Commit Base:** 99d9b60  
-**Testing:** 100% ✅
+**Testing:** 100% ✅ (Incluyendo OpenAI Real Testing)  
+**Última Actualización:** 8 dic 2025, 17:15 (OpenAI Test Connection Fix)
 
 ---
 
@@ -336,9 +337,48 @@ Implementar selector Provider + Model para Chat component
 - [x] Frontend integrado
 - [x] AJAX backend proxy
 - [x] Error handling
-- [x] Testing completado
+- [x] Testing completado (Ollama)
+- [x] **OpenAI Real Testing (8 dic 2025)** ⭐ NEW
+- [x] **Test Connection Fix (API key authentication)** ⭐ NEW
 - [x] Commits realizados
 - [x] Código production-ready
+
+---
+
+## 🔧 OpenAI Test Connection Fix (8 dic 2025, 17:10)
+
+### **Issue Detectado:**
+- Test Connection no enviaba API key real a OpenAI
+- Frontend enviaba `"***"` literal → Backend convertía a `null`
+- Resultado: HTTP 401 Unauthorized (missing authentication)
+
+### **Root Cause:**
+```javascript
+// ANTES (show.blade.php línea 148)
+const apiKey = '{{ $model->api_key ? "***" : "" }}';
+// Lógica línea 169:
+api_key: apiKey === '***' ? null : apiKey  // ❌ Siempre null si hay key
+```
+
+### **Fix Aplicado:**
+```javascript
+// DESPUÉS
+const apiKeyInput = document.getElementById('api-key-input');
+const apiKey = apiKeyInput ? apiKeyInput.value : '';
+// Lógica:
+api_key: apiKey || null  // ✅ Envía valor real del input
+```
+
+### **Testing Realizado:**
+- ✅ **OpenAI:** API key válida → HTTP 200, modelos cargados
+- ✅ **OpenAI:** API key inválida → HTTP 401 con mensaje "invalid API key"
+- ✅ **OpenRouter:** Sin regresiones, funciona igual que antes
+- ✅ **Ollama:** Sin cambios (no requiere API key)
+
+### **Archivos Modificados:**
+- `resources/views/admin/models/show.blade.php` (función `testModelConnection()`)
+
+### **Status:** ✅ COMPLETADO Y VERIFICADO
 
 ---
 
@@ -349,11 +389,13 @@ Implementar selector Provider + Model para Chat component
 3. **Caching Strategy:** TTL apropiado (10min) balanza freshness vs performance
 4. **Backend Proxy:** Evita CORS, centraliza autenticación
 5. **Error Handling:** Consistencia en respuestas JSON
+6. **Security Testing:** ⭐ Verificar que credenciales se envíen correctamente en testing (no hardcodear "***")
+7. **Provider Differences:** ⭐ OpenAI requiere auth obligatoria, OpenRouter permite endpoints públicos
 
 ---
 
 **Estado:** COMPLETADO ✅  
 **Calidad:** PRODUCTION ✅  
-**Testing:** 100% ✅
+**Testing:** 100% ✅ (Incluyendo OpenAI Real)
 
 🎉 **Implementación Exitosa!** 🎉

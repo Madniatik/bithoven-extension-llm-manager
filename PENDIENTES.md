@@ -1,8 +1,8 @@
 # Estado del Proyecto: Pendientes y Próximos Pasos
 
-**Fecha:** 8 de diciembre de 2025, 16:35  
+**Fecha:** 8 de diciembre de 2025, 17:15  
 **Versión:** v1.0.7-dev  
-**Última Sesión:** Provider Connection Service Layer (COMPLETADA ✅)
+**Última Sesión:** OpenAI Test Connection Fix (COMPLETADA ✅)
 
 ---
 
@@ -35,6 +35,32 @@
 - `reports/analysis/PROVIDER-CONNECTION-ARCHITECTURE-ANALYSIS.md`
 
 **Status:** ✅ PRODUCTION READY
+
+### OpenAI Test Connection Fix
+**Issue:** Test Connection no enviaba API key real, causando HTTP 401 en OpenAI
+
+**Root Cause:**
+- Frontend enviaba `"***"` literal en lugar de API key real
+- Lógica convertía `"***"` → `null` (sin autenticación)
+
+**Fix Implementado:**
+```javascript
+// ANTES (resources/views/admin/models/show.blade.php línea 148)
+const apiKey = '{{ $model->api_key ? "***" : "" }}';
+api_key: apiKey === '***' ? null : apiKey  // ❌ Siempre null
+
+// DESPUÉS
+const apiKeyInput = document.getElementById('api-key-input');
+const apiKey = apiKeyInput ? apiKeyInput.value : '';
+api_key: apiKey || null  // ✅ Envía valor real
+```
+
+**Testing Realizado:**
+- ✅ OpenAI: API key enviada correctamente, autenticación exitosa
+- ✅ OpenRouter: Sin regresiones, funciona igual
+- ✅ Ollama: Sin cambios (no requiere API key)
+
+**Status:** ✅ COMPLETADO Y VERIFICADO
 
 ---
 
@@ -113,15 +139,18 @@ Feature alternativo para Chat component - selector dual (Provider + Model) en lu
 - SweetAlert2 toasts
 - Dropdown rendering
 
-### 3. OpenAI Real Testing
-**Priority:** MEDIUM  
-**Estimated Time:** 15 min  
-**Status:** PENDING (requiere API key válida)
+### 3. ~~OpenAI Real Testing~~
+**Priority:** ~~MEDIUM~~ COMPLETADO ✅  
+**Estimated Time:** ~~15 min~~ (COMPLETADO)  
+**Status:** ✅ COMPLETADO (8 dic 2025, 17:10)
 
-**Tests:**
-- Cargar modelos desde OpenAI API
-- Validar parsing correcto
-- Verificar cache funcionando
+**Tests Realizados:**
+- ✅ Test Connection con API key real (HTTP 200 con auth válida, HTTP 401 con auth inválida)
+- ✅ Load Models desde OpenAI API (parsing correcto)
+- ✅ Cache funcionando (10min TTL)
+- ✅ Error handling (timeout, invalid response)
+
+**Fix aplicado:** API key ahora se lee del input field en lugar de hardcoded `"***"`
 
 ---
 
@@ -175,7 +204,9 @@ Operaciones batch en Admin:
 - ✅ Chat Monitor Enhancement (8/8 fases)
 - ✅ Activity Log Migration (Database-driven)
 - ✅ Database Logs Consolidation
-- ✅ Provider Connection Service Layer (NEW - 8 dic 2025)
+- ✅ Provider Connection Service Layer (8 dic 2025)
+- ✅ OpenAI Test Connection Fix (8 dic 2025)
+- ✅ OpenAI Real Testing (API key authentication)
 
 **En Desarrollo:**
 - ⏳ Ninguno actualmente
@@ -184,7 +215,6 @@ Operaciones batch en Admin:
 - 🟡 Dual-Select Model Picker (Propuesta)
 - 🟡 Unit Tests LLMProviderService
 - 🟡 Cross-browser Testing
-- 🟡 OpenAI Real Testing
 
 **Blockers:**
 - ❌ Ninguno
