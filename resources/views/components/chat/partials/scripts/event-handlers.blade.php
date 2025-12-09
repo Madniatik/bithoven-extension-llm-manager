@@ -1391,12 +1391,93 @@
                     }
                 }
 
-                // Delete button (placeholder - funcionalidad pendiente)
+                // Delete button
                 if (target.classList.contains('delete-message-btn')) {
                     e.preventDefault();
                     const messageId = target.dataset.messageId;
-                    console.log('Delete message:', messageId);
-                    toastr.info('Delete functionality coming soon');
+                    
+                    // Validar que el mensaje esté guardado
+                    if (!messageId || messageId.startsWith('msg-')) {
+                        toastr.warning('Cannot delete unsaved messages');
+                        return;
+                    }
+                    
+                    // Mostrar confirmación con checkbox para borrar logs
+                    Swal.fire({
+                        title: 'Delete Message?',
+                        html: `
+                            <p class="text-gray-700 mb-4">This message will be permanently removed from the conversation</p>
+                            <div class="form-check text-start">
+                                <input class="form-check-input" type="checkbox" id="deleteLogsCheck">
+                                <label class="form-check-label text-gray-700" for="deleteLogsCheck">
+                                    Also delete usage logs (costs, metrics, etc.)
+                                </label>
+                                <div class="text-muted fs-8 mt-1">
+                                    <i class="ki-duotone ki-information-5 fs-7 text-warning me-1">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                    Warning: This will affect statistics and cost reports
+                                </div>
+                            </div>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete Message',
+                        cancelButtonText: 'Cancel',
+                        confirmButtonColor: '#dc3545',
+                        reverseButtons: true,
+                        preConfirm: () => {
+                            return {
+                                delete_logs: document.getElementById('deleteLogsCheck').checked
+                            };
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Realizar petición DELETE
+                            fetch(`/admin/llm/messages/${messageId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                                    'Accept': 'application/json',
+                                },
+                                credentials: 'same-origin',
+                                body: JSON.stringify({
+                                    delete_logs: result.value.delete_logs
+                                })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    // Remover bubble del DOM
+                                    const bubble = messagesContainer.querySelector(`[data-message-id="${messageId}"]`);
+                                    if (bubble) {
+                                        bubble.remove();
+                                    }
+                                    
+                                    // Feedback
+                                    if (data.logs_deleted > 0) {
+                                        toastr.success(`Message and ${data.logs_deleted} usage log(s) deleted`);
+                                    } else {
+                                        toastr.success('Message deleted successfully');
+                                    }
+                                } else {
+                                    toastr.error(data.message || 'Failed to delete message');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Delete message error:', error);
+                                toastr.error('Error deleting message: ' + error.message);
+                            });
+                        }
+                    });
                 }
             });
 
