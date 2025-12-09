@@ -17,7 +17,9 @@
 {!! $__llmDebugConsoleRegistration ?? '' !!}
 
 {{-- CRITICAL: Load Alpine.js components BEFORE using them in x-data attributes --}}
+{!! '<script>' !!}
 @include('llm-manager::components.chat.partials.scripts.chat-settings')
+{!! '</script>' !!}
 
 <div class="llm-chat-workspace" 
      data-session-id="{{ $session?->id }}" 

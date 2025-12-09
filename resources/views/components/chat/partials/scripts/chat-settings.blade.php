@@ -1,4 +1,3 @@
-<script>
 /**
  * Chat Settings Component (Alpine.js)
  * 
