@@ -136,10 +136,12 @@ class LLMQuickChatController extends Controller
                 
                 // Build context from previous messages (apply context_limit)
                 // Skip error messages from context (is_error flag in metadata)
+                // EXCLUDE current user message (already added above, will be appended separately)
                 $contextLimit = $validated['context_limit'] ?? 10;
                 
-                // Get all messages first (to support 'All messages' option)
+                // Get all messages EXCEPT the current user message just created
                 $allMessages = $session->messages()
+                    ->where('id', '!=', $userMessage->id) // Exclude current message
                     ->orderBy('id')
                     ->get()
                     ->filter(function($m) {

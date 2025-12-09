@@ -100,7 +100,10 @@
                                 </tr>
                                 <tr>
                                     <td class="fw-semibold text-gray-600">Top P</td>
-                                    <td id="param-top-p" class="text-gray-800">-</td>
+                                    <td id="param-top-p" class="text-gray-800">
+                                        <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>
+                                        <span class="text-muted">Waiting for SSE...</span>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="fw-semibold text-gray-600">Context Limit</td>
@@ -108,7 +111,10 @@
                                 </tr>
                                 <tr>
                                     <td class="fw-semibold text-gray-600">Actual Context Size</td>
-                                    <td id="param-actual-context-size" class="text-gray-800 fw-bold">-</td>
+                                    <td id="param-actual-context-size" class="text-gray-800 fw-bold">
+                                        <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>
+                                        <span class="text-muted">Waiting for SSE...</span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -151,7 +157,9 @@
                             <span class="path3"></span>
                         </i>
                         Context Messages
-                        <span id="context-count-badge" class="badge badge-light-primary ms-2">0</span>
+                        <span id="context-count-badge" class="badge badge-light-primary ms-2">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </span>
                     </h3>
                     <div class="card-toolbar">
                         <span class="btn btn-sm btn-icon btn-active-light-primary">
@@ -162,7 +170,10 @@
                 <div id="context-messages-section" class="collapse">
                     <div class="card-body p-4">
                         <div id="context-messages-list" class="timeline">
-                            <p class="text-muted">No context messages</p>
+                            <div class="text-center text-muted py-3">
+                                <span class="spinner-border spinner-border-sm text-primary me-2" role="status"></span>
+                                <span>Waiting for SSE event...</span>
+                            </div>
                         </div>
                     </div>
                 </div>
