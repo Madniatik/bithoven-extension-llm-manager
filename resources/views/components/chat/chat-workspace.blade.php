@@ -16,6 +16,9 @@
 {{-- Debug Console auto-loaded via View Composer globally --}}
 {!! $__llmDebugConsoleRegistration ?? '' !!}
 
+{{-- CRITICAL: Load Alpine.js components BEFORE using them in x-data attributes --}}
+@include('llm-manager::components.chat.partials.scripts.chat-settings')
+
 <div class="llm-chat-workspace" 
      data-session-id="{{ $session?->id }}" 
      data-monitor-layout="{{ $monitorLayout }}"
@@ -42,7 +45,6 @@
 @endpush --}}
 
 {{-- Styles (partitioned) --}}
-@push('styles')
 @include('llm-manager::components.chat.partials.styles.dependencies')
 @include('llm-manager::components.chat.partials.styles.markdown')
 @include('llm-manager::components.chat.partials.styles.buttons')
@@ -51,14 +53,12 @@
 @if($monitorLayout === 'split-horizontal')
     @include('llm-manager::components.chat.partials.styles.split-horizontal')
 @endif
-@endpush
 
 {{-- Scripts (partitioned) --}}
-@push('scripts')
 @include('llm-manager::components.chat.partials.scripts.clipboard-utils')
 @include('llm-manager::components.chat.partials.scripts.message-renderer')
 @include('llm-manager::components.chat.partials.scripts.settings-manager')
-@include('llm-manager::components.chat.partials.scripts.chat-settings')
+{{-- chat-settings MOVED to top (before x-data usage) --}}
 @include('llm-manager::components.chat.partials.scripts.event-handlers')
 @include('llm-manager::components.chat.partials.scripts.chat-workspace')
 @include('llm-manager::components.chat.partials.scripts.monitor-api')
@@ -66,4 +66,3 @@
 @if($monitorLayout === 'split-horizontal')
     @include('llm-manager::components.chat.partials.scripts.split-resizer')
 @endif
-@endpush
