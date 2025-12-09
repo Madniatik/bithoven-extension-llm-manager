@@ -153,12 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Crear checkmark element
         const checkmark = document.createElement('span');
-        checkmark.className = 'saved-checkmark';
+        checkmark.className = 'saved-checkmark ms-2';
         checkmark.innerHTML = `
-            <i class="ki-duotone ki-check-circle fs-6 text-success">
+            <i class="ki-duotone ki-check-circle fs-2 text-success">
                 <span class="path1"></span>
                 <span class="path2"></span>
             </i>
+            <span class="text-success fw-bold fs-7 ms-1">Saved</span>
         `;
         
         // Agregar al footer
