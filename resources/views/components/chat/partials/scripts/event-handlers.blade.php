@@ -63,8 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollToUserMessage = (messageBubble) => {
         if (!messagesContainer || !messageBubble) return;
         
+        console.log('[Scroll] User message scroll triggered');
         const bubbleTop = messageBubble.offsetTop;
         const paddingTop = 20; // 20px de espacio arriba del bubble
+        
+        console.log('[Scroll] Bubble offsetTop:', bubbleTop, 'Target scroll:', bubbleTop - paddingTop);
         
         messagesContainer.scrollTo({
             top: bubbleTop - paddingTop,
@@ -1199,10 +1202,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Scroll inicial al último mensaje (al cargar página)
     setTimeout(() => {
         if (messagesContainer) {
+            console.log('[Scroll] Initial scroll to bottom');
+            console.log('[Scroll] Container scrollHeight:', messagesContainer.scrollHeight);
             messagesContainer.scrollTo({
                 top: messagesContainer.scrollHeight,
                 behavior: 'auto' // Instantáneo en carga inicial
             });
+        } else {
+            console.warn('[Scroll] Messages container not found for initial scroll');
         }
     }, 200);
     
