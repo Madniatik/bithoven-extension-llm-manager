@@ -1294,8 +1294,7 @@
         clearBtn?.addEventListener('click', clearConversation);
 
         // ===== KEYBOARD SHORTCUTS (OS-aware, configurable) =====
-        // Initialize KeyboardShortcuts module
-        const sessionId = '{{ $session?->id ?? 'default' }}';
+        // Initialize KeyboardShortcuts module (reuse sessionId from top)
         KeyboardShortcuts.init(sessionId, messageInput, sendMessage);
         
         console.log('[QuickChat] Keyboard shortcuts initialized');

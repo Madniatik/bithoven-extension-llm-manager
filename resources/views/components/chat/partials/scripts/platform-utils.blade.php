@@ -1,17 +1,26 @@
 {{--
     PLATFORM UTILITIES
     
-    Detección de sistema operativo y utilidades cross-platform.
-    Este módulo detecta Mac/Windows/Linux y proporciona helpers
-    para adaptar UX según la plataforma.
+    Detección de sistema operativo, navegador y utilidades cross-platform.
+    Este módulo detecta Mac/Windows/Linux, Chrome/Firefox/Safari y proporciona
+    helpers para adaptar UX según la plataforma.
     
     Funcionalidades:
     - Detección de OS (macOS, Windows, Linux, iOS, Android)
+    - Detección de Browser (Chrome, Firefox, Safari, Edge, Opera)
+    - Versión del navegador
+    - Información completa del sistema (viewport, touch support, etc.)
     - Teclas modificadoras (Cmd vs Ctrl)
     - Tooltips adaptados por OS
     - Comportamientos específicos de plataforma
     
-    @version 1.0.0
+    Uso:
+    - PlatformUtils.currentOS → 'mac', 'windows', 'linux', etc.
+    - PlatformUtils.currentBrowser → 'chrome', 'firefox', 'safari', etc.
+    - PlatformUtils.getModifierKey() → 'Cmd' (Mac) o 'Ctrl' (Windows/Linux)
+    - PlatformUtils.getSystemInfo() → Objeto completo con toda la info
+    
+    @version 1.1.0
     @requires JavaScript ES6+
 --}}
 
@@ -19,8 +28,15 @@
 /**
  * Platform Detection & Cross-Platform Utilities
  * 
- * Proporciona información sobre el sistema operativo del usuario
- * y helpers para adaptar UX (keyboard shortcuts, tooltips, etc.)
+ * Proporciona información sobre el sistema operativo, navegador y características
+ * del dispositivo del usuario. Helpers para adaptar UX (keyboard shortcuts, tooltips, etc.)
+ * 
+ * API Pública:
+ * - OS Detection: detectOS(), currentOS, isMac(), isWindows(), etc.
+ * - Browser Detection: detectBrowser(), currentBrowser, currentBrowserVersion
+ * - System Info: getSystemInfo() → viewport, touch support, screen resolution, etc.
+ * - Modifier Keys: getModifierKey(), isModifierPressed(event)
+ * - Shortcuts: formatShortcut('MOD+C') → 'Cmd+C' (Mac) o 'Ctrl+C' (Windows)
  */
 window.PlatformUtils = (function() {
     'use strict';
@@ -68,6 +84,107 @@ window.PlatformUtils = (function() {
      * @type {string}
      */
     const currentOS = detectOS();
+    
+    // ===== BROWSER DETECTION =====
+    
+    /**
+     * Detecta el navegador basado en userAgent
+     * @returns {string} 'chrome', 'firefox', 'safari', 'edge', 'opera', 'unknown'
+     */
+    const detectBrowser = () => {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        
+        // Edge (debe ir ANTES de Chrome porque usa Chromium)
+        if (/edg\//.test(userAgent)) {
+            return 'edge';
+        }
+        
+        // Chrome
+        if (/chrome/.test(userAgent) && !/edg\//.test(userAgent)) {
+            return 'chrome';
+        }
+        
+        // Firefox
+        if (/firefox/.test(userAgent)) {
+            return 'firefox';
+        }
+        
+        // Safari (debe ir DESPUÉS de Chrome)
+        if (/safari/.test(userAgent) && !/chrome/.test(userAgent)) {
+            return 'safari';
+        }
+        
+        // Opera
+        if (/opr\/|opera/.test(userAgent)) {
+            return 'opera';
+        }
+        
+        return 'unknown';
+    };
+    
+    /**
+     * Obtiene la versión del navegador
+     * @returns {string} Versión del navegador o 'unknown'
+     */
+    const getBrowserVersion = () => {
+        const userAgent = window.navigator.userAgent;
+        const browser = detectBrowser();
+        
+        let match;
+        switch (browser) {
+            case 'chrome':
+                match = userAgent.match(/Chrome\/(\d+\.\d+)/);
+                return match ? match[1] : 'unknown';
+            case 'firefox':
+                match = userAgent.match(/Firefox\/(\d+\.\d+)/);
+                return match ? match[1] : 'unknown';
+            case 'safari':
+                match = userAgent.match(/Version\/(\d+\.\d+)/);
+                return match ? match[1] : 'unknown';
+            case 'edge':
+                match = userAgent.match(/Edg\/(\d+\.\d+)/);
+                return match ? match[1] : 'unknown';
+            case 'opera':
+                match = userAgent.match(/OPR\/(\d+\.\d+)/);
+                return match ? match[1] : 'unknown';
+            default:
+                return 'unknown';
+        }
+    };
+    
+    /**
+     * Current browser detected
+     * @type {string}
+     */
+    const currentBrowser = detectBrowser();
+    
+    /**
+     * Current browser version
+     * @type {string}
+     */
+    const currentBrowserVersion = getBrowserVersion();
+    
+    /**
+     * Obtiene información completa del navegador y plataforma
+     * @returns {Object} Información completa del sistema
+     */
+    const getSystemInfo = () => {
+        return {
+            os: currentOS,
+            browser: currentBrowser,
+            browserVersion: currentBrowserVersion,
+            userAgent: window.navigator.userAgent,
+            platform: window.navigator.platform,
+            language: window.navigator.language,
+            screenWidth: window.screen.width,
+            screenHeight: window.screen.height,
+            viewportWidth: window.innerWidth,
+            viewportHeight: window.innerHeight,
+            colorDepth: window.screen.colorDepth,
+            pixelRatio: window.devicePixelRatio,
+            touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+        };
+    };
     
     // ===== MODIFIER KEYS =====
     
@@ -163,6 +280,13 @@ window.PlatformUtils = (function() {
         detectOS,
         currentOS,
         
+        // Browser Detection
+        detectBrowser,
+        getBrowserVersion,
+        currentBrowser,
+        currentBrowserVersion,
+        getSystemInfo,
+        
         // Platform Checks
         isMac,
         isWindows,
@@ -183,8 +307,14 @@ window.PlatformUtils = (function() {
 })();
 
 /**
- * Log detected OS (útil para debugging)
+ * Log detected platform info (útil para debugging)
  */
-console.log('[PlatformUtils] Detected OS:', PlatformUtils.currentOS);
-console.log('[PlatformUtils] Modifier Key:', PlatformUtils.getModifierKey());
+if (PlatformUtils.isDesktop()) {
+    console.log('[PlatformUtils] System:', PlatformUtils.currentOS, '/', PlatformUtils.currentBrowser, PlatformUtils.currentBrowserVersion);
+    console.log('[PlatformUtils] Modifier Key:', PlatformUtils.getModifierKey());
+} else {
+    console.log('[PlatformUtils] Mobile:', PlatformUtils.currentOS, '/', PlatformUtils.currentBrowser);
+}
+
+// Log completo disponible con: console.table(PlatformUtils.getSystemInfo())
 </script>
