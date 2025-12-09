@@ -428,6 +428,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const maxTokens = parseInt(document.getElementById('quick-chat-max-tokens')?.value || 2000, 10);
         const contextLimit = parseInt(document.getElementById('quick-chat-context-limit')?.value || 10, 10);
         
+        // ========================================
+        // 🔥 POPULATE REQUEST INSPECTOR (BEFORE STREAMING)
+        // ========================================
+        // Build request data BEFORE EventSource starts (immediate UI feedback)
+        const requestData = {
+            metadata: {
+                provider: thinkingProvider,
+                model: thinkingModel,
+                endpoint: selectedOption?.dataset.endpoint || 'N/A',
+                timestamp: new Date().toISOString(),
+                session_id: sessionId,
+                message_id: null, // Will be set by backend
+            },
+            parameters: {
+                temperature: temperature,
+                max_tokens: maxTokens,
+                context_limit: contextLimit,
+            },
+            system_instructions: selectedOption?.dataset.systemInstructions || null,
+            context_messages: [], // Cannot get from UI (backend handles this)
+            current_prompt: userPrompt,
+            full_request_body: {
+                model: thinkingModel,
+                prompt: userPrompt,
+                temperature: temperature,
+                max_tokens: maxTokens,
+                stream: true,
+            }
+        };
+        
+        // Populate Request Inspector IMMEDIATELY (no SSE dependency)
+        if (typeof window.populateRequestInspector === 'function') {
+            window.populateRequestInspector(requestData);
+            addMonitorLog('📋 Request Inspector populated', 'success');
+        } else {
+            console.warn('[Event Handlers] populateRequestInspector function not found');
+        }
+        
         // EventSource with session_id, configuration_id, and custom parameters
         const params = new URLSearchParams({
             session_id: sessionId,

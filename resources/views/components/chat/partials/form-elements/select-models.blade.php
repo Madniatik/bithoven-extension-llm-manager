@@ -6,6 +6,7 @@
         @foreach ($configurations as $config)
             <option value="{{ $config->id }}" data-provider="{{ ucfirst($config->provider) }}"
                 data-model="{{ $config->model }}"
+                data-endpoint="{{ $config->api_endpoint ?? 'N/A' }}"
                 {{ $session && $session->configuration_id == $config->id ? 'selected' : '' }}>
                 {{ $config->name }} ({{ ucfirst($config->provider) }})
             </option>
