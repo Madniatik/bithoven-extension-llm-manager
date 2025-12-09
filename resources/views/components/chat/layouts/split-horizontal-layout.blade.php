@@ -60,10 +60,22 @@
             <div class="split-horizontal-container" id="llm-split-view-{{ $sessionId }}" x-data="splitResizer_{{ $sessionId }}({{ $session?->id ?? 'null' }})"
                 x-init="init()">
                 {{-- CHAT PANE (70% default) --}}
-                <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}" style="overflow-x: hidden;">
+                <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}" style="overflow-x: hidden; position: relative;">
                     <div class="py-0" style="overflow-x: hidden;">
                         @include('llm-manager::components.chat.partials.messages-container')
                     </div>
+                    
+                    <!--begin::Scroll to bottom button-->
+                    <button id="scroll-to-bottom-btn-{{ $sessionId }}" 
+                            class="scroll-to-bottom-btn d-none"
+                            title="Scroll to bottom">
+                        <i class="ki-duotone ki-arrow-down fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        <span class="unread-badge badge badge-circle badge-danger d-none" id="unread-badge-{{ $sessionId }}">0</span>
+                    </button>
+                    <!--end::Scroll to bottom button-->
                 </div>
 
                 @if ($showMonitor)

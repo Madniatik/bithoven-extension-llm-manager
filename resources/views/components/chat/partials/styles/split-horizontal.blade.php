@@ -21,9 +21,9 @@
     
     /* Scroll to bottom floating button */
     .scroll-to-bottom-btn {
-        position: fixed;
-        bottom: 120px;
-        right: 40px;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
         width: 48px;
         height: 48px;
         border-radius: 50%;
