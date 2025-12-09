@@ -215,11 +215,11 @@
         <div x-show="activeMainTab === 'settings'" style="display: none;">
             <div class="d-flex justify-content-end gap-2">
                 <button type="button" class="btn btn-light"
-                    @click="activeMainTab = 'conversation'; toastr.info('Reset to defaults - funcionalidad pendiente de implementar')">
+                    @click="window.dispatchEvent(new CustomEvent('workspace-reset-settings'))">
                     Reset to Defaults
                 </button>
                 <button type="button" class="btn btn-primary"
-                    onclick="toastr.info('Save settings - funcionalidad pendiente de implementar')">
+                    @click="window.dispatchEvent(new CustomEvent('workspace-save-settings'))">
                     {!! getIcon('ki-check', 'fs-2 me-1', '', 'i') !!}
                     Save Settings
                 </button>

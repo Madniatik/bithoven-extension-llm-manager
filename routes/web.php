@@ -10,6 +10,7 @@ use Bithoven\LLMManager\Http\Controllers\Admin\LLMToolDefinitionController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMStreamController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMActivityController;
 use Bithoven\LLMManager\Http\Controllers\Admin\LLMQuickChatController;
+use Bithoven\LLMManager\Http\Controllers\Admin\WorkspacePreferencesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,4 +92,9 @@ Route::prefix('admin/llm')
         Route::post('models', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'store'])->name('models.store');
         Route::put('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'update'])->name('models.update');
         Route::put('models/{model}/advanced', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'updateAdvanced'])->name('models.update-advanced');
+        
+        // Workspace Preferences (Save/Reset Settings)
+        Route::get('workspace/preferences', [WorkspacePreferencesController::class, 'get'])->name('workspace.preferences.get');
+        Route::post('workspace/preferences/save', [WorkspacePreferencesController::class, 'save'])->name('workspace.preferences.save');
+        Route::post('workspace/preferences/reset', [WorkspacePreferencesController::class, 'reset'])->name('workspace.preferences.reset');
     });
