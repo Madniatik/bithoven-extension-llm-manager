@@ -3,13 +3,16 @@
 namespace Bithoven\LLMManager\Tests\Unit\Services;
 
 use Bithoven\LLMManager\Services\ChatWorkspaceConfigValidator;
-use Bithoven\LLMManager\Tests\TestCase;
+use Bithoven\LLMManager\Tests\UnitTestCase;
 use InvalidArgumentException;
 
 /**
  * Unit tests for ChatWorkspaceConfigValidator
+ * 
+ * Estos tests son UNIT puros (no requieren database).
+ * Usan UnitTestCase que NO carga migraciones.
  */
-class ChatWorkspaceConfigValidatorTest extends TestCase
+class ChatWorkspaceConfigValidatorTest extends UnitTestCase
 {
     /**
      * Test that empty config returns defaults
@@ -38,12 +41,18 @@ class ChatWorkspaceConfigValidatorTest extends TestCase
                     ],
                 ],
             ],
+            'ui' => [
+                'buttons' => [
+                    'monitor_toggle' => false, // CRÍTICO: debe coincidir con monitor.enabled
+                ],
+            ],
         ];
 
         $validated = ChatWorkspaceConfigValidator::validate($config);
 
         $this->assertFalse($validated['features']['monitor']['enabled']);
         $this->assertFalse($validated['features']['monitor']['tabs']['console']);
+        $this->assertFalse($validated['ui']['buttons']['monitor_toggle']);
     }
 
     /**
@@ -154,6 +163,11 @@ class ChatWorkspaceConfigValidatorTest extends TestCase
             'features' => [
                 'monitor' => [
                     'enabled' => false,
+                    'tabs' => [
+                        'console' => false,
+                        'request_inspector' => false,
+                        'activity_log' => false,
+                    ],
                 ],
             ],
             'ui' => [
@@ -163,6 +177,7 @@ class ChatWorkspaceConfigValidatorTest extends TestCase
             ],
         ]);
     }
+
 
     /**
      * Test all tabs disabled when monitor enabled throws exception

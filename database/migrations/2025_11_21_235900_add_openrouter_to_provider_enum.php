@@ -12,7 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // MySQL no permite modificar ENUM directamente, hay que usar ALTER TABLE con MODIFY
+        $driver = DB::connection()->getDriverName();
+        
+        if ($driver === 'sqlite') {
+            // SQLite no soporta ENUM ni MODIFY COLUMN
+            // En SQLite, 'provider' es un string simple, así que no requiere cambios
+            // Los valores ENUM se validan a nivel de aplicación (via validator)
+            return;
+        }
+        
+        // MySQL/MariaDB: modificar ENUM para agregar 'openrouter'
         DB::statement("ALTER TABLE llm_manager_configurations MODIFY COLUMN provider ENUM('ollama', 'openai', 'anthropic', 'openrouter', 'local', 'custom') DEFAULT 'ollama'");
     }
 
@@ -21,7 +30,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revertir al estado anterior (sin openrouter)
+        $driver = DB::connection()->getDriverName();
+        
+        if ($driver === 'sqlite') {
+            // SQLite: no requiere cambios (ver up())
+            return;
+        }
+        
+        // MySQL/MariaDB: revertir al estado anterior (sin openrouter)
         DB::statement("ALTER TABLE llm_manager_configurations MODIFY COLUMN provider ENUM('ollama', 'openai', 'anthropic', 'local', 'custom') DEFAULT 'ollama'");
     }
 };

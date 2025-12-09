@@ -111,11 +111,8 @@ class ChatWorkspaceConfigValidator
         // 1. Merge with defaults recursively
         $merged = array_replace_recursive(self::$defaults, $config);
 
-        // 2. Flatten for validation (Laravel validator doesn't support deep arrays directly)
-        $flattened = self::flattenArray($merged);
-
-        // 3. Validate types and values
-        $validator = Validator::make($flattened, self::$rules);
+        // 2. Validate using dot-notation on multidimensional array (Laravel supports this)
+        $validator = Validator::make($merged, self::$rules);
 
         if ($validator->fails()) {
             throw new InvalidArgumentException(
@@ -124,7 +121,7 @@ class ChatWorkspaceConfigValidator
             );
         }
 
-        // 4. Logical validations (complex rules)
+        // 3. Logical validations (complex rules)
         self::validateLogic($merged);
 
         return $merged;
@@ -195,29 +192,5 @@ class ChatWorkspaceConfigValidator
                 );
             }
         }
-    }
-
-    /**
-     * Flatten multidimensional array for Laravel validator
-     * 
-     * @param array $array
-     * @param string $prefix
-     * @return array
-     */
-    private static function flattenArray(array $array, string $prefix = ''): array
-    {
-        $result = [];
-        
-        foreach ($array as $key => $value) {
-            $newKey = $prefix === '' ? $key : $prefix . '.' . $key;
-            
-            if (is_array($value)) {
-                $result = array_merge($result, self::flattenArray($value, $newKey));
-            } else {
-                $result[$newKey] = $value;
-            }
-        }
-        
-        return $result;
     }
 }
