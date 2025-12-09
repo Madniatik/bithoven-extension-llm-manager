@@ -11,7 +11,7 @@
 @endphp
 
 <div class="card" id="kt_chat_messenger" x-data="chatSettings({{ $alpineSessionId }})">
-    {{-- Card Header (fuera del split) --}}
+    {{-- Card Header (SIEMPRE VISIBLE) --}}
     <div class="card-header" id="kt_chat_messenger_header">
         <div class="card-title">
             <h3 class="card-title align-items-start flex-column">
@@ -26,25 +26,45 @@
             </h3>
             @include('llm-manager::components.chat.partials.drafts.chat-users')
         </div>
+
+        {{-- Toolbar con botones toggle --}}
+        <div class="card-toolbar d-flex gap-2">
+            @if($showSettings)
+                {{-- Settings button (visible solo en tab Conversación) --}}
+                <button type="button" 
+                        class="btn btn-sm btn-icon btn-active-light-primary" 
+                        @click="activeMainTab = 'settings'"
+                        x-show="activeMainTab === 'conversation'"
+                        data-bs-toggle="tooltip"
+                        title="Chat Settings">
+                    {!! getIcon('ki-setting-2', 'fs-2x', '', 'i') !!}
+                </button>
+                
+                {{-- Close Settings button (visible solo en tab Settings) --}}
+                <button type="button" 
+                        class="btn btn-sm btn-light-dark pe-1" 
+                        @click="activeMainTab = 'conversation'"
+                        x-show="activeMainTab === 'settings'"
+                        style="display: none;"
+                        title="Close Settings">
+                    Close Settings
+                    {!! getIcon('ki-cross', 'fs-2 ms-1', '', 'i') !!}
+                </button>
+            @endif
+        </div>
     </div>
 
-    {{-- Tab Navigation --}}
-    @include('llm-manager::components.chat.partials.tab-navigation', [
-        'sessionId' => $sessionId,
-        'showSettings' => $showSettings,
-    ])
-
-    {{-- TAB CONTENT WRAPPER --}}
-    <div class="tab-content">
-        {{-- TAB: Conversación | Monitor --}}
+    {{-- Card Body (CONTENIDO CAMBIA SEGÚN TAB) --}}
+    <div class="card-body" id="kt_chat_messenger_body">
+        {{-- TAB 1: Conversación + Monitor (Split) --}}
         <div x-show="activeMainTab === 'conversation'" style="display: block;">
-            {{-- SPLIT CONTAINER (solo body: mensajes + monitor) --}}
+            {{-- SPLIT CONTAINER --}}
             <div class="split-horizontal-container" id="llm-split-view-{{ $sessionId }}" 
                  x-data="splitResizer_{{ $sessionId }}({{ $session?->id ?? 'null' }})"
                  x-init="init()">
-                {{-- CHAT PANE (70% default) - Solo mensajes con scroll --}}
+                {{-- CHAT PANE (70% default) --}}
                 <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}">
-                    <div class="card-body py-0" id="kt_chat_messenger_body-{{ $sessionId }}">
+                    <div class="py-0">
                         @include('llm-manager::components.chat.partials.messages-container')
                     </div>
                 </div>
@@ -167,24 +187,22 @@
             </div>
             {{-- END SPLIT CONTAINER --}}
         </div>
-        {{-- END TAB: Conversación | Monitor --}}
+        {{-- END TAB 1: Conversación + Monitor --}}
 
-    @if($showSettings)
-        {{-- TAB: Chat Settings --}}
-        <div x-show="activeMainTab === 'settings'" style="display: none;">
-            <div class="p-5">
+        @if($showSettings)
+            {{-- TAB 2: Chat Settings --}}
+            <div x-show="activeMainTab === 'settings'" style="display: none;">
                 @include('llm-manager::components.chat.partials.settings-form', [
                     'sessionId' => $sessionId,
                 ])
             </div>
-        </div>
-        {{-- END TAB: Chat Settings --}}
-    @endif
-</div>
-{{-- END TAB CONTENT WRAPPER --}}
+            {{-- END TAB 2: Chat Settings --}}
+        @endif
+    </div>
+    {{-- END Card Body --}}
 
-    {{-- Card Footer (fuera del split) - SIEMPRE VISIBLE excepto en Settings tab --}}
-    <div class="card-footer pt-4" id="kt_chat_messenger_footer" x-show="activeMainTab === 'conversation'">
+    {{-- Card Footer (SIEMPRE VISIBLE) --}}
+    <div class="card-footer pt-4" id="kt_chat_messenger_footer">
         @include('llm-manager::components.chat.partials.form-elements.input-form', [
             'configurations' => $configurations,
         ])
