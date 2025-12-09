@@ -878,38 +878,6 @@
                                 }
                             }
 
-                            // Add raw data button now that we have real DB ID
-                            const bubbleContent = assistantBubble.querySelector(
-                                '.bubble-content-wrapper');
-                            const btnContainer = bubbleContent?.querySelector(
-                                '.message-actions-container');
-
-                            if (btnContainer && !btnContainer.querySelector('.raw-view-btn')) {
-                                const rawBtn = document.createElement('button');
-                                rawBtn.className =
-                                    'btn btn-icon btn-sm btn-light-info raw-view-btn';
-                                rawBtn.setAttribute('data-bs-toggle', 'tooltip');
-                                rawBtn.setAttribute('title', 'View raw data');
-                                rawBtn.onclick = function() {
-                                    showRawMessage(data.message_id);
-                                };
-                                rawBtn.innerHTML =
-                                    '<i class="ki-duotone ki-code fs-6"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>';
-
-                                // Insert before copy button
-                                const copyBtn = btnContainer.querySelector('.copy-bubble-btn');
-                                if (copyBtn) {
-                                    btnContainer.insertBefore(rawBtn, copyBtn);
-                                } else {
-                                    btnContainer.appendChild(rawBtn);
-                                }
-
-                                // Initialize tooltip
-                                if (typeof bootstrap !== 'undefined') {
-                                    new bootstrap.Tooltip(rawBtn);
-                                }
-                            }
-
                             // Update footer with final metrics
                             const footer = assistantBubble.querySelector('.bubble-footer');
 
@@ -1402,37 +1370,16 @@
                         return;
                     }
                     
-                    // Mostrar confirmación con checkbox para borrar logs
+                    // Mostrar confirmación simple (sin checkbox)
                     Swal.fire({
                         title: 'Delete Message?',
-                        html: `
-                            <p class="text-gray-700 mb-4">This message will be permanently removed from the conversation</p>
-                            <div class="form-check text-start">
-                                <input class="form-check-input" type="checkbox" id="deleteLogsCheck">
-                                <label class="form-check-label text-gray-700" for="deleteLogsCheck">
-                                    Also delete usage logs (costs, metrics, etc.)
-                                </label>
-                                <div class="text-muted fs-8 mt-1">
-                                    <i class="ki-duotone ki-information-5 fs-7 text-warning me-1">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                    </i>
-                                    Warning: This will affect statistics and cost reports
-                                </div>
-                            </div>
-                        `,
+                        text: 'This message will be permanently removed. Usage logs will be preserved.',
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonText: 'Delete Message',
                         cancelButtonText: 'Cancel',
                         confirmButtonColor: '#dc3545',
-                        reverseButtons: true,
-                        preConfirm: () => {
-                            return {
-                                delete_logs: document.getElementById('deleteLogsCheck').checked
-                            };
-                        }
+                        reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Realizar petición DELETE
@@ -1443,10 +1390,7 @@
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                                     'Accept': 'application/json',
                                 },
-                                credentials: 'same-origin',
-                                body: JSON.stringify({
-                                    delete_logs: result.value.delete_logs
-                                })
+                                credentials: 'same-origin'
                             })
                             .then(response => {
                                 if (!response.ok) {
@@ -1462,12 +1406,8 @@
                                         bubble.remove();
                                     }
                                     
-                                    // Feedback
-                                    if (data.logs_deleted > 0) {
-                                        toastr.success(`Message and ${data.logs_deleted} usage log(s) deleted`);
-                                    } else {
-                                        toastr.success('Message deleted successfully');
-                                    }
+                                    // Feedback simple
+                                    toastr.success(data.message);
                                 } else {
                                     toastr.error(data.message || 'Failed to delete message');
                                 }

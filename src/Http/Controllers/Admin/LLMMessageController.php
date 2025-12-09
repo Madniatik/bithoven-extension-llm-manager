@@ -12,18 +12,13 @@ class LLMMessageController extends Controller
     /**
      * Delete a conversation message
      * 
-     * Optionally deletes related usage logs if requested
+     * Usage logs are preserved (no FK constraint on message_id)
      * 
      * @param int $id Message ID
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(int $id, Request $request)
+    public function destroy(int $id)
     {
-        $validated = $request->validate([
-            'delete_logs' => 'nullable|boolean',
-        ]);
-
         $message = LLMConversationMessage::findOrFail($id);
 
         // Verify permissions: user can only delete their own messages
@@ -34,19 +29,12 @@ class LLMMessageController extends Controller
             ], 403);
         }
 
-        // Delete message
+        // Delete message (logs are preserved - no FK constraint)
         $message->delete();
-
-        // Optionally delete related usage logs
-        $logsDeleted = 0;
-        if ($validated['delete_logs'] ?? false) {
-            $logsDeleted = LLMUsageLog::where('message_id', $id)->delete();
-        }
 
         return response()->json([
             'success' => true,
             'message' => 'Message deleted successfully',
-            'logs_deleted' => $logsDeleted,
         ]);
     }
 }
