@@ -1400,18 +1400,18 @@
             });
 
             // Scroll inicial al último mensaje (al cargar página)
+            // BUG-1 fix: Reduce timeout + use 'instant' behavior for invisible scroll
             setTimeout(() => {
                 if (messagesContainer) {
-                    console.log('[Scroll] Initial scroll to bottom');
-                    console.log('[Scroll] Container scrollHeight:', messagesContainer.scrollHeight);
+                    console.log('[Scroll] Initial scroll to bottom (instant)');
                     messagesContainer.scrollTo({
                         top: messagesContainer.scrollHeight,
-                        behavior: 'auto' // Instantáneo en carga inicial
+                        behavior: 'instant' // Sin animación visible
                     });
                 } else {
                     console.warn('[Scroll] Messages container not found for initial scroll');
                 }
-            }, 200);
+            }, 50); // Reducido de 200ms a 50ms
 
             console.log('✅ Quick Chat ready - Press Enter or Send button');
         });
