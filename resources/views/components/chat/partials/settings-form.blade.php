@@ -17,7 +17,7 @@
     $sessionId = $sessionId ?? ($session->id ?? 'default');
 @endphp
 
-<div x-data="{ monitorEnabled: true }">
+<div x-data="{ monitorEnabled: true }" style="max-width: 100%; overflow-x: hidden;">
     {{-- SECTION: Monitor Settings --}}
     <div class="mb-8">
         <h3 class="mb-5">

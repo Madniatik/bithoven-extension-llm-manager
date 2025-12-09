@@ -55,9 +55,9 @@
     </div>
 
     {{-- Card Body (CONTENIDO CAMBIA SEGÚN TAB) --}}
-    <div class="card-body" id="kt_chat_messenger_body">
+    <div class="card-body py-0" id="kt_chat_messenger_body" style="overflow-x: hidden;">
         {{-- TAB 1: Conversación + Monitor (Split) --}}
-        <div x-show="activeMainTab === 'conversation'" style="display: block;">
+        <div x-show="activeMainTab === 'conversation'" style="display: block; overflow-x: hidden;">
             {{-- SPLIT CONTAINER --}}
             <div class="split-horizontal-container" id="llm-split-view-{{ $sessionId }}" 
                  x-data="splitResizer_{{ $sessionId }}({{ $session?->id ?? 'null' }})"
@@ -191,7 +191,7 @@
 
         @if($showSettings)
             {{-- TAB 2: Chat Settings --}}
-            <div x-show="activeMainTab === 'settings'" style="display: none;">
+            <div x-show="activeMainTab === 'settings'" style="display: none; overflow-x: hidden;">
                 @include('llm-manager::components.chat.partials.settings-form', [
                     'sessionId' => $sessionId,
                 ])
