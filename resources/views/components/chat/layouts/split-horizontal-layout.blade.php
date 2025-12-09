@@ -163,8 +163,10 @@
                 </div>
             </div>
         @endif
-    </div>
-    {{-- END TAB: Conversación | Monitor --}}
+            </div>
+            {{-- END SPLIT CONTAINER --}}
+        </div>
+        {{-- END TAB: Conversación | Monitor --}}
 
     @if($showSettings)
         {{-- TAB: Chat Settings --}}
