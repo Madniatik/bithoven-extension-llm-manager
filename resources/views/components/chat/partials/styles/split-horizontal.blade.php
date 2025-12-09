@@ -13,13 +13,74 @@
     gap: 0;
 }
 
-.split-pane {
-    overflow-y: auto;
-    scroll-behavior: smooth;
-    position: relative;
-}
-
-.split-chat {
+    .split-pane {
+        overflow-y: auto;
+        scroll-behavior: smooth;
+        position: relative;
+    }
+    
+    /* Scroll to bottom floating button */
+    .scroll-to-bottom-btn {
+        position: fixed;
+        bottom: 120px;
+        right: 40px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--bs-primary);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.3s ease;
+    }
+    
+    .scroll-to-bottom-btn:hover {
+        background: var(--bs-primary-active);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .scroll-to-bottom-btn:active {
+        transform: translateY(0);
+    }
+    
+    .scroll-to-bottom-btn .unread-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        min-width: 20px;
+        height: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 6px;
+        animation: scaleIn 0.3s ease;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes scaleIn {
+        from {
+            transform: scale(0);
+        }
+        to {
+            transform: scale(1);
+        }
+    }.split-chat {
     flex: 70%;
     min-height: 250px;
 }

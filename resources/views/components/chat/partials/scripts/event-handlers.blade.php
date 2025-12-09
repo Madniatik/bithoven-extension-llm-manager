@@ -40,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Smart Auto-Scroll: detectar si usuario está en bottom
     let autoScrollEnabled = true; // Default: habilitado
+    let unreadMessagesCount = 0; // Contador de mensajes nuevos sin leer
+    
+    const scrollToBottomBtn = document.getElementById('scroll-to-bottom-btn-{{ $session?->id ?? "default" }}');
+    const unreadBadge = document.getElementById('unread-badge-{{ $session?->id ?? "default" }}');
     
     const isAtBottom = () => {
         if (!messagesContainer) return true;
@@ -80,9 +84,20 @@ document.addEventListener('DOMContentLoaded', () => {
         messagesContainer.addEventListener('scroll', () => {
             if (isAtBottom()) {
                 autoScrollEnabled = true;
+                toggleScrollButton(false); // Ocultar botón cuando llega al bottom
             } else {
                 autoScrollEnabled = false;
+                toggleScrollButton(true); // Mostrar botón cuando se aleja del bottom
             }
+        });
+    }
+    
+    // Click handler para botón de scroll to bottom
+    if (scrollToBottomBtn) {
+        scrollToBottomBtn.addEventListener('click', () => {
+            console.log('[Scroll Button] Clicked');
+            scrollToBottom(true); // Force scroll
+            toggleScrollButton(false); // Ocultar después de hacer scroll
         });
     }
     
@@ -95,6 +110,40 @@ document.addEventListener('DOMContentLoaded', () => {
             countSpan.textContent = newCount;
             countSpan.dataset.count = newCount;
             console.log('[Message Count] Updated:', currentCount, '→', newCount);
+        }
+    };
+    
+    // Función para mostrar/ocultar botón flotante de scroll
+    const toggleScrollButton = (show) => {
+        if (!scrollToBottomBtn) return;
+        
+        if (show) {
+            scrollToBottomBtn.classList.remove('d-none');
+            console.log('[Scroll Button] Shown');
+        } else {
+            scrollToBottomBtn.classList.add('d-none');
+            // Reset unread badge cuando se oculta
+            unreadMessagesCount = 0;
+            if (unreadBadge) {
+                unreadBadge.classList.add('d-none');
+                unreadBadge.textContent = '0';
+            }
+            console.log('[Scroll Button] Hidden, badge reset');
+        }
+    };
+    
+    // Función para actualizar badge de mensajes no leídos
+    const updateUnreadBadge = (increment = 1) => {
+        if (!unreadBadge) return;
+        
+        unreadMessagesCount += increment;
+        
+        if (unreadMessagesCount > 0) {
+            unreadBadge.classList.remove('d-none');
+            unreadBadge.textContent = unreadMessagesCount;
+            console.log('[Unread Badge] Updated:', unreadMessagesCount);
+        } else {
+            unreadBadge.classList.add('d-none');
         }
     };
     
@@ -673,6 +722,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             ttftSpan.classList.add('text-success');
                         }
                     }
+                }
+                
+                // Incrementar badge de mensajes no leídos si usuario no está en bottom
+                if (!isAtBottom() && chunkCount === 1) {
+                    // Solo incrementar una vez por mensaje del asistente (en el primer chunk)
+                    updateUnreadBadge(1);
                 }
                 
                 if (chunkCount % 50 === 0) {
