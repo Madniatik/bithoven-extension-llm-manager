@@ -1392,6 +1392,53 @@
                 }
             });
 
+            // Event delegation for header action buttons (Copy, View Raw, Delete)
+            messagesContainer?.addEventListener('click', (e) => {
+                const target = e.target.closest('a');
+                if (!target) return;
+
+                // Copy button
+                if (target.classList.contains('copy-message-btn')) {
+                    e.preventDefault();
+                    const bubble = target.closest('.message-bubble');
+                    const messageContent = bubble?.querySelector('.message-content');
+                    if (messageContent) {
+                        const text = messageContent.textContent.trim();
+                        navigator.clipboard.writeText(text).then(() => {
+                            // Visual feedback
+                            const originalText = target.textContent;
+                            target.textContent = '✓ Copied';
+                            target.classList.remove('text-muted');
+                            target.classList.add('text-success');
+                            setTimeout(() => {
+                                target.textContent = originalText;
+                                target.classList.remove('text-success');
+                                target.classList.add('text-muted');
+                            }, 2000);
+                        });
+                    }
+                }
+
+                // View Raw button
+                if (target.classList.contains('view-raw-btn')) {
+                    e.preventDefault();
+                    const messageId = target.dataset.messageId;
+                    if (messageId && !messageId.startsWith('msg-')) {
+                        showRawMessage(messageId);
+                    } else {
+                        toastr.warning('Raw data not available for unsaved messages');
+                    }
+                }
+
+                // Delete button (placeholder - funcionalidad pendiente)
+                if (target.classList.contains('delete-message-btn')) {
+                    e.preventDefault();
+                    const messageId = target.dataset.messageId;
+                    console.log('Delete message:', messageId);
+                    toastr.info('Delete functionality coming soon');
+                }
+            });
+
             // Scroll inicial al último mensaje (al cargar página)
             // BUG-1 fix: Reduce timeout + use 'instant' behavior for invisible scroll
             setTimeout(() => {

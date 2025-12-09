@@ -50,52 +50,18 @@
     <div class="d-flex flex-column {{ $innerAlignmentClass }}" data-bubble-alignment=""
         style="width: 100%; max-width: 85%;">
 
-        {{-- Header: Avatar + Name/Model + Timestamp --}}
-        <div class="d-flex align-items-center mb-2">
-            {{-- Assistant avatar (left side) --}}
-            <div
-                class="symbol symbol-35px symbol-circle me-3 assistant-avatar {{ $role !== 'assistant' ? 'd-none' : '' }}">
-                <span class="symbol-label bg-light-primary text-primary fw-bold">AI</span>
-            </div>
-
-            {{-- Name/Model + Badges + Timestamp --}}
-            <div>
-                <span class="text-gray-600 fw-semibold fs-8" data-bubble-header-text="">
-                    @if ($role === 'user')
-                        {{ $userName }}
-                    @elseif ($role === 'assistant' && $provider && $model)
-                        {{ ucfirst($provider) }} / {{ $model }}
-                    @elseif ($role === 'assistant')
-                        Assistant
-                    @endif
-                </span>
-
-                @if ($isError)
-                    <span class="badge badge-light-warning badge-sm ms-2"
-                        title="This message contains an error explanation">
-                        <i class="ki-duotone ki-information-5 fs-7">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                            <span class="path3"></span>
-                        </i>
-                        Error Message
-                    </span>
-                @endif
-
-                <span class="text-gray-500 fw-semibold fs-8 ms-2" data-bubble-timestamp="">
-                    {{ $timestamp }}
-                </span>
-            </div>
-
-            {{-- User avatar (right side) --}}
-            <div class="symbol symbol-35px symbol-circle ms-3 user-avatar {{ $role !== 'user' ? 'd-none' : '' }}">
-                @if ($userAvatar)
-                    <img src="{{ asset('storage/' . $userAvatar) }}" alt="{{ $userName }}" />
-                @else
-                    <span class="symbol-label bg-light-success text-success fw-bold">{{ $userInitial }}</span>
-                @endif
-            </div>
-        </div>
+        {{-- Header: Two-line structure with actions --}}
+        @include('llm-manager::components.chat.partials.bubble.bubble-header', [
+            'role' => $role,
+            'messageId' => $messageId,
+            'userName' => $userName,
+            'userAvatar' => $userAvatar,
+            'userInitial' => $userInitial,
+            'provider' => $provider,
+            'model' => $model,
+            'timestamp' => $timestamp,
+            'isError' => $isError,
+        ])
 
         {{-- Content wrapper --}}
         <div class="p-5 {{ $role === 'assistant' ? 'pb-2' : '' }} rounded bubble-content-wrapper {{ $bgColorClass }}" data-bubble-bg-class=""
