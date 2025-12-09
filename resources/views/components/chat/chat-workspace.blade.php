@@ -42,6 +42,7 @@
 @endpush --}}
 
 {{-- Styles (partitioned) --}}
+@push('styles')
 @include('llm-manager::components.chat.partials.styles.dependencies')
 @include('llm-manager::components.chat.partials.styles.markdown')
 @include('llm-manager::components.chat.partials.styles.buttons')
@@ -50,8 +51,10 @@
 @if($monitorLayout === 'split-horizontal')
     @include('llm-manager::components.chat.partials.styles.split-horizontal')
 @endif
+@endpush
 
 {{-- Scripts (partitioned) --}}
+@push('scripts')
 @include('llm-manager::components.chat.partials.scripts.clipboard-utils')
 @include('llm-manager::components.chat.partials.scripts.message-renderer')
 @include('llm-manager::components.chat.partials.scripts.settings-manager')
@@ -63,3 +66,4 @@
 @if($monitorLayout === 'split-horizontal')
     @include('llm-manager::components.chat.partials.scripts.split-resizer')
 @endif
+@endpush
