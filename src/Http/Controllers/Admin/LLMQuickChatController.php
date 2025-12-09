@@ -5,6 +5,8 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Bithoven\LLMManager\Models\LLMConfiguration;
 use Bithoven\LLMManager\Models\LLMConversationSession;
+use Bithoven\LLMManager\Models\LLMUserWorkspacePreference;
+use Bithoven\LLMManager\Services\ChatWorkspaceConfigValidator;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMStreamLogger;
@@ -71,7 +73,15 @@ class LLMQuickChatController extends Controller
         // Actualizar last_activity_at
         $session->touch('last_activity_at');
         
-        return view('llm-manager::admin.quick-chat.index', compact('configurations', 'session'));
+        // Cargar preferencias del usuario
+        $userPreference = LLMUserWorkspacePreference::firstOrCreate(
+            ['user_id' => auth()->id()],
+            ['config' => (new ChatWorkspaceConfigValidator())->getDefaults()]
+        );
+        
+        $workspaceConfig = $userPreference->config;
+        
+        return view('llm-manager::admin.quick-chat.index', compact('configurations', 'session', 'workspaceConfig'));
     }
     
     /**

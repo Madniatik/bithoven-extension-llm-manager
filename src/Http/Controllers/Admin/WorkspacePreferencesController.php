@@ -53,14 +53,14 @@ class WorkspacePreferencesController extends Controller
             // Validar configuración con ChatWorkspaceConfigValidator
             $validatedConfig = $this->validator->validate($validated['config']);
 
+            // Detectar si se necesita reload ANTES de guardar
+            $needsReload = $this->detectReloadNeeded($request, $validatedConfig);
+
             // Actualizar o crear preferencia
             $preference = LLMUserWorkspacePreference::updateOrCreate(
                 ['user_id' => $request->user()->id],
                 ['config' => $validatedConfig]
             );
-
-            // Detectar si se necesita reload de página
-            $needsReload = $this->detectReloadNeeded($request, $validatedConfig);
 
             return response()->json([
                 'success' => true,
