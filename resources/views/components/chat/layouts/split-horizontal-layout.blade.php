@@ -7,9 +7,10 @@
 @php
     $sessionId = $session?->id ?? 'default';
     $showSettings = $showSettings ?? true; // Por defecto mostrar settings tab
+    $alpineSessionId = is_numeric($sessionId) ? $sessionId : "'" . $sessionId . "'";
 @endphp
 
-<div class="card" id="kt_chat_messenger" x-data="chatSettings({{ is_numeric($sessionId) ? $sessionId : '\'' . $sessionId . '\'' }})">
+<div class="card" id="kt_chat_messenger" x-data="chatSettings({{ $alpineSessionId }})">
     {{-- Card Header (fuera del split) --}}
     <div class="card-header" id="kt_chat_messenger_header">
         <div class="card-title">
