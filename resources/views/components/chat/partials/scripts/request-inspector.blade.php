@@ -1,14 +1,20 @@
 {{-- Request Inspector JavaScript Functions --}}
 <script>
-/**
- * Populate Request Inspector UI with data from SSE request_data event
- */
-function populateRequestInspector(data) {
+// Ensure functions are in global scope
+window.populateRequestInspector = function(data) {
     console.log('populateRequestInspector called', data);
 
     // Hide no-data message, show data display
-    document.getElementById('request-no-data').classList.add('d-none');
-    document.getElementById('request-data-display').classList.remove('d-none');
+    const noDataEl = document.getElementById('request-no-data');
+    const dataDisplayEl = document.getElementById('request-data-display');
+    
+    if (!noDataEl || !dataDisplayEl) {
+        console.error('[Request Inspector] Required DOM elements not found');
+        return;
+    }
+    
+    noDataEl.classList.add('d-none');
+    dataDisplayEl.classList.remove('d-none');
 
     // 1. Populate Metadata
     document.getElementById('meta-provider').textContent = data.metadata.provider || 'N/A';
@@ -72,12 +78,12 @@ function populateRequestInspector(data) {
     if (typeof Prism !== 'undefined') {
         Prism.highlightElement(fullJsonCode);
     }
-}
+};
 
 /**
  * Copy current prompt to clipboard
  */
-function copyCurrentPrompt() {
+window.copyCurrentPrompt = function() {
     const promptText = document.getElementById('current-prompt-text').value;
     navigator.clipboard.writeText(promptText).then(() => {
         toastr.success('Prompt copied to clipboard');
@@ -85,12 +91,12 @@ function copyCurrentPrompt() {
         toastr.error('Failed to copy prompt');
         console.error('Clipboard copy failed', err);
     });
-}
+};
 
 /**
  * Copy full JSON body to clipboard
  */
-function copyRequestJSON() {
+window.copyRequestJSON = function() {
     const jsonText = document.getElementById('full-json-code').textContent;
     navigator.clipboard.writeText(jsonText).then(() => {
         toastr.success('JSON copied to clipboard');
@@ -98,12 +104,12 @@ function copyRequestJSON() {
         toastr.error('Failed to copy JSON');
         console.error('Clipboard copy failed', err);
     });
-}
+};
 
 /**
  * Download full JSON body as file
  */
-function downloadRequestJSON() {
+window.downloadRequestJSON = function() {
     const jsonText = document.getElementById('full-json-code').textContent;
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const filename = `llm-request-${timestamp}.json`;
@@ -117,14 +123,22 @@ function downloadRequestJSON() {
     URL.revokeObjectURL(url);
 
     toastr.success(`Downloaded ${filename}`);
-}
+};
 
 /**
  * Escape HTML to prevent XSS
  */
-function escapeHtml(text) {
+window.escapeHtml = function(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
+};
+
+console.log('[Request Inspector] Functions loaded:', {
+    populateRequestInspector: typeof window.populateRequestInspector,
+    copyCurrentPrompt: typeof window.copyCurrentPrompt,
+    copyRequestJSON: typeof window.copyRequestJSON,
+    downloadRequestJSON: typeof window.downloadRequestJSON,
+    escapeHtml: typeof window.escapeHtml
+});
 </script>
