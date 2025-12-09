@@ -172,18 +172,11 @@
             // checkmark.offsetHeight;
             checkmark.classList.add('show');
 
-            // Remover después de 2 segundos
-            setTimeout(() => {
-                checkmark.classList.remove('show');
-                checkmark.classList.add('hide');
+            // BUG-5 fix: Mantener checkmark permanente (sin fade out)
+            // Los bubbles nuevos mantienen el indicador "Saved"
+            // Los bubbles antiguos (al recargar página) no lo tienen
 
-                // Eliminar del DOM después del fade out
-                setTimeout(() => {
-                    checkmark.remove();
-                }, 300);
-            }, 2000);
-
-            console.log('[Checkmark] Saved animation triggered');
+            console.log('[Checkmark] Saved animation triggered (permanent)');
         };
 
         const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
