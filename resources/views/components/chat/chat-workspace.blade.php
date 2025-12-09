@@ -2,33 +2,50 @@
     LLM Chat Workspace Component
     
     Componente maestro con layout configurable para monitor
+    Sistema de configuración granular (v1.0.7+)
     
-    Props (desde ChatWorkspace.php):
+    Props (desde Workspace.php):
     - $session: LLMConversationSession|null
     - $configurations: Collection
-    - $showMonitor: bool
-    - $monitorOpen: bool
-    - $monitorLayout: string ('sidebar' | 'split-horizontal')
+    - $config: array (validated configuration)
     - $messages: Collection (generado por componente)
     - $monitorId: string (generado por componente)
+    - Legacy props: $showMonitor, $monitorLayout, etc. (backward compatible)
 --}}
+
+@php
+    // Extract config values for easier access
+    $monitorEnabled = $config['features']['monitor']['enabled'] ?? false;
+    $monitorOpenByDefault = $config['features']['monitor']['default_open'] ?? true;
+    $monitorLayoutValue = $config['ui']['layout']['monitor'] ?? 'split-horizontal';
+    $settingsPanelEnabled = $config['features']['settings_panel'] ?? true;
+    
+    // Performance optimizations
+    $lazyLoadTabs = $config['performance']['lazy_load_tabs'] ?? true;
+    $cachePreferences = $config['performance']['cache_preferences'] ?? true;
+    
+    // Custom CSS class
+    $customCssClass = $config['advanced']['custom_css_class'] ?? '';
+@endphp
 
 {{-- Debug Console auto-loaded via View Composer globally --}}
 {!! $__llmDebugConsoleRegistration ?? '' !!}
 
 {{-- CRITICAL: Load Alpine.js components BEFORE using them in x-data attributes --}}
-{!! '<script>' !!}
-@include('llm-manager::components.chat.partials.scripts.chat-settings')
-{!! '</script>' !!}
+@if($settingsPanelEnabled)
+    {!! '<script>' !!}
+    @include('llm-manager::components.chat.partials.scripts.chat-settings')
+    {!! '</script>' !!}
+@endif
 
-<div class="llm-chat-workspace" 
+<div class="llm-chat-workspace {{ $customCssClass }}" 
      data-session-id="{{ $session?->id }}" 
-     data-monitor-layout="{{ $monitorLayout }}"
-     x-data="chatWorkspace_{{ $session?->id ?? 'default' }}({{ $showMonitor ? 'true' : 'false' }}, {{ $monitorOpen ? 'true' : 'false' }}, '{{ $monitorLayout }}', {{ $session?->id ?? 'null' }})"
+     data-monitor-layout="{{ $monitorLayoutValue }}"
+     x-data="chatWorkspace_{{ $session?->id ?? 'default' }}({{ $monitorEnabled ? 'true' : 'false' }}, {{ $monitorOpenByDefault ? 'true' : 'false' }}, '{{ $monitorLayoutValue }}', {{ $session?->id ?? 'null' }})"
      id="chat-workspace-{{ $session?->id ?? 'default' }}">
     
-    @if($monitorLayout === 'split-horizontal')
-        {{-- SPLIT HORIZONTAL LAYOUT: Chat arriba (70%), Monitor abajo (30%) --}}
+    @if($monitorLayoutValue === 'split-horizontal')
+        {{-- SPLIT HORIZONTAL LAYOUT: Chat + Monitor split --}}
         @include('llm-manager::components.chat.layouts.split-horizontal-layout')
     @else
         {{-- SIDEBAR LAYOUT: Monitor fijo derecha (60/40) --}}
@@ -39,32 +56,37 @@
 {{-- Raw Message Modal --}}
 @include('llm-manager::components.chat.partials.modals.modal-raw-message')
 
-{{-- Shared JavaScript Utilities --}}
-{{-- REMOVED: External JS files not needed, logic inline in Blade --}}
-{{-- @push('scripts')
-    <script src="{{ asset('vendor/llm-manager/js/streaming-handler.js') }}"></script>
-    <script src="{{ asset('vendor/llm-manager/js/metrics-calculator.js') }}"></script>
-@endpush --}}
-
-{{-- Styles (partitioned) --}}
+{{-- Conditional Styles - Load only what's needed --}}
 @include('llm-manager::components.chat.partials.styles.dependencies')
 @include('llm-manager::components.chat.partials.styles.markdown')
 @include('llm-manager::components.chat.partials.styles.buttons')
 @include('llm-manager::components.chat.partials.styles.responsive')
-@include('llm-manager::components.chat.partials.styles.chat-settings')
-@if($monitorLayout === 'split-horizontal')
+
+@if($settingsPanelEnabled)
+    @include('llm-manager::components.chat.partials.styles.chat-settings')
+@endif
+
+@if($monitorLayoutValue === 'split-horizontal')
     @include('llm-manager::components.chat.partials.styles.split-horizontal')
 @endif
 
-{{-- Scripts (partitioned) --}}
+{{-- Conditional Scripts - Load only what's needed --}}
 @include('llm-manager::components.chat.partials.scripts.clipboard-utils')
 @include('llm-manager::components.chat.partials.scripts.message-renderer')
-@include('llm-manager::components.chat.partials.scripts.settings-manager')
-{{-- chat-settings MOVED to top (before x-data usage) --}}
+
+@if($settingsPanelEnabled)
+    @include('llm-manager::components.chat.partials.scripts.settings-manager')
+@endif
+
 @include('llm-manager::components.chat.partials.scripts.event-handlers')
 @include('llm-manager::components.chat.partials.scripts.chat-workspace')
-@include('llm-manager::components.chat.partials.scripts.monitor-api')
-@include('llm-manager::components.chat.partials.scripts.request-inspector')
-@if($monitorLayout === 'split-horizontal')
+
+@if($monitorEnabled)
+    @include('llm-manager::components.chat.partials.scripts.monitor-api')
+    @include('llm-manager::components.chat.partials.scripts.request-inspector')
+@endif
+
+@if($monitorLayoutValue === 'split-horizontal')
     @include('llm-manager::components.chat.partials.scripts.split-resizer')
 @endif
+
