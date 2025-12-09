@@ -757,16 +757,16 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 3/14 items completados (21%)
-**Última Actualización:** 9 de diciembre de 2025, 22:50
+**Estado Actual:** 4/14 items completados (29%)
+**Última Actualización:** 9 de diciembre de 2025, 22:52
 
-### Bug Fixes (3/6) ✅
+### Bug Fixes (4/6) ✅
 - [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
 - [x] **BUG-3:** User bubble icons (64c0518) - 20 min
 - [x] **BUG-1:** Scroll inicial invisible (54b6554) - 30 min
+- [x] **BUG-5:** Checkmark fade out innecesario (eba6466) - 10 min
 - [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
-- [ ] **BUG-5:** Checkmark fade out innecesario - 10 min (NUEVO)
-- [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min (NUEVO)
+- [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min
 
 ### Implementaciones (0/7)
 - [ ] Notificación sonora inteligente
@@ -784,13 +784,13 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 🎯 ORDEN DE IMPLEMENTACIÓN RECOMENDADO
 
-### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 3/6
+### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 4/6
 1. ✅ **BUG-2:** Textarea resize (15 min) - COMPLETADO (e59259b)
 2. ✅ **BUG-3:** User bubble icons (20 min) - COMPLETADO (64c0518)
 3. ✅ **BUG-1:** Scroll inicial invisible (30 min) - COMPLETADO (54b6554)
-4. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
-5. 🆕 **BUG-5:** Checkmark fade out (10 min) - NUEVO
-6. 🆕 **BUG-6:** New Chat warning (30 min) - NUEVO
+4. ✅ **BUG-5:** Checkmark fade out (10 min) - COMPLETADO (eba6466)
+5. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
+6. 🔜 **BUG-6:** New Chat warning (30 min) - PENDIENTE
 
 ### Fase 2: Core UX Features - 4 horas
 1. ✅ **Keyboard Shortcuts** (1 hora) - Alto impacto, bajo esfuerzo
@@ -875,8 +875,11 @@ Este plan se considerará **100% completado** cuando:
 2. **e59259b** - fix: reset textarea height after send using Metronic autosize.update() (BUG-2)
 3. **64c0518** - fix: show Copy button in user bubbles, Raw only in assistant (BUG-3)
 4. **54b6554** - fix: invisible initial scroll - instant behavior + 50ms timeout (BUG-1)
+5. **e8f616e** - docs: update plans - FASE 1 Bug Fixes 75% complete (3/4 items, BUG-4 postponed)
+6. **49dfae4** - docs: add BUG-5 (checkmark permanent) and BUG-6 (New Chat warning) to plan
+7. **eba6466** - fix: remove checkmark fade out - keep permanent in new bubbles (BUG-5)
 
-**Total:** 4 commits, 3 bug fixes completados
+**Total:** 7 commits, 4 bug fixes completados
 
 ---
 
