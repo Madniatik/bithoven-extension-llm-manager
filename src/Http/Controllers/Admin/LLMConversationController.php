@@ -221,7 +221,7 @@ class LLMConversationController extends Controller
                     'metadata' => [
                         'provider' => $configuration->provider,
                         'model' => $configuration->model,
-                        'endpoint' => $provider->getBaseUrl() ?? 'N/A',
+                        'endpoint' => $configuration->api_endpoint ?? 'N/A',
                         'timestamp' => now()->toIso8601String(),
                         'conversation_id' => $conversation->id,
                         'message_id' => $userMessage->id,

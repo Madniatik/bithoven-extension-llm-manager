@@ -179,7 +179,7 @@ class LLMQuickChatController extends Controller
                     'metadata' => [
                         'provider' => $configuration->provider,
                         'model' => $configuration->model,
-                        'endpoint' => $provider->getBaseUrl() ?? 'N/A',
+                        'endpoint' => $configuration->api_endpoint ?? 'N/A',
                         'timestamp' => now()->toIso8601String(),
                         'session_id' => $session->id,
                         'message_id' => $userMessage->id,
