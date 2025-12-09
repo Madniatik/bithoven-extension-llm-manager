@@ -18,7 +18,8 @@
                 <span class="card-label fw-bold text-gray-800">Quick Chat</span>
                 <span class="text-gray-500 mt-1 fw-semibold fs-7">
                     @if ($session)
-                        Conversación #{{ $session->id }} - {{ $messages->count() }} mensajes
+                        Conversación #{{ $session->id }} - 
+                        <span id="message-count-{{ $session->id }}" data-count="{{ $messages->count() }}">{{ $messages->count() }}</span> mensajes
                     @else
                         Conversación rápida con IA
                     @endif

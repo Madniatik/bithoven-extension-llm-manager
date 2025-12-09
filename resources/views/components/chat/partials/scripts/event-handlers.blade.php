@@ -86,6 +86,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Función para actualizar contador de mensajes en el header
+    const updateMessageCount = (increment = 1) => {
+        const countSpan = document.getElementById('message-count-{{ $session?->id ?? "default" }}');
+        if (countSpan) {
+            const currentCount = parseInt(countSpan.dataset.count || 0);
+            const newCount = currentCount + increment;
+            countSpan.textContent = newCount;
+            countSpan.dataset.count = newCount;
+            console.log('[Message Count] Updated:', currentCount, '→', newCount);
+        }
+    };
+    
     const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
         if (!messagesContainer) return;
         
@@ -448,6 +460,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add user message to UI
         const userBubble = appendMessage('user', userPrompt);
         
+        // Actualizar contador de mensajes (+1 por user message)
+        updateMessageCount(1);
+        
         // Scroll inteligente: posicionar mensaje de usuario arriba (con padding)
         if (userBubble) {
             setTimeout(() => scrollToUserMessage(userBubble), 100);
@@ -730,6 +745,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const assistantBubble = messagesContainer.querySelector(`[data-message-id="${assistantMessageId}"]`);
                     if (assistantBubble) {
                         assistantBubble.dataset.messageId = data.message_id;
+                        
+                        // Increment message counter (assistant response saved)
+                        updateMessageCount(1);
                         
                         // Add error badge if this is an error message
                         if (data.metadata?.is_error) {
