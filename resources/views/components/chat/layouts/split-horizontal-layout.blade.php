@@ -137,21 +137,21 @@
                 {{-- Tabs Body (scrollable) --}}
                 <div class="monitor-console-body p-0">
                     {{-- Console Tab --}}
-                    <div :class="{ 'hidden': activeTab !== 'console' }" style="height: 100%;">
+                    <div x-show="activeTab === 'console'" style="height: 100%;">
                         @include('llm-manager::components.chat.shared.monitor-console', [
                             'monitorId' => $monitorId,
                         ])
                     </div>
 
                     {{-- Activity Logs Tab --}}
-                    <div :class="{ 'hidden': activeTab !== 'activity' }" style="height: 100%;">
+                    <div x-show="activeTab === 'activity'" style="height: 100%;">
                         @include('llm-manager::admin.stream.partials.activity-table', [
                             'sessionId' => $session?->id ?? null,
                         ])
                     </div>
 
-                    {{-- Request Inspector Tab --}}
-                    <div :class="{ 'hidden': activeTab !== 'request' }" style="height: 100%; overflow-y: auto;">
+                    {{-- Request Inspector Tab (NO x-cloak = DOM always exists) --}}
+                    <div x-show="activeTab === 'request'" style="height: 100%; overflow-y: auto;">
                         @include('llm-manager::components.chat.shared.monitor-request-inspector')
                     </div>
                 </div>
