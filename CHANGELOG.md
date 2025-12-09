@@ -9,6 +9,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v1.0.7
 
+### 🔍 Request Inspector Tab (9 diciembre 2025, 02:20)
+
+**Visual debugging tool for LLM requests implemented!** ✅
+
+**Total:** 5 commits (20d41ac → 4329429), ~3 hours
+
+**What Changed:**
+- ✅ New Request Inspector tab in Monitor panel
+- ✅ Hybrid population: Immediate form data + SSE update with context
+- ✅ 6 collapsible sections: Metadata, Parameters, System Instructions, Context Messages, Current Prompt, Full JSON
+- ✅ Spinners for SSE-pending data (Top P, Actual Context Size, Context Messages)
+- ✅ Copy/Download buttons for prompt and JSON
+- ✅ Timeline visualization for context messages with role badges and tokens
+
+**Implementation Details:**
+
+#### Phase 1 - Initial Population (commit 20d41ac)
+- **Created** `monitor-request-inspector.blade.php` (240 líneas) - UI component
+- **Created** `request-inspector.blade.php` (145 líneas) - JavaScript functions
+- **Modified** `event-handlers.blade.php` - Build requestData from form, populate immediately
+- **Modified** `select-models.blade.php` - Added `data-endpoint` attribute
+- **Strategy:** Populate partial data BEFORE streaming starts (metadata, parameters, current_prompt)
+
+#### Phase 2 - SSE Update + Context Fix (commit 130227f)
+- **Fixed** Context limit bug: Was taking FIRST N messages → Now takes LAST N (most recent)
+- **Fixed** Context includes current message → Now excludes it with `where('id', '!=', $userMessage->id)`
+- **Modified** `LLMQuickChatController.php` - Use `slice(-$contextLimit)` for recent messages
+- **Modified** `LLMQuickChatController.php` - Map `$contextMessages` directly (not `skip($idx)`)
+- **Strategy:** Backend emits `request_data` SSE event with complete context_messages
+
+#### Phase 3 - Visual Feedback (commit 60c45cc)
+- **Added** Spinners in `monitor-request-inspector.blade.php` for SSE-pending fields
+- **Spinners in:** Top P, Actual Context Size, Context Messages badge/list
+- **Purpose:** Visual indicator of data loading from SSE event
+
+#### Phase 4 - DOM Visibility Fix (commit 85e3abb)
+- **Changed** `x-show` with `x-cloak` → `x-show` without `x-cloak`
+- **Reason:** DOM must always exist (just hidden) for JavaScript to populate
+- **Result:** Tab switching works correctly, data populates in background
+
+#### Phase 5 - SSE Listener Fix (commit 4329429)
+- **Added** `request_data` event listener in `event-handlers.blade.php`
+- **Reason:** EventSource created in event-handlers, not using streaming-handler.js class
+- **Result:** SSE event now received correctly, spinners replaced with real data
+
+**Benefits:**
+- ✅ Complete request visibility (what's being sent to model)
+- ✅ Debug context issues (verify last N messages included)
+- ✅ Verify parameters (temperature, max_tokens, context_limit)
+- ✅ Instant feedback (~5ms partial, ~50ms complete)
+- ✅ Copy/Download for testing/debugging
+
+**Files Modified:**
+- NEW: `resources/views/components/chat/shared/monitor-request-inspector.blade.php`
+- NEW: `resources/views/components/chat/partials/scripts/request-inspector.blade.php`
+- MODIFIED: `resources/views/components/chat/partials/scripts/event-handlers.blade.php`
+- MODIFIED: `resources/views/components/chat/layouts/split-horizontal-layout.blade.php`
+- MODIFIED: `resources/views/components/chat/partials/form-elements/select-models.blade.php`
+- MODIFIED: `src/Http/Controllers/Admin/LLMQuickChatController.php`
+
+**Testing:**
+- ✅ Ollama: 6 context messages loaded correctly
+- ✅ Context limit 20: Last 20 messages (not first 20)
+- ✅ Context limit 0 (All): All messages without duplicating current
+- ✅ Spinners appear/disappear in ~50ms
+- ✅ Copy/Download buttons functional
+
+---
+
 ### 🎉 Activity Log Migration Complete (7 diciembre 2025, 21:45)
 
 **Database-driven Activity History implemented successfully!** ✅

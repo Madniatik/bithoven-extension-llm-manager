@@ -1,10 +1,10 @@
 # LLM Manager Extension - Plan v1.0.7
 
 **Fecha de Creación:** 3 de diciembre de 2025  
-**Fecha de Actualización:** 8 de diciembre de 2025  
+**Fecha de Actualización:** 9 de diciembre de 2025  
 **Versión Actual:** v1.0.6  
 **Versión Objetivo:** v1.0.7  
-**Estado:** In Progress (110+ commits desde v1.0.6)
+**Estado:** In Progress (125+ commits desde v1.0.6)
 
 ---
 
@@ -17,14 +17,14 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 2. ✅ **Monitor System v2.0** (8-10 horas) - **COMPLETADO 100%** (NO estaba en plan original)
 3. ✅ **UI/UX Optimizations** (6-8 horas) - **COMPLETADO 92%**
 4. ✅ **Provider Connection Service Layer** (4-5 horas) - **COMPLETADO 100%** (8 dic 2025)
-5. ⏳ **Request Inspector Tab** (2-3 horas) - **PENDIENTE** (9 dic 2025 - NUEVO)
+5. ✅ **Request Inspector Tab** (2-3 horas) - **COMPLETADO 100%** (9 dic 2025)
 6. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
 7. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
 8. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
 
-**Tiempo Total Estimado:** 38.5-46.5 horas (ajustado por Request Inspector)  
-**Tiempo Invertido:** ~32-36 horas (110+ commits)  
-**Progreso General:** **83%** (ajustado por nueva categoría Request Inspector)
+**Tiempo Total Estimado:** 38.5-46.5 horas  
+**Tiempo Invertido:** ~36-40 horas (125+ commits)  
+**Progreso General:** **87%** (sube de 83%)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 
@@ -68,7 +68,89 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 
 ## 🎉 TRABAJO COMPLETADO (Últimas Sesiones)
 
-### ✅ Provider Connection Service Layer (8 dic 2025) - **NUEVO**
+### ✅ Request Inspector Tab (9 dic 2025) - **COMPLETADO 100%**
+
+**Commits:**
+- `20d41ac` - feat: populate request inspector before streaming
+- `130227f` - fix: hybrid request inspector + correct context limit
+- `60c45cc` - feat: add spinners for SSE-pending data + fix context
+- `85e3abb` - fix: revert to x-show without x-cloak
+- `4329429` - fix: add request_data listener in event-handlers
+
+#### Features Implementadas
+- ✅ **Hybrid Population Architecture**
+  - **Phase 1 (Immediate ~5ms):** Form data poblada inmediatamente (metadata, parameters, current_prompt)
+  - **Phase 2 (SSE ~50ms):** Backend emite `request_data` event con context_messages completos
+  - Spinners visuales para datos pendientes del SSE
+
+- ✅ **UI Components** (240 líneas)
+  - 6 secciones collapsibles: Metadata, Parameters, System Instructions, Context Messages, Current Prompt, Full JSON
+  - Spinners en campos SSE-dependent (Top P, Actual Context Size, Context Messages)
+  - Copy/Download buttons para prompt y JSON completo
+  - Timeline visualization para context messages (role badges, tokens, timestamps)
+
+- ✅ **Backend Fixes Críticos**
+  - **Context Limit Bug:** Tomaba PRIMEROS N mensajes → Ahora toma ÚLTIMOS N (más recientes)
+    ```php
+    // ANTES: take($contextLimit) - Bug: primeros mensajes
+    // DESPUÉS: slice(-$contextLimit) - Fix: últimos N mensajes
+    ```
+  - **Context Includes Current Message:** Mensaje actual duplicado en contexto
+    ```php
+    // Fix: Excluir mensaje actual con where('id', '!=', $userMessage->id)
+    ```
+  - **SSE Event Listener:** No conectado en event-handlers.blade.php
+    ```javascript
+    // Fix: addEventListener('request_data', ...) en EventSource
+    ```
+
+- ✅ **DOM Visibility Strategy**
+  - Cambio de `x-show` + `x-cloak` → `x-show` sin `x-cloak`
+  - DOM siempre existe (oculto con `display: none`), permite población en background
+  - JavaScript puede poblar datos incluso cuando tab no está visible
+
+#### Technical Details
+- **Frontend:** `monitor-request-inspector.blade.php`, `request-inspector.blade.php` (140 líneas JS)
+- **Backend:** `LLMQuickChatController.php` - SSE emission de `request_data` event
+- **Data Structure:**
+  ```json
+  {
+    "metadata": { provider, model, endpoint, timestamp, session_id, message_id },
+    "parameters": { temperature, max_tokens, top_p, context_limit, actual_context_size },
+    "system_instructions": "...",
+    "context_messages": [
+      { id, role, content (200 chars), tokens, created_at }
+    ],
+    "current_prompt": "...",
+    "full_request_body": { model, messages, temperature, max_tokens, stream: true }
+  }
+  ```
+
+#### User Experience
+1. Usuario envía mensaje
+2. ✅ Request Inspector pobla datos parciales INMEDIATAMENTE
+3. ✅ Spinners aparecen en campos pendientes
+4. ✅ ~50ms después, SSE event actualiza con context_messages completos
+5. ✅ Spinners desaparecen, datos completos visibles
+6. ✅ Usuario cambia al tab Request → Todo ya está listo
+
+#### Files Modified
+- NEW: `resources/views/components/chat/shared/monitor-request-inspector.blade.php` (240 líneas)
+- NEW: `resources/views/components/chat/partials/scripts/request-inspector.blade.php` (145 líneas)
+- MODIFIED: `resources/views/components/chat/partials/scripts/event-handlers.blade.php` (listener SSE)
+- MODIFIED: `resources/views/components/chat/layouts/split-horizontal-layout.blade.php` (x-show fix)
+- MODIFIED: `resources/views/components/chat/partials/form-elements/select-models.blade.php` (data-endpoint)
+- MODIFIED: `src/Http/Controllers/Admin/LLMQuickChatController.php` (context limit fix, SSE emission)
+
+#### Testing Realizado
+- ✅ Ollama: 6 context messages cargados correctamente
+- ✅ Spinners aparecen y desaparecen en ~50ms
+- ✅ Context limit 20: Últimos 20 mensajes (no primeros)
+- ✅ Context limit 0 (All): Todos los mensajes sin duplicar mensaje actual
+- ✅ Copy/Download buttons funcionales
+- ✅ Alpine.js tabs switching sin conflictos
+
+### ✅ Provider Connection Service Layer (8 dic 2025)
 
 **Commits:**
 - `99d9b60` - feat: implement provider connection service layer
