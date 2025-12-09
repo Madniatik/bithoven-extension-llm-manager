@@ -273,14 +273,17 @@ document.addEventListener('alpine:init', () => {
         
         // Función para capturar todos los valores del formulario
         collectFormValues() {
+            const monitorEnabled = this.getElement('monitor_enabled').checked;
+            
             return {
                 features: {
                     monitor: {
-                        enabled: this.getElement('monitor_enabled').checked,
+                        enabled: monitorEnabled,
                         tabs: {
-                            console: this.getElement('tab_console').checked,
-                            request_inspector: this.getElement('tab_request_inspector').checked,
-                            activity_log: this.getElement('tab_activity_log').checked,
+                            // Si monitor deshabilitado, forzar todas las tabs a false
+                            console: monitorEnabled ? this.getElement('tab_console').checked : false,
+                            request_inspector: monitorEnabled ? this.getElement('tab_request_inspector').checked : false,
+                            activity_log: monitorEnabled ? this.getElement('tab_activity_log').checked : false,
                         },
                     },
                     settings_panel: true,
@@ -297,7 +300,8 @@ document.addEventListener('alpine:init', () => {
                         clear: this.getElement('btn_clear').checked,
                         settings: true,
                         download: this.getElement('btn_download').checked,
-                        monitor_toggle: this.getElement('btn_monitor_toggle').checked,
+                        // Si monitor deshabilitado, forzar monitor_toggle a false
+                        monitor_toggle: monitorEnabled ? this.getElement('btn_monitor_toggle').checked : false,
                     },
                     mode: 'full',
                 },
