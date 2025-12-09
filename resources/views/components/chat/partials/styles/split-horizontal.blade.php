@@ -88,8 +88,7 @@
         align-items: center;
         margin-left: 8px;
         opacity: 0;
-        transform: scale(0.5);
-        transition: all 0.3s ease;
+        transition: opacity 0.3s ease;
     }
     
     .saved-checkmark.show {
@@ -99,7 +98,7 @@
     
     .saved-checkmark.hide {
         opacity: 0;
-        transform: scale(0.8);
+        /* Sin transform en hide - solo fade out */
     }
     
     @keyframes checkmarkBounce {
