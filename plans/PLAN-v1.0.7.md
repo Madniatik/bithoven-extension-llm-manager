@@ -389,9 +389,8 @@ api_key: apiKey || null  // ✅ Envía valor real
 - ⏳ **Notificación sonora** - Opcional al completar
 - ⏳ **Keyboard shortcuts** - Ctrl/Cmd + Enter para enviar
 - ⏳ **Hover effects en mensajes** - Lift shadow, transform
-- ⏳ **Transiciones suaves entre estados** - Fade in/out optimizado
 
-**Progreso:** 95% completado (11/16 items)
+**Progreso:** 95% completado (11/15 items)
 
 ---
 
@@ -1568,15 +1567,9 @@ Optimizar la experiencia de usuario en componentes de chat existentes (Conversat
   - Fade out (2s display, 0.3s fade) ✅
   - "Saved" text label ✅
 
-- [ ] **Transiciones suaves entre estados**
-  - Idle → Thinking → Streaming → Complete
-  - Fade in/out de elementos
-  - Evitar "popping" visual
-
-**Entregable:** ✅ 33% COMPLETADO
+**Entregable:** ✅ 50% COMPLETADO
 - Checkmark animado ✅
 - Hover effects pendientes
-- Transiciones pendientes
 
 ### Git Commits Sugeridos
 ```bash

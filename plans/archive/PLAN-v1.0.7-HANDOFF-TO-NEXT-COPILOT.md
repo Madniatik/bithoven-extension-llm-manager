@@ -898,9 +898,7 @@ Cuando completes tu trabajo o necesites pasar a otro Copilot:
 
 ### 5. Microinteracciones (1h)
 - Hover effects en mensajes (lift shadow, transform)
-- Checkmark animado al guardar en DB (scale animation)
-- Transiciones suaves entre estados (Idle → Thinking → Streaming → Complete)
-- Evitar "popping" visual
+- Checkmark animado al guardar en DB ✅ (COMPLETADO 9 dic 2025 - scale bounce + fade out)
 - Referencias: CSS transitions, animations en `resources/css/`
 
 **Documentación de Referencia para Testing Suite:**
