@@ -13,7 +13,8 @@
 --}}
 
 @php
-    $sessionId = $sessionId ?? 'default';
+    // Manejar sessionId de forma segura (puede venir de variable, sesión, o ser default)
+    $sessionId = $sessionId ?? ($session->id ?? 'default');
 @endphp
 
 <div class="card h-100" x-data="{ 

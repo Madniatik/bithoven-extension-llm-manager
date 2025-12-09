@@ -7,7 +7,8 @@
 --}}
 
 @php
-    $sessionId = $sessionId ?? 'default';
+    // Manejar sessionId de forma segura (puede ser int, null, o no estar definido)
+    $sessionId = $sessionId ?? ($session->id ?? 'default');
     $showSettings = $showSettings ?? true;
 @endphp
 

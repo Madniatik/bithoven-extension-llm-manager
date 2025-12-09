@@ -109,7 +109,8 @@ window.chatSettingsFactory = {
 
 /**
  * Register Alpine.js component globally
- * Usage in Blade: x-data="chatSettings_{{ $sessionId }}({{ $sessionId }})"
+ * Usage in Blade: x-data="chatSettings(sessionId)"
+ * where sessionId can be session ID number or 'default' for non-session chats
  */
 document.addEventListener('alpine:init', () => {
     // Register component factory for each session
