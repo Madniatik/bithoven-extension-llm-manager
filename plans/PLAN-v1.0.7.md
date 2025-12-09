@@ -21,10 +21,11 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 6. ⏳ **Testing Suite** (4-5 horas) - **PENDIENTE**
 7. ⏳ **Streaming Documentation** (1.5 horas) - **PENDIENTE**
 8. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
+9. ⏳ **Chat Workspace Configuration System** (12-15 horas) - **PENDIENTE** (Feature opcional para extensibilidad)
 
-**Tiempo Total Estimado:** 38.5-46.5 horas  
+**Tiempo Total Estimado:** 50.5-61.5 horas (actualizado)  
 **Tiempo Invertido:** ~36-40 horas (125+ commits)  
-**Progreso General:** **87%** (sube de 83%)
+**Progreso General:** **87%** (sin incluir config system opcional)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 
@@ -2667,9 +2668,9 @@ Una tarea se considera completada cuando:
 **Trabajo Pendiente (20%):**
 - ⏳ Testing Suite (4-5h) - CRÍTICO para release
 - ⏳ UI/UX finishing touches (1-2h) - Typewriter effect, keyboard shortcuts
-- ⏳ Request Inspector Tab (2-3h) - NUEVO - Debug de payloads enviados al modelo
 - ⏳ Streaming Documentation (1.5h)
 - ⏳ GitHub Release v1.0.7 (1h)
+- ⏳ **Chat Workspace Configuration System** (12-15h) - **OPCIONAL** - Sistema de configuración granular para reutilización del componente (Ver [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md))
 
 **Planes Completados y Archivados:**
 1. FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md (496 líneas)
@@ -2679,6 +2680,9 @@ Una tarea se considera completada cuando:
 5. CHAT-MONITOR-ENHANCEMENT-PLAN.md
 6. MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md
 
+**Planes Activos (Pendientes de Implementación):**
+1. **PLAN-v1.0.7-chat-config-options.md** (1000+ líneas) - Sistema de configuración granular para Chat Workspace Component (array asociativo, validation, Settings UI panel, conditional resource loading, backward compatibility)
+
 ---
 
-_Este documento consolida el contenido de QUICK-CHAT-IMPLEMENTATION-PLAN.md y PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md en un único plan maestro. Última actualización: 8 de diciembre de 2025._
+_Este documento consolida el contenido de QUICK-CHAT-IMPLEMENTATION-PLAN.md y PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md en un único plan maestro. Última actualización: 9 de diciembre de 2025._
