@@ -300,6 +300,125 @@ textarea.style.height = '38px'; // Altura inicial (1 línea)
 
 ---
 
+### BUG-5: Checkmark "Saved" con Fade Out Innecesario 🟡
+**Descripción:** El checkmark animado que aparece al guardar mensaje en DB desaparece después de 2 segundos, pero sería más útil mantenerlo visible permanentemente en nuevos bubbles.
+
+**Comportamiento Actual:**
+```javascript
+// En showSavedCheckmark()
+setTimeout(() => {
+    checkmark.classList.remove('show');
+    checkmark.classList.add('hide');
+    setTimeout(() => {
+        checkmark.remove();
+    }, 300);
+}, 2000); // Desaparece después de 2 segundos
+```
+
+**Comportamiento Deseado:**
+- El checkmark debe permanecer visible en el footer del bubble
+- Solo desaparece cuando usuario recarga página (bubbles antiguos no lo muestran)
+- Sirve como indicador visual de que el mensaje está guardado en DB
+
+**Solución:**
+```javascript
+// Opción A: Eliminar timeouts (más simple)
+const showSavedCheckmark = (footer) => {
+    // ... código existente ...
+    footer.appendChild(checkmark);
+    checkmark.classList.add('show');
+    // SIN timeouts - queda permanente
+};
+
+// Opción B: Agregar clase "permanent" al bubble
+const showSavedCheckmark = (footer, permanent = true) => {
+    // ... código existente ...
+    if (!permanent) {
+        setTimeout(() => { /* fade out */ }, 2000);
+    }
+};
+```
+
+**Archivos:**
+- `event-handlers.blade.php` - Función `showSavedCheckmark()`
+
+**Tiempo Estimado:** 10 minutos
+
+---
+
+### BUG-6: "New Chat" Sin Advertencia Durante Streaming 🔴
+**Descripción:** Si usuario pulsa "New Chat" mientras hay streaming activo, se pierde el progreso sin advertencia.
+
+**Comportamiento Actual:**
+- Botón "New Chat" navega directamente a nueva sesión
+- No verifica si hay streaming en proceso
+- No cancela streaming activo antes de navegar
+- Usuario pierde respuesta generándose
+
+**Comportamiento Deseado:**
+1. Detectar si hay streaming activo (`eventSource !== null`)
+2. Mostrar SweetAlert de advertencia:
+   - Título: "⚠️ Streaming in Progress"
+   - Mensaje: "You have a response being generated. Are you sure you want to start a new chat?"
+   - Botones: "Cancel" (default) / "Continue"
+3. Si usuario confirma:
+   - Cancelar streaming actual (llamar protocolo de cancelación)
+   - Esperar confirmación de cancelación
+   - Navegar a nueva sesión
+
+**Solución:**
+```javascript
+// En listener de newChatBtn
+newChatBtn?.addEventListener('click', async (e) => {
+    // Prevenir navegación default
+    e.preventDefault();
+    
+    // Check si hay streaming activo
+    if (eventSource !== null) {
+        const result = await Swal.fire({
+            title: '⚠️ Streaming in Progress',
+            text: 'You have a response being generated. Are you sure you want to start a new chat?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Continue',
+            cancelButtonText: 'Stay Here',
+            reverseButtons: true
+        });
+        
+        if (!result.isConfirmed) {
+            return; // Usuario cancela, no hacer nada
+        }
+        
+        // Usuario confirma - cancelar streaming
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+            // Cleanup UI...
+        }
+    }
+    
+    // Proceder con "New Chat" (mostrar prompt título)
+    const { value: chatTitle } = await Swal.fire({
+        title: 'New Chat Session',
+        input: 'text',
+        inputPlaceholder: 'Enter chat title (optional)',
+        showCancelButton: true
+    });
+    
+    if (chatTitle !== undefined) {
+        window.location.href = '{{ route("admin.llm.quick-chat.new") }}?title=' + 
+            encodeURIComponent(chatTitle || '');
+    }
+});
+```
+
+**Archivos:**
+- `event-handlers.blade.php` - Listener de `newChatBtn`
+
+**Tiempo Estimado:** 30 minutos
+
+---
+
 ## ⚙️ CONFIGURACIÓN EN CHAT ADMINISTRATION
 
 **Nuevos Settings a Agregar:**
@@ -638,14 +757,16 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 3/12 items completados (25%)
-**Última Actualización:** 9 de diciembre de 2025, 22:40
+**Estado Actual:** 3/14 items completados (21%)
+**Última Actualización:** 9 de diciembre de 2025, 22:50
 
-### Bug Fixes (3/4) ✅
+### Bug Fixes (3/6) ✅
 - [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
 - [x] **BUG-3:** User bubble icons (64c0518) - 20 min
 - [x] **BUG-1:** Scroll inicial invisible (54b6554) - 30 min
 - [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
+- [ ] **BUG-5:** Checkmark fade out innecesario - 10 min (NUEVO)
+- [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min (NUEVO)
 
 ### Implementaciones (0/7)
 - [ ] Notificación sonora inteligente
@@ -663,11 +784,13 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 🎯 ORDEN DE IMPLEMENTACIÓN RECOMENDADO
 
-### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 3/4
+### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 3/6
 1. ✅ **BUG-2:** Textarea resize (15 min) - COMPLETADO (e59259b)
 2. ✅ **BUG-3:** User bubble icons (20 min) - COMPLETADO (64c0518)
 3. ✅ **BUG-1:** Scroll inicial invisible (30 min) - COMPLETADO (54b6554)
 4. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
+5. 🆕 **BUG-5:** Checkmark fade out (10 min) - NUEVO
+6. 🆕 **BUG-6:** New Chat warning (30 min) - NUEVO
 
 ### Fase 2: Core UX Features - 4 horas
 1. ✅ **Keyboard Shortcuts** (1 hora) - Alto impacto, bajo esfuerzo
@@ -702,6 +825,8 @@ Este plan se considerará **100% completado** cuando:
 - Scroll inicial invisible
 - Textarea resize automático
 - User bubble icons visibles
+- Checkmark permanente en new bubbles
+- New Chat warning durante streaming
 - Cancel request investigation documentada (con o sin solución implementada)
 
 ✅ **Chat Administration actualizado:**
