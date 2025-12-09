@@ -9,11 +9,14 @@
         type="button" data-bs-toggle="tooltip" title="Delete Chat">
         {!! getIcon('ki-trash', 'fs-3', '', 'i') !!}
     </button>
-
-    <div class="separator mx-2"></div>
+    
+    {{-- Solo mostrar separador si hay tabs de monitor --}}
+    @if ($showMonitor && ($isMonitorTabEnabled('console') || $isMonitorTabEnabled('activity_log') || $isMonitorTabEnabled('request_inspector')))
+        <div class="separator mx-2"></div>
+    @endif
     
     {{-- Monitor Console Tab --}}
-    @if ($showMonitor)
+    @if ($showMonitor && $isMonitorTabEnabled('console'))
         <button type="button" 
                 class="btn btn-sm btn-icon btn-active-light-primary" 
                 @click="openMonitorTab('console')"
@@ -22,9 +25,10 @@
                 title="Console Monitor">
             {!! getIcon('ki-underlining', 'fs-3', '', 'i') !!}
         </button>
+    @endif
 
-
-        {{-- Activity Logs Tab --}}
+    {{-- Activity Logs Tab --}}
+    @if ($showMonitor && $isMonitorTabEnabled('activity_log'))
         <button type="button" 
                 class="btn btn-sm btn-icon btn-active-light-primary" 
                 @click="openMonitorTab('activity')"
@@ -33,8 +37,10 @@
                 title="Activity Logs">
             {!! getIcon('ki-chart-pie-simple', 'fs-3', '', 'i') !!}
         </button>
-        
-        {{-- Request Tab --}}
+    @endif
+    
+    {{-- Request Tab --}}
+    @if ($showMonitor && $isMonitorTabEnabled('request_inspector'))
         <button type="button" 
                 class="btn btn-sm btn-icon btn-active-light-primary" 
                 @click="openMonitorTab('request')"
@@ -45,7 +51,10 @@
         </button>
     @endif
 
-    <div class="separator mx-2"></div>
+    {{-- Solo mostrar separador si hay tabs de monitor --}}
+    @if ($showMonitor && ($isMonitorTabEnabled('console') || $isMonitorTabEnabled('activity_log') || $isMonitorTabEnabled('request_inspector')))
+        <div class="separator mx-2"></div>
+    @endif
     
     {{-- Future implementations --}}
     <button class="btn btn-sm btn-icon btn-active-light-primary" type="button" disabled data-bs-toggle="tooltip"

@@ -44,26 +44,77 @@ class ChatWorkspace extends Component
     public $monitorLayout;
 
     /**
+     * Config array (validated configuration)
+     *
+     * @var array
+     */
+    public $config;
+
+    /**
      * Crear nueva instancia del componente
      *
      * @param LLMConversationSession|null $session
      * @param Collection $configurations
-     * @param bool $showMonitor
-     * @param bool $monitorOpen
-     * @param string $monitorLayout 'sidebar' | 'split-horizontal'
+     * @param array|null $config New config array system (recommended)
+     * @param bool $showMonitor LEGACY: Show monitor panel
+     * @param bool $monitorOpen LEGACY: Monitor initial state
+     * @param string $monitorLayout LEGACY: Monitor layout 'sidebar' | 'split-horizontal'
      */
     public function __construct(
         $session = null,
         $configurations = null,
+        ?array $config = null,
+        // Legacy props (backward compatibility)
         bool $showMonitor = false,
         bool $monitorOpen = false,
         string $monitorLayout = 'sidebar'
     ) {
         $this->session = $session;
         $this->configurations = $configurations ?? collect([]);
-        $this->showMonitor = $showMonitor;
-        $this->monitorOpen = $monitorOpen;
-        $this->monitorLayout = $monitorLayout;
+
+        // CONFIG SYSTEM: Decide entre config array (nuevo) o legacy props
+        if ($config !== null) {
+            // NEW SYSTEM: Use config array directly
+            $this->config = $config;
+            
+            // Map config to legacy props (backward compatibility)
+            $this->showMonitor = $this->config['features']['monitor']['enabled'] ?? false;
+            $this->monitorOpen = $this->config['features']['monitor']['default_open'] ?? false;
+            $this->monitorLayout = $this->config['ui']['layout']['monitor'] ?? 'sidebar';
+        } else {
+            // LEGACY SYSTEM: Build config array from legacy props
+            $this->showMonitor = $showMonitor;
+            $this->monitorOpen = $monitorOpen;
+            $this->monitorLayout = $monitorLayout;
+            
+            // Build minimal config array for views
+            $this->config = [
+                'features' => [
+                    'monitor' => [
+                        'enabled' => $showMonitor,
+                        'default_open' => $monitorOpen,
+                        'tabs' => [
+                            'console' => true,
+                            'activity_log' => true,
+                            'request_inspector' => true,
+                        ],
+                    ],
+                    'settings_panel' => true,
+                ],
+                'ui' => [
+                    'layout' => [
+                        'monitor' => $monitorLayout,
+                    ],
+                ],
+                'performance' => [
+                    'lazy_load_tabs' => true,
+                    'cache_preferences' => true,
+                ],
+                'advanced' => [
+                    'custom_css_class' => '',
+                ],
+            ];
+        }
     }
 
     /**
@@ -126,6 +177,17 @@ class ChatWorkspace extends Component
     }
 
     /**
+     * Check if specific monitor tab is enabled
+     *
+     * @param string $tab Tab name (console, activity_log, request_inspector)
+     * @return bool
+     */
+    public function isMonitorTabEnabled(string $tab): bool
+    {
+        return $this->config['features']['monitor']['tabs'][$tab] ?? false;
+    }
+
+    /**
      * Renderizar componente
      *
      * @return \Illuminate\View\View
@@ -135,6 +197,7 @@ class ChatWorkspace extends Component
         return view('llm-manager::components.chat.chat-workspace', [
             'messages' => $this->getMessages(),
             'monitorId' => $this->getMonitorId(),
+            'config' => $this->config,
         ]);
     }
 }
