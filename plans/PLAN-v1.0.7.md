@@ -22,6 +22,7 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 7. ✅ **Testing Suite** (4-5 horas) - **COMPLETADO 100%** (9 dic 2025) - 33 tests creados
 8. ✅ **Streaming Documentation** (1.5 horas) - **COMPLETADO 100%** (9 dic 2025) - 1050+ líneas
 9. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
+10. 🆕 **Chat UX Improvements** (8-12 horas) - **PLAN ANEXO** - Ver [PLAN-v1.0.7-chat-ux.md](./PLAN-v1.0.7-chat-ux.md)
 
 **Tiempo Total Estimado:** 50.5-61.5 horas (actualizado)  
 **Tiempo Invertido:** ~56.8-60.8 horas (125+ commits + config system + tests + streaming docs)  
