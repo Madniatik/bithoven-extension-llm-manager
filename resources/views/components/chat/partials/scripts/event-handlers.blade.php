@@ -566,6 +566,11 @@
             const userPrompt = messageInput.value;
             messageInput.value = '';
 
+            // Reset textarea height to initial size (BUG-2 fix - Metronic Autosize)
+            if (typeof autosize !== 'undefined' && messageInput) {
+                autosize.update(messageInput);
+            }
+
             // Add user message to UI
             const userBubble = appendMessage('user', userPrompt);
 
