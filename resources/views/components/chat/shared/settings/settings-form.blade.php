@@ -61,6 +61,21 @@ document.addEventListener('alpine:init', () => {
             window.addEventListener('workspace-reset-settings', () => {
                 this.resetToDefaults();
             });
+            
+            // Listener para cambio de shortcuts_mode (actualizar KeyboardShortcuts inmediatamente)
+            const shortcutsModeSelect = this.getElement('shortcuts_mode');
+            if (shortcutsModeSelect && typeof KeyboardShortcuts !== 'undefined') {
+                shortcutsModeSelect.addEventListener('change', (e) => {
+                    const newMode = e.target.value;
+                    KeyboardShortcuts.saveMode(newMode, this.sessionId);
+                    
+                    // Show feedback
+                    const tooltip = KeyboardShortcuts.getInputTooltip();
+                    toastr.info(`Keyboard shortcuts updated: ${tooltip}`);
+                    
+                    console.log('[Settings] Keyboard mode changed to:', newMode);
+                });
+            }
         },
         
         // Helper para obtener elemento por ID con sessionId

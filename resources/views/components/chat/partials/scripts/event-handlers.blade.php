@@ -1293,13 +1293,14 @@
 
         clearBtn?.addEventListener('click', clearConversation);
 
-        // Shift+Enter to send (Enter for new line - comportamiento estándar)
-        messageInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+        // ===== KEYBOARD SHORTCUTS (OS-aware, configurable) =====
+        // Initialize KeyboardShortcuts module
+        const sessionId = '{{ $session?->id ?? 'default' }}';
+        KeyboardShortcuts.init(sessionId, messageInput, sendMessage);
+        
+        console.log('[QuickChat] Keyboard shortcuts initialized');
+        console.log('[QuickChat] Current mode:', KeyboardShortcuts.getCurrentMode());
+        console.log('[QuickChat] Shortcut help:', KeyboardShortcuts.getInputTooltip());
 
 
 

@@ -113,10 +113,35 @@
         <label class="form-label fw-semibold text-gray-700">Enter Key Behavior</label>
         <select class="form-select form-select-solid" id="shortcuts_mode_{{ $sessionId }}">
             <option value="A" selected>Mode A: Enter sends, Shift+Enter new line</option>
-            <option value="B">Mode B: Enter new line, Ctrl/Cmd+Enter sends</option>
+            <option value="B" id="mode_b_option_{{ $sessionId }}">Mode B: Enter new line, Ctrl+Enter sends</option>
         </select>
-        <div class="text-muted fs-7 mt-1">
+        <div class="text-muted fs-7 mt-1" id="shortcuts_help_{{ $sessionId }}">
             Choose Enter key behavior for message input.
         </div>
     </div>
+    
+    {{-- Update Mode B description with correct modifier key --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof PlatformUtils !== 'undefined') {
+            const modifier = PlatformUtils.getModifierKey(); // 'Cmd' o 'Ctrl'
+            const sessionId = '{{ $sessionId }}';
+            
+            // Update Mode B option text
+            const modeBOption = document.getElementById(`mode_b_option_${sessionId}`);
+            if (modeBOption) {
+                modeBOption.textContent = `Mode B: Enter new line, ${modifier}+Enter sends`;
+            }
+            
+            // Update help text to show current platform
+            const helpText = document.getElementById(`shortcuts_help_${sessionId}`);
+            if (helpText) {
+                const os = PlatformUtils.currentOS;
+                const osLabel = os === 'mac' ? 'macOS' : os === 'windows' ? 'Windows' : os.charAt(0).toUpperCase() + os.slice(1);
+                helpText.textContent = `Choose Enter key behavior for message input. Detected: ${osLabel}`;
+            }
+        }
+    });
+    </script>
 </div>
+

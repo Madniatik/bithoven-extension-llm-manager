@@ -98,6 +98,12 @@
     @include('llm-manager::components.chat.partials.scripts.settings-manager')
 @endif
 
+{{-- Platform Detection & Cross-Platform Utilities (ALWAYS load first) --}}
+@include('llm-manager::components.chat.partials.scripts.platform-utils')
+
+{{-- Keyboard Shortcuts Module (depends on PlatformUtils) --}}
+@include('llm-manager::components.chat.partials.scripts.keyboard-shortcuts')
+
 @include('llm-manager::components.chat.partials.scripts.event-handlers')
 @include('llm-manager::components.chat.partials.scripts.chat-workspace')
 
