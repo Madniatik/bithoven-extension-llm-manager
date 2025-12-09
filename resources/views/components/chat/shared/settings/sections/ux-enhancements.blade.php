@@ -113,7 +113,7 @@
         <label class="form-label fw-semibold text-gray-700">Enter Key Behavior</label>
         <select class="form-select form-select-solid" id="shortcuts_mode_{{ $sessionId }}">
             <option value="A" selected>Mode A: Enter sends, Shift+Enter new line</option>
-            <option value="B" id="mode_b_option_{{ $sessionId }}">Mode B: Enter new line, Ctrl+Enter sends</option>
+            <option value="B" id="mode_b_option_{{ $sessionId }}">Mode B: Enter new line, MOD+Enter sends</option>
         </select>
         <div class="text-muted fs-7 mt-1" id="shortcuts_help_{{ $sessionId }}">
             Choose Enter key behavior for message input.
@@ -127,10 +127,10 @@
             const modifier = PlatformUtils.getModifierKey(); // 'Cmd' o 'Ctrl'
             const sessionId = '{{ $sessionId }}';
             
-            // Update Mode B option text
+            // Update Mode B option text (replace MOD placeholder)
             const modeBOption = document.getElementById(`mode_b_option_${sessionId}`);
             if (modeBOption) {
-                modeBOption.textContent = `Mode B: Enter new line, ${modifier}+Enter sends`;
+                modeBOption.textContent = modeBOption.textContent.replace('MOD', modifier);
             }
             
             // Update help text to show current platform
