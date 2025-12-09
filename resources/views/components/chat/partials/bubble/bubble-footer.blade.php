@@ -64,12 +64,4 @@
             $...
         </span>
     @endif
-
-    {{-- <span class="saved-indicator d-flex align-items-center gap-1 d--none">
-        <i class="ki-duotone ki-check-circle fs-6 text-primary d--none -saved-checkmark">
-            <span class="path1"></span>
-            <span class="path2"></span>
-        </i>
-        <span class="text-primary d--none -saved-checkmark fw-bold fs-7">Saved</span>
-    </span> --}}
 </div>

@@ -157,7 +157,7 @@
             checkmark.className = 'saved-checkmark ms-2';
             checkmark.innerHTML = `
                     <span class="saved-indicator d-flex align-items-center gap-1">
-                        <i class="ki-duotone ki-check-circle fs-6 text-primary">
+                        <i class="ki-duotone ki-check-circle fs-5 text-primary">
                             <span class="path1"></span>
                             <span class="path2"></span>
                         </i>
