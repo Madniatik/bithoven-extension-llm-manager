@@ -147,6 +147,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
+    // Función para mostrar checkmark animado cuando mensaje se guarda en DB
+    const showSavedCheckmark = (footer) => {
+        if (!footer) return;
+        
+        // Crear checkmark element
+        const checkmark = document.createElement('span');
+        checkmark.className = 'saved-checkmark';
+        checkmark.innerHTML = `
+            <i class="ki-duotone ki-check-circle fs-6 text-success">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+        `;
+        
+        // Agregar al footer
+        footer.appendChild(checkmark);
+        
+        // Trigger animation (forzar reflow)
+        checkmark.offsetHeight;
+        checkmark.classList.add('show');
+        
+        // Remover después de 2 segundos
+        setTimeout(() => {
+            checkmark.classList.remove('show');
+            checkmark.classList.add('hide');
+            
+            // Eliminar del DOM después del fade out
+            setTimeout(() => {
+                checkmark.remove();
+            }, 300);
+        }, 2000);
+        
+        console.log('[Checkmark] Saved animation triggered');
+    };
+    
     const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
         if (!messagesContainer) return;
         
@@ -925,6 +960,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                     costSpan.classList.add('d-none');
                                 }
                             }
+                            
+                            // Mostrar checkmark animado al guardar en DB
+                            showSavedCheckmark(footer);
                         }
                     }
                 }

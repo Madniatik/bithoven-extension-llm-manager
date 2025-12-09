@@ -80,6 +80,38 @@
         to {
             transform: scale(1);
         }
+    }
+    
+    /* Saved checkmark animation */
+    .saved-checkmark {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 8px;
+        opacity: 0;
+        transform: scale(0.5);
+        transition: all 0.3s ease;
+    }
+    
+    .saved-checkmark.show {
+        opacity: 1;
+        animation: checkmarkBounce 0.6s ease;
+    }
+    
+    .saved-checkmark.hide {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    
+    @keyframes checkmarkBounce {
+        0% {
+            transform: scale(0.5);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        100% {
+            transform: scale(1);
+        }
     }.split-chat {
     flex: 70%;
     min-height: 250px;
