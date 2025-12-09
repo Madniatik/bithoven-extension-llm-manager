@@ -4,7 +4,12 @@
     El header y footer (textarea) quedan fuera del split
 --}}
 
-<div class="card" id="kt_chat_messenger">
+@php
+    $sessionId = $session?->id ?? 'default';
+    $showSettings = $showSettings ?? true; // Por defecto mostrar settings tab
+@endphp
+
+<div class="card" id="kt_chat_messenger" x-data="chatSettings({{ $sessionId }})">
     {{-- Card Header (fuera del split) --}}
     <div class="card-header" id="kt_chat_messenger_header">
         <div class="card-title">
@@ -20,31 +25,32 @@
             </h3>
             @include('llm-manager::components.chat.partials.drafts.chat-users')
         </div>
-
-        {{-- Toolbar --}}
-        <div class="card-toolbar d-flex gap-2">
-            @if ($session)
-                <span class="badge badge-light-info">Session ID: {{ $session->id }}</span>
-                @if ($session->configuration)
-                    <span class="badge badge-light-primary">{{ ucfirst($session->configuration->provider) }}</span>
-                @endif
-            @endif
-        </div>
     </div>
 
-    {{-- SPLIT CONTAINER (solo body: mensajes + monitor) --}}
-    <div class="split-horizontal-container" id="llm-split-view-{{ $session?->id ?? 'default' }}" x-data="splitResizer_{{ $session?->id ?? 'default' }}({{ $session?->id ?? 'null' }})"
-        x-init="init()">
-        {{-- CHAT PANE (70% default) - Solo mensajes con scroll --}}
-        <div class="split-pane split-chat" id="split-chat-pane-{{ $session?->id ?? 'default' }}">
-            <div class="card-body py-0" id="kt_chat_messenger_body-{{ $session?->id ?? 'default' }}">
-                @include('llm-manager::components.chat.partials.messages-container')
-            </div>
-        </div>
+    {{-- Tab Navigation --}}
+    @include('llm-manager::components.chat.partials.tab-navigation', [
+        'sessionId' => $sessionId,
+        'showSettings' => $showSettings,
+    ])
+
+    {{-- TAB CONTENT WRAPPER --}}
+    <div class="tab-content">
+        {{-- TAB: Conversación | Monitor --}}
+        <div x-show="activeMainTab === 'conversation'" style="display: block;">
+            {{-- SPLIT CONTAINER (solo body: mensajes + monitor) --}}
+            <div class="split-horizontal-container" id="llm-split-view-{{ $sessionId }}" 
+                 x-data="splitResizer_{{ $sessionId }}({{ $session?->id ?? 'null' }})"
+                 x-init="init()">
+                {{-- CHAT PANE (70% default) - Solo mensajes con scroll --}}
+                <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}">
+                    <div class="card-body py-0" id="kt_chat_messenger_body-{{ $sessionId }}">
+                        @include('llm-manager::components.chat.partials.messages-container')
+                    </div>
+                </div>
 
         @if ($showMonitor)
             {{-- RESIZER BAR (draggable) --}}
-            <div x-show="monitorOpen" class="split-resizer" id="split-resizer-{{ $session?->id ?? 'default' }}"
+            <div x-show="monitorOpen" class="split-resizer" id="split-resizer-{{ $sessionId }}"
                 @mousedown="startResize($event)" style="display: none;">
                 <div class="split-resizer-handle">
                     {!! getIcon('ki-row-vertical', 'fs-3', '', 'i') !!}
@@ -58,7 +64,7 @@
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 transform translate-y-0"
                 x-transition:leave-end="opacity-0 transform translate-y-4" class="split-pane split-monitor llm-monitor"
-                id="split-monitor-pane-{{ $session?->id ?? 'default' }}" data-monitor-id="{{ $monitorId }}"
+                id="split-monitor-pane-{{ $sessionId }}" data-monitor-id="{{ $monitorId }}"
                 x-data="{ monitorId: '{{ $monitorId }}' }" x-init="$nextTick(() => {
                     if (window.initLLMMonitor) {
                         window.initLLMMonitor('{{ $monitorId }}');
@@ -126,7 +132,7 @@
 
                             {{-- Close --}}
                             <button type="button" class="btn btn-icon btn-sm btn-active-light-dark"
-                                @click="monitorOpen = false; localStorage.setItem('llm_chat_monitor_open_{{ $session?->id ?? 'default' }}', 'false')"
+                                @click="monitorOpen = false; localStorage.setItem('llm_chat_monitor_open_{{ $sessionId }}', 'false')"
                                 data-bs-toggle="tooltip" title="Close">
                                 {!! getIcon('ki-cross', 'fs-1', '', 'i') !!}
                             </button>
@@ -158,15 +164,32 @@
             </div>
         @endif
     </div>
+    {{-- END TAB: Conversación | Monitor --}}
 
-    {{-- Card Footer (fuera del split) - SIEMPRE VISIBLE --}}
-    <div class="card-footer pt-4" id="kt_chat_messenger_footer">
-        @include('llm-manager::components.chat.partials.form-elements.input-form', ['configurations' => $configurations])
+    @if($showSettings)
+        {{-- TAB: Chat Settings --}}
+        <div x-show="activeMainTab === 'settings'" style="display: none;">
+            <div class="p-5">
+                @include('llm-manager::components.chat.partials.settings-form', [
+                    'sessionId' => $sessionId,
+                ])
+            </div>
+        </div>
+        {{-- END TAB: Chat Settings --}}
+    @endif
+</div>
+{{-- END TAB CONTENT WRAPPER --}}
+
+    {{-- Card Footer (fuera del split) - SIEMPRE VISIBLE excepto en Settings tab --}}
+    <div class="card-footer pt-4" id="kt_chat_messenger_footer" x-show="activeMainTab === 'conversation'">
+        @include('llm-manager::components.chat.partials.form-elements.input-form', [
+            'configurations' => $configurations,
+        ])
     </div>
 </div>
 
 {{-- Message Bubble Template (hidden, for cloning via JS) --}}
-<template id="message-bubble-template-{{ $session?->id ?? 'default' }}">
+<template id="message-bubble-template-{{ $sessionId }}">
     @include('llm-manager::components.chat.partials.bubble.message-bubble-template')
 </template>
 
