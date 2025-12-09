@@ -206,7 +206,7 @@
                 data-kt-scroll-dependencies="#kt_header, #kt_app_header, #kt_app_toolbar, #kt_toolbar, #kt_footer, #kt_app_footer"
                 data-kt-scroll-wrappers="#kt_content, #kt_app_content"
                 data-kt-scroll-offset="{default: '350px', lg: '50px'}">
-                @include('llm-manager::components.chat.partials.settings-form', [
+                @include('llm-manager::components.chat.shared.settings.settings-form', [
                     'sessionId' => $sessionId,
                 ])
             </div>

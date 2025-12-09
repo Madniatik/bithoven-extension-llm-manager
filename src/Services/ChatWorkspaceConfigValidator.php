@@ -50,6 +50,22 @@ class ChatWorkspaceConfigValidator
             ],
             'mode' => 'full',
         ],
+        'ux' => [
+            'animations' => [
+                'fancy_enabled' => true,
+                'checkmark_bounce' => true,
+                'scroll_button_fade' => true,
+                'hover_effects' => true,
+            ],
+            'notifications' => [
+                'sound_enabled' => true,
+                'sound_file' => 'notification.mp3',
+                'vibrate_enabled' => false,
+            ],
+            'keyboard' => [
+                'shortcuts_mode' => 'A', // A = Enter send, B = Enter newline
+            ],
+        ],
         'performance' => [
             'lazy_load_tabs' => true,
             'minify_assets' => false,
@@ -87,6 +103,16 @@ class ChatWorkspaceConfigValidator
         'ui.buttons.download' => 'boolean',
         'ui.buttons.monitor_toggle' => 'boolean',
         'ui.mode' => 'in:full,demo,canvas-only',
+        
+        // UX
+        'ux.animations.fancy_enabled' => 'boolean',
+        'ux.animations.checkmark_bounce' => 'boolean',
+        'ux.animations.scroll_button_fade' => 'boolean',
+        'ux.animations.hover_effects' => 'boolean',
+        'ux.notifications.sound_enabled' => 'boolean',
+        'ux.notifications.sound_file' => 'string|in:notification.mp3,ping.mp3,chime.mp3,beep.mp3,swoosh.mp3',
+        'ux.notifications.vibrate_enabled' => 'boolean',
+        'ux.keyboard.shortcuts_mode' => 'in:A,B',
         
         // Performance
         'performance.lazy_load_tabs' => 'boolean',
