@@ -133,28 +133,66 @@ MessageController::deleteMessage($sessionId, $messageId)
 
 ---
 
-### 5. Keyboard Shortcuts para Enviar Mensajes ⏳
+### 5. Keyboard Shortcuts para Enviar Mensajes ✅
 **Descripción:** Configurar modo de envío con Enter vs Shift+Enter.
 
 **Modos:**
 - **Modo A (Default):** Enter = enviar, Shift+Enter = nueva línea
-- **Modo B:** Enter = nueva línea, Shift+Enter = enviar
+- **Modo B:** Enter = nueva línea, Cmd/Ctrl+Enter = enviar (OS-aware)
 
 **Implementación:**
-- Listener `keydown` en textarea
-- Detectar `event.key === 'Enter'` + `event.shiftKey`
-- Setting en Chat Administration: Radio buttons para elegir modo
-- Guardar preferencia en localStorage o DB (user preference)
+- ✅ Módulo `KeyboardShortcuts` con lógica OS-aware
+- ✅ Listener `keydown` en textarea con `shouldSendMessage(event)`
+- ✅ Setting en UX Enhancements: Select mode A/B con descripción dinámica
+- ✅ Persistencia en localStorage por sesión
+- ✅ Actualización en tiempo real desde Settings Panel
 
 **Archivos:**
-- `event-handlers.blade.php` - Listener keydown con lógica condicional
-- `chat-administration.blade.php` - Radio buttons "Keyboard Shortcuts Mode"
+- ✅ `keyboard-shortcuts.blade.php` (189 líneas) - Nuevo módulo
+- ✅ `event-handlers.blade.php` - KeyboardShortcuts.init() integration
+- ✅ `ux-enhancements.blade.php` - Selector mode + OS-aware descriptions
+- ✅ `settings-form.blade.php` - Change listener con feedback
 
-**Tiempo Estimado:** 1 hora
+**Tiempo Real:** 1.5 horas (estimado: 1 hora)
+**Estado:** COMPLETADO (b582b8f, cc73d04)
 
 ---
 
-### 6. Hover Effects en Bubbles ⏳
+### 6. OS & Browser Detection Utility ✅
+**Descripción:** Utilidad cross-platform para detección de sistema operativo y navegador.
+
+**Funcionalidades Implementadas:**
+- ✅ **OS Detection:** Mac, Windows, Linux, iOS, Android
+- ✅ **Browser Detection:** Chrome, Firefox, Safari, Edge, Opera
+- ✅ **Browser Version:** Extracción automática de versión
+- ✅ **Modifier Keys:** getModifierKey() → "Cmd" (Mac) o "Ctrl" (Windows/Linux)
+- ✅ **Keyboard Helpers:** formatShortcut('MOD+C') → "Cmd+C" o "Ctrl+C"
+- ✅ **System Info:** getSystemInfo() con viewport, touch support, screen resolution, etc.
+- ✅ **Platform Checks:** isMac(), isWindows(), isMobile(), isDesktop()
+
+**UI Integration:**
+- ✅ System Information panel en Performance Settings (4 campos compactos)
+- ✅ "Show Full Details" button con modal SweetAlert (11 campos)
+- ✅ Auto-populate al cargar Settings Panel
+- ✅ Ideal para debugging y soporte técnico
+
+**Archivos:**
+- ✅ `platform-utils.blade.php` (242 líneas) - Módulo core de detección
+- ✅ `performance-settings.blade.php` - System Info panel + modal
+- ✅ `chat-workspace.blade.php` - Cargar platform-utils ANTES de otros scripts
+
+**Beneficios:**
+- Shortcuts consistentes en Mac/Windows/Linux
+- Browser detection para CSS hacks específicos
+- System info completo para bug reports
+- Reutilizable para futuras features (tooltips, copy/paste, etc.)
+
+**Tiempo Real:** 2 horas (estimado: no planificado originalmente)
+**Estado:** COMPLETADO (b582b8f, cc73d04, b3e5111)
+
+---
+
+### 7. Hover Effects en Bubbles ⏳
 **Descripción:** Efectos visuales al pasar el mouse sobre mensajes.
 
 **Efectos:**
@@ -757,8 +795,8 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 4/14 items completados (29%)
-**Última Actualización:** 9 de diciembre de 2025, 22:52
+**Estado Actual:** 7/16 items completados (44%)
+**Última Actualización:** 9 de diciembre de 2025, 23:45
 
 ### Bug Fixes (4/6) ✅
 - [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
@@ -768,12 +806,13 @@ textarea.addEventListener('keydown', (e) => {
 - [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
 - [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min
 
-### Implementaciones (0/7)
+### Implementaciones (2/8) 🔄
 - [ ] Notificación sonora inteligente
 - [ ] Botón borrar mensaje
 - [ ] Indicador streaming status
 - [ ] Header bubble refactor
-- [ ] Keyboard shortcuts
+- [x] **Keyboard shortcuts** - COMPLETADO (b582b8f, cc73d04) ✅
+- [x] **OS & Browser Info** - COMPLETADO (b582b8f, cc73d04, b3e5111) ✅
 - [ ] Hover effects
 - [ ] Efecto typewriter (opcional)
 
@@ -799,11 +838,12 @@ textarea.addEventListener('keydown', (e) => {
    - 4 partials: monitor-settings, ui-preferences, ux-enhancements, performance-settings
    - Settings: Fancy animations, Sound notifications, Keyboard shortcuts mode A/B
 
-### Fase 3: Core UX Features - 4 horas ⏳
-1. ⏳ **Keyboard Shortcuts** (1 hora) - Alto impacto, bajo esfuerzo
-2. ⏳ **Hover Effects** (30 min) - Quick win visual
-3. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
-4. ⏳ **Sound Notification** (1.5 horas) - Depende de status indicator
+### Fase 3: Core UX Features - 4 horas 🔄 2/5 COMPLETADO
+1. ✅ **Keyboard Shortcuts** (1.5 horas) - COMPLETADO (b582b8f, cc73d04)
+2. ✅ **OS & Browser Info** (2 horas) - COMPLETADO (b582b8f, cc73d04, b3e5111)
+3. ⏳ **Hover Effects** (30 min) - Quick win visual
+4. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
+5. ⏳ **Sound Notification** (1.5 horas) - Depende de status indicator
 
 ### Fase 4: Advanced Features - 3.5 horas ⏳
 1. ⏳ **Header Bubble Refactor** (1.5 horas) - UI cleanup
@@ -888,11 +928,23 @@ Este plan se considerará **100% completado** cuando:
 9. **935978b** - chore: cleanup - remove backup files from shared/
 10. **d093e21** - refactor(chat): modular settings form with new UX section (FASE 2 COMPLETE)
 11. **2cead9a** - chore: remove old settings-form.blade.php from partials
+12. **dbcdbd4** - docs: update plan - FASE 2 Configuration complete (5/14 items, 36%)
 
-**Total:** 11 commits, 4 bug fixes + 1 fase configuración completados
+### FASE 3: Core UX Features (9 dic 2025)
+13. **b582b8f** - feat(chat): OS-aware keyboard shortcuts with configurable modes
+14. **cc73d04** - fix: duplicate sessionId declaration + enhanced PlatformUtils with browser detection
+15. **b3e5111** - feat(chat): add System Information panel in Settings (debugging tool)
+
+**Total:** 15 commits, 4 bug fixes + 1 config + 2 features completados
 
 ---
 
-**Última Actualización:** 9 de diciembre de 2025, 22:40
+**Última Actualización:** 9 de diciembre de 2025, 23:45
 **Responsable Actual:** GitHub Copilot (Claude Sonnet 4.5)
 **Siguiente Copilot:** Leer [HANDOFF-NEXT-COPILOT-CHAT-UX.md](./archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md)
+
+**Progreso Sesión Actual:**
+- ✅ Keyboard Shortcuts con detección OS (Mac/Windows/Linux)
+- ✅ PlatformUtils module (OS + Browser detection)
+- ✅ System Information panel en Settings
+- 📈 Progreso: 29% → 44% (+15%)
