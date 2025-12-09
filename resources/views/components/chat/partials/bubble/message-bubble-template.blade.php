@@ -99,9 +99,10 @@
 
         {{-- Content wrapper --}}
         <div class="p-5 {{ $role === 'assistant' ? 'pb-2' : '' }} rounded bubble-content-wrapper {{ $bgColorClass }}" data-bubble-bg-class=""
-            style="max-width: 85%">
+            style="max-width: 85%; overflow-x: hidden; word-wrap: break-word; overflow-wrap: break-word;">
             <div class="message-content text-gray-800 fw-semibold fs-6"
-                @if ($role === 'assistant') data-role="assistant" @endif data-bubble-content="">
+                @if ($role === 'assistant') data-role="assistant" @endif data-bubble-content=""
+                style="overflow-x: auto; max-width: 100%;">
                 @if ($content)
                     {{ $content }}
                 @endif

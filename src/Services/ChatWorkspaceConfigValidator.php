@@ -25,7 +25,7 @@ class ChatWorkspaceConfigValidator
         'features' => [
             'monitor' => [
                 'enabled' => true,
-                'default_open' => true,
+                'default_open' => false,
                 'tabs' => [
                     'console' => true,
                     'request_inspector' => true,

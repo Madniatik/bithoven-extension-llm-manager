@@ -220,7 +220,7 @@ class Workspace extends Component
      */
     public function isMonitorOpenByDefault(): bool
     {
-        return $this->config['features']['monitor']['default_open'] ?? true;
+        return $this->config['features']['monitor']['default_open'] ?? false;
     }
 
     /**
@@ -253,6 +253,8 @@ class Workspace extends Component
         return view('llm-manager::components.chat.workspace', [
             'messages' => $this->getMessages(),
             'config' => $this->config, // Pass config to view
+            'showMonitor' => $this->showMonitor, // Backward compatibility for layouts
+            'monitorLayout' => $this->monitorLayout, // Backward compatibility for layouts
         ]);
     }
 }

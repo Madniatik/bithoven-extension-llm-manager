@@ -17,15 +17,11 @@ window.chatSettings = function(sessionId) {
         init() {
             console.log(`[Chat Settings ${sessionId}] Component initialized`);
             
-            // Load saved tab preference from localStorage
-            const savedTab = localStorage.getItem(`llm_chat_active_tab_${sessionId}`);
-            if (savedTab) {
-                this.activeMainTab = savedTab;
-            }
+            // NO persistir tab preference en localStorage (siempre empezar en 'conversation')
+            this.activeMainTab = 'conversation';
             
-            // Watch for tab changes and persist to localStorage
+            // Watch for tab changes (sin persistencia)
             this.$watch('activeMainTab', (value) => {
-                localStorage.setItem(`llm_chat_active_tab_${sessionId}`, value);
                 console.log(`[Chat Settings ${sessionId}] Tab switched to: ${value}`);
                 
                 // Emit custom event for external integrations

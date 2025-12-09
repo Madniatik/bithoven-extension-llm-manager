@@ -17,7 +17,7 @@
     $sessionId = $sessionId ?? ($session->id ?? 'default');
 @endphp
 
-<div x-data="{ monitorEnabled: true }" style="max-width: 100%; overflow-x: hidden;">
+<div x-data="{ monitorEnabled: true }" style="max-width: 100%; overflow-x: hidden-;">
     {{-- SECTION: Monitor Settings --}}
     <div class="mb-8">
         <h3 class="mb-5">
@@ -27,7 +27,7 @@
         
         {{-- Enable Monitor --}}
         <div class="form-check form-check-custom form-check-solid mb-4">
-            <input class="form-check-input" type="checkbox" id="monitor_enabled" x-model="monitorEnabled" checked disabled>
+            <input class="form-check-input" type="checkbox" id="monitor_enabled" x-model="monitorEnabled" checked>
             <label class="form-check-label fw-semibold text-gray-700" for="monitor_enabled">
                 Enable Monitor Panel
             </label>
@@ -41,7 +41,7 @@
         
         {{-- Console Tab --}}
         <div class="form-check form-check-custom form-check-solid mb-4">
-            <input class="form-check-input" type="checkbox" id="tab_console" checked disabled :disabled="!monitorEnabled || $el.disabled">
+            <input class="form-check-input" type="checkbox" id="tab_console" checked :disabled="!monitorEnabled">
             <label class="form-check-label fw-semibold text-gray-700" for="tab_console">
                 Console Tab
             </label>
@@ -52,7 +52,7 @@
 
         {{-- Request Inspector Tab --}}
         <div class="form-check form-check-custom form-check-solid mb-4">
-            <input class="form-check-input" type="checkbox" id="tab_request_inspector" checked disabled :disabled="!monitorEnabled || $el.disabled">
+            <input class="form-check-input" type="checkbox" id="tab_request_inspector" checked :disabled="!monitorEnabled">
             <label class="form-check-label fw-semibold text-gray-700" for="tab_request_inspector">
                 Request Inspector Tab
             </label>
@@ -63,7 +63,7 @@
 
         {{-- Activity Log Tab --}}
         <div class="form-check form-check-custom form-check-solid mb-4">
-            <input class="form-check-input" type="checkbox" id="tab_activity_log" checked disabled :disabled="!monitorEnabled || $el.disabled">
+            <input class="form-check-input" type="checkbox" id="tab_activity_log" checked :disabled="!monitorEnabled">
             <label class="form-check-label fw-semibold text-gray-700" for="tab_activity_log">
                 Activity Log Tab
             </label>
@@ -85,7 +85,7 @@
         {{-- Chat Layout --}}
         <div class="mb-5">
             <label class="form-label fw-semibold text-gray-700">Chat Layout</label>
-            <select class="form-select form-select-solid" disabled>
+            <select class="form-select form-select-solid">
                 <option value="bubble" selected>Bubble Style (WhatsApp-like)</option>
                 <option value="drawer">Drawer Style</option>
                 <option value="compact">Compact Style</option>
@@ -98,7 +98,7 @@
         {{-- Custom CSS Class --}}
         <div class="mb-5">
             <label class="form-label fw-semibold text-gray-700">Custom CSS Class</label>
-            <input type="text" class="form-control form-control-solid" placeholder="e.g., custom-chat-theme" disabled>
+            <input type="text" class="form-control form-control-solid" placeholder="e.g., custom-chat-theme">
             <div class="text-muted fs-7 mt-1">
                 Add custom CSS class to the chat container.
             </div>
@@ -110,7 +110,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-check form-check-custom form-check-solid mb-4">
-                    <input class="form-check-input" type="checkbox" id="btn_new_chat" checked disabled>
+                    <input class="form-check-input" type="checkbox" id="btn_new_chat" checked>
                     <label class="form-check-label fw-semibold text-gray-700" for="btn_new_chat">
                         New Chat Button
                     </label>
@@ -118,7 +118,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-check form-check-custom form-check-solid mb-4">
-                    <input class="form-check-input" type="checkbox" id="btn_clear" checked disabled>
+                    <input class="form-check-input" type="checkbox" id="btn_clear" checked>
                     <label class="form-check-label fw-semibold text-gray-700" for="btn_clear">
                         Clear Chat Button
                     </label>
@@ -126,7 +126,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-check form-check-custom form-check-solid mb-4">
-                    <input class="form-check-input" type="checkbox" id="btn_download" checked disabled>
+                    <input class="form-check-input" type="checkbox" id="btn_download" checked>
                     <label class="form-check-label fw-semibold text-gray-700" for="btn_download">
                         Download History Button
                     </label>
@@ -134,7 +134,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-check form-check-custom form-check-solid mb-4">
-                    <input class="form-check-input" type="checkbox" id="btn_monitor_toggle" checked disabled>
+                    <input class="form-check-input" type="checkbox" id="btn_monitor_toggle" checked>
                     <label class="form-check-label fw-semibold text-gray-700" for="btn_monitor_toggle">
                         Monitor Toggle Button
                     </label>
@@ -146,14 +146,14 @@
     <div class="separator separator-dashed my-6"></div>
 
     {{-- SECTION: Performance --}}
-    <div class="mb-8">
+    <div class="pb-8 mb-n8">
         <h3 class="mb-5">
             {!! getIcon('ki-rocket', 'fs-2 me-2', '', 'i') !!}
             Performance
         </h3>
         
         <div class="form-check form-check-custom form-check-solid mb-4">
-            <input class="form-check-input" type="checkbox" id="lazy_load_tabs" checked disabled>
+            <input class="form-check-input" type="checkbox" id="lazy_load_tabs" checked>
             <label class="form-check-label fw-semibold text-gray-700" for="lazy_load_tabs">
                 Lazy Load Tabs
             </label>
@@ -163,7 +163,7 @@
         </div>
 
         <div class="form-check form-check-custom form-check-solid mb-4">
-            <input class="form-check-input" type="checkbox" id="cache_preferences" checked disabled>
+            <input class="form-check-input" type="checkbox" id="cache_preferences" checked>
             <label class="form-check-label fw-semibold text-gray-700" for="cache_preferences">
                 Cache Preferences
             </label>
@@ -171,18 +171,40 @@
                 Save settings to localStorage for faster loading.
             </div>
         </div>
-    </div>
-
-    <div class="separator separator-dashed my-6"></div>
-
-    {{-- Form Actions --}}
-    <div class="d-flex justify-content-end gap-2 mt-8">
-        <button type="button" class="btn btn-light" disabled>
-            Reset to Defaults
-        </button>
-        <button type="button" class="btn btn-primary" disabled>
-            {!! getIcon('ki-check', 'fs-2 me-1', '', 'i') !!}
-            Save Settings
-        </button>
+        
+        {{-- Clear localStorage Button --}}
+        <div class="mt-6">
+            <button type="button" class="btn btn-sm btn-light-danger" 
+                    onclick="Swal.fire({
+                        title: '¿Limpiar LocalStorage?',
+                        text: 'Se eliminarán todos los datos guardados del chat. Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'btn btn-danger',
+                            cancelButton: 'btn btn-secondary'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Object.keys(localStorage).filter(k => k.startsWith('llm_chat_')).forEach(k => localStorage.removeItem(k));
+                            Swal.fire({
+                                title: 'Limpiado',
+                                text: 'LocalStorage limpiado correctamente',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
+                        }
+                    })">
+                {!! getIcon('ki-trash', 'fs-2 me-1', '', 'i') !!}
+                Clear Chat LocalStorage
+            </button>
+            <div class="text-muted fs-7 mt-2">
+                Remove all saved chat preferences, monitor states, and cached data.
+            </div>
+        </div>
     </div>
 </div>

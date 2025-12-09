@@ -16,19 +16,11 @@ document.addEventListener('alpine:init', () => {
         logs: [], // Monitor logs array
         
         init() {
-            // Load saved state from localStorage (unique per session)
-            const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
-            const saved = localStorage.getItem(storageKey);
-            if (saved !== null && this.showMonitor) {
-                this.monitorOpen = saved === 'true';
-            }
+            // NO persistir estado del monitor - siempre inicia cerrado
+            this.monitorOpen = false;
             
-            // Load saved tab
-            const tabKey = `llm_chat_monitor_tab_${this.sessionId}`;
-            const savedTab = localStorage.getItem(tabKey);
-            if (savedTab) {
-                this.activeTab = savedTab;
-            }
+            // Tab por defecto: console (sin persistencia)
+            this.activeTab = 'console';
         },
         
         addLog(logEntry) {
@@ -58,23 +50,20 @@ document.addEventListener('alpine:init', () => {
         
         toggleMonitor() {
             this.monitorOpen = !this.monitorOpen;
-            const storageKey = `llm_chat_monitor_open_${this.sessionId}`;
-            localStorage.setItem(storageKey, this.monitorOpen);
+            // NO persistir en localStorage
         },
         
         openMonitorTab(tab) {
             // Si ya está abierto con este tab, cerrar
             if (this.monitorOpen && this.activeTab === tab) {
                 this.monitorOpen = false;
-                localStorage.setItem(`llm_chat_monitor_open_${this.sessionId}`, 'false');
                 return;
             }
             
             // Cambiar tab y abrir si estaba cerrado
             this.activeTab = tab;
             this.monitorOpen = true;
-            localStorage.setItem(`llm_chat_monitor_tab_${this.sessionId}`, tab);
-            localStorage.setItem(`llm_chat_monitor_open_${this.sessionId}`, 'true');
+            // NO persistir en localStorage
         }
     });
     

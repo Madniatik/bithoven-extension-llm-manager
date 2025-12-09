@@ -16,7 +16,7 @@
 @php
     // Extract config values for easier access
     $monitorEnabled = $config['features']['monitor']['enabled'] ?? false;
-    $monitorOpenByDefault = $config['features']['monitor']['default_open'] ?? true;
+    $monitorOpenByDefault = $config['features']['monitor']['default_open'] ?? false;
     $monitorLayoutValue = $config['ui']['layout']['monitor'] ?? 'split-horizontal';
     $settingsPanelEnabled = $config['features']['settings_panel'] ?? true;
     
@@ -81,7 +81,7 @@
 @include('llm-manager::components.chat.partials.scripts.event-handlers')
 @include('llm-manager::components.chat.partials.scripts.chat-workspace')
 
-@if($monitorEnabled)
+@if($showMonitor)
     @include('llm-manager::components.chat.partials.scripts.monitor-api')
     @include('llm-manager::components.chat.partials.scripts.request-inspector')
 @endif
