@@ -638,7 +638,14 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 0/12 items completados (0%)
+**Estado Actual:** 3/12 items completados (25%)
+**Última Actualización:** 9 de diciembre de 2025, 22:40
+
+### Bug Fixes (3/4) ✅
+- [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
+- [x] **BUG-3:** User bubble icons (64c0518) - 20 min
+- [x] **BUG-1:** Scroll inicial invisible (54b6554) - 30 min
+- [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
 
 ### Implementaciones (0/7)
 - [ ] Notificación sonora inteligente
@@ -649,12 +656,6 @@ textarea.addEventListener('keydown', (e) => {
 - [ ] Hover effects
 - [ ] Efecto typewriter (opcional)
 
-### Bug Fixes (0/4)
-- [ ] Scroll inicial invisible
-- [ ] Textarea resize fix
-- [ ] User bubble icons
-- [ ] Cancel request investigation
-
 ### Configuración (0/1)
 - [ ] Chat Administration settings (3 nuevos toggles)
 
@@ -662,11 +663,11 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 🎯 ORDEN DE IMPLEMENTACIÓN RECOMENDADO
 
-### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas
-1. ✅ **BUG-2:** Textarea resize (15 min)
-2. ✅ **BUG-3:** User bubble icons (20 min)
-3. ✅ **BUG-1:** Scroll inicial invisible (30 min)
-4. ⏳ **BUG-4:** Cancel request investigation (2 horas)
+### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 3/4
+1. ✅ **BUG-2:** Textarea resize (15 min) - COMPLETADO (e59259b)
+2. ✅ **BUG-3:** User bubble icons (20 min) - COMPLETADO (64c0518)
+3. ✅ **BUG-1:** Scroll inicial invisible (30 min) - COMPLETADO (54b6554)
+4. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
 
 ### Fase 2: Core UX Features - 4 horas
 1. ✅ **Keyboard Shortcuts** (1 hora) - Alto impacto, bajo esfuerzo
@@ -742,6 +743,18 @@ Este plan se considerará **100% completado** cuando:
 
 ---
 
-**Última Actualización:** 9 de diciembre de 2025  
-**Responsable Actual:** GitHub Copilot  
+## 📝 COMMITS DE IMPLEMENTACIÓN
+
+### FASE 1: Bug Fixes (9 dic 2025)
+1. **849c50f** - docs: add Chat UX Improvements plan + handoff document (v1.0.7 annex, 12 pending items)
+2. **e59259b** - fix: reset textarea height after send using Metronic autosize.update() (BUG-2)
+3. **64c0518** - fix: show Copy button in user bubbles, Raw only in assistant (BUG-3)
+4. **54b6554** - fix: invisible initial scroll - instant behavior + 50ms timeout (BUG-1)
+
+**Total:** 4 commits, 3 bug fixes completados
+
+---
+
+**Última Actualización:** 9 de diciembre de 2025, 22:40
+**Responsable Actual:** GitHub Copilot (Claude Sonnet 4.5)
 **Siguiente Copilot:** Leer [HANDOFF-NEXT-COPILOT-CHAT-UX.md](./archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md)
