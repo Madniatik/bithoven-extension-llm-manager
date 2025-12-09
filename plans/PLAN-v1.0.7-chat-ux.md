@@ -777,8 +777,8 @@ textarea.addEventListener('keydown', (e) => {
 - [ ] Hover effects
 - [ ] Efecto typewriter (opcional)
 
-### Configuración (0/1)
-- [ ] Chat Administration settings (3 nuevos toggles)
+### Configuración (1/1) ✅
+- [x] Chat Administration settings (3 nuevos toggles) - **COMPLETADO (d093e21)**
 
 ---
 
@@ -792,18 +792,22 @@ textarea.addEventListener('keydown', (e) => {
 5. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
 6. 🔜 **BUG-6:** New Chat warning (30 min) - PENDIENTE
 
-### Fase 2: Core UX Features - 4 horas
-1. ✅ **Keyboard Shortcuts** (1 hora) - Alto impacto, bajo esfuerzo
-2. ✅ **Hover Effects** (30 min) - Quick win visual
-3. ✅ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
-4. ✅ **Sound Notification** (1.5 horas) - Depende de status indicator
+### Fase 2: Configuración (1.5 horas) ✅ COMPLETADO
+1. ✅ **Chat Administration Refactoring** (1.5 horas) - COMPLETADO (d093e21, 2cead9a)
+   - Estructura modular en shared/settings/sections/
+   - Nueva sección 'ux' en ChatWorkspaceConfigValidator
+   - 4 partials: monitor-settings, ui-preferences, ux-enhancements, performance-settings
+   - Settings: Fancy animations, Sound notifications, Keyboard shortcuts mode A/B
 
-### Fase 3: Advanced Features - 3.5 horas
-1. ✅ **Header Bubble Refactor** (1.5 horas) - UI cleanup
-2. ✅ **Delete Message** (2 horas) - Backend + frontend
+### Fase 3: Core UX Features - 4 horas ⏳
+1. ⏳ **Keyboard Shortcuts** (1 hora) - Alto impacto, bajo esfuerzo
+2. ⏳ **Hover Effects** (30 min) - Quick win visual
+3. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
+4. ⏳ **Sound Notification** (1.5 horas) - Depende de status indicator
 
-### Fase 4: Configuration - 1.5 horas
-1. ✅ **Chat Administration** (1.5 horas) - Centralizar settings
+### Fase 4: Advanced Features - 3.5 horas ⏳
+1. ⏳ **Header Bubble Refactor** (1.5 horas) - UI cleanup
+2. ⏳ **Delete Message** (2 horas) - Backend + frontend
 
 **Total:** 10.5 horas (sin BUG-4 investigation)
 
@@ -878,8 +882,14 @@ Este plan se considerará **100% completado** cuando:
 5. **e8f616e** - docs: update plans - FASE 1 Bug Fixes 75% complete (3/4 items, BUG-4 postponed)
 6. **49dfae4** - docs: add BUG-5 (checkmark permanent) and BUG-6 (New Chat warning) to plan
 7. **eba6466** - fix: remove checkmark fade out - keep permanent in new bubbles (BUG-5)
+8. **d27ddfe** - docs: update plan - FASE 1 Bug Fixes 67% complete (4/6 items)
 
-**Total:** 7 commits, 4 bug fixes completados
+### FASE 2: Configuración (9 dic 2025)
+9. **935978b** - chore: cleanup - remove backup files from shared/
+10. **d093e21** - refactor(chat): modular settings form with new UX section (FASE 2 COMPLETE)
+11. **2cead9a** - chore: remove old settings-form.blade.php from partials
+
+**Total:** 11 commits, 4 bug fixes + 1 fase configuración completados
 
 ---
 
