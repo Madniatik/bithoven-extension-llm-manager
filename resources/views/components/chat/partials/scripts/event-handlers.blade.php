@@ -478,6 +478,21 @@ document.addEventListener('DOMContentLoaded', () => {
         
         eventSource = new EventSource('{{ route("admin.llm.quick-chat.stream") }}?' + params);
         
+        // Listen for request_data SSE event (Phase 2: Update with complete context_messages)
+        eventSource.addEventListener('request_data', (event) => {
+            const data = JSON.parse(event.data);
+            console.log('[Event Handlers] SSE request_data received (COMPLETE with context)', data);
+            
+            // UPDATE Request Inspector with COMPLETE data (including context_messages from backend)
+            if (typeof window.populateRequestInspector === 'function') {
+                window.populateRequestInspector(data);
+                addMonitorLog('📋 Request Inspector: updated with context_messages', 'success');
+                console.log('[Event Handlers] Request Inspector updated with context_messages');
+            } else {
+                console.warn('[Event Handlers] populateRequestInspector function not found');
+            }
+        });
+        
         // Start monitor tracking with provider/model
         if (window.LLMMonitor) {
             window.LLMMonitor.start(thinkingProvider, thinkingModel, monitorId);

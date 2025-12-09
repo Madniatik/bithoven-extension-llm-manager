@@ -224,6 +224,12 @@ class LLMQuickChatController extends Controller
                 echo "event: request_data\n";
                 echo "data: " . json_encode($requestData) . "\n\n";
                 
+                // Temporary debug log
+                \Log::info('[QuickChat] SSE request_data emitted', [
+                    'context_messages_count' => count($requestData['context_messages']),
+                    'actual_context_size' => $requestData['parameters']['actual_context_size'],
+                ]);
+                
                 if (ob_get_level()) ob_flush();
                 flush();
 
