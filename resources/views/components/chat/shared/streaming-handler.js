@@ -100,14 +100,15 @@ window.LLMStreamingHandler = {
             }
         });
 
-        // Event: request_data (Request Inspector)
+        // Event: request_data (Request Inspector - COMPLETE DATA with context_messages)
         this.eventSource.addEventListener('request_data', (event) => {
             const data = JSON.parse(event.data);
-            console.log('[LLMStreamingHandler] Request data received', data);
+            console.log('[LLMStreamingHandler] Request data received (COMPLETE with context)', data);
             
-            // Populate Request Inspector UI if function exists
-            if (typeof populateRequestInspector === 'function') {
-                populateRequestInspector(data);
+            // UPDATE Request Inspector with COMPLETE data (including context_messages from backend)
+            if (typeof window.populateRequestInspector === 'function') {
+                window.populateRequestInspector(data);
+                console.log('[LLMStreamingHandler] Request Inspector updated with context_messages');
             } else {
                 console.warn('[LLMStreamingHandler] populateRequestInspector function not found');
             }

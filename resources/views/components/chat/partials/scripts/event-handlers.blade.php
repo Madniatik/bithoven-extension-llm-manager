@@ -429,10 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const contextLimit = parseInt(document.getElementById('quick-chat-context-limit')?.value || 10, 10);
         
         // ========================================
-        // 🔥 POPULATE REQUEST INSPECTOR (BEFORE STREAMING)
+        // 🔥 POPULATE REQUEST INSPECTOR (IMMEDIATE + SSE UPDATE)
         // ========================================
-        // Build request data BEFORE EventSource starts (immediate UI feedback)
-        const requestData = {
+        // Phase 1: Build PARTIAL request data from form (immediate UI feedback)
+        const partialRequestData = {
             metadata: {
                 provider: thinkingProvider,
                 model: thinkingModel,
@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 context_limit: contextLimit,
             },
             system_instructions: selectedOption?.dataset.systemInstructions || null,
-            context_messages: [], // Cannot get from UI (backend handles this)
+            context_messages: [], // Will be populated by SSE event
             current_prompt: userPrompt,
             full_request_body: {
                 model: thinkingModel,
@@ -458,10 +458,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
-        // Populate Request Inspector IMMEDIATELY (no SSE dependency)
+        // Populate IMMEDIATELY with partial data (instant feedback)
         if (typeof window.populateRequestInspector === 'function') {
-            window.populateRequestInspector(requestData);
-            addMonitorLog('📋 Request Inspector populated', 'success');
+            window.populateRequestInspector(partialRequestData);
+            addMonitorLog('📋 Request Inspector: partial data loaded', 'debug');
         } else {
             console.warn('[Event Handlers] populateRequestInspector function not found');
         }

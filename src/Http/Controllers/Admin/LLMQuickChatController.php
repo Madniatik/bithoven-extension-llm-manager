@@ -137,20 +137,24 @@ class LLMQuickChatController extends Controller
                 // Build context from previous messages (apply context_limit)
                 // Skip error messages from context (is_error flag in metadata)
                 $contextLimit = $validated['context_limit'] ?? 10;
-                $query = $session->messages()->orderBy('id');
                 
-                // If context_limit is 0, use all messages; otherwise take last N
-                if ($contextLimit > 0) {
-                    $query->take($contextLimit);
-                }
-                
-                $context = $query->get()
+                // Get all messages first (to support 'All messages' option)
+                $allMessages = $session->messages()
+                    ->orderBy('id')
+                    ->get()
                     ->filter(function($m) {
                         // Skip messages marked as errors
                         return !($m->metadata['is_error'] ?? false);
-                    })
+                    });
+                
+                // If context_limit > 0, take LAST N messages (most recent)
+                // If context_limit = 0, use ALL messages
+                $contextMessages = $contextLimit > 0 
+                    ? $allMessages->slice(-$contextLimit)->values() // Negative slice = take last N
+                    : $allMessages->values();
+                
+                $context = $contextMessages
                     ->map(fn($m) => ['role' => $m->role, 'content' => $m->content])
-                    ->values() // Reset array keys after filter
                     ->toArray();
 
                 $fullResponse = '';
@@ -192,15 +196,13 @@ class LLMQuickChatController extends Controller
                         'actual_context_size' => count($context),
                     ],
                     'system_instructions' => $configuration->system_instructions ?? null,
-                    'context_messages' => collect($context)->map(function($m, $idx) use ($session) {
-                        // Get original message from DB to get metadata
-                        $originalMsg = $session->messages()->skip($idx)->first();
+                    'context_messages' => $contextMessages->map(function($m) {
                         return [
-                            'id' => $originalMsg->id ?? $idx,
-                            'role' => $m['role'],
-                            'content' => \Illuminate\Support\Str::limit($m['content'], 200),
-                            'tokens' => $originalMsg->tokens ?? 0,
-                            'created_at' => $originalMsg->created_at?->toIso8601String() ?? now()->toIso8601String(),
+                            'id' => $m->id,
+                            'role' => $m->role,
+                            'content' => \Illuminate\Support\Str::limit($m->content, 200),
+                            'tokens' => $m->tokens ?? 0,
+                            'created_at' => $m->created_at?->toIso8601String() ?? now()->toIso8601String(),
                         ];
                     })->toArray(),
                     'current_prompt' => $validated['prompt'],
