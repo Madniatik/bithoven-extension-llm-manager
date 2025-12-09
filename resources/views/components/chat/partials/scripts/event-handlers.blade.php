@@ -42,8 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let autoScrollEnabled = true; // Default: habilitado
     let unreadMessagesCount = 0; // Contador de mensajes nuevos sin leer
     
-    const scrollToBottomBtn = document.getElementById('scroll-to-bottom-btn-{{ $session?->id ?? "default" }}');
-    const unreadBadge = document.getElementById('unread-badge-{{ $session?->id ?? "default" }}');
+    const scrollToBottomBtn = document.getElementById(`scroll-to-bottom-btn-${sessionId}`);
+    const unreadBadge = document.getElementById(`unread-badge-${sessionId}`);
     
     const isAtBottom = () => {
         if (!messagesContainer) return true;
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Función para actualizar contador de mensajes en el header
     const updateMessageCount = (increment = 1) => {
-        const countSpan = document.getElementById('message-count-{{ $session?->id ?? "default" }}');
+        const countSpan = document.getElementById(`message-count-${sessionId}`);
         if (countSpan) {
             const currentCount = parseInt(countSpan.dataset.count || 0);
             const newCount = currentCount + increment;
@@ -724,12 +724,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                // Incrementar badge de mensajes no leídos si usuario no está en bottom
-                if (!isAtBottom() && chunkCount === 1) {
-                    // Solo incrementar una vez por mensaje del asistente (en el primer chunk)
-                    updateUnreadBadge(1);
-                }
-                
                 if (chunkCount % 50 === 0) {
                     addMonitorLog(`📥 Received ${chunkCount} chunks (${currentTokens} tokens)`, 'info');
                 }
@@ -803,6 +797,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         // Increment message counter (assistant response saved)
                         updateMessageCount(1);
+                        
+                        // Increment unread badge if user is not at bottom
+                        if (!isAtBottom()) {
+                            updateUnreadBadge(1);
+                            console.log('[Unread Badge] Assistant message completed, user not at bottom');
+                        }
                         
                         // Add error badge if this is an error message
                         if (data.metadata?.is_error) {
