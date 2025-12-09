@@ -38,11 +38,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const showThinking = () => thinkingMessage?.classList.remove('d-none');
     const hideThinking = () => thinkingMessage?.classList.add('d-none');
     
-    const scrollToBottom = () => {
-        if (messagesContainer) {
-            setTimeout(() => messagesContainer.scrollTop = messagesContainer.scrollHeight, 100);
+    // Smart Auto-Scroll: detectar si usuario está en bottom
+    let autoScrollEnabled = true; // Default: habilitado
+    
+    const isAtBottom = () => {
+        if (!messagesContainer) return true;
+        const threshold = 100; // 100px del bottom
+        return messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < threshold;
+    };
+    
+    // Scroll suave al bottom (solo si auto-scroll habilitado o forzado)
+    const scrollToBottom = (force = false) => {
+        if (!messagesContainer) return;
+        
+        if (autoScrollEnabled || force) {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'smooth'
+            });
         }
     };
+    
+    // Scroll para posicionar mensaje de usuario al top (con padding)
+    const scrollToUserMessage = (messageBubble) => {
+        if (!messagesContainer || !messageBubble) return;
+        
+        const bubbleTop = messageBubble.offsetTop;
+        const paddingTop = 20; // 20px de espacio arriba del bubble
+        
+        messagesContainer.scrollTo({
+            top: bubbleTop - paddingTop,
+            behavior: 'smooth'
+        });
+    };
+    
+    // Listener de scroll manual para detectar si usuario se aleja del bottom
+    if (messagesContainer) {
+        messagesContainer.addEventListener('scroll', () => {
+            if (isAtBottom()) {
+                autoScrollEnabled = true;
+            } else {
+                autoScrollEnabled = false;
+            }
+        });
+    }
     
     const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
         if (!messagesContainer) return;
@@ -197,7 +236,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         scrollToBottom();
-        return messagesContainer.querySelector(`[data-message-id="${messageId}"]`);
+        
+        // Retornar el bubble insertado (para poder hacer scroll a él)
+        return insertedBubble;
     };
     
     /**
@@ -402,7 +443,13 @@ document.addEventListener('DOMContentLoaded', () => {
         messageInput.value = '';
         
         // Add user message to UI
-        appendMessage('user', userPrompt);
+        const userBubble = appendMessage('user', userPrompt);
+        
+        // Scroll inteligente: posicionar mensaje de usuario arriba (con padding)
+        if (userBubble) {
+            setTimeout(() => scrollToUserMessage(userBubble), 100);
+            autoScrollEnabled = true; // Asegurar que auto-scroll está activo
+        }
         
         addMonitorLog('🚀 Sending message to LLM...', 'info');
         addMonitorLog(`   Prompt: "${userPrompt.substring(0, 50)}${userPrompt.length > 50 ? '...' : ''}"`, 'debug');
@@ -1148,6 +1195,16 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '{{ route("admin.llm.quick-chat.new") }}?title=' + encodeURIComponent(chatTitle);
         }
     });
+    
+    // Scroll inicial al último mensaje (al cargar página)
+    setTimeout(() => {
+        if (messagesContainer) {
+            messagesContainer.scrollTo({
+                top: messagesContainer.scrollHeight,
+                behavior: 'auto' // Instantáneo en carga inicial
+            });
+        }
+    }, 200);
     
     console.log('✅ Quick Chat ready - Press Enter or Send button');
 });

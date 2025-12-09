@@ -15,6 +15,7 @@
 
 .split-pane {
     overflow-y: auto;
+    scroll-behavior: smooth;
     position: relative;
 }
 
