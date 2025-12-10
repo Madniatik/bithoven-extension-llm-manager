@@ -1695,6 +1695,22 @@
                 }
             }, 50); // Reducido de 200ms a 50ms
 
+            // Listen for Context Indicator toggle from Workspace Settings
+            window.addEventListener('context-indicator-toggle', (event) => {
+                const { enabled, sessionId: eventSessionId } = event.detail;
+                const currentSessionId = '{{ $session?->id ?? "default" }}';
+                
+                // Solo aplicar si el evento es para esta instancia
+                if (eventSessionId == currentSessionId) {
+                    console.log(`[Context Indicator] Toggle event received: ${enabled ? 'ENABLED' : 'DISABLED'}`);
+                    
+                    // Aplicar cambios inmediatamente
+                    if (typeof updateContextIndicators === 'function') {
+                        updateContextIndicators();
+                    }
+                }
+            });
+
             console.log('✅ Quick Chat ready - Press Enter or Send button');
         });
     </script>

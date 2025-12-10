@@ -421,10 +421,17 @@
                 element.addEventListener('change', (e) => {
                     saveSetting(setting.id, e.target.checked);
                     
-                    // Si es context_indicator_enabled, trigger updateContextIndicators
-                    if (setting.id === 'context_indicator_enabled' && typeof updateContextIndicators === 'function') {
-                        updateContextIndicators();
-                        console.log('[Settings] Context Indicator toggled, updating bubbles...');
+                    // Si es context_indicator_enabled, emitir evento para aplicación inmediata
+                    if (setting.id === 'context_indicator_enabled') {
+                        // Dispatch custom event para que el chat lo escuche
+                        const event = new CustomEvent('context-indicator-toggle', {
+                            detail: { 
+                                enabled: e.target.checked,
+                                sessionId: sessionId
+                            }
+                        });
+                        window.dispatchEvent(event);
+                        console.log('[Settings] Context Indicator toggled, event dispatched:', e.target.checked);
                     }
                 });
             } else if (setting.type === 'select') {
