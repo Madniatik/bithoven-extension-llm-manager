@@ -137,17 +137,53 @@
                                     </div>
                                 </div>
 
-                                {{-- Right: Action Buttons --}}
-                                @include('llm-manager::components.chat.shared.monitor.monitor-header-buttons', [
-                                    'monitorId' => $monitorId,
-                                    'showRefresh' => true,
-                                    'showDownload' => true,
-                                    'showCopy' => true,
-                                    'showClear' => true,
-                                    'showFullscreen' => true,
-                                    'showClose' => true,
-                                    'size' => 'sm'
-                                ])
+                                {{-- Right: Action Buttons (Dynamic per Tab) --}}
+                                <div class="d-flex gap-1 flex-shrink-0">
+                                    {{-- Console Tab Buttons --}}
+                                    <div x-show="activeTab === 'console'">
+                                        @include('llm-manager::components.chat.shared.monitor.monitor-header-buttons', [
+                                            'monitorId' => $monitorId,
+                                            'showRefresh' => true,
+                                            'showDownload' => true,
+                                            'showCopy' => true,
+                                            'showClear' => true,
+                                            'showLoadMore' => false,
+                                            'showFullscreen' => true,
+                                            'showClose' => true,
+                                            'size' => 'sm'
+                                        ])
+                                    </div>
+
+                                    {{-- Activity Logs Tab Buttons --}}
+                                    <div x-show="activeTab === 'activity'" style="display: none;">
+                                        @include('llm-manager::components.chat.shared.monitor.monitor-header-buttons', [
+                                            'monitorId' => $monitorId,
+                                            'showRefresh' => true,
+                                            'showDownload' => false,
+                                            'showCopy' => false,
+                                            'showClear' => false,
+                                            'showLoadMore' => true,
+                                            'showFullscreen' => true,
+                                            'showClose' => true,
+                                            'size' => 'sm'
+                                        ])
+                                    </div>
+
+                                    {{-- Request Inspector Tab Buttons --}}
+                                    <div x-show="activeTab === 'request'" style="display: none;">
+                                        @include('llm-manager::components.chat.shared.monitor.monitor-header-buttons', [
+                                            'monitorId' => $monitorId,
+                                            'showRefresh' => false,
+                                            'showDownload' => false,
+                                            'showCopy' => false,
+                                            'showClear' => false,
+                                            'showLoadMore' => false,
+                                            'showFullscreen' => true,
+                                            'showClose' => true,
+                                            'size' => 'sm'
+                                        ])
+                                    </div>
+                                </div>
                             </div>
                         </div>
                                                 {{-- Tabs Body (scrollable) --}}
