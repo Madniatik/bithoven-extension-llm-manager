@@ -26,6 +26,11 @@
         </span>
     </div>
     
+    {{-- Progress bar at bottom --}}
+    <div class="streaming-progress-bar" id="streaming_progress_bar_{{ $sessionId }}">
+        <div class="streaming-progress-fill" id="streaming_progress_fill_{{ $sessionId }}"></div>
+    </div>
+    
 </div>
 
 <style>
@@ -34,25 +39,63 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    padding: 0.75rem 1.5rem;
-    border-bottom: 2px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--bs-border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: 0.8125rem;
     animation: slideDown 0.3s ease-out;
 }
 
 .streaming-status-indicator .status-icon {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .streaming-status-indicator .status-text {
-    color: #475569;
     letter-spacing: 0.01em;
+}
+
+/* Progress bar at bottom */
+.streaming-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.streaming-progress-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+    background: linear-gradient(90deg, 
+        var(--bs-primary) 0%, 
+        var(--bs-primary-active) 100%);
+}
+
+/* Progress bar colors per state */
+.streaming-status-indicator.state-connecting .streaming-progress-fill {
+    background: linear-gradient(90deg, 
+        var(--bs-warning) 0%, 
+        var(--bs-warning-active) 100%);
+}
+
+.streaming-status-indicator.state-thinking .streaming-progress-fill {
+    background: linear-gradient(90deg, 
+        var(--bs-info) 0%, 
+        var(--bs-info-active) 100%);
+}
+
+.streaming-status-indicator.state-typing .streaming-progress-fill,
+.streaming-status-indicator.state-completed .streaming-progress-fill {
+    background: linear-gradient(90deg, 
+        var(--bs-success) 0%, 
+        var(--bs-success-active) 100%);
 }
 
 /* ===== ANIMATIONS ===== */
@@ -67,16 +110,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-/* Spinner rotation (connecting, thinking) */
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-.status-icon.spinning {
-    animation: spin 1s linear infinite;
 }
 
 /* Blinking dots (typing) */
@@ -124,72 +157,72 @@
 
 /* ===== STATE COLORS ===== */
 
-/* Connecting - Amber/Warning */
+/* Connecting - Warning/Amber */
 .streaming-status-indicator.state-connecting {
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-    border-bottom-color: #fbbf24;
+    background-color: var(--bs-warning-light) !important;
+    border-bottom-color: var(--bs-warning);
 }
 
 .streaming-status-indicator.state-connecting .status-text {
-    color: #92400e;
+    color: var(--bs-warning);
 }
 
 .streaming-status-indicator.state-connecting .status-icon {
-    color: #f59e0b;
+    color: var(--bs-warning);
 }
 
-/* Thinking - Blue/Info */
+/* Thinking - Info/Blue */
 .streaming-status-indicator.state-thinking {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-bottom-color: #60a5fa;
+    background-color: var(--bs-info-light) !important;
+    border-bottom-color: var(--bs-info);
 }
 
 .streaming-status-indicator.state-thinking .status-text {
-    color: #1e40af;
+    color: var(--bs-info);
 }
 
 .streaming-status-indicator.state-thinking .status-icon {
-    color: #3b82f6;
+    color: var(--bs-info);
 }
 
-/* Typing - Green/Success */
+/* Typing - Success/Green */
 .streaming-status-indicator.state-typing {
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-    border-bottom-color: #34d399;
+    background-color: var(--bs-success-light) !important;
+    border-bottom-color: var(--bs-success);
 }
 
 .streaming-status-indicator.state-typing .status-text {
-    color: #065f46;
+    color: var(--bs-success);
 }
 
 .streaming-status-indicator.state-typing .status-icon {
-    color: #10b981;
+    color: var(--bs-success);
 }
 
-/* Completed - Green bright */
+/* Completed - Success bright */
 .streaming-status-indicator.state-completed {
-    background: linear-gradient(135deg, #d1fae5 0%, #86efac 100%);
-    border-bottom-color: #22c55e;
+    background-color: var(--bs-success-light) !important;
+    border-bottom-color: var(--bs-success);
 }
 
 .streaming-status-indicator.state-completed .status-text {
-    color: #14532d;
+    color: var(--bs-success);
 }
 
 .streaming-status-indicator.state-completed .status-icon {
-    color: #16a34a;
+    color: var(--bs-success);
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 991.98px) {
     .streaming-status-indicator {
-        padding: 0.5rem 1rem;
-        font-size: 0.8125rem;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.75rem;
     }
     
     .streaming-status-indicator .status-icon {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
     }
 }
 </style>
@@ -200,24 +233,28 @@ const StreamingStatusIndicator = (() => {
     const sessionId = '{{ $sessionId }}';
     let currentState = null;
     let hideTimeout = null;
+    let progressInterval = null;
+    let progressValue = 0;
     
     // DOM elements
     const indicator = document.getElementById(`streaming_status_indicator_${sessionId}`);
     const icon = document.getElementById(`streaming_status_icon_${sessionId}`);
     const text = document.getElementById(`streaming_status_text_${sessionId}`);
+    const progressBar = document.getElementById(`streaming_progress_bar_${sessionId}`);
+    const progressFill = document.getElementById(`streaming_progress_fill_${sessionId}`);
     
     // State configuration
     const states = {
         connecting: {
-            icon: '{!! getIcon("ki-loading", "fs-3", "", "i") !!}',
+            icon: '<div class="spinner-border spinner-border-sm" role="status"></div>',
             text: 'Connecting to AI...',
-            iconClass: 'spinning',
+            iconClass: '',
             className: 'state-connecting'
         },
         thinking: {
-            icon: '{!! getIcon("ki-abstract-26", "fs-3", "", "i") !!}',
+            icon: '<div class="spinner-border spinner-border-sm" role="status"></div>',
             text: 'Thinking...',
-            iconClass: 'spinning',
+            iconClass: '',
             className: 'state-thinking'
         },
         typing: {
@@ -279,13 +316,62 @@ const StreamingStatusIndicator = (() => {
         // Show indicator
         indicator.style.display = 'block';
         
+        // Start progress animation
+        startProgress();
+        
         console.log(`[StreamingIndicator] State: ${state}`);
         
         // Auto-hide completed state after 1.5 seconds
         if (state === 'completed') {
+            completeProgress(); // Jump to 100%
             hideTimeout = setTimeout(() => {
                 hide();
             }, 1500);
+        }
+    };
+    
+    /**
+     * Start progress animation
+     */
+    const startProgress = () => {
+        // Clear any existing interval
+        if (progressInterval) {
+            clearInterval(progressInterval);
+        }
+        
+        // Reset progress
+        progressValue = 0;
+        if (progressFill) {
+            progressFill.style.width = '0%';
+        }
+        
+        // Animate progress from 0% to 90% over time
+        // Slow progress that never reaches 100% (indicates ongoing process)
+        progressInterval = setInterval(() => {
+            if (progressValue < 90) {
+                // Exponential slowdown as it approaches 90%
+                const increment = (90 - progressValue) * 0.02;
+                progressValue += increment;
+                
+                if (progressFill) {
+                    progressFill.style.width = `${progressValue}%`;
+                }
+            }
+        }, 100); // Update every 100ms
+    };
+    
+    /**
+     * Complete progress (jump to 100%)
+     */
+    const completeProgress = () => {
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
+        
+        if (progressFill) {
+            progressValue = 100;
+            progressFill.style.width = '100%';
         }
     };
     
@@ -295,12 +381,22 @@ const StreamingStatusIndicator = (() => {
     const hide = () => {
         if (!indicator) return;
         
+        // Stop progress
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            progressInterval = null;
+        }
+        
         indicator.classList.add('fading-out');
         
         setTimeout(() => {
             indicator.style.display = 'none';
             indicator.classList.remove('fading-out');
             currentState = null;
+            progressValue = 0;
+            if (progressFill) {
+                progressFill.style.width = '0%';
+            }
         }, 500);
         
         console.log('[StreamingIndicator] Hidden');
@@ -327,7 +423,8 @@ const StreamingStatusIndicator = (() => {
         hide,
         show,
         getState,
-        isEnabled
+        isEnabled,
+        completeProgress
     };
 })();
 
