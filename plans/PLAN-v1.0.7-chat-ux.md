@@ -5,8 +5,8 @@
 **Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
 **Estado:** In Progress  
 **Prioridad:** Medium  
-**Progreso:** 94% (15/16 items completados)  
-**Tiempo Estimado:** 11.5-13.5 horas (actualizado: +1h system notifications)
+**Progreso:** 75% (15/20 items completados)  
+**Tiempo Estimado:** 16-19 horas (actualizado: +4.75h nuevas features)
 
 ---
 
@@ -393,7 +393,421 @@ error/stop → hide()                             // Immediate hide
 
 ---
 
-### 7. Efecto Typewriter (Opcional) 🔮
+### 8. Resend Message Button 🆕
+**Descripción:** Botón para reenviar un mensaje de usuario copiando su contenido al input del chat.
+
+**Ubicación:** Header de bubbles de usuario (junto a Copy, Raw, Delete)
+
+**Funcionalidad:**
+- ✅ Solo visible en bubbles de usuario (NO en asistente)
+- ✅ Copia el contenido del mensaje al textarea del chat
+- ✅ Posiciona el cursor al final del texto
+- ✅ Auto-scroll al textarea para dar feedback visual
+- ✅ Opcional: Focus automático en textarea después de copiar
+
+**Implementación:**
+
+#### Backend:
+- NO requiere cambios de backend (solo manipulación DOM)
+
+#### Frontend:
+```blade
+{{-- bubble-header.blade.php - Solo para user bubbles --}}
+@if($message->role === 'user')
+<a href="javascript:void(0)" 
+   class="resend-message-btn text-hover-primary fs-7" 
+   data-message-id="{{ $message->id }}"
+   title="Resend this message">
+    <i class="ki-outline ki-arrows-circle fs-3"></i> Resend
+</a>
+@endif
+```
+
+```javascript
+// event-handlers.blade.php
+$(document).on('click', '.resend-message-btn', function(e) {
+    e.preventDefault();
+    const messageId = $(this).data('message-id');
+    const bubbleContent = $(this).closest('.message-bubble').find('.message-content').text();
+    
+    // Copiar al textarea
+    const textarea = $('#messageTextarea');
+    textarea.val(bubbleContent);
+    
+    // Trigger autosize update (Metronic)
+    if (window.KTApp && window.KTApp.autosize) {
+        window.KTApp.autosize.update(textarea[0]);
+    }
+    
+    // Focus y scroll
+    textarea.focus();
+    textarea[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Feedback
+    toastr.success('Message copied to input. Ready to send!');
+});
+```
+
+**Archivos Modificados:**
+- `bubble-header.blade.php` - Agregar botón Resend
+- `event-handlers.blade.php` - Agregar listener click
+
+**Tiempo Estimado:** 30 minutos
+**Prioridad:** Alta
+
+---
+
+### 9. Bubble Numbering 🆕
+**Descripción:** Numeración secuencial de mensajes en la conversación.
+
+**Ubicación por Evaluar:**
+- **Opción A:** Badge pequeño en esquina superior izquierda del bubble
+- **Opción B:** Prefijo en el header antes del rol (ej: "#1 User" | "#2 Assistant")
+- **Opción C:** Timeline vertical en el lado izquierdo (más complejo)
+
+**Funcionalidad:**
+- ✅ Numeración auto-incremental basada en orden de mensajes en DB
+- ✅ User y Assistant comparten secuencia (ej: 1-User, 2-Assistant, 3-User, 4-Assistant)
+- ✅ Se mantiene después de eliminar mensajes (numerar solo visibles)
+- ✅ Reinicia con cada nueva conversación
+
+**Implementación:**
+
+#### Opción A: Badge (RECOMENDADO - más limpio)
+```blade
+{{-- bubble-header.blade.php --}}
+<div class="message-bubble-header d-flex align-items-center justify-content-between">
+    {{-- Badge numeración --}}
+    <span class="badge badge-light-primary badge-circle me-2">{{ $loop->iteration }}</span>
+    
+    {{-- Resto del header --}}
+    <div class="d-flex align-items-center flex-grow-1">
+        {{-- ... contenido actual ... --}}
+    </div>
+</div>
+```
+
+```css
+.badge-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+```
+
+#### Opción B: Prefijo en Header
+```blade
+{{-- bubble-header.blade.php --}}
+<span class="text-muted fw-bold me-1">#{{ $loop->iteration }}</span>
+<span class="fw-bold text-{{ $message->role === 'user' ? 'success' : 'primary' }}">
+    {{ ucfirst($message->role) }}
+</span>
+```
+
+**Decisión:**
+- Evaluar visualmente ambas opciones con mockup
+- Opción A parece más profesional y menos intrusiva
+- Opción B es más explícita pero puede saturar el header
+
+**Archivos Modificados:**
+- `bubble-header.blade.php` - Agregar numeración
+- `split-horizontal.blade.php` - CSS para badge circular (si Opción A)
+
+**Tiempo Estimado:** 45 minutos (incluyendo evaluación visual)
+**Prioridad:** Media
+
+---
+
+### 10. Context Window Visual Indicator 🆕
+**Descripción:** Marcador visual en bubbles que indica qué mensajes están incluidos en el contexto actual (`size_context` setting).
+
+**Contexto Técnico:**
+- `size_context` define cuántos mensajes previos se envían al LLM como contexto
+- Valor configurable en Settings (ej: 5, 10, 20, 50, ALL)
+- Crucial para que el usuario entienda el "alcance de memoria" del asistente
+
+**Funcionalidad:**
+- ✅ Marcador visual dinámico que distingue mensajes "en contexto" vs "fuera de contexto"
+- ✅ Se actualiza en tiempo real al cambiar `size_context` en Settings
+- ✅ Feedback claro: usuario sabe exactamente qué ve el LLM
+- ✅ Útil para depuración: "¿Por qué el LLM no recuerda esto?" → mensaje fuera de contexto
+
+**Propuestas de Diseño:**
+
+#### Opción A: Border Color + Opacity
+```css
+/* Mensajes EN contexto */
+.message-bubble.in-context {
+    border-left: 3px solid var(--bs-primary);
+    opacity: 1;
+}
+
+/* Mensajes FUERA de contexto */
+.message-bubble.out-of-context {
+    border-left: 3px solid var(--bs-gray-300);
+    opacity: 0.5;
+}
+```
+
+#### Opción B: Badge "In Context" / "Archived"
+```blade
+{{-- bubble-header.blade.php --}}
+@if($isInContext)
+    <span class="badge badge-light-success badge-sm">
+        <i class="ki-outline ki-check-circle fs-6"></i> In Context
+    </span>
+@else
+    <span class="badge badge-light-secondary badge-sm">
+        <i class="ki-outline ki-archive fs-6"></i> Archived
+    </span>
+@endif
+```
+
+#### Opción C: Icon Indicator (más sutil)
+```blade
+{{-- Tooltip explicativo --}}
+@if($isInContext)
+    <i class="ki-outline ki-eye text-success fs-4" 
+       data-bs-toggle="tooltip" 
+       title="LLM can see this message"></i>
+@else
+    <i class="ki-outline ki-eye-slash text-muted fs-4" 
+       data-bs-toggle="tooltip" 
+       title="Out of context window"></i>
+@endif
+```
+
+**Implementación:**
+
+#### Backend (Controller):
+```php
+// QuickChatController.php
+public function show($sessionId)
+{
+    $session = ChatSession::findOrFail($sessionId);
+    $messages = $session->messages()->orderBy('created_at')->get();
+    $sizeContext = $session->workspace->configuration->size_context ?? 10;
+    
+    // Marcar últimos N mensajes como "in context"
+    $totalMessages = $messages->count();
+    $messages = $messages->map(function($message, $index) use ($totalMessages, $sizeContext) {
+        $message->is_in_context = ($totalMessages - $index) <= $sizeContext;
+        return $message;
+    });
+    
+    return view('llm-manager::chat.quick-chat', compact('session', 'messages'));
+}
+```
+
+#### Frontend (JavaScript):
+```javascript
+// event-handlers.blade.php
+function updateContextIndicators() {
+    const sizeContext = parseInt($('#sizeContextSetting').val()) || 10;
+    const bubbles = $('.message-bubble').get().reverse(); // Más recientes primero
+    
+    bubbles.forEach((bubble, index) => {
+        const $bubble = $(bubble);
+        if (index < sizeContext) {
+            $bubble.addClass('in-context').removeClass('out-of-context');
+        } else {
+            $bubble.addClass('out-of-context').removeClass('in-context');
+        }
+    });
+}
+
+// Listener en Settings
+$('#sizeContextSetting').on('change', function() {
+    updateContextIndicators();
+    toastr.info(`Context window updated: ${$(this).val()} messages`);
+});
+
+// Inicializar al cargar página
+$(document).ready(function() {
+    updateContextIndicators();
+});
+```
+
+**Decisión de Diseño:**
+1. **Prioridad 1:** Opción A (border + opacity) - Más sutil, no satura UI
+2. **Prioridad 2:** Opción C (icon indicator) - Muy clean, requiere hover para info
+3. **Descartada:** Opción B (badge) - Demasiado visual, ocupa espacio
+
+**Archivos Modificados:**
+- `QuickChatController.php` - Calcular `is_in_context` flag
+- `bubble-header.blade.php` o `message-bubble.blade.php` - Agregar marcador visual
+- `event-handlers.blade.php` - Función `updateContextIndicators()` + listener settings
+- `split-horizontal.blade.php` - CSS para `.in-context` y `.out-of-context`
+- `chat-administration.blade.php` - Agregar listener en setting `size_context`
+
+**Tiempo Estimado:** 2 horas (incluyendo backend + frontend + testing)
+**Prioridad:** Alta (muy útil para UX y debugging)
+
+---
+
+### 11. Request Inspector Persistence 🆕
+**Descripción:** Persistir datos del Request Inspector en localStorage para recuperarlos al recargar la página.
+
+**Problema Actual:**
+- Request Inspector se vacía al recargar página
+- Usuario pierde historial de requests/responses durante desarrollo
+- Datos existen en DB pero no se reconstruyen automáticamente en UI
+
+**Propuestas de Solución:**
+
+#### Opción A: LocalStorage (RECOMENDADO - más rápido)
+**Ventajas:**
+- ✅ Carga instantánea al abrir página (no espera fetch)
+- ✅ Funciona offline
+- ✅ Menos carga en servidor (no más queries)
+- ✅ Ideal para datos temporales de debugging
+
+**Desventajas:**
+- ❌ Límite 5-10MB (suficiente para 50-100 requests)
+- ❌ Se pierde si usuario limpia caché
+- ❌ No sincroniza entre pestañas del mismo chat
+
+**Implementación:**
+```javascript
+// MonitorAPI.js o event-handlers.blade.php
+
+// Guardar en localStorage después de cada request
+function saveRequestToStorage(sessionId, requestData) {
+    const storageKey = `llm_requests_${sessionId}`;
+    let requests = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    
+    // Limitar a últimos 50 requests (evitar overflow)
+    if (requests.length >= 50) {
+        requests.shift(); // Eliminar el más antiguo
+    }
+    
+    requests.push({
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        prompt: requestData.prompt,
+        response: requestData.response,
+        model: requestData.model,
+        tokensUsed: requestData.tokens,
+        executionTime: requestData.execution_time
+    });
+    
+    localStorage.setItem(storageKey, JSON.stringify(requests));
+}
+
+// Restaurar al cargar página
+function loadRequestsFromStorage(sessionId) {
+    const storageKey = `llm_requests_${sessionId}`;
+    const requests = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    
+    // Renderizar en Request Inspector UI
+    requests.forEach(request => {
+        RequestInspector.addRequest(request);
+    });
+    
+    console.log(`Restored ${requests.length} requests from localStorage`);
+}
+
+// Inicializar
+$(document).ready(function() {
+    const sessionId = '{{ $session->id }}';
+    loadRequestsFromStorage(sessionId);
+});
+
+// Listener en evento 'done' de streaming
+eventSource.addEventListener('done', function(e) {
+    const data = JSON.parse(e.data);
+    saveRequestToStorage(sessionId, {
+        prompt: currentPrompt,
+        response: currentResponse,
+        model: data.model,
+        tokens: data.tokens_used,
+        execution_time: data.execution_time
+    });
+});
+```
+
+#### Opción B: Reconstruir desde DB (más completo pero lento)
+**Ventajas:**
+- ✅ Datos persistentes entre sesiones
+- ✅ Sincronizado entre pestañas
+- ✅ No se pierde aunque usuario limpie caché
+- ✅ Acceso a todo el historial (no solo últimos 50)
+
+**Desventajas:**
+- ❌ Query adicional al cargar página (latencia)
+- ❌ Más carga en servidor
+- ❌ Requiere modificar backend
+
+**Implementación:**
+```php
+// QuickChatController.php
+public function show($sessionId)
+{
+    $session = ChatSession::with(['messages.llmUsageLogs'])->findOrFail($sessionId);
+    
+    // Construir array de requests para Request Inspector
+    $requestHistory = $session->messages()
+        ->whereNotNull('llm_usage_log_id')
+        ->with('llmUsageLog')
+        ->get()
+        ->map(function($message) {
+            return [
+                'id' => $message->id,
+                'timestamp' => $message->created_at->toISOString(),
+                'prompt' => $message->content, // Si es user message
+                'response' => $message->llmResponse->content ?? null,
+                'model' => $message->llmUsageLog->model_name ?? null,
+                'tokens' => $message->llmUsageLog->total_tokens ?? 0,
+                'execution_time' => $message->llmUsageLog->execution_time ?? 0
+            ];
+        });
+    
+    return view('llm-manager::chat.quick-chat', compact('session', 'requestHistory'));
+}
+```
+
+```javascript
+// event-handlers.blade.php
+const requestHistory = @json($requestHistory);
+
+$(document).ready(function() {
+    // Renderizar historial desde backend
+    requestHistory.forEach(request => {
+        RequestInspector.addRequest(request);
+    });
+});
+```
+
+#### Opción C: Híbrido (LocalStorage + lazy load desde DB)
+- Cargar últimos 20 desde localStorage (instantáneo)
+- Botón "Load more history" que fetch desde DB
+- Best of both worlds
+
+**Decisión:**
+- **Desarrollo/Testing:** Opción A (localStorage) - Más rápido, ideal para debugging
+- **Producción:** Opción B (DB) - Más robusto, datos persistentes
+- **Recomendación:** Opción C (híbrido) - Balance perfecto
+
+**Archivos Modificados:**
+- `MonitorAPI.js` o `event-handlers.blade.php` - Funciones `saveRequestToStorage()` y `loadRequestsFromStorage()`
+- `request-inspector.blade.php` - UI para renderizar requests restaurados
+- Si Opción B/C: `QuickChatController.php` - Endpoint o data inicial
+
+**Tiempo Estimado:** 
+- Opción A: 1 hora
+- Opción B: 2 horas
+- Opción C: 2.5 horas
+
+**Prioridad:** Media-Alta (muy útil para desarrollo)
+
+---
+
+### 12. Efecto Typewriter (Opcional) 🔮
 **Descripción:** Simular escritura letra por letra del asistente.
 
 **Estado:** FUTURO (baja prioridad)
@@ -914,27 +1328,34 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 8/16 items completados (50%)  
-**Última Actualización:** 10 de diciembre de 2025, 04:15
+**Estado Actual:** 15/20 items completados (75%)  
+**Última Actualización:** 10 de diciembre de 2025, 18:00
 
-### Bug Fixes (4/6) ✅
+### Bug Fixes (6/6) ✅ 100% COMPLETADO
 - [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
 - [x] **BUG-3:** User bubble icons (64c0518) - 20 min
 - [x] **BUG-1:** Scroll inicial invisible (54b6554) - 30 min
 - [x] **BUG-5:** Checkmark fade out innecesario (eba6466) - 10 min
-- [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
-- [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min
-- [❌] **BUG-7:** Messages container oculto por monitor - DESCARTADO (2486405, 829345c revertidos)### Implementaciones (3/8) 🔄
+- [x] **BUG-6:** New Chat warning durante streaming (a951d41) - 30 min
+- [⏸️] **BUG-4:** Cancel request investigation - 2h (APLAZADO - no crítico)
+
+### Implementaciones Completadas (7/8) ✅ 87.5%
 - [x] **System Notifications + Sound** - COMPLETADO (b742e22, f7d3cae) ✅
-- [ ] Botón borrar mensaje
-- [ ] Indicador streaming status
-- [ ] Header bubble refactor
+- [x] **Delete Message** - COMPLETADO (b0942de) ✅
+- [x] **Streaming Status Indicator** - COMPLETADO (c5f79ec, e699e9a, 5236e3f, 65e8c84) ✅
+- [x] **Header Bubble Refactor** - COMPLETADO ✅
 - [x] **Keyboard shortcuts** - COMPLETADO (b582b8f, cc73d04) ✅
 - [x] **OS & Browser Info** - COMPLETADO (b582b8f, cc73d04, b3e5111) ✅
-- [ ] Hover effects
-- [ ] Efecto typewriter (opcional)
+- [x] **New Chat Warning** - COMPLETADO (a951d41) ✅
+- [ ] **Hover effects** - PENDIENTE (opcional)
 
-### Configuración (1/1) ✅
+### Nuevas Features (0/4) 🆕
+- [ ] **Resend Message Button** - PENDIENTE (30 min)
+- [ ] **Bubble Numbering** - PENDIENTE (45 min)
+- [ ] **Context Window Visual Indicator** - PENDIENTE (2h)
+- [ ] **Request Inspector Persistence** - PENDIENTE (1-2.5h según opción)
+
+### Configuración (1/1) ✅ 100%
 - [x] Chat Administration settings (3 nuevos toggles) - **COMPLETADO (d093e21)**
 
 ---
@@ -967,29 +1388,39 @@ textarea.addEventListener('keydown', (e) => {
 1. ✅ **Header Bubble Refactor** (1.5 horas) - COMPLETADO
 2. ✅ **Delete Message** (2 horas) - COMPLETADO (commit b0942de)
 
-**Total:** 11.5 horas (sin BUG-4 investigation, sin Hover Effects opcional)
+### Fase 5: New UX Enhancements - 4.75 horas 🆕
+1. ⏳ **Resend Message Button** (30 min) - Quick action button in user bubbles
+2. ⏳ **Bubble Numbering** (45 min) - Sequential numbering with visual options
+3. ⏳ **Context Window Visual Indicator** (2 horas) - Dynamic marking of in-context messages
+4. ⏳ **Request Inspector Persistence** (1-2.5h) - localStorage o DB reconstruction
+
+**Total:** 16-19 horas (11.5h completados + 4.75h nuevas features, sin BUG-4 investigation, sin Hover Effects opcional)
 
 ---
 
 ## 🎉 MILESTONE DE COMPLETADO
 
-**Progreso Actual:** 94% (15/16 items completados)
+**Progreso Actual:** 75% (15/20 items completados)
 
-✅ **Features Implementadas (6/7):**
+✅ **Features Implementadas (7/11):**
 - ✅ Streaming status indicator con 4 estados (connecting, thinking, typing, completed)
 - ✅ System notifications (Notifications API) + sound (Audio API) condicional (solo si tab no activa)
 - ✅ Keyboard shortcuts configurables (2 modos)
 - ✅ Header bubble con segunda línea de acciones
 - ✅ Delete message funcional (backend + UI) - commit b0942de
-- ✅ BUG-6: New Chat warning durante streaming - COMPLETADO
-- ⏳ Hover effects en bubbles - OPCIONAL (último item pendiente)
+- ✅ BUG-6: New Chat warning durante streaming - commit a951d41
+- ⏳ Hover effects en bubbles - OPCIONAL (pendiente)
+- 🆕 **Resend Message Button** - PENDIENTE
+- 🆕 **Bubble Numbering** - PENDIENTE
+- 🆕 **Context Window Visual Indicator** - PENDIENTE
+- 🆕 **Request Inspector Persistence** - PENDIENTE
 
 ✅ **Bugs Corregidos (6/6 - 100%):**
 - ✅ BUG-1: Scroll inicial invisible (commit 54b6554)
 - ✅ BUG-2: Textarea resize automático (commit e59259b)
 - ✅ BUG-3: User bubble icons visibles (commit 64c0518)
 - ✅ BUG-5: Checkmark permanente en new bubbles (commit eba6466)
-- ✅ BUG-6: New Chat warning durante streaming - COMPLETADO
+- ✅ BUG-6: New Chat warning durante streaming (commit a951d41)
 - ⏸️ BUG-4: Cancel request investigation - APLAZADO (no crítico)
 
 ✅ **Chat Administration actualizado:**
@@ -1079,11 +1510,11 @@ textarea.addEventListener('keydown', (e) => {
 
 ---
 
-**Última Actualización:** 5 de enero de 2026, 17:45
+**Última Actualización:** 10 de diciembre de 2025, 18:00
 **Responsable Actual:** GitHub Copilot (Claude Sonnet 4.5)
 **Siguiente Copilot:** Leer [HANDOFF-NEXT-COPILOT-CHAT-UX.md](./archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md)
 
-**Progreso Sesión Actual:**
+**Progreso Sesión Actual (10 dic 2025):**
 - ✅ Item #4: Header Bubble Refactor (two-line compact layout)
 - ✅ Item #2: Delete Message (backend + frontend + database)
 - ✅ BUG-1: Scroll inicial invisible (instant behavior + timeout)
@@ -1094,6 +1525,11 @@ textarea.addEventListener('keydown', (e) => {
 - ✅ BUG-7: DELETED from plan (space optimization)
 - ✅ Fase 1: Bug Fixes 100% COMPLETADO
 - ✅ Fase 4: Advanced Features 100% COMPLETADO
-- 📊 94% completado (15/16 items)
-- 📈 Progreso: 56% → 94% (+38%)
-- 🎯 Solo Item #7 (Hover Effects) pendiente (OPCIONAL)
+- 🆕 **4 Nuevas Features agregadas al plan:**
+  - Resend Message Button (30 min)
+  - Bubble Numbering (45 min)
+  - Context Window Visual Indicator (2h)
+  - Request Inspector Persistence (1-2.5h)
+- 📊 75% completado (15/20 items)
+- 📈 Progreso: 56% → 94% → 75% (reajuste por nuevas features)
+- 🎯 Fase 5 agregada: New UX Enhancements (4.75h estimadas)
