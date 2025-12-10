@@ -27,9 +27,13 @@ document.addEventListener('alpine:init', () => {
                 this.updateMonitorHeader(newTab);
             });
             
-            // Initialize header on load
-            this.$nextTick(() => {
-                this.updateMonitorHeader(this.activeTab);
+            // Update monitor header when monitor opens
+            this.$watch('monitorOpen', (isOpen) => {
+                if (isOpen) {
+                    this.$nextTick(() => {
+                        this.updateMonitorHeader(this.activeTab);
+                    });
+                }
             });
         },
         
@@ -38,7 +42,21 @@ document.addEventListener('alpine:init', () => {
             const iconEl = document.getElementById(`monitor-header-icon-${monitorId}`);
             const textEl = document.getElementById(`monitor-header-text-${monitorId}`);
             
-            if (!iconEl || !textEl) return;
+            console.log('[Monitor Header] Update attempt:', {
+                tab,
+                monitorId,
+                iconElFound: !!iconEl,
+                textElFound: !!textEl,
+                sessionId: this.sessionId
+            });
+            
+            if (!iconEl || !textEl) {
+                console.warn('[Monitor Header] Elements not found:', {
+                    iconId: `monitor-header-icon-${monitorId}`,
+                    textId: `monitor-header-text-${monitorId}`
+                });
+                return;
+            }
             
             const configs = {
                 console: {
@@ -57,6 +75,8 @@ document.addEventListener('alpine:init', () => {
             
             const config = configs[tab] || configs.console;
             
+            console.log('[Monitor Header] Applying config:', config);
+            
             // Update icon (use getIcon helper format)
             iconEl.innerHTML = `<i class="ki-duotone ${config.icon} fs-2x me-2">
                 <span class="path1"></span>
@@ -65,6 +85,8 @@ document.addEventListener('alpine:init', () => {
             
             // Update title
             textEl.textContent = config.title;
+            
+            console.log('[Monitor Header] Updated successfully');
         },
         
         addLog(logEntry) {
