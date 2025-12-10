@@ -1398,8 +1398,12 @@
         /**
          * New Chat Button Handler
          * Shows modal with optional custom title
+         * If streaming is active, shows warning and stops streaming before creating new chat
          */
         newChatBtn?.addEventListener('click', async () => {
+            // Detect if streaming is currently active
+            const isStreaming = eventSource && eventSource.readyState !== EventSource.CLOSED;
+
             const now = new Date();
             const defaultTitle = 'Quick Chat - ' + now.getFullYear() + '-' +
                 String(now.getMonth() + 1).padStart(2, '0') + '-' +
@@ -1408,39 +1412,76 @@
                 String(now.getMinutes()).padStart(2, '0');
 
             const result = await Swal.fire({
-                title: 'Start New Chat',
+                title: isStreaming ? '⚠️ Stop Streaming & Start New Chat?' : 'Start New Chat',
                 html: `
-                        <div class="text-start">
+                    <div class="text-start">
+                        ${isStreaming ? `
+                            <div class="alert alert-warning d-flex align-items-center mb-4">
+                                <i class="ki-duotone ki-information-5 fs-2x me-3">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                                <div>
+                                    <p class="fw-semibold mb-1">Streaming in Progress</p>
+                                    <p class="text-muted fs-7 mb-0">Current response will be stopped and lost.</p>
+                                </div>
+                            </div>
+                        ` : `
                             <p class="mb-3 text-muted">Create a new conversation session.</p>
-                            <label class="form-label fw-bold">Chat Title (optional):</label>
-                            <input type="text" id="new-chat-title" class="form-control" 
-                                   placeholder="${defaultTitle}" 
-                                   maxlength="100">
-                            <div class="form-text">Leave empty to use default title with timestamp</div>
-                        </div>
-                    `,
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="ki-duotone ki-plus"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Create Chat',
-                    cancelButtonText: 'Cancel',
-                    customClass: {
-                        confirmButton: 'btn btn-primary',
-                        cancelButton: 'btn btn-light'
-                    },
-                    preConfirm: () => {
-                        const title = document.getElementById('new-chat-title').value
-                            .trim();
-                        return title || defaultTitle;
-                    }
-                });
-
-                if (result.isConfirmed) {
-                    const chatTitle = result.value;
-                    // Send title as query param to backend
-                    window.location.href = '{{ route('admin.llm.quick-chat.new') }}?title=' +
-                        encodeURIComponent(chatTitle);
+                        `}
+                        
+                        <label class="form-label fw-bold">Chat Title (optional):</label>
+                        <input type="text" id="new-chat-title" class="form-control" 
+                               placeholder="${defaultTitle}" 
+                               maxlength="100">
+                        <div class="form-text">Leave empty to use default title with timestamp</div>
+                    </div>
+                `,
+                icon: isStreaming ? 'warning' : 'question',
+                showCancelButton: true,
+                confirmButtonText: isStreaming 
+                    ? '<i class="ki-duotone ki-cross"><span class="path1"></span><span class="path2"></span></i> Stop & Create Chat'
+                    : '<i class="ki-duotone ki-plus"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i> Create Chat',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: isStreaming ? '#f1416c' : '#009ef7', // Danger if streaming, Primary if not
+                customClass: {
+                    confirmButton: isStreaming ? 'btn btn-danger' : 'btn btn-primary',
+                    cancelButton: 'btn btn-light'
+                },
+                preConfirm: () => {
+                    const title = document.getElementById('new-chat-title').value.trim();
+                    return title || defaultTitle;
                 }
             });
+
+            if (result.isConfirmed) {
+                // Stop streaming if active (reuse stop button logic)
+                if (isStreaming) {
+                    clearInterval(statsUpdateInterval);
+                    eventSource.close();
+                    eventSource = null;
+                    hideThinking();
+                    
+                    if (window.StreamingStatusIndicators?.[sessionId]) {
+                        window.StreamingStatusIndicators[sessionId].hide();
+                    }
+                    
+                    // Restore buttons (good practice even though we're navigating)
+                    sendBtn.disabled = false;
+                    sendBtn.classList.remove('d-none');
+                    stopBtn?.classList.add('d-none');
+                    messageInput.disabled = false;
+
+                    toastr.info('Streaming stopped. Creating new chat...');
+                }
+
+                // Navigate to new chat
+                const chatTitle = result.value;
+                window.location.href = '{{ route('admin.llm.quick-chat.new') }}?title=' +
+                    encodeURIComponent(chatTitle);
+            }
+        });
 
             // Event delegation for header action buttons (Copy, View Raw, Delete)
             messagesContainer?.addEventListener('click', (e) => {
