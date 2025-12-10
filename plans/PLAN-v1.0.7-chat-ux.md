@@ -251,7 +251,7 @@ error/stop → hide()                             // Immediate hide
 - Default: `true` (habilitado)
 - Persistence: Automática con Settings Panel
 
-**Tiempo Real:** 2.5 horas (commits: c5f79ec, e699e9a, cc8b1f6, 16a0b8b)
+**Tiempo Real:** 3.5 horas (commits: c5f79ec, e699e9a, cc8b1f6, 16a0b8b, 23ad01b, 5236e3f, 65e8c84)
 
 ---
 
@@ -1077,7 +1077,7 @@ textarea.addEventListener('keydown', (e) => {
 1. ✅ **Keyboard Shortcuts** (1.5 horas) - COMPLETADO (b582b8f, cc73d04)
 2. ✅ **OS & Browser Info** (2 horas) - COMPLETADO (b582b8f, cc73d04, b3e5111)
 3. ✅ **System Notifications + Sound** (2.5 horas) - COMPLETADO (b742e22, f7d3cae, 84152d8, 89aa73c, 6b83908, cc8b1f6, 07212f4)
-4. ✅ **Streaming Status Indicator** (2.5 horas) - COMPLETADO (c5f79ec, e699e9a, cc8b1f6, 16a0b8b)
+4. ✅ **Streaming Status Indicator** (3.5 horas) - COMPLETADO (c5f79ec, e699e9a, cc8b1f6, 16a0b8b, 23ad01b, 5236e3f, 65e8c84)
 5. ⏳ **Hover Effects** (30 min) - Quick win visual
 
 ### Fase 4: Advanced Features - 3.5 horas ⏳
@@ -1181,8 +1181,11 @@ Este plan se considerará **100% completado** cuando:
 23. **c5f79ec** - feat(chat): implement Streaming Status Indicator with 4 states
 24. **e699e9a** - fix(chat): correct Streaming Status Indicator and scroll-bottom button positioning
 25. **16a0b8b** - fix(chat): hide Streaming Status Indicator on error and stop events
+26. **23ad01b** - fix(chat): scroll-to-bottom button stays fixed, not scrolling with messages
+27. **5236e3f** - feat(chat): improve Streaming Status Indicator - compact design, Metronic colors, Bootstrap spinner, animated progress bar
+28. **65e8c84** - fix(chat): multi-instance support for Streaming Status Indicator - registry pattern with sessionId keys prevents cross-session interference
 
-**Total:** 25 commits, 4 bug fixes + 1 config + 4 features completados (80% FASE 3)
+**Total:** 28 commits, 6 bug fixes + 1 config + 5 features completados (80% FASE 3)
 
 ---
 
@@ -1198,6 +1201,9 @@ Este plan se considerará **100% completado** cuando:
 - ✅ Test notification button con flujo completo
 - ✅ Asset management (5 sounds + 2 icons)
 - ✅ Streaming Status Indicator (4 estados, sticky, animaciones, settings toggle)
+- ✅ Scroll-to-bottom button positioning fix (absolute → fixed)
+- ✅ Streaming indicator improvements (compact design, Metronic colors, Bootstrap spinner, progress bar)
+- ✅ Multi-instance support (registry pattern with sessionId, prevents cross-session interference)
 - ✅ Bug fixes: asset paths, toastr warnings, positioning, event handling
 - 📊 56% completado (9/16 items)
 - 📈 Progreso: 29% → 56% (+27%)
