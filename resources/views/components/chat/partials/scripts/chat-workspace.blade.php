@@ -36,6 +36,11 @@ document.addEventListener('alpine:init', () => {
                     this.$nextTick(() => {
                         this.updateMonitorHeader(this.activeTab);
                     });
+                } else {
+                    // Si se cierra el monitor, salir del fullscreen automáticamente
+                    if (this.monitorFullscreen) {
+                        this.exitFullscreen();
+                    }
                 }
             });
         },
@@ -135,7 +140,7 @@ document.addEventListener('alpine:init', () => {
             // NO persistir en localStorage
         },
         
-        toggleMonitorFullscreen() {
+        exitFullscreen() {
             const monitorPane = document.getElementById(`split-monitor-pane-${this.sessionId}`);
             const chatPane = document.getElementById(`split-chat-pane-${this.sessionId}`);
             
@@ -144,8 +149,26 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
             
+            // Exit fullscreen: Restore original size and show chat
+            chatPane.style.display = '';
+            monitorPane.style.height = this.monitorOriginalSize || '30%';
+            this.monitorFullscreen = false;
+            
+            console.log('[Fullscreen] Exited fullscreen mode');
+        },
+        
+        toggleMonitorFullscreen() {
             if (!this.monitorFullscreen) {
-                // Enter fullscreen: Store original size and hide chat
+                // Enter fullscreen
+                const monitorPane = document.getElementById(`split-monitor-pane-${this.sessionId}`);
+                const chatPane = document.getElementById(`split-chat-pane-${this.sessionId}`);
+                
+                if (!monitorPane || !chatPane) {
+                    console.error('[Fullscreen] Monitor or Chat pane not found');
+                    return;
+                }
+                
+                // Store original size and hide chat
                 this.monitorOriginalSize = monitorPane.style.height;
                 chatPane.style.display = 'none';
                 monitorPane.style.height = '100%';
@@ -153,12 +176,8 @@ document.addEventListener('alpine:init', () => {
                 
                 console.log('[Fullscreen] Entered fullscreen mode');
             } else {
-                // Exit fullscreen: Restore original size and show chat
-                chatPane.style.display = '';
-                monitorPane.style.height = this.monitorOriginalSize || '30%';
-                this.monitorFullscreen = false;
-                
-                console.log('[Fullscreen] Exited fullscreen mode');
+                // Exit fullscreen
+                this.exitFullscreen();
             }
         }
     });
