@@ -1,15 +1,15 @@
-# 🚀 LLM Manager Extension v1.0.7-dev
+# 🚀 LLM Manager Extension v1.0.7
 
 **Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.7--dev-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
 [![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, database-driven activity logs, and comprehensive admin UI.
+Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, database-driven activity logs, comprehensive admin UI, and granular chat configuration system.
 
-**✨ NEW in v1.0.7:** Monitor Export Feature (CSV/JSON/SQL), Database-driven Activity History, Request Inspector, Message ID Refactor - Ready for Release (99.5% complete, 10 Dec 2025)
+**✨ v1.0.7 Released:** Chat Workspace Configuration System (23 docs, 3376+ lines), Monitor Export (CSV/JSON/SQL), UX Enhancements (21 items), Database Activity Logs, Settings Panel with DB Persistence - Production Ready (10 Dec 2025)
 
 ---
 
@@ -61,7 +61,8 @@ Complete documentation available in the `docs/` directory:
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - Development workflow and guidelines
 
 ### 🧩 Components
-- **[Chat Workspace Component](docs/components/CHAT-WORKSPACE.md)** - Complete usage guide for ChatWorkspace v2.2 (Multi-Instance Support)
+- **[Chat Configuration System](docs/components/chat/README.md)** - Chat Workspace Configuration System v1.0.7 (23 docs, production ready)
+- **[Chat Workspace Component](docs/reference/components/CHAT-WORKSPACE.md)** - Legacy guide for ChatWorkspace v2.2 (Multi-Instance Support)
 
 ### 📊 Project Status
 - **[Changelog](CHANGELOG.md)** - Complete version history with Monitor Export Feature (v1.0.0 - v1.0.7)
@@ -69,7 +70,21 @@ Complete documentation available in the `docs/` directory:
 - **[Testing Status](#-testing-status)** - Manual testing coverage (33/33 features - 100%)
 - **[Roadmap](#-roadmap)** - Future features and releases
 
-### 🎨 Component Features (v2.2.0 + v1.0.7)
+### 🎨 Component Features (v1.0.7)
+
+- **Chat Workspace Configuration System v1.0.7** - Granular Configuration (NEW)
+  - ✅ Config Array System: Configuración mediante array único (vs legacy props)
+  - ✅ ChatWorkspaceConfigValidator: Validación + merge con defaults
+  - ✅ Settings Panel UI: Personalización de UI con DB persistence
+  - ✅ 4 secciones: features, ui, performance, advanced
+  - ✅ Backward Compatible: Legacy props siguen funcionando 100%
+  - ✅ Conditional Resource Loading: 15-39% bundle size reduction
+  - ✅ Testing Suite: 27/27 tests passing ✅
+  - ✅ Documentation: 23 archivos modular (3376+ líneas)
+  - [Full documentation](docs/components/chat/README.md)
+  - [Quick Start](docs/components/chat/getting-started/quick-start.md)
+  - [Examples](docs/components/chat/guides/examples.md) - 10+ ejemplos
+
 - **ChatWorkspace v2.2** - Multi-Instance Support + 63% code reduction (740 → 270 lines)
   - ✅ Multi-instance architecture: Múltiples chats en la misma página
   - ✅ Alpine.js scopes únicos: `chatWorkspace_{{sessionId}}`, `splitResizer_{{sessionId}}`
@@ -79,9 +94,19 @@ Complete documentation available in the `docs/` directory:
   - Split-horizontal layout: 66% reduction
   - Monitor components: 56% reduction
   - 10 reusable partials created
-  - [Full documentation](docs/components/CHAT-WORKSPACE.md)
+  - [Legacy documentation](docs/reference/components/CHAT-WORKSPACE.md)
 
-- **Activity Log System v1.0.7** - Database-driven Activity History + Monitor Export (NEW)
+- **UX Enhancements v1.0.7** - Chat UX System (21 items - PLAN-v1.0.7-chat-ux.md)
+  - ✅ Context Window Visual Indicator: Border + opacity para mensajes en contexto
+  - ✅ Smart Auto-Scroll System: 6 features ChatGPT-style (scroll detection, counter, badge)
+  - ✅ Browser + Sound Notifications: Dual implementation
+  - ✅ Delete Message Feature: Two-column approach (message_id + id fallback)
+  - ✅ Request Inspector Tab: Hybrid architecture (immediate + SSE)
+  - ✅ Message ID Refactor: Centralized system
+  - [Context Window](docs/components/chat/features/context-window.md)
+  - [Auto-Scroll](docs/components/chat/features/auto-scroll.md)
+
+- **Activity Log System v1.0.7** - Database-driven Activity History + Monitor Export
   - ✅ Cross-device persistence: Access history from any device
   - ✅ Unlimited history: No localStorage 5MB cap limitation
   - ✅ Auto-refresh: Real-time updates after streaming completion
@@ -91,6 +116,7 @@ Complete documentation available in the `docs/` directory:
   - 132+ commits total (230ba0a → 77373af)
   - [Migration plan](plans/completed/ACTIVITY-LOG-MIGRATION-PLAN.md)
   - [Export analysis](reports/MONITOR-EXPORT-ANALYSIS-2025-12-10.md)
+  - [Monitor Export](docs/components/chat/features/monitor-export.md)
 
 ---
 
@@ -692,9 +718,14 @@ See [LICENSE](LICENSE) file for full details.
 
 ---
 
-**Version:** v1.0.7-dev (99.5% complete)  
-**Last Updated:** 10 de diciembre de 2025, 23:59  
-**Status:** ✅ Ready for Release - Monitor Export + Chat UX System Complete  
-**Latest Feature:** Monitor Export Feature (10 dic 2025) - CSV/JSON/SQL export with session filtering
+**Version:** v1.0.7 (Production Ready)  
+**Last Updated:** 10 de diciembre de 2025, 13:30  
+**Status:** ✅ Production Release - Chat Configuration System + Monitor Export + UX Enhancements Complete  
+**Latest Features:**
+- Chat Workspace Configuration System (23 docs, 3376+ líneas, 27/27 tests passing)
+- Monitor Export Feature (CSV/JSON/SQL con session filtering)
+- UX Enhancements (21 items: Context Window, Auto-Scroll, Notifications, Delete Message, Request Inspector)
+- Settings Panel con DB Persistence
+- Documentation modular completa
 
 **GitHub:** https://github.com/Madniatik/bithoven-extension-llm-manager
