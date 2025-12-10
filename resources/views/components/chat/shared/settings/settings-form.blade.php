@@ -115,7 +115,16 @@ document.addEventListener('alpine:init', () => {
                     this.getElement('scroll_button_fade').checked = config.ux?.animations?.scroll_button_fade ?? true;
                     this.getElement('hover_effects').checked = config.ux?.animations?.hover_effects ?? true;
                     
-                    // UX - Notifications
+                    // UX - Context Indicator
+                    this.getElement('context_indicator_enabled').checked = config.ux?.context_indicator?.enabled ?? true;
+                    
+                    // UX - Streaming Indicator
+                    this.getElement('streaming_indicator_enabled').checked = config.ux?.streaming_indicator?.enabled ?? true;
+                    
+                    // UX - System Notifications
+                    this.getElement('system_notification_enabled').checked = config.ux?.system_notification?.enabled ?? true;
+                    
+                    // UX - Sound Notifications
                     this.getElement('sound_enabled').checked = config.ux?.notifications?.sound_enabled ?? true;
                     this.getElement('sound_file').value = config.ux?.notifications?.sound_file ?? 'notification.mp3';
                     this.getElement('vibrate_enabled').checked = config.ux?.notifications?.vibrate_enabled ?? false;
@@ -172,6 +181,15 @@ document.addEventListener('alpine:init', () => {
                         checkmark_bounce: this.getElement('checkmark_bounce').checked,
                         scroll_button_fade: this.getElement('scroll_button_fade').checked,
                         hover_effects: this.getElement('hover_effects').checked,
+                    },
+                    context_indicator: {
+                        enabled: this.getElement('context_indicator_enabled').checked,
+                    },
+                    streaming_indicator: {
+                        enabled: this.getElement('streaming_indicator_enabled').checked,
+                    },
+                    system_notification: {
+                        enabled: this.getElement('system_notification_enabled').checked,
                     },
                     notifications: {
                         sound_enabled: this.getElement('sound_enabled').checked,

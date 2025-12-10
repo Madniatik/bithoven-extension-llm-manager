@@ -57,6 +57,15 @@ class ChatWorkspaceConfigValidator
                 'scroll_button_fade' => true,
                 'hover_effects' => true,
             ],
+            'context_indicator' => [
+                'enabled' => true,
+            ],
+            'streaming_indicator' => [
+                'enabled' => true,
+            ],
+            'system_notification' => [
+                'enabled' => true,
+            ],
             'notifications' => [
                 'sound_enabled' => true,
                 'sound_file' => 'notification.mp3',
@@ -109,6 +118,9 @@ class ChatWorkspaceConfigValidator
         'ux.animations.checkmark_bounce' => 'boolean',
         'ux.animations.scroll_button_fade' => 'boolean',
         'ux.animations.hover_effects' => 'boolean',
+        'ux.context_indicator.enabled' => 'boolean',
+        'ux.streaming_indicator.enabled' => 'boolean',
+        'ux.system_notification.enabled' => 'boolean',
         'ux.notifications.sound_enabled' => 'boolean',
         'ux.notifications.sound_file' => 'string|in:notification.mp3,ping.mp3,chime.mp3,beep.mp3,swoosh.mp3',
         'ux.notifications.vibrate_enabled' => 'boolean',

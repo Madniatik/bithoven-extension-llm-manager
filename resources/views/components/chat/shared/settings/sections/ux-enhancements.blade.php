@@ -65,6 +65,21 @@
         </div>
     </div>
 
+    {{-- Context Window Indicator --}}
+    <h5 class="mt-6 mb-4">Context Window Indicator</h5>
+    
+    <div class="mb-5">
+        <div class="form-check form-check-custom form-check-solid mb-4">
+            <input class="form-check-input" type="checkbox" id="context_indicator_enabled_{{ $sessionId }}" checked>
+            <label class="form-check-label fw-semibold text-gray-700" for="context_indicator_enabled_{{ $sessionId }}">
+                Show Context Window Indicator
+            </label>
+            <div class="text-muted fs-7 mt-1">
+                Highlight messages that are included in the LLM context window with a subtle blue border.
+            </div>
+        </div>
+    </div>
+
     {{-- Streaming Status Indicator --}}
     <h5 class="mt-6 mb-4">Streaming Status</h5>
     

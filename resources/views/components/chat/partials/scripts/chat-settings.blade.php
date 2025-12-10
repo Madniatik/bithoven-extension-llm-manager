@@ -113,17 +113,4 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.data('chatSettings', (sessionId) => window.chatSettings(sessionId));
 });
 
-/**
- * Initialize Bootstrap tooltips for chat settings
- */
-document.addEventListener('DOMContentLoaded', () => {
-    // Wait for menu to be rendered, then initialize tooltips
-    setTimeout(() => {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tooltipTriggerList.forEach(tooltipTriggerEl => {
-            new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-    }, 500);
-});
-
 console.log('[Chat Settings] Alpine.js component registered');

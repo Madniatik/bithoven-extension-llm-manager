@@ -5,7 +5,7 @@
         {!! getIcon('ki-setting-4','fs-2', '', 'i') !!}
     </button>
     <!--begin::Menu 3-->
-    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-350px py-3"
+    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-300px py-3"
         data-kt-menu="true">
         <div class="row g-3 px-3 mb-3">
             {{-- Temperature --}}
@@ -46,40 +46,6 @@
                     <option value="0" selected>All messages</option>
                 </select>
                 <small class="text-gray-600">How much conversation history to send</small>
-            </div>
-            
-            <div class="separator my-2"></div>
-            
-            {{-- UX Features --}}
-            <div class="col-md-12">
-                <label class="form-label fw-bold text-gray-800">UX Features</label>
-                
-                {{-- Context Indicator --}}
-                <div class="form-check form-check-custom form-check-sm mb-2">
-                    <input class="form-check-input" type="checkbox" id="quick-chat-context-indicator" checked>
-                    <label class="form-check-label text-gray-700" for="quick-chat-context-indicator">
-                        Context Indicator
-                        <i class="ki-duotone ki-information fs-7 text-gray-500 ms-1" data-bs-toggle="tooltip" title="Highlight messages included in context window"></i>
-                    </label>
-                </div>
-                
-                {{-- Streaming Indicator --}}
-                <div class="form-check form-check-custom form-check-sm mb-2">
-                    <input class="form-check-input" type="checkbox" id="quick-chat-streaming-indicator" checked>
-                    <label class="form-check-label text-gray-700" for="quick-chat-streaming-indicator">
-                        Streaming Indicator
-                        <i class="ki-duotone ki-information fs-7 text-gray-500 ms-1" data-bs-toggle="tooltip" title="Show typing indicator during streaming"></i>
-                    </label>
-                </div>
-                
-                {{-- Notifications --}}
-                <div class="form-check form-check-custom form-check-sm">
-                    <input class="form-check-input" type="checkbox" id="quick-chat-notifications" checked>
-                    <label class="form-check-label text-gray-700" for="quick-chat-notifications">
-                        Notifications
-                        <i class="ki-duotone ki-information fs-7 text-gray-500 ms-1" data-bs-toggle="tooltip" title="Show system notifications when tab is inactive"></i>
-                    </label>
-                </div>
             </div>
         </div>
     </div>
