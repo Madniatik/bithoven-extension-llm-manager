@@ -198,7 +198,9 @@
     <!--end::Connection Monitor Card-->
 
     <!--begin::Activity History (Database-driven)-->
-    @include('llm-manager::admin.stream.partials.activity-table')
+    @include('llm-manager::components.chat.shared.monitor.monitor-activity-logs', [
+        'variant' => 'card'
+    ])
     <!--end::Activity History-->
 
     @push('scripts')

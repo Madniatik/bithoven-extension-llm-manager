@@ -138,7 +138,7 @@
                                 </div>
 
                                 {{-- Right: Action Buttons --}}
-                                @include('llm-manager::components.chat.shared.monitor-header-buttons', [
+                                @include('llm-manager::components.chat.shared.monitor.monitor-header-buttons', [
                                     'monitorId' => $monitorId,
                                     'showRefresh' => true,
                                     'showDownload' => true,
@@ -154,21 +154,22 @@
                         <div class="monitor-console-body p-0">
                             {{-- Console Tab --}}
                             <div x-show="activeTab === 'console'" style="height: 100%;">
-                                @include('llm-manager::components.chat.shared.monitor-console', [
+                                @include('llm-manager::components.chat.shared.monitor.monitor-console', [
                                     'monitorId' => $monitorId,
                                 ])
                             </div>
 
                             {{-- Activity Logs Tab --}}
                             <div x-show="activeTab === 'activity'" style="height: 100%;">
-                                @include('llm-manager::admin.stream.partials.activity-table', [
+                                @include('llm-manager::components.chat.shared.monitor.monitor-activity-logs', [
                                     'sessionId' => $session?->id ?? null,
+                                    'variant' => 'table'
                                 ])
                             </div>
 
                             {{-- Request Inspector Tab (NO x-cloak = DOM always exists) --}}
                             <div x-show="activeTab === 'request'" style="height: 100%; overflow-y: auto;">
-                                @include('llm-manager::components.chat.shared.monitor-request-inspector')
+                                @include('llm-manager::components.chat.shared.monitor.monitor-request-inspector')
                             </div>
                         </div>
                     </div>

@@ -19,7 +19,7 @@
             x-transition:leave-start="opacity-100 transform translate-x-0"
             x-transition:leave-end="opacity-0 transform translate-x-4"
             :class="monitorOpen ? 'col-lg-4 d-none d-lg-block' : 'd-none'" class="monitor-column">
-            @include('llm-manager::components.chat.shared.monitor', ['monitorId' => $monitorId])
+            @include('llm-manager::components.chat.shared.monitor.monitor', ['monitorId' => $monitorId])
         </div>
 
         {{-- Mobile: Monitor Modal --}}

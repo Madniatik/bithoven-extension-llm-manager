@@ -104,7 +104,7 @@
         </h5>
         
         @if($showButtons)
-            @include('llm-manager::components.chat.shared.monitor-header-buttons', [
+            @include('llm-manager::components.chat.shared.monitor.monitor-header-buttons', [
                 'monitorId' => $monitorId,
                 'showRefresh' => true,
                 'showDownload' => true,
