@@ -1,5 +1,7 @@
 # 📦 Archived Documentation
 
+**Location:** `/docs/archived/` (consolidated from `/archived-docs/` on 10 Dec 2025)
+
 Esta carpeta contiene documentación histórica de versiones anteriores de LLM Manager. Se mantiene para referencia y contexto histórico, pero **no es parte de la documentación activa**.
 
 ## 📂 Estructura
@@ -56,17 +58,17 @@ Documentación miscelánea
 
 ## 🚀 Próximas Actualizaciones
 
-Cuando se complete v1.2.0, los archivos históricos de v1.1.0 pueden ser movidos aquí automáticamente:
+Cuando se complete v1.2.0, los archivos históricos pueden ser movidos aquí automáticamente:
 
 ```
-archived-docs/v1.2.0-statistics/
-  - STATISTICS-DASHBOARD-IMPLEMENTATION.md
-  - TESTING-IMPLEMENTATION.md
+docs/archived/v1.2.0-hybrid-tools/
+  - MCP-INTEGRATION-IMPLEMENTATION.md
+  - FUNCTION-CALLING-TESTS.md
   - etc.
 ```
 
 ---
 
-**Última Actualización:** 28 de noviembre de 2025  
-**Estado:** Archivos históricos organizados y documentados
+**Última Actualización:** 10 de diciembre de 2025  
+**Estado:** Archivos históricos consolidados en docs/archived/ (moved from /archived-docs/)
 
