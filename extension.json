@@ -1,11 +1,11 @@
 {
     "slug": "llm-manager",
     "name": "LLM Manager",
-    "version": "1.0.7-dev",
+    "version": "1.0.7",
     "description": "Multi-provider LLM Manager with RAG, Workflows, MCP Integration & Database-driven Activity Logs",
     "author": "BITHOVEN Team",
     "created_at": "2025-01-18T10:00:00+00:00",
-    "updated_at": "2025-12-07T21:45:00+00:00",
+    "updated_at": "2025-12-10T23:59:00+00:00",
     
     "homepage": "https://github.com/bithoven/llm-manager",
     "repository": {
@@ -66,6 +66,32 @@
     },
     
     "changelog": {
+        "v1.0.7": {
+            "date": "2025-12-10",
+            "changes": [
+                "🎉 RELEASE: v1.0.7 Complete - Monitor Export + Chat UX System",
+                "✅ FEATURE: Monitor Export (CSV/JSON/SQL) with session-aware filtering",
+                "✅ FEATURE: Activity Log DB Migration - cross-device persistence, unlimited history",
+                "✅ FEATURE: Request Inspector Tab - hybrid population (immediate + SSE)",
+                "✅ FEATURE: Delete Message with two-column approach (request_message_id + response_message_id)",
+                "✅ FEATURE: Message ID Refactor - usage logs track request and response separately",
+                "✅ TESTING: Complete testing suite (33/33 features - 100% coverage)",
+                "✅ DOCS: Streaming Documentation (1050+ lines comprehensive guide)",
+                "✅ DOCS: Chat UX System (21/21 items, 24h implementation)",
+                "✅ DOCS: Documentation Audit (156 files, +67% clarity, +137% discoverability)",
+                "🔧 FIX: Context limit bug - now takes LAST N messages (most recent)",
+                "🔧 FIX: Request Inspector SSE event listener connection",
+                "🔧 FIX: Activity Logs auto-refresh after streaming completion",
+                "📊 PERFORMANCE: Production-only caching strategy",
+                "📚 DOCS: Consolidated archived-docs/ → docs/archived/",
+                "📚 DOCS: Updated all README indexes (QUICK-INDEX v1.2.0, plans/, reports/, docs/)",
+                "132+ commits total (230ba0a → f2d26dd)",
+                "99.5% complete (only GitHub release pending)"
+            ],
+            "migration_notes": "BREAKING: Message ID Refactor requires manual ALTER TABLE (4 steps, ~30 sec). Backup created: backups/pre-message-refactor-20251210-0146.sql. Git tag: checkpoint-pre-message-refactor. Run: 1) Drop FK, 2) Drop index, 3) Rename + add column, 4) Add new indexes. All changes backward compatible except message_id column split.",
+            "breaking_changes": true,
+            "components": ["monitoring", "database", "ui", "docs", "testing"]
+        },
         "v1.0.6": {
             "date": "2025-12-03",
             "changes": [
