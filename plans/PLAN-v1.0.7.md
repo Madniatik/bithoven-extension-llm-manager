@@ -23,11 +23,11 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 8. ✅ **Streaming Documentation** (1.5 horas) - **COMPLETADO 100%** (9 dic 2025) - 1050+ líneas
 9. ✅ **Message ID Refactor** (2 horas) - **COMPLETADO 100%** (10 dic 2025) - Two-column approach
 10. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
-11. 🆕 **Chat UX Improvements** (8-12 horas) - **EN PROGRESO 8%** (1/12 items) - Ver [PLAN-v1.0.7-chat-ux.md](./PLAN-v1.0.7-chat-ux.md)
+11. 🆕 **Chat UX Improvements** (8-12 horas) - **EN PROGRESO 81%** (13/16 items) - Ver [PLAN-v1.0.7-chat-ux.md](./PLAN-v1.0.7-chat-ux.md)
 
 **Tiempo Total Estimado:** 52.5-63.5 horas (actualizado)  
 **Tiempo Invertido:** ~59.5-63.5 horas (131 commits + config system + tests + streaming docs + message refactor)  
-**Progreso General:** **97%** (release + chat UX improvements pendientes)
+**Progreso General:** **98%** (release + 3 items chat UX pendientes)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
 

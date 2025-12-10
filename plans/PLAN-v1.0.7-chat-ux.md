@@ -5,7 +5,7 @@
 **Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
 **Estado:** In Progress  
 **Prioridad:** Medium  
-**Progreso:** 56% (9/16 items completados)  
+**Progreso:** 81% (13/16 items completados)  
 **Tiempo Estimado:** 11.5-13.5 horas (actualizado: +1h system notifications)
 
 ---
@@ -255,7 +255,7 @@ error/stop → hide()                             // Immediate hide
 
 ---
 
-### 4. Refactorización Header del Bubble ⏳
+### 4. Refactorización Header del Bubble ✅ COMPLETADO
 **Descripción:** Reorganizar header de cada bubble con segunda línea para acciones.
 
 **Estructura Actual:**
@@ -269,17 +269,18 @@ error/stop → hide()                             // Immediate hide
         Copy | View Raw | Delete
 ```
 
-**Cambios:**
-- Mover botones de iconos a texto (más claro)
-- Estilo link pequeño (fs-7, text-muted)
-- Añadir botón "Delete" con icono papelera
-- Preparar para futuras acciones (Edit, Download, Share, etc.)
+**Cambios Implementados:**
+- ✅ Botones cambiados de iconos a texto (más claro)
+- ✅ Estilo link pequeño (fs-7, text-muted)
+- ✅ Botón "Delete" agregado con icono papelera
+- ✅ Preparado para futuras acciones (Edit, Download, Share, etc.)
 
-**Archivos:**
-- `message-bubble.blade.php` - Refactorizar estructura HTML del header
-- `split-horizontal.blade.php` - CSS para segunda línea (flex, gap, spacing)
+**Archivos Modificados:**
+- ✅ `message-bubble.blade.php` - Refactorizado estructura HTML del header
+- ✅ `split-horizontal.blade.php` - CSS para segunda línea (flex, gap, spacing)
 
-**Tiempo Estimado:** 1.5 horas
+**Tiempo Real:** 1.5 horas
+**Estado:** ✅ COMPLETADO
 
 ---
 
@@ -386,84 +387,70 @@ error/stop → hide()                             // Immediate hide
 
 ## 🐞 BUGS UX A CORREGIR
 
-### BUG-1: Scroll Inicial Visible al Cargar Chat 🔴
+### BUG-1: Scroll Inicial Visible al Cargar Chat ✅ COMPLETADO
 **Descripción:** Al cargar la página, el scroll automático hacia el final del contenedor es visible para el usuario (efecto de desplazamiento).
 
-**Comportamiento Actual:**
+**Comportamiento Anterior:**
 ```javascript
 setTimeout(() => {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }, 200);
 ```
-- Usuario ve el scroll animándose hacia abajo (200ms delay + smooth scroll)
+- Usuario veía el scroll animándose hacia abajo (200ms delay + smooth scroll)
 
-**Comportamiento Deseado:**
-- Aparecer directamente al final sin animación de scroll visible
-
-**Solución Propuesta:**
+**Solución Implementada:**
 ```javascript
-// Opción A: Reducir timeout a 50ms + scrollBehavior instant
+// Opción A implementada: scrollBehavior instant
 setTimeout(() => {
     messagesContainer.scrollTo({
         top: messagesContainer.scrollHeight,
         behavior: 'instant' // Sin animación
     });
 }, 50);
-
-// Opción B: CSS inicial (position messages-container al bottom)
-#messages-container-{{ $session->id }} {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end; /* Iniciar en bottom */
-}
 ```
 
-**Archivos:**
-- `event-handlers.blade.php` - Modificar scroll inicial
+**Archivos Modificados:**
+- ✅ `event-handlers.blade.php` - Scroll inicial con behavior instant
 
-**Tiempo Estimado:** 30 minutos
+**Tiempo Real:** 30 minutos
+**Commit:** 54b6554
+**Estado:** ✅ COMPLETADO
 
 ---
 
-### BUG-2: Textarea No Restaura Tamaño al Enviar 🟡
+### BUG-2: Textarea No Restaura Tamaño al Enviar ✅ COMPLETADO
 **Descripción:** Después de enviar mensaje, el textarea mantiene el tamaño expandido (si era grande, queda grande).
 
-**Comportamiento Actual:**
-- Textarea con auto-resize al escribir (event listener `input`)
-- Al enviar, solo se limpia el texto pero no se resetea el height
-
-**Comportamiento Deseado:**
-- Restaurar a tamaño inicial (1-2 líneas) después de enviar
-
-**Solución:**
+**Solución Implementada:**
 ```javascript
 // En sendMessage() después de limpiar textarea.value
 textarea.style.height = 'auto'; // Reset a altura mínima
 textarea.style.height = '38px'; // Altura inicial (1 línea)
 ```
 
-**Archivos:**
-- `event-handlers.blade.php` - Función `sendMessage()`
+**Archivos Modificados:**
+- ✅ `event-handlers.blade.php` - Función `sendMessage()` con height reset
 
-**Tiempo Estimado:** 15 minutos
+**Tiempo Real:** 15 minutos
+**Commit:** e59259b
+**Estado:** ✅ COMPLETADO
 
 ---
 
-### BUG-3: Bubble de Usuario Sin Iconos Copy/Raw 🟡
+### BUG-3: Bubble de Usuario Sin Iconos Copy/Raw ✅ COMPLETADO
 **Descripción:** Los bubbles del usuario no muestran los iconos de "Copy" y "View Raw Response" en el header (solo en bubbles del asistente).
 
-**Razón:**
-- Código condicional `@if ($message->role === 'assistant')` oculta botones
+**Solución Implementada:**
+- ✅ "Copy" visible en AMBOS (usuario y asistente)
+- ✅ "View Raw" solo para asistente (tiene `raw_response`)
+- ✅ Verificado que `copyMessageContent()` funciona para mensajes de usuario
 
-**Solución:**
-- Mostrar "Copy" en AMBOS (usuario y asistente)
-- "View Raw" solo para asistente (tiene `raw_response`)
-- Verificar que `copyMessageContent()` funciona para mensajes de usuario
+**Archivos Modificados:**
+- ✅ `message-bubble.blade.php` - Condicionales de botones corregidos
 
-**Archivos:**
-- `message-bubble.blade.php` - Modificar condicionales de botones
-
-**Tiempo Estimado:** 20 minutos
+**Tiempo Real:** 20 minutos
+**Commit:** 64c0518
+**Estado:** ✅ COMPLETADO
 
 ---
 
@@ -488,49 +475,26 @@ textarea.style.height = '38px'; // Altura inicial (1 línea)
 
 ---
 
-### BUG-5: Checkmark "Saved" con Fade Out Innecesario 🟡
+### BUG-5: Checkmark "Saved" con Fade Out Innecesario ✅ COMPLETADO
 **Descripción:** El checkmark animado que aparece al guardar mensaje en DB desaparece después de 2 segundos, pero sería más útil mantenerlo visible permanentemente en nuevos bubbles.
 
-**Comportamiento Actual:**
+**Solución Implementada:**
 ```javascript
-// En showSavedCheckmark()
-setTimeout(() => {
-    checkmark.classList.remove('show');
-    checkmark.classList.add('hide');
-    setTimeout(() => {
-        checkmark.remove();
-    }, 300);
-}, 2000); // Desaparece después de 2 segundos
-```
-
-**Comportamiento Deseado:**
-- El checkmark debe permanecer visible en el footer del bubble
-- Solo desaparece cuando usuario recarga página (bubbles antiguos no lo muestran)
-- Sirve como indicador visual de que el mensaje está guardado en DB
-
-**Solución:**
-```javascript
-// Opción A: Eliminar timeouts (más simple)
+// Opción A implementada: Eliminar timeouts
 const showSavedCheckmark = (footer) => {
     // ... código existente ...
     footer.appendChild(checkmark);
     checkmark.classList.add('show');
     // SIN timeouts - queda permanente
 };
-
-// Opción B: Agregar clase "permanent" al bubble
-const showSavedCheckmark = (footer, permanent = true) => {
-    // ... código existente ...
-    if (!permanent) {
-        setTimeout(() => { /* fade out */ }, 2000);
-    }
-};
 ```
 
-**Archivos:**
-- `event-handlers.blade.php` - Función `showSavedCheckmark()`
+**Archivos Modificados:**
+- ✅ `event-handlers.blade.php` - Función `showSavedCheckmark()` sin timeouts
 
-**Tiempo Estimado:** 10 minutos
+**Tiempo Real:** 10 minutos
+**Commit:** eba6466
+**Estado:** ✅ COMPLETADO
 
 ---
 
@@ -606,89 +570,6 @@ newChatBtn?.addEventListener('click', async (e) => {
 **Tiempo Estimado:** 30 minutos
 
 ---
-
-### BUG-7: Messages Container Oculto por Monitor en Split Mode ❌ DESCARTADO
-
-**Problema:**
-- En modo split (monitor visible), cuando el panel monitor está abierto, el bottom del `.messages-container` queda oculto por el panel del monitor
-- Comportamiento actual: Los últimos mensajes del chat quedan tapados por el monitor panel
-- Comportamiento deseado: El `.messages-container` debería linkear su bottom al split point, ajustándose dinámicamente cuando el monitor se abre/cierra
-
-**Decisión:**
-- **DESCARTADO** tras intentar dos soluciones:
-  - **Opción A (CSS):** `height: 100%` + `max-height` en container → Rompió drag del split
-  - **Opción B (JavaScript):** ResizeObserver + MutationObserver → Lógica compleja sin beneficio claro
-  
-**Razón del descarte:**
-- Las soluciones implementadas introducen más complejidad que beneficio
-- El problema es menor (solo afecta cuando monitor está abierto)
-- Los usuarios pueden hacer scroll manual para ver mensajes ocultos
-- El drag del splitter permite ajustar manualmente el espacio chat/monitor
-- Riesgo de romper auto-scroll o crear comportamientos inesperados
-
-**Estado:** ❌ DESCARTADO (no se implementará)
-
-**Commits de intento:**
-- `2486405` - CSS solution (revertido)
-- `829345c` - JavaScript solution (revertido)
-
----
-    min-height: 0; /* Permite shrink */
-    overflow: hidden;
-}
-
-#messages-container-{{ $session->id }} {
-    height: 100%; /* Llena el wrapper */
-}
-```
-
-**Solución Propuesta (Opción B - JavaScript reactivo):**
-```javascript
-// event-handlers.blade.php
-const syncMessagesContainerHeight = () => {
-    const splitPanel = document.querySelector('.split-panel-top');
-    const header = document.querySelector('.chat-header');
-    const footer = document.querySelector('.chat-footer');
-    
-    if (!splitPanel || !header || !footer) return;
-    
-    const availableHeight = splitPanel.offsetHeight - header.offsetHeight - footer.offsetHeight - 20;
-    messagesContainer.style.height = availableHeight + 'px';
-    
-    // Mantener scroll en bottom si estaba ahí
-    if (autoScrollEnabled) {
-        scrollToBottom(false);
-    }
-};
-
-// Listener en splitter resize
-const splitter = document.querySelector('.split-handle');
-if (splitter) {
-    const observer = new ResizeObserver(() => {
-        syncMessagesContainerHeight();
-    });
-    observer.observe(document.querySelector('.split-panel-top'));
-}
-
-// Inicializar al cargar
-syncMessagesContainerHeight();
-```
-
-**Decisión:**
-- ✅ **Implementar Opción A (CSS)** si no afecta smart auto-scroll
-- ⚠️ **Si Opción A causa conflictos:** Implementar Opción B (JS) con debounce
-- ❌ **Si ambas causan problemas:** Dejarlo como está (won't fix)
-
-**Testing Crítico:**
-1. Abrir monitor → Verificar que último mensaje sigue visible
-2. Mover splitter arriba/abajo → Container debe redimensionarse
-3. Enviar mensaje durante streaming → Auto-scroll debe funcionar
-4. Scroll manual arriba → Scroll button debe aparecer correctamente
-5. Volver a bottom → Auto-scroll debe reactivarse
-
-**Commits de intento:**
-- `2486405` - CSS solution (revertido)
-- `829345c` - JavaScript solution (revertido)
 
 ---
 
@@ -1057,14 +938,13 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 🎯 ORDEN DE IMPLEMENTACIÓN RECOMENDADO
 
-### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 4/6
-1. ✅ **BUG-2:** Textarea resize (15 min) - COMPLETADO (e59259b)
-2. ✅ **BUG-3:** User bubble icons (20 min) - COMPLETADO (64c0518)
-3. ✅ **BUG-1:** Scroll inicial invisible (30 min) - COMPLETADO (54b6554)
+### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 5/6 COMPLETADO
+1. ✅ **BUG-1:** Scroll inicial invisible (30 min) - COMPLETADO (54b6554)
+2. ✅ **BUG-2:** Textarea resize (15 min) - COMPLETADO (e59259b)
+3. ✅ **BUG-3:** User bubble icons (20 min) - COMPLETADO (64c0518)
 4. ✅ **BUG-5:** Checkmark fade out (10 min) - COMPLETADO (eba6466)
 5. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
 6. 🔜 **BUG-6:** New Chat warning (30 min) - PENDIENTE
-7. ❌ **BUG-7:** Messages container hidden by monitor - DESCARTADO
 
 ### Fase 2: Configuración (1.5 horas) ✅ COMPLETADO
 1. ✅ **Chat Administration Refactoring** (1.5 horas) - COMPLETADO (d093e21, 2cead9a)
@@ -1080,8 +960,8 @@ textarea.addEventListener('keydown', (e) => {
 4. ✅ **Streaming Status Indicator** (3.5 horas) - COMPLETADO (c5f79ec, e699e9a, cc8b1f6, 16a0b8b, 23ad01b, 5236e3f, 65e8c84)
 5. ⏳ **Hover Effects** (30 min) - Quick win visual
 
-### Fase 4: Advanced Features - 3.5 horas ⏳
-1. ⏳ **Header Bubble Refactor** (1.5 horas) - UI cleanup
+### Fase 4: Advanced Features - 3.5 horas ✅ 1/2 COMPLETADO
+1. ✅ **Header Bubble Refactor** (1.5 horas) - COMPLETADO
 2. ⏳ **Delete Message** (2 horas) - Backend + frontend
 
 **Total:** 13 horas (sin BUG-4 investigation)
@@ -1092,22 +972,24 @@ textarea.addEventListener('keydown', (e) => {
 
 Este plan se considerará **100% completado** cuando:
 
-✅ **Todas las features implementadas:**
-- Streaming status indicator con 3 estados (connecting, thinking, typing)
-- System notifications (Notifications API) + sound (Audio API) condicional (solo si tab no activa)
-- Keyboard shortcuts configurables (2 modos)
-- Delete message funcional (backend + UI)
-- Header bubble con segunda línea de acciones
-- Hover effects en bubbles
+✅ **Features Implementadas (5/7):**
+- ✅ Streaming status indicator con 4 estados (connecting, thinking, typing, completed)
+- ✅ System notifications (Notifications API) + sound (Audio API) condicional (solo si tab no activa)
+- ✅ Keyboard shortcuts configurables (2 modos)
+- ✅ Header bubble con segunda línea de acciones
+- ⏳ Delete message funcional (backend + UI) - PENDIENTE
+- ⏳ Hover effects en bubbles - PENDIENTE
+- ⏳ BUG-6: New Chat warning durante streaming - PENDIENTE
 
-✅ **Todos los bugs corregidos:**
-- Scroll inicial invisible
-- Textarea resize automático
-- User bubble icons visibles
-- Checkmark permanente en new bubbles
-- New Chat warning durante streaming
-- BUG-7 (split messages container) evaluado y descartado
-- Cancel request investigation documentada (con o sin solución implementada)
+✅ **Bugs Corregidos (5/6):**
+- ✅ BUG-1: Scroll inicial invisible
+- ✅ BUG-2: Textarea resize automático
+- ✅ BUG-3: User bubble icons visibles
+- ✅ BUG-5: Checkmark permanente en new bubbles
+- ⏸️ BUG-4: Cancel request investigation - APLAZADO
+- ⏳ BUG-6: New Chat warning - PENDIENTE
+
+**Progreso Actual:** 81% (13/16 items completados)
 
 ✅ **Chat Administration actualizado:**
 - 3 nuevos settings (animations, sounds, keyboard)
