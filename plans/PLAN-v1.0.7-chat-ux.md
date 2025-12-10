@@ -4,7 +4,7 @@
 **Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
 **Estado:** New  
 **Prioridad:** Medium  
-**Tiempo Estimado:** 10.5-12.5 horas (actualizado: BUG-7 descartado)
+**Tiempo Estimado:** 11.5-13.5 horas (actualizado: +1h system notifications)
 
 ---
 
@@ -21,7 +21,7 @@ Plan anexo dedicado a mejoras visuales y de experiencia de usuario (UX) en el co
 ## 🎯 OBJETIVOS
 
 1. **Mejorar Feedback Visual:** Indicadores de estado durante streaming (connecting, thinking, typing)
-2. **Notificaciones Inteligentes:** Sonido al completar respuesta SOLO si usuario está en otra pestaña
+2. **Notificaciones Inteligentes:** System notifications + sonido al completar respuesta SOLO si usuario está en otra pestaña
 3. **Gestión de Mensajes:** Borrar mensajes individuales desde UI
 4. **Atajos de Teclado:** Enter/Shift+Enter configurable para enviar vs nueva línea
 5. **Refinamiento UI:** Header de bubbles con segunda línea para acciones, hover effects
@@ -32,25 +32,148 @@ Plan anexo dedicado a mejoras visuales y de experiencia de usuario (UX) en el co
 
 ## 📦 IMPLEMENTACIONES UX PENDIENTES
 
-### 1. Notificación Sonora al Completar Respuesta ⏳
-**Descripción:** Reproducir sonido cuando el streaming del asistente finaliza.
+### 1. Notificaciones al Completar Respuesta ⏳
+**Descripción:** Mostrar notificación del sistema y/o reproducir sonido cuando el streaming del asistente finaliza.
 
 **Condición:**
 - ✅ Solo si la pestaña del navegador NO está activa (usuario en otra tab/ventana)
-- ❌ NO reproducir si el usuario está viendo el chat activamente
+- ❌ NO notificar si el usuario está viendo el chat activamente
+- ✅ Pedir permiso de notificaciones al usuario la primera vez
 
-**Implementación:**
-- Usar API `document.visibilityState` para detectar si tab está activa
-- Evento trigger: `done` event en streaming (cuando `event.data === '[DONE]'`)
-- Sonido: Notificación sutil (ej: `notification.mp3` en `/public/vendor/llm-manager/sounds/`)
-- Settings: Habilitar/deshabilitar en Chat Administration
+**Implementación Dual:**
 
-**Archivos:**
-- `event-handlers.blade.php` - Listener `done` + visibility check
-- `chat-administration.blade.php` - Toggle switch "Notificaciones Sonoras"
-- `public/vendor/llm-manager/sounds/` - Audio files
+#### A. System Notification (Browser Notifications API)
+```javascript
+// event-handlers.blade.php - Al recibir '[DONE]' event
 
-**Tiempo Estimado:** 1.5 horas
+// 1. Verificar permisos
+if (Notification.permission === 'default') {
+    await Notification.requestPermission();
+}
+
+// 2. Mostrar notificación si tab no está activa
+if (document.visibilityState === 'hidden' && Notification.permission === 'granted') {
+    const notification = new Notification('LLM Manager', {
+        body: 'Your AI response is ready',
+        icon: '/vendor/llm-manager/images/logo.png',
+        badge: '/vendor/llm-manager/images/badge.png',
+        tag: 'llm-response', // Reemplaza notificaciones anteriores
+        requireInteraction: false, // Auto-close después de timeout
+        silent: false // Usar sonido del sistema
+    });
+    
+    // Click handler: focus tab
+    notification.onclick = () => {
+        window.focus();
+        notification.close();
+    };
+}
+```
+
+**Características:**
+- Notificación nativa del sistema (Windows/macOS/Linux)
+- Icono de la aplicación
+- Click para volver al tab
+- Auto-close después de 4-5 segundos
+- Tag para evitar duplicados (solo última notificación visible)
+
+#### B. Sound Notification (Audio API)
+```javascript
+// Reproducir sonido (complementa system notification)
+if (document.visibilityState === 'hidden' && soundEnabled) {
+    const audio = new Audio(`/vendor/llm-manager/sounds/${soundFile}`);
+    audio.volume = 0.5; // 50% volumen
+    audio.play().catch(err => console.warn('[Sound] Play failed:', err));
+}
+```
+
+**Sonidos disponibles:**
+- `notification.mp3` (default) - Sutil, profesional
+- `ping.mp3` - Corto, agudo
+- `chime.mp3` - Melodioso
+- `beep.mp3` - Técnico
+- `swoosh.mp3` - Suave
+
+**Configuración en Chat Settings** (`ux-enhancements.blade.php`):
+
+```blade
+{{-- System Notifications --}}
+<h5 class="mt-6 mb-4">System Notifications</h5>
+
+<div class="mb-5">
+    <div class="form-check form-check-custom form-check-solid mb-4">
+        <input class="form-check-input" type="checkbox" id="system_notification_enabled_{{ $sessionId }}" checked>
+        <label class="form-check-label fw-semibold text-gray-700" for="system_notification_enabled_{{ $sessionId }}">
+            Enable System Notifications
+        </label>
+        <div class="text-muted fs-7 mt-1">
+            Show native OS notification when response is ready (requires permission).
+        </div>
+    </div>
+</div>
+
+<div class="mb-5" id="notification_permission_status_{{ $sessionId }}">
+    <!-- Dynamic permission status -->
+</div>
+
+<button type="button" class="btn btn-sm btn-light-primary mb-5" id="request_notification_permission_{{ $sessionId }}">
+    {!! getIcon('ki-notification', 'fs-3 me-1', '', 'i') !!}
+    Request Notification Permission
+</button>
+
+{{-- Sound Notifications (ya existe) --}}
+<h5 class="mt-6 mb-4">Sound Notifications</h5>
+<!-- ... existing sound settings ... -->
+```
+
+**JavaScript Settings Handler:**
+```javascript
+// Mostrar estado de permisos
+const updatePermissionStatus = () => {
+    const statusDiv = document.getElementById(`notification_permission_status_${sessionId}`);
+    const permission = Notification.permission;
+    
+    const statusHTML = {
+        'granted': '<div class="alert alert-success">✅ Notifications enabled</div>',
+        'denied': '<div class="alert alert-danger">❌ Notifications blocked (check browser settings)</div>',
+        'default': '<div class="alert alert-warning">⚠️ Permission not requested yet</div>'
+    };
+    
+    statusDiv.innerHTML = statusHTML[permission];
+};
+
+// Request permission button
+document.getElementById(`request_notification_permission_${sessionId}`)
+    .addEventListener('click', async () => {
+        const permission = await Notification.requestPermission();
+        updatePermissionStatus();
+        
+        if (permission === 'granted') {
+            toastr.success('Notifications enabled successfully');
+        }
+    });
+
+// Init
+updatePermissionStatus();
+```
+
+**Archivos Modificados:**
+- `event-handlers.blade.php` - Listener `done` + notification logic
+- `ux-enhancements.blade.php` - Nueva sección "System Notifications" + permisos UI
+- `settings-form.blade.php` - Guardar/cargar preferencias notificaciones
+- `public/vendor/llm-manager/sounds/` - Audio files (5 opciones)
+- `public/vendor/llm-manager/images/` - Logo y badge para notificaciones
+
+**Testing Crítico:**
+- ✅ Pedir permisos solo una vez (persistir decisión)
+- ✅ Verificar `document.visibilityState` correctamente
+- ✅ No notificar si usuario está en tab activo
+- ✅ Sonido + notificación funcionan juntos (configurables independientes)
+- ✅ Click en notificación enfoca tab correcto
+- ✅ Fallback si Notifications API no soportada (solo sonido)
+- ✅ Vibración en móvil (si habilitado)
+
+**Tiempo Estimado:** 2.5 horas (era 1.5h, +1h por system notifications + permisos UI)
 
 ---
 
@@ -924,18 +1047,18 @@ textarea.addEventListener('keydown', (e) => {
    - 4 partials: monitor-settings, ui-preferences, ux-enhancements, performance-settings
    - Settings: Fancy animations, Sound notifications, Keyboard shortcuts mode A/B
 
-### Fase 3: Core UX Features - 4 horas 🔄 2/5 COMPLETADO
+### Fase 3: Core UX Features - 5 horas 🔄 2/5 COMPLETADO
 1. ✅ **Keyboard Shortcuts** (1.5 horas) - COMPLETADO (b582b8f, cc73d04)
 2. ✅ **OS & Browser Info** (2 horas) - COMPLETADO (b582b8f, cc73d04, b3e5111)
 3. ⏳ **Hover Effects** (30 min) - Quick win visual
 4. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
-5. ⏳ **Sound Notification** (1.5 horas) - Depende de status indicator
+5. ⏳ **System Notifications + Sound** (2.5 horas) - Notifications API + Audio API
 
 ### Fase 4: Advanced Features - 3.5 horas ⏳
 1. ⏳ **Header Bubble Refactor** (1.5 horas) - UI cleanup
 2. ⏳ **Delete Message** (2 horas) - Backend + frontend
 
-**Total:** 12 horas (sin BUG-4 investigation)
+**Total:** 13 horas (sin BUG-4 investigation)
 
 ---
 
@@ -945,7 +1068,7 @@ Este plan se considerará **100% completado** cuando:
 
 ✅ **Todas las features implementadas:**
 - Streaming status indicator con 3 estados (connecting, thinking, typing)
-- Sound notification condicional (solo si tab no activa)
+- System notifications (Notifications API) + sound (Audio API) condicional (solo si tab no activa)
 - Keyboard shortcuts configurables (2 modos)
 - Delete message funcional (backend + UI)
 - Header bubble con segunda línea de acciones
@@ -976,7 +1099,8 @@ Este plan se considerará **100% completado** cuando:
 
 **Lessons to Document:**
 1. **Visibility API:** Uso de `document.visibilityState` para notificaciones inteligentes
-2. **Keyboard Events:** Manejo de `event.shiftKey` + `event.key` para shortcuts
+2. **Notifications API:** Permisos, system notifications, y fallback a sonido
+3. **Keyboard Events:** Manejo de `event.shiftKey` + `event.key` para shortcuts
 3. **Streaming State Machine:** Transiciones claras entre estados (connecting → thinking → typing)
 4. **Settings Persistence:** localStorage vs DB para preferencias de usuario
 5. **Cancel Signal Propagation:** Limitaciones de EventSource + Laravel + Ollama (si BUG-4 no tiene solución)
