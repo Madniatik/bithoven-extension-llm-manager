@@ -14,10 +14,15 @@
 }
 
 /* Messages Container Responsive Heights */
-/* Desktop: sin max-height, dejamos que el parent (.split-pane) controle */
+/* Desktop: sin overflow-y (el parent .split-pane ya tiene scroll) */
+.messages-container {
+    overflow-y: visible;
+}
+
 @media (max-width: 991.98px) {
     .messages-container {
         max-height: calc(100vh - 450px); /* Mobile: con offset para header/footer */
+        overflow-y: auto; /* Mobile: necesita su propio scroll */
     }
 }
 
@@ -122,6 +127,7 @@
     }.split-chat {
     flex: 70%;
     min-height: 250px;
+    overflow-y: auto; /* Scroll en desktop split mode */
 }
 
 .split-monitor {

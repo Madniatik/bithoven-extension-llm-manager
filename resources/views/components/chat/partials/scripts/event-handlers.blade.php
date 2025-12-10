@@ -45,20 +45,32 @@
         const scrollToBottomBtn = document.getElementById(`scroll-to-bottom-btn-${sessionId}`);
         const unreadBadge = document.getElementById(`unread-badge-${sessionId}`);
 
+        // Detectar el elemento scrollable real (en split mode es .split-chat, en mobile es messages-container)
+        const getScrollableElement = () => {
+            const splitPane = document.getElementById(`split-chat-pane-${sessionId}`);
+            // Si existe .split-pane y tiene overflow, usar ese (desktop split mode)
+            if (splitPane && window.getComputedStyle(splitPane).overflowY !== 'visible') {
+                return splitPane;
+            }
+            // Caso contrario, usar messages-container (mobile)
+            return messagesContainer;
+        };
+
         const isAtBottom = () => {
-            if (!messagesContainer) return true;
+            const scrollable = getScrollableElement();
+            if (!scrollable) return true;
             const threshold = 100; // 100px del bottom
-            return messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer
-                .clientHeight < threshold;
+            return scrollable.scrollHeight - scrollable.scrollTop - scrollable.clientHeight < threshold;
         };
 
         // Scroll suave al bottom (solo si auto-scroll habilitado o forzado)
         const scrollToBottom = (force = false) => {
-            if (!messagesContainer) return;
+            const scrollable = getScrollableElement();
+            if (!scrollable) return;
 
             if (autoScrollEnabled || force) {
-                messagesContainer.scrollTo({
-                    top: messagesContainer.scrollHeight,
+                scrollable.scrollTo({
+                    top: scrollable.scrollHeight,
                     behavior: 'smooth'
                 });
             }
@@ -66,7 +78,8 @@
 
         // Scroll para posicionar mensaje de usuario al top (con padding)
         const scrollToUserMessage = (messageBubble) => {
-            if (!messagesContainer || !messageBubble) return;
+            const scrollable = getScrollableElement();
+            if (!scrollable || !messageBubble) return;
 
             console.log('[Scroll] User message scroll triggered');
             const bubbleTop = messageBubble.offsetTop;
@@ -74,15 +87,16 @@
 
             console.log('[Scroll] Bubble offsetTop:', bubbleTop, 'Target scroll:', bubbleTop - paddingTop);
 
-            messagesContainer.scrollTo({
+            scrollable.scrollTo({
                 top: bubbleTop - paddingTop,
                 behavior: 'smooth'
             });
         };
 
         // Listener de scroll manual para detectar si usuario se aleja del bottom
-        if (messagesContainer) {
-            messagesContainer.addEventListener('scroll', () => {
+        const scrollable = getScrollableElement();
+        if (scrollable) {
+            scrollable.addEventListener('scroll', () => {
                 if (isAtBottom()) {
                     autoScrollEnabled = true;
                     toggleScrollButton(false); // Ocultar botón cuando llega al bottom
@@ -1430,14 +1444,15 @@
             // Scroll inicial al último mensaje (al cargar página)
             // BUG-1 fix: Reduce timeout + use 'instant' behavior for invisible scroll
             setTimeout(() => {
-                if (messagesContainer) {
+                const scrollable = getScrollableElement();
+                if (scrollable) {
                     console.log('[Scroll] Initial scroll to bottom (instant)');
-                    messagesContainer.scrollTo({
-                        top: messagesContainer.scrollHeight,
+                    scrollable.scrollTo({
+                        top: scrollable.scrollHeight,
                         behavior: 'instant' // Sin animación visible
                     });
                 } else {
-                    console.warn('[Scroll] Messages container not found for initial scroll');
+                    console.warn('[Scroll] Scrollable element not found for initial scroll');
                 }
             }, 50); // Reducido de 200ms a 50ms
 
