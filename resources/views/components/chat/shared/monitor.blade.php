@@ -104,82 +104,16 @@
         </h5>
         
         @if($showButtons)
-            <div class="d-flex gap-2">
-                {{-- Download Logs (Green) --}}
-                <button class="btn btn-sm btn-icon btn-light-success" 
-                        onclick="window.LLMMonitor.downloadLogs('{{ $monitorId }}')"
-                        data-bs-toggle="tooltip"
-                        title="Download logs as .txt file">
-                    <i class="ki-duotone ki-file-down fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </button>
-
-                {{-- Copy Logs (Blue) --}}
-                <button class="btn btn-sm btn-icon btn-light-primary" 
-                        onclick="window.LLMMonitor.copyLogs('{{ $monitorId }}')"
-                        data-bs-toggle="tooltip"
-                        title="Copy logs to clipboard">
-                    <i class="ki-duotone ki-copy fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </button>
-
-                {{-- Clear Logs Only (Orange) --}}
-                <button class="btn btn-sm btn-icon btn-light-warning" 
-                        onclick="window.LLMMonitor.clearLogs('{{ $monitorId }}')"
-                        data-bs-toggle="tooltip"
-                        title="Clear console logs only">
-                    <i class="ki-duotone ki-eraser fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                        <span class="path3"></span>
-                        <span class="path4"></span>
-                    </i>
-                </button>
-
-                {{-- Clear All (Red) --}}
-                <button class="btn btn-sm btn-icon btn-light-danger" 
-                        onclick="window.LLMMonitor.clear('{{ $monitorId }}')"
-                        data-bs-toggle="tooltip"
-                        title="Clear all monitoring data">
-                    <i class="ki-duotone ki-trash fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                        <span class="path3"></span>
-                        <span class="path4"></span>
-                        <span class="path5"></span>
-                    </i>
-                </button>
-
-                {{-- Refresh (Gray) --}}
-                <button class="btn btn-sm btn-icon btn-light" 
-                        onclick="window.LLMMonitor.refresh('{{ $monitorId }}')"
-                        data-bs-toggle="tooltip"
-                        title="Refresh monitor display">
-                    <i class="ki-duotone ki-arrows-circle fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                </button>
-
-                @if($showCloseButton)
-                    {{-- Close Monitor (Dark) - Solo en split-horizontal --}}
-                    <button 
-                        type="button" 
-                        class="btn btn-sm btn-icon btn-light-dark" 
-                        @click="monitorOpen = false; localStorage.setItem(`llm_chat_monitor_open_${sessionId}`, 'false')"
-                        data-bs-toggle="tooltip"
-                        title="Close monitor">
-                        <i class="ki-duotone ki-cross fs-2">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                    </button>
-                @endif
-            </div>
+            @include('llm-manager::components.chat.shared.monitor-header-buttons', [
+                'monitorId' => $monitorId,
+                'showRefresh' => true,
+                'showDownload' => true,
+                'showCopy' => true,
+                'showClear' => true,
+                'showFullscreen' => false,
+                'showClose' => $showCloseButton,
+                'size' => 'sm'
+            ])
         @endif
     </div>
 

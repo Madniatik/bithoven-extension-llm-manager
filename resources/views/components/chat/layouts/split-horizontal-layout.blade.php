@@ -138,57 +138,19 @@
                                 </div>
 
                                 {{-- Right: Action Buttons --}}
-                                <div class="d-flex gap-1 flex-shrink-0">
-                                    {{-- Refresh --}}
-                                    <button type="button" class="btn btn-icon btn-sm btn-active-secondary"
-                                        onclick="window.LLMMonitor.refresh('{{ $monitorId }}')"
-                                        data-bs-toggle="tooltip" title="Refresh">
-                                        {!! getIcon('ki-arrows-circle', 'fs-1', '', 'i') !!}
-                                    </button>
-
-                                    {{-- Download Logs --}}
-                                    <button type="button" class="btn btn-icon btn-sm btn-active-light-primary"
-                                        onclick="window.LLMMonitor.downloadLogs('{{ $monitorId }}')"
-                                        data-bs-toggle="tooltip" title="Download logs">
-                                        {!! getIcon('ki-cloud-download', 'fs-1', '', 'i') !!}
-                                    </button>
-
-                                    {{-- Copy Logs --}}
-                                    <button type="button" class="btn btn-icon btn-sm btn-active-light-primary"
-                                        onclick="window.LLMMonitor.copyLogs('{{ $monitorId }}')"
-                                        data-bs-toggle="tooltip" title="Copy logs">
-                                        {!! getIcon('ki-copy', 'fs-1', '', 'i') !!}
-                                    </button>
-
-                                    {{-- Clear All --}}
-                                    <button type="button" class="btn btn-icon btn-sm btn-active-light-danger"
-                                        onclick="window.LLMMonitor.clear('{{ $monitorId }}')"
-                                        data-bs-toggle="tooltip" title="Clear all">
-                                        {!! getIcon('ki-trash', 'fs-1', '', 'i') !!}
-                                    </button>
-
-                                    {{-- Fullscreen Toggle --}}
-                                    <button type="button" class="btn btn-icon btn-sm btn-active-light-primary"
-                                        @click="toggleMonitorFullscreen()"
-                                        data-bs-toggle="tooltip" :title="monitorFullscreen ? 'Exit fullscreen' : 'Fullscreen'">
-                                        <span x-show="!monitorFullscreen">
-                                            {!! getIcon('ki-maximize', 'fs-1', '', 'i') !!}
-                                        </span>
-                                        <span x-show="monitorFullscreen" style="display: none;">
-                                            {!! getIcon('ki-cross-square', 'fs-1', '', 'i') !!}
-                                        </span>
-                                    </button>
-
-                                    {{-- Close --}}
-                                    <button type="button" class="btn btn-icon btn-sm btn-active-light-danger"
-                                        @click="monitorOpen = false" data-bs-toggle="tooltip" title="Close monitor">
-                                        {!! getIcon('ki-cross', 'fs-1', '', 'i') !!}
-                                    </button>
-                                </div>
+                                @include('llm-manager::components.chat.shared.monitor-header-buttons', [
+                                    'monitorId' => $monitorId,
+                                    'showRefresh' => true,
+                                    'showDownload' => true,
+                                    'showCopy' => true,
+                                    'showClear' => true,
+                                    'showFullscreen' => true,
+                                    'showClose' => true,
+                                    'size' => 'sm'
+                                ])
                             </div>
                         </div>
-
-                        {{-- Tabs Body (scrollable) --}}
+                                                {{-- Tabs Body (scrollable) --}}
                         <div class="monitor-console-body p-0">
                             {{-- Console Tab --}}
                             <div x-show="activeTab === 'console'" style="height: 100%;">
