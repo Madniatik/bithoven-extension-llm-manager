@@ -33,11 +33,6 @@
 <div class="bubble-header mb-2">
     {{-- Line 1: Avatar + Name/Model + Timestamp --}}
     <div class="d-flex align-items-center mb-1">
-        {{-- Bubble Number Badge (both roles) --}}
-        @if($bubbleNumber > 0)
-        <span class="badge badge-light-primary badge-circle me-2" style="width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600;" data-bubble-number-badge>{{ $bubbleNumber }}</span>
-        @endif
-        
         {{-- Assistant avatar (left side) --}}
         <div class="symbol symbol-35px symbol-circle me-3 assistant-avatar {{ $role !== 'assistant' ? 'd-none' : '' }}">
             <span class="symbol-label bg-light-primary text-primary fw-bold">AI</span>
@@ -68,6 +63,11 @@
                     </span>
                 @endif
 
+                {{-- Bubble Number Badge (antes del timestamp) --}}
+                @if($bubbleNumber > 0)
+                <span class="badge badge-light-secondary badge-sm ms-2" data-bubble-number-badge style="font-size: 0.7rem;">({{ $bubbleNumber }})</span>
+                @endif
+                
                 <span class="text-gray-500 fw-semibold fs-8 ms-2" data-bubble-timestamp="">
                     {{ $timestamp }}
                 </span>
@@ -75,16 +75,6 @@
 
             {{-- Line 2: Action Buttons --}}
             <div class="d-flex gap-2" style="margin-top: 0px;">
-                {{-- Resend Button (solo user bubbles) --}}
-                @if($role === 'user')
-                <a href="#" class="text-muted text-hover-primary fs-8 text-decoration-none resend-message-btn"
-                    data-message-id="{{ $messageId }}" title="Resend this message">
-                    <i class="ki-outline ki-arrows-circle fs-6"></i> Resend
-                </a>
-
-                <span class="text-muted fs-8">|</span>
-                @endif
-                
                 {{-- Copy Button (both user & assistant) --}}
                 <a href="#" class="text-muted text-hover-primary fs-8 text-decoration-none copy-message-btn"
                     data-message-id="{{ $messageId }}" title="Copy message content">
@@ -106,6 +96,16 @@
                     data-message-id="{{ $messageId }}" title="Delete this message">
                     Delete
                 </a>
+                
+                {{-- Resend Button (solo user bubbles, después de Delete) --}}
+                @if($role === 'user')
+                <span class="text-muted fs-8">|</span>
+                
+                <a href="#" class="text-muted text-hover-primary fs-8 text-decoration-none resend-message-btn"
+                    data-message-id="{{ $messageId }}" title="Resend this message">
+                    Resend
+                </a>
+                @endif
             </div>
         </div>
 
