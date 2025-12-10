@@ -219,5 +219,28 @@ body.split-resizing {
 body.split-resizing * {
     cursor: row-resize !important;
 }
+
+/* Context Window Visual Indicator */
+.message-bubble.in-context {
+    border-left: 3px solid var(--bs-primary);
+    opacity: 1;
+}
+
+.message-bubble.out-of-context {
+    border-left: 3px solid var(--bs-gray-300);
+    opacity: 0.5;
+}
+
+/* Badge circular para numeración */
+.badge-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
 </style>
 @endpush

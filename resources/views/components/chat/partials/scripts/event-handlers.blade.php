@@ -193,6 +193,31 @@
             console.log('[Checkmark] Saved animation triggered (permanent)');
         };
 
+        // Context Window Visual Indicator
+        // Actualizar indicadores visuales de qué mensajes están en contexto
+        const updateContextIndicators = () => {
+            const sizeContextInput = document.querySelector('[name="size_context"]');
+            const sizeContext = parseInt(sizeContextInput?.value) || 10;
+            const bubbles = Array.from(messagesContainer?.querySelectorAll('.message-bubble') || []);
+            
+            // Contar desde el final (más recientes primero)
+            const totalBubbles = bubbles.length;
+            
+            bubbles.forEach((bubble, index) => {
+                const positionFromEnd = totalBubbles - index;
+                
+                if (positionFromEnd <= sizeContext) {
+                    bubble.classList.add('in-context');
+                    bubble.classList.remove('out-of-context');
+                } else {
+                    bubble.classList.add('out-of-context');
+                    bubble.classList.remove('in-context');
+                }
+            });
+            
+            console.log(`[Context Indicator] Updated: ${sizeContext} messages in context (total: ${totalBubbles})`);
+        };
+
         const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
             if (!messagesContainer) return;
 
@@ -613,7 +638,7 @@
 
             // Populate IMMEDIATELY with partial data (instant feedback)
             if (typeof window.populateRequestInspector === 'function') {
-                window.populateRequestInspector(partialRequestData);
+                window.populateRequestInspector(partialRequestData, sessionId);
                 addMonitorLog('📋 Request Inspector: partial data loaded', 'debug');
             } else {
                 console.warn('[Event Handlers] populateRequestInspector function not found');
@@ -645,7 +670,7 @@
 
                 // UPDATE Request Inspector with COMPLETE data (including context_messages from backend)
                 if (typeof window.populateRequestInspector === 'function') {
-                    window.populateRequestInspector(data);
+                    window.populateRequestInspector(data, sessionId);
                     addMonitorLog('📋 Request Inspector: updated with context_messages',
                         'success');
                     console.log(
@@ -1395,6 +1420,16 @@
             setTimeout(renderExistingMessages, 500);
         }
 
+        // Inicializar context indicators después de cargar mensajes existentes
+        setTimeout(() => {
+            updateContextIndicators();
+            
+            // Cargar Request Inspector desde localStorage si existe
+            if (typeof window.loadRequestInspectorFromStorage === 'function') {
+                loadRequestInspectorFromStorage(sessionId);
+            }
+        }, 600);
+
         /**
          * New Chat Button Handler
          * Shows modal with optional custom title
@@ -1507,6 +1542,31 @@
                                 target.classList.add('text-muted');
                             }, 2000);
                         });
+                    }
+                }
+
+                // Resend button (solo user bubbles)
+                if (target.classList.contains('resend-message-btn')) {
+                    e.preventDefault();
+                    const bubble = target.closest('.message-bubble');
+                    const messageContent = bubble?.querySelector('.message-content');
+                    if (messageContent) {
+                        const text = messageContent.textContent.trim();
+                        
+                        // Copiar al textarea
+                        messageInput.value = text;
+                        
+                        // Trigger Metronic autosize update
+                        if (window.KTApp && window.KTApp.autosize) {
+                            window.KTApp.autosize.update(messageInput);
+                        }
+                        
+                        // Focus y scroll al textarea
+                        messageInput.focus();
+                        messageInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // Feedback
+                        toastr.success('Message copied to input. Ready to send!');
                     }
                 }
 

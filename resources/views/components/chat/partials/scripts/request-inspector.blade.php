@@ -1,8 +1,13 @@
 {{-- Request Inspector JavaScript Functions --}}
 <script>
 // Ensure functions are in global scope
-window.populateRequestInspector = function(data) {
+window.populateRequestInspector = function(data, sessionId = null) {
     console.log('populateRequestInspector called', data);
+
+    // Guardar en localStorage si se proporciona sessionId
+    if (sessionId && window.RequestInspectorStorage) {
+        RequestInspectorStorage.saveRequest(sessionId, data);
+    }
 
     // Hide no-data message, show data display
     const noDataEl = document.getElementById('request-no-data');
@@ -135,11 +140,152 @@ window.escapeHtml = function(text) {
     return div.innerHTML;
 };
 
+/**
+ * Request Inspector Persistence (localStorage)
+ * Guardar y recuperar datos del Request Inspector por sessionId
+ */
+window.RequestInspectorStorage = {
+    /**
+     * Guardar request data en localStorage
+     * @param {string} sessionId - ID de la sesión del chat
+     * @param {object} requestData - Datos del request a guardar
+     */
+    saveRequest(sessionId, requestData) {
+        if (!sessionId) {
+            console.warn('[Inspector Storage] No sessionId provided');
+            return;
+        }
+
+        const storageKey = `llm_request_inspector_${sessionId}`;
+        
+        try {
+            // Agregar timestamp si no existe
+            if (!requestData.metadata) {
+                requestData.metadata = {};
+            }
+            if (!requestData.metadata.timestamp) {
+                requestData.metadata.timestamp = new Date().toLocaleString();
+            }
+
+            // Guardar en localStorage
+            localStorage.setItem(storageKey, JSON.stringify(requestData));
+            
+            console.log(`[Inspector Storage] Request saved for session ${sessionId}`);
+        } catch (error) {
+            console.error('[Inspector Storage] Save failed:', error);
+            if (error.name === 'QuotaExceededError') {
+                toastr.warning('LocalStorage is full. Inspector data not saved.');
+            }
+        }
+    },
+
+    /**
+     * Cargar request data desde localStorage
+     * @param {string} sessionId - ID de la sesión del chat
+     * @returns {object|null} - Request data o null si no existe
+     */
+    loadRequest(sessionId) {
+        if (!sessionId) {
+            console.warn('[Inspector Storage] No sessionId provided');
+            return null;
+        }
+
+        const storageKey = `llm_request_inspector_${sessionId}`;
+        
+        try {
+            const data = localStorage.getItem(storageKey);
+            if (data) {
+                const requestData = JSON.parse(data);
+                console.log(`[Inspector Storage] Request loaded for session ${sessionId}`);
+                return requestData;
+            }
+        } catch (error) {
+            console.error('[Inspector Storage] Load failed:', error);
+        }
+
+        return null;
+    },
+
+    /**
+     * Limpiar storage de una sesión específica
+     * @param {string} sessionId - ID de la sesión del chat
+     */
+    clearSession(sessionId) {
+        if (!sessionId) return;
+        
+        const storageKey = `llm_request_inspector_${sessionId}`;
+        localStorage.removeItem(storageKey);
+        console.log(`[Inspector Storage] Cleared session ${sessionId}`);
+    },
+
+    /**
+     * Limpiar todas las sesiones antiguas (más de 7 días)
+     */
+    cleanupOldSessions() {
+        const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 días en ms
+        const now = Date.now();
+        
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('llm_request_inspector_')) {
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    const timestamp = new Date(data?.metadata?.timestamp).getTime();
+                    
+                    if (now - timestamp > maxAge) {
+                        localStorage.removeItem(key);
+                        console.log(`[Inspector Storage] Removed old session: ${key}`);
+                    }
+                } catch (e) {
+                    // Si falla parsing, eliminar entrada corrupta
+                    localStorage.removeItem(key);
+                }
+            }
+        }
+    }
+};
+
+// Auto-cleanup al cargar la página (una vez al día)
+const lastCleanup = localStorage.getItem('llm_inspector_last_cleanup');
+const now = Date.now();
+const oneDayMs = 24 * 60 * 60 * 1000;
+
+if (!lastCleanup || (now - parseInt(lastCleanup)) > oneDayMs) {
+    RequestInspectorStorage.cleanupOldSessions();
+    localStorage.setItem('llm_inspector_last_cleanup', now.toString());
+}
+
+/**
+ * Cargar datos del Request Inspector desde localStorage al cargar la página
+ * Se debe llamar después de que el DOM esté listo
+ */
+window.loadRequestInspectorFromStorage = function(sessionId) {
+    if (!sessionId) {
+        console.warn('[Inspector Load] No sessionId provided');
+        return;
+    }
+
+    const requestData = RequestInspectorStorage.loadRequest(sessionId);
+    
+    if (requestData) {
+        // Restaurar datos en el inspector
+        populateRequestInspector(requestData, sessionId);
+        console.log('[Inspector Load] Data restored from localStorage for session:', sessionId);
+        
+        // Opcional: Mostrar toast de confirmación
+        // toastr.info('Request Inspector data restored from previous session');
+    } else {
+        console.log('[Inspector Load] No stored data found for session:', sessionId);
+    }
+};
+
 console.log('[Request Inspector] Functions loaded:', {
     populateRequestInspector: typeof window.populateRequestInspector,
     copyCurrentPrompt: typeof window.copyCurrentPrompt,
     copyRequestJSON: typeof window.copyRequestJSON,
     downloadRequestJSON: typeof window.downloadRequestJSON,
-    escapeHtml: typeof window.escapeHtml
+    escapeHtml: typeof window.escapeHtml,
+    RequestInspectorStorage: typeof window.RequestInspectorStorage,
+    loadRequestInspectorFromStorage: typeof window.loadRequestInspectorFromStorage
 });
 </script>

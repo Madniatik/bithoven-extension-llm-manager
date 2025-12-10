@@ -12,6 +12,7 @@
     // Defaults for JavaScript cloning (when used as <template>)
     $message = $message ?? null;
     $session = $session ?? null;
+    $bubbleNumber = $bubbleNumber ?? 0; // Bubble numbering
 
     // Dynamic values or empty for JS population
     $role = $message?->role ?? '';
@@ -44,7 +45,7 @@
 @endphp
 
 <div class="d-flex {{ $alignmentClass }} mb-10 message-bubble" data-role="{{ $role }}"
-    data-message-id="{{ $messageId }}">
+    data-message-id="{{ $messageId }}" data-bubble-number="{{ $bubbleNumber }}">
 
     {{-- Inner wrapper with alignment --}}
     <div class="d-flex flex-column {{ $innerAlignmentClass }}" data-bubble-alignment=""
@@ -61,6 +62,7 @@
             'model' => $model,
             'timestamp' => $timestamp,
             'isError' => $isError,
+            'bubbleNumber' => $bubbleNumber,
         ])
 
         {{-- Content wrapper --}}

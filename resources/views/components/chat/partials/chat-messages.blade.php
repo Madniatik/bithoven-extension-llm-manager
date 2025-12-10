@@ -3,6 +3,7 @@
         @include('llm-manager::components.chat.partials.bubble.message-bubble-template', [
             'message' => $message,
             'session' => $session,
+            'bubbleNumber' => $loop->iteration,
         ])
     @endforeach
 @else
