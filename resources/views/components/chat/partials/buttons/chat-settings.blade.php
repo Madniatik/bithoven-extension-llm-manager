@@ -24,9 +24,9 @@
                 <label class="form-label">Max Tokens</label>
                 <input type="number" id="quick-chat-max-tokens" name="max_tokens" 
                     class="form-control form-control-solid form-control-sm" 
-                    min="1" max="4000" 
-                    value="{{ $session && $session->configuration ? $session->configuration->max_tokens : 2000 }}" 
-                    placeholder="2000">
+                    min="1" max="32000" 
+                    value="{{ $session && $session->configuration ? $session->configuration->max_tokens : 8000 }}" 
+                    placeholder="8000">
             </div>
             
             <div class="separator my-2"></div>
@@ -39,11 +39,11 @@
                     data-control="select2" 
                     data-hide-search="true" 
                     data-placeholder="Select context limit">
-                    <option value="5" selected>Last 5 messages</option>
+                    <option value="5">Last 5 messages</option>
                     <option value="10">Last 10 messages</option>
                     <option value="20">Last 20 messages</option>
                     <option value="50">Last 50 messages</option>
-                    <option value="0">All messages</option>
+                    <option value="0" selected>All messages</option>
                 </select>
                 <small class="text-gray-600">How much conversation history to send</small>
             </div>

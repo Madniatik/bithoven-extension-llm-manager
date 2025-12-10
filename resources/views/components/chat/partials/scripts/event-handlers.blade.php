@@ -614,10 +614,10 @@
             // Get current settings from UI
             const temperature = parseFloat(document.getElementById('quick-chat-temperature')?.value ||
                 0.7);
-            const maxTokens = parseInt(document.getElementById('quick-chat-max-tokens')?.value || 2000,
+            const maxTokens = parseInt(document.getElementById('quick-chat-max-tokens')?.value || 8000,
                 10);
             const contextLimit = parseInt(document.getElementById('quick-chat-context-limit')?.value ||
-                10, 10);
+                0, 10);
 
             // ========================================
             // 🔥 POPULATE REQUEST INSPECTOR (IMMEDIATE + SSE UPDATE)

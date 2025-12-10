@@ -44,7 +44,7 @@ class ChatWorkspaceConfigValidator
             'buttons' => [
                 'new_chat' => true,
                 'clear' => true,
-                'settings' => true,
+                'settings' => true,  // Default: visible
                 'download' => true,
                 'monitor_toggle' => true,
             ],
