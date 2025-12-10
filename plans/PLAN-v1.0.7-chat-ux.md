@@ -54,27 +54,28 @@ Plan anexo dedicado a mejoras visuales y de experiencia de usuario (UX) en el co
 
 ---
 
-### 2. Botón "Borrar Mensaje" en Bubble Header ⏳
+### 2. ✅ Borrar Mensaje Individual (10 dic 2025) - **COMPLETADO**
 **Descripción:** Eliminar mensajes individuales desde la UI del chat.
 
-**Funcionalidad:**
-- Botón "Delete" en header de cada bubble (usuario y asistente)
-- Confirmación modal antes de borrar
-- Eliminar de DB + remover del DOM
-- Actualizar contador de mensajes en header (-1)
+**Implementación Realizada:**
+- ✅ Backend: `LLMMessageController::destroy()` - Borra mensaje y nullifica logs
+- ✅ Database: Dos campos separados `request_message_id` + `response_message_id`
+- ✅ Nullify Logic: Ambos campos se nullifican antes de borrar mensaje
+- ✅ Logs preservados: No se borran, solo se desvinculan
 
-**Endpoint:**
-```php
-// POST /llm/sessions/{session}/messages/{message}/delete
-MessageController::deleteMessage($sessionId, $messageId)
-```
+**Decisión Arquitectónica:**
+- **Estrategia:** Borrar mensaje, mantener logs (opción híbrida)
+- **Rationale:** Preservar histórico de costos y métricas
+- **UI:** Confirmación SweetAlert antes de borrar (pendiente frontend)
 
-**Archivos:**
-- `message-bubble.blade.php` - Agregar botón "Delete" en header actions
-- `MessageController.php` - Método `deleteMessage()`
-- `event-handlers.blade.php` - Listener para borrado (actualizar contador)
+**Status:** Backend completado, frontend pendiente (confirmación modal + DOM removal)
 
-**Tiempo Estimado:** 2 horas
+**Documentación:**
+- `plans/MESSAGE-REFACTOR-COMPLETE.md` - Implementación completa
+- `plans/archived/DELETE-MESSAGE-ANALYSIS.md` - Análisis inicial
+- `plans/archived/DELETE-MESSAGE-PLAN.md` - Plan alternativo
+
+**Tiempo Real:** 2 horas
 
 ---
 

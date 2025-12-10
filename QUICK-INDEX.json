@@ -99,14 +99,60 @@
               "status": "active"
             },
             {
+              "file": "PLAN-v1.0.7-chat-ux.md",
+              "type": "feature-plan",
+              "version": "1.0.7",
+              "status": "in-progress"
+            },
+            {
+              "file": "PLAN-v1.0.7-chat-config-options.md",
+              "type": "feature-plan",
+              "version": "1.0.7",
+              "status": "completed"
+            },
+            {
               "file": "PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md",
               "type": "documentation",
               "purpose": "copilot-handoff"
             },
             {
+              "file": "MESSAGE-REFACTOR-COMPLETE.md",
+              "type": "implementation-report",
+              "completedAt": "2025-12-10",
+              "status": "complete"
+            },
+            {
+              "file": "DELETE-MESSAGE-REFACTOR-PLAN.md",
+              "type": "implementation-plan",
+              "completedAt": "2025-12-10",
+              "status": "complete"
+            },
+            {
+              "file": "DELETE-MESSAGE-REFACTOR-SUMMARY.md",
+              "type": "executive-summary",
+              "completedAt": "2025-12-10",
+              "status": "complete"
+            },
+            {
               "file": "QUICK-CHAT-IMPLEMENTATION-PLAN.md",
               "type": "feature-plan",
               "status": "new"
+            }
+          ]
+        },
+        "archived": {
+          "path": "plans/archived/",
+          "description": "Archived plans superseded by newer implementations",
+          "files": [
+            {
+              "file": "DELETE-MESSAGE-ANALYSIS.md",
+              "type": "analysis",
+              "supersededBy": "MESSAGE-REFACTOR-COMPLETE.md"
+            },
+            {
+              "file": "DELETE-MESSAGE-PLAN.md",
+              "type": "implementation-plan",
+              "supersededBy": "MESSAGE-REFACTOR-COMPLETE.md"
             }
           ]
         },
@@ -246,14 +292,15 @@
     ]
   },
   "metadata": {
-    "lastReorganization": "2025-12-07T04:12:00+00:00",
-    "lastPlanVerification": "2025-12-07T20:10:00+00:00",
-    "lastUpdate": "2025-12-07T20:10:00+00:00",
+    "lastReorganization": "2025-12-10T02:00:00+00:00",
+    "lastPlanVerification": "2025-12-10T02:00:00+00:00",
+    "lastUpdate": "2025-12-10T02:00:00+00:00",
     "totalDocumentationFiles": 27,
-    "totalPlans": 8,
-    "totalCompletedPlans": 4,
+    "totalPlans": 11,
+    "totalCompletedPlans": 7,
+    "totalArchivedPlans": 2,
     "copilotOptimized": true,
-    "structure": "Opción B - docs/ categorizado, plans/ raíz con subdirectorio completed/"
+    "structure": "Opción B - docs/ categorizado, plans/ raíz con subdirectorios completed/ y archived/"
   },
   "usage": {
     "forCopilot": "Read this file first to quickly locate any documentation, plan, or report",

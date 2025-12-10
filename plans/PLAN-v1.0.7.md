@@ -21,11 +21,12 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 6. ✅ **Chat Workspace Configuration System** (12-15 horas) - **COMPLETADO 99.5%** (9 dic 2025) - Ver [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md)
 7. ✅ **Testing Suite** (4-5 horas) - **COMPLETADO 100%** (9 dic 2025) - 33 tests creados
 8. ✅ **Streaming Documentation** (1.5 horas) - **COMPLETADO 100%** (9 dic 2025) - 1050+ líneas
-9. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
-10. 🆕 **Chat UX Improvements** (8-12 horas) - **EN PROGRESO 25%** (3/12 items) - Ver [PLAN-v1.0.7-chat-ux.md](./PLAN-v1.0.7-chat-ux.md)
+9. ✅ **Message ID Refactor** (2 horas) - **COMPLETADO 100%** (10 dic 2025) - Two-column approach
+10. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
+11. 🆕 **Chat UX Improvements** (8-12 horas) - **EN PROGRESO 8%** (1/12 items) - Ver [PLAN-v1.0.7-chat-ux.md](./PLAN-v1.0.7-chat-ux.md)
 
-**Tiempo Total Estimado:** 50.5-61.5 horas (actualizado)  
-**Tiempo Invertido:** ~57.5-61.5 horas (129 commits + config system + tests + streaming docs + bug fixes)  
+**Tiempo Total Estimado:** 52.5-63.5 horas (actualizado)  
+**Tiempo Invertido:** ~59.5-63.5 horas (131 commits + config system + tests + streaming docs + message refactor)  
 **Progreso General:** **97%** (release + chat UX improvements pendientes)
 
 **Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
@@ -151,6 +152,96 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 - ✅ Context limit 0 (All): Todos los mensajes sin duplicar mensaje actual
 - ✅ Copy/Download buttons funcionales
 - ✅ Alpine.js tabs switching sin conflictos
+
+---
+
+### ✅ Message ID Refactor: Two-Column Approach (10 dic 2025) - **COMPLETADO 100%**
+
+**BREAKING CHANGE:** Usage logs now track request and response messages separately
+
+**Commits:**
+- `b0942de` - refactor: split message_id into request_message_id + response_message_id
+- `6f9169b` - docs: update CHANGELOG + archive refactor planning docs
+
+#### What Changed
+- ✅ Database schema: `message_id` → `request_message_id` + `response_message_id`
+- ✅ Request Inspector: Split into two fields (request shown immediately, response after streaming)
+- ✅ Delete message: Nullifies correct field in logs (preserves log data)
+- ✅ Service layer: `startSession()` and `endSession()` updated with new parameters
+- ✅ Controllers: 4 files updated (QuickChat, Conversation, Stream, Message)
+
+#### Migration Strategy
+- **Manual ALTER TABLE** (no migrate:fresh needed)
+- **Backup created:** `backups/pre-message-refactor-20251210-0146.sql` (4.3MB)
+- **Git tag:** `checkpoint-pre-message-refactor` (safe restore point)
+
+#### Database Changes (4 steps)
+```sql
+-- Step 1: Drop FK constraint
+ALTER TABLE llm_manager_usage_logs DROP FOREIGN KEY llm_manager_usage_logs_message_id_foreign;
+
+-- Step 2: Drop old index
+ALTER TABLE llm_manager_usage_logs DROP INDEX llm_ul_message_idx;
+
+-- Step 3: Rename column + add new column
+ALTER TABLE llm_manager_usage_logs 
+  CHANGE COLUMN message_id request_message_id BIGINT UNSIGNED NULL,
+  ADD COLUMN response_message_id BIGINT UNSIGNED NULL AFTER request_message_id;
+
+-- Step 4: Add new indexes
+ALTER TABLE llm_manager_usage_logs 
+  ADD INDEX llm_ul_request_msg_idx (request_message_id),
+  ADD INDEX llm_ul_response_msg_idx (response_message_id);
+```
+
+#### Code Changes (9 files)
+**Model:**
+- `LLMUsageLog.php`: Updated `$fillable`, relationships `requestMessage()` + `responseMessage()`
+
+**Service:**
+- `LLMStreamLogger.php`: 
+  - `startSession()`: Parameter `$messageId` → `$requestMessageId`
+  - `endSession()`: New parameter `?int $responseMessageId = null`
+  - `logError()`: Field `message_id` → `request_message_id`
+
+**Controllers:**
+- `LLMQuickChatController.php`: Pass request/response IDs to service methods
+- `LLMConversationController.php`: Create assistant message BEFORE endSession() to have ID
+- `LLMMessageController.php`: Nullify BOTH fields before delete
+
+**Frontend:**
+- `monitor-request-inspector.blade.php`: Split "Message ID" into two fields
+- `request-inspector.blade.php`: Read `request_message_id` from event
+- `event-handlers.blade.php`: Update `response_message_id` on `done` event
+
+#### Testing Results (100% OK)
+- ✅ Quick Chat: Both IDs populated correctly
+- ✅ Request Inspector: Request ID immediate, Response ID updates on `done` event
+- ✅ Delete user message: `request_message_id` nullified, log preserved
+- ✅ Delete assistant message: `response_message_id` nullified, log preserved
+- ✅ Database: Both columns indexed, queries fast
+
+#### Rationale
+1. **Cleaner separation:** Request (user message) vs Response (assistant message)
+2. **Better queries:** Find logs by either message independently
+3. **Streaming timeline:** Request available BEFORE streaming, response AFTER
+4. **Delete tracking:** Nullify correct field when user/assistant message deleted
+5. **Performance:** Two indexed columns faster than string parsing
+
+#### Documentation
+- **CHANGELOG.md:** Updated with complete refactor documentation
+- **MESSAGE-REFACTOR-COMPLETE.md:** Full implementation report with testing results
+- **DELETE-MESSAGE-ANALYSIS.md:** Archived to `plans/archived/` (superseded)
+- **DELETE-MESSAGE-PLAN.md:** Archived to `plans/archived/` (superseded)
+
+**Related Files:**
+- `plans/MESSAGE-REFACTOR-COMPLETE.md` (Implementation complete)
+- `plans/DELETE-MESSAGE-REFACTOR-PLAN.md` (Original plan)
+- `plans/DELETE-MESSAGE-REFACTOR-SUMMARY.md` (Executive summary)
+- `plans/archived/DELETE-MESSAGE-ANALYSIS.md` (Initial analysis)
+- `plans/archived/DELETE-MESSAGE-PLAN.md` (Alternative approach)
+
+---
 
 ### ✅ Provider Connection Service Layer (8 dic 2025)
 
