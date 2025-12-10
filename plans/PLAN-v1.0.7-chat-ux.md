@@ -1567,6 +1567,247 @@ textarea.addEventListener('keydown', (e) => {
 - ✅ **Item #10: Context Window Indicator** (border+opacity, dynamic update)
 - ✅ **Item #11: Request Inspector Persistence** (localStorage, sessionId scoped)
 - ✅ Fase 1: Bug Fixes 100% COMPLETADO
+
+---
+
+## 🔧 NUEVAS MEJORAS DETECTADAS - Monitor UX (10 dic 2025)
+
+### MONITOR HEADER IMPROVEMENTS
+
+#### 1. Dynamic Title & Icon Based on Active Tab ⏳
+**Descripción:** El header del Monitor debe actualizar su título e icono según el tab activo.
+
+**Estado Actual:**
+- Header estático con título genérico "Monitor"
+- No refleja qué información está viendo el usuario
+
+**Implementación:**
+```javascript
+// monitor-header.blade.php
+const updateMonitorHeader = (activeTab) => {
+    const titles = {
+        'console': {
+            icon: 'ki-tablet-text-down',
+            title: 'Console Logs'
+        },
+        'request_inspector': {
+            icon: 'ki-chart-line',
+            title: 'Request Inspector'
+        },
+        'activity_log': {
+            icon: 'ki-timer',
+            title: 'Activity Timeline'
+        }
+    };
+    
+    const config = titles[activeTab];
+    $('#monitor-header-icon').attr('class', `ki-outline ${config.icon} fs-2`);
+    $('#monitor-header-title').text(config.title);
+};
+
+// Listener en tab change
+$('.monitor-tab-btn').on('click', function() {
+    const tabId = $(this).data('tab-id');
+    updateMonitorHeader(tabId);
+});
+```
+
+**Archivos a modificar:**
+- `monitor-header.blade.php` - Agregar IDs dinámicos
+- `split-horizontal-layout.blade.php` - Tab change listener
+
+**Prioridad:** Media  
+**Tiempo estimado:** 1 hora
+
+---
+
+#### 2. Unificar Buttons del Monitor (Audit & Cleanup) 🔍
+**Descripción:** Análisis completo de todos los botones del Monitor para unificar estilos y componentes.
+
+**Tarea de Auditoría:**
+1. Listar todos los botones en `split-horizontal-layout.blade.php`
+2. Listar todos los botones en `sidebar-layout.blade.php`
+3. Identificar tipos:
+   - Refresh (¿cuántas variantes?)
+   - Download logs
+   - Copy logs
+   - Delete/Clear
+   - Otros
+4. Documentar propósito de cada uno
+5. Proponer unificación de componentes
+
+**Archivos a revisar:**
+- `split-horizontal-layout.blade.php`
+- `sidebar-layout.blade.php`
+- `partials/buttons/*`
+- `partials/monitor/*`
+
+**Deliverable:**
+- Documento de auditoría: `docs/MONITOR-BUTTONS-AUDIT.md`
+- Propuesta de componentes unificados
+- Plan de refactoring
+
+**Prioridad:** Alta (prerequisito para otros fixes)  
+**Tiempo estimado:** 2 horas (audit) + 3 horas (refactor)
+
+---
+
+#### 3. Fullscreen Toggle Button 🆕
+**Descripción:** Botón para expandir Monitor a pantalla completa (collapsar chat).
+
+**Funcionalidad:**
+- Click: Chat se colapsa totalmente (height: 0 o display: none)
+- Monitor expande a 100% de altura disponible
+- NO persistente: Al reload vuelve a tamaño original
+- Tamaño original SÍ es persistente (localStorage)
+
+**Implementación:**
+```javascript
+// monitor-header.blade.php
+let isFullscreen = false;
+
+$('#monitor-fullscreen-btn').on('click', function() {
+    const $chatContainer = $('#chat-conversation-container');
+    const $monitorContainer = $('#monitor-container');
+    
+    if (isFullscreen) {
+        // Restore original size (from localStorage)
+        const savedHeight = localStorage.getItem(`monitor_height_${sessionId}`) || '40%';
+        $chatContainer.css('height', 'auto');
+        $monitorContainer.css('height', savedHeight);
+        $(this).find('i').removeClass('ki-minimize').addClass('ki-maximize');
+        isFullscreen = false;
+    } else {
+        // Expand to fullscreen
+        $chatContainer.css('height', '0');
+        $monitorContainer.css('height', '100%');
+        $(this).find('i').removeClass('ki-maximize').addClass('ki-minimize');
+        isFullscreen = true;
+    }
+});
+```
+
+**HTML:**
+```blade
+{{-- monitor-header.blade.php --}}
+<button id="monitor-fullscreen-btn" class="btn btn-sm btn-icon btn-light-primary" 
+        data-bs-toggle="tooltip" title="Fullscreen">
+    <i class="ki-outline ki-maximize fs-2"></i>
+</button>
+```
+
+**Archivos a modificar:**
+- `monitor-header.blade.php` - Agregar botón
+- `split-horizontal-layout.blade.php` - JavaScript handler
+- `styles/split-horizontal.blade.php` - Transiciones CSS
+
+**Prioridad:** Media  
+**Tiempo estimado:** 1.5 horas
+
+---
+
+### TAB: Activity Logs Fixes
+
+#### 4. BUG: Refresh Carga Logs de Otras Sesiones 🐛
+**Descripción:** Al hacer refresh manual en Activity Logs, carga logs que no pertenecen a la sesión actual.
+
+**Problema:**
+- Al cargar página: ✅ Filtra correctamente por sessionId
+- Al hacer refresh: ❌ Trae logs de todas las sesiones
+
+**Investigación Necesaria:**
+- Revisar función de refresh en `activity-log.blade.php`
+- Verificar si el filtro `sessionId` se está pasando correctamente
+- Comparar endpoint de carga inicial vs refresh
+
+**Archivos a revisar:**
+- `activity-log.blade.php` - Función refresh
+- Backend endpoint que sirve los logs
+- Parámetros de request AJAX
+
+**Prioridad:** Alta (bug funcional)  
+**Tiempo estimado:** 1 hora (debug) + 0.5 hora (fix)
+
+---
+
+#### 5. Cleanup Header en Activity Logs ⏳
+**Descripción:** Quitar header "Activity Logs" y mover botón de refresh al header del Monitor.
+
+**Cambios:**
+1. Eliminar header interno de Activity Logs
+2. Dejar solo la tabla con lista de logs
+3. Integrar botón refresh en monitor-header (ver punto #2)
+
+**Relación:**
+- Depende de punto #2 (unificación de botones)
+- Después de auditoría, decidir ubicación final del refresh
+
+**Archivos a modificar:**
+- `activity-log.blade.php` - Remover header
+- `monitor-header.blade.php` - Agregar refresh button (condicional por tab)
+
+**Prioridad:** Media  
+**Tiempo estimado:** 0.5 horas (después de punto #2)
+
+---
+
+### TAB: Request Inspector Fixes
+
+#### 6. Suavizar Hover Colors en Accordions 🎨
+**Descripción:** Los hovers en headers de acordeones son demasiado estridentes (100% intensity).
+
+**Problema:**
+```css
+/* Estado actual (demasiado intenso) */
+.accordion-header:hover {
+    background-color: var(--bs-primary); /* 100% intensity */
+}
+```
+
+**Solución:**
+```css
+/* Usar variables de Metronic más suaves */
+.accordion-header:hover {
+    background-color: var(--bs-primary-light); /* #E9F3FF - suave */
+}
+
+/* Alternativa */
+.accordion-header:hover {
+    background-color: var(--bs-gray-400); /* Gris suave */
+}
+```
+
+**Archivos a modificar:**
+- `styles/request-inspector.blade.php` o CSS inline
+- Buscar selectores `.accordion-header:hover`
+
+**Prioridad:** Baja (UX polish)  
+**Tiempo estimado:** 0.5 horas
+
+---
+
+## 📊 RESUMEN DE NUEVAS MEJORAS
+
+| # | Item | Prioridad | Tiempo | Estado |
+|---|------|-----------|--------|--------|
+| 1 | Dynamic Monitor Header (title + icon) | Media | 1h | ⏳ Pendiente |
+| 2 | Audit & Unify Monitor Buttons | Alta | 5h | 🔍 Prerequisito |
+| 3 | Fullscreen Toggle Button | Media | 1.5h | ⏳ Pendiente |
+| 4 | BUG: Activity Logs Refresh (wrong session) | Alta | 1.5h | 🐛 Bug |
+| 5 | Cleanup Activity Logs Header | Media | 0.5h | ⏳ Pendiente |
+| 6 | Suavizar Accordion Hover Colors | Baja | 0.5h | 🎨 Polish |
+
+**Total tiempo estimado:** ~10 horas
+
+**Orden de implementación recomendado:**
+1. Item #2 (Audit) - Prerequisito para otros
+2. Item #4 (Bug fix) - Alta prioridad
+3. Item #1 (Dynamic header) - Base para items 3 y 5
+4. Item #5 (Cleanup) - Depende de #1 y #2
+5. Item #3 (Fullscreen) - Feature independiente
+6. Item #6 (Hover colors) - Polish final
+
+---
 - ✅ Fase 4: Advanced Features 100% COMPLETADO
 - ✅ Fase 5: New UX Enhancements 100% COMPLETADO
 - 📊 95% completado (19/20 items)
