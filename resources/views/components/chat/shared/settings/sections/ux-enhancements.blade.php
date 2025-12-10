@@ -84,10 +84,17 @@
         {{-- Dynamic permission status will be inserted here --}}
     </div>
 
-    <button type="button" class="btn btn-sm btn-light-primary mb-5" id="request_notification_permission_{{ $sessionId }}">
-        {!! getIcon('ki-notification', 'fs-3 me-1', '', 'i') !!}
-        Request Notification Permission
-    </button>
+    <div class="d-flex gap-2 mb-5">
+        <button type="button" class="btn btn-sm btn-light-primary" id="request_notification_permission_{{ $sessionId }}">
+            {!! getIcon('ki-notification', 'fs-3 me-1', '', 'i') !!}
+            Request Notification Permission
+        </button>
+        
+        <button type="button" class="btn btn-sm btn-light-success" id="test_notification_{{ $sessionId }}">
+            {!! getIcon('ki-message-text-2', 'fs-3 me-1', '', 'i') !!}
+            Test Notification
+        </button>
+    </div>
 
     {{-- Sound Notifications --}}
     <h5 class="mt-6 mb-4">Sound Notifications</h5>
@@ -245,6 +252,80 @@
         
         // Initialize permission status on load
         updateNotificationPermissionStatus();
+        
+        // ===== TEST NOTIFICATION BUTTON =====
+        const testBtn = document.getElementById(`test_notification_${sessionId}`);
+        if (testBtn) {
+            testBtn.addEventListener('click', () => {
+                if (!('Notification' in window)) {
+                    toastr.error('Your browser doesn\'t support notifications');
+                    return;
+                }
+                
+                if (Notification.permission !== 'granted') {
+                    toastr.warning('Please grant notification permission first');
+                    return;
+                }
+                
+                // Get current settings
+                const systemEnabled = localStorage.getItem(`llm_system_notification_enabled_${sessionId}`) !== 'false';
+                const soundEnabled = localStorage.getItem(`llm_sound_enabled_${sessionId}`) !== 'false';
+                const soundFile = localStorage.getItem(`llm_sound_file_${sessionId}`) || 'notification.mp3';
+                const vibrateEnabled = localStorage.getItem(`llm_vibrate_enabled_${sessionId}`) === 'true';
+                
+                console.log('[Test Notification] Settings:', {
+                    system: systemEnabled,
+                    sound: soundEnabled,
+                    soundFile,
+                    vibrate: vibrateEnabled
+                });
+                
+                // System notification
+                if (systemEnabled) {
+                    const notification = new Notification('LLM Manager - Test Notification', {
+                        body: 'This is a test notification. Your settings are working correctly!',
+                        icon: '/vendor/llm-manager/images/logo.png',
+                        badge: '/vendor/llm-manager/images/badge.png',
+                        tag: `test-notification-${Date.now()}`,
+                        requireInteraction: false,
+                        silent: !soundEnabled
+                    });
+                    
+                    notification.onclick = () => {
+                        window.focus();
+                        notification.close();
+                    };
+                    
+                    // Auto-close after 5 seconds
+                    setTimeout(() => notification.close(), 5000);
+                    
+                    console.log('[Test Notification] System notification sent');
+                }
+                
+                // Sound notification
+                if (soundEnabled) {
+                    try {
+                        const audio = new Audio(`/vendor/llm-manager/sounds/${soundFile}`);
+                        audio.volume = 0.5;
+                        audio.play().catch(err => {
+                            console.warn('[Test Notification] Sound play failed:', err);
+                            toastr.warning(`Sound file not found: ${soundFile}`);
+                        });
+                        console.log('[Test Notification] Sound played:', soundFile);
+                    } catch (error) {
+                        console.error('[Test Notification] Sound error:', error);
+                    }
+                }
+                
+                // Vibration (mobile)
+                if (vibrateEnabled && 'vibrate' in navigator) {
+                    navigator.vibrate([200, 100, 200]);
+                    console.log('[Test Notification] Vibration triggered');
+                }
+                
+                toastr.success('Test notification sent!');
+            });
+        }
         
         // ===== SETTINGS PERSISTENCE =====
         // Lista de todos los settings que se deben guardar/cargar
