@@ -196,9 +196,12 @@
         // Context Window Visual Indicator
         // Actualizar indicadores visuales de qué mensajes están en contexto
         const updateContextIndicators = () => {
-            const sizeContextInput = document.querySelector('[name="size_context"]');
-            const sizeContext = parseInt(sizeContextInput?.value) || 10;
-            const bubbles = Array.from(messagesContainer?.querySelectorAll('.message-bubble') || []);
+            // Selector correcto del setting (chat-settings.blade.php)
+            const contextLimitInput = document.querySelector('#quick-chat-context-limit');
+            const contextLimit = parseInt(contextLimitInput?.value) || 10;
+            
+            // Seleccionar el inner wrapper (no el outer .message-bubble)
+            const bubbles = Array.from(messagesContainer?.querySelectorAll('.message-bubble > div') || []);
             
             // Contar desde el final (más recientes primero)
             const totalBubbles = bubbles.length;
@@ -206,7 +209,7 @@
             bubbles.forEach((bubble, index) => {
                 const positionFromEnd = totalBubbles - index;
                 
-                if (positionFromEnd <= sizeContext) {
+                if (contextLimit === 0 || positionFromEnd <= contextLimit) {
                     bubble.classList.add('in-context');
                     bubble.classList.remove('out-of-context');
                 } else {
@@ -215,7 +218,7 @@
                 }
             });
             
-            console.log(`[Context Indicator] Updated: ${sizeContext} messages in context (total: ${totalBubbles})`);
+            console.log(`[Context Indicator] Updated: ${contextLimit === 0 ? 'ALL' : contextLimit} messages in context (total: ${totalBubbles})`);
         };
 
         const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {
@@ -348,6 +351,11 @@
             }
 
             scrollToBottom();
+
+            // Actualizar context indicators después de agregar mensaje
+            if (typeof updateContextIndicators === 'function') {
+                updateContextIndicators();
+            }
 
             // Retornar el bubble insertado (para poder hacer scroll a él)
             return insertedBubble;
@@ -1429,6 +1437,16 @@
                 loadRequestInspectorFromStorage(sessionId);
             }
         }, 600);
+
+        // Event listener para cambios en Context Limit (actualización dinámica)
+        // Usar jQuery porque el select usa Select2
+        const contextLimitSelect = document.querySelector('#quick-chat-context-limit');
+        if (contextLimitSelect) {
+            $(contextLimitSelect).on('change', function() {
+                console.log('[Context Indicator] Settings changed, updating indicators...');
+                updateContextIndicators();
+            });
+        }
 
         /**
          * New Chat Button Handler
