@@ -57,7 +57,7 @@ Documentación específica de providers LLM.
 
 ---
 
-## 🧩 Componentes
+### 🧩 Componentes
 
 ### Chat Workspace Component
 
@@ -68,6 +68,7 @@ Componente principal para interfaces de chat LLM con soporte para layouts duales
 **Características:**
 - ✅ **Dual Layout System:** Sidebar (vertical) y Split-Horizontal (horizontal resizable)
 - ✅ **Monitor Integrado:** Métricas en tiempo real, historial de actividad, console logs
+- ✅ **Monitor Export:** Export Activity Logs en CSV/JSON/SQL con session filtering (v1.0.7)
 - ✅ **Streaming Support:** Compatible con Server-Sent Events (SSE)
 - ✅ **Alpine.js Reactive:** Componentes reactivos sin Vue/React
 - ✅ **LocalStorage Persistence:** Guarda preferencias del usuario

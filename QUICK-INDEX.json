@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema",
-  "version": "1.1.0",
-  "lastUpdate": "2025-12-07T20:10:00+00:00",
+  "version": "1.2.0",
+  "lastUpdate": "2025-12-10T23:59:00+00:00",
   "description": "Quick navigation index for Copilot - Optimized for AI assistant file discovery",
   "project": {
     "name": "bithoven-extension-llm-manager",
@@ -81,12 +81,12 @@
     },
     "plans": {
       "path": "plans/",
-      "description": "Implementation plans organized by status (new/in-progress/completed)",
-      "totalFiles": 8,
+      "description": "Implementation plans organized by status (new/in-progress/completed/archive)",
+      "totalFiles": 5,
       "categories": {
         "root": {
           "path": "plans/",
-          "description": "General plans and documentation",
+          "description": "Active development plans",
           "files": [
             {
               "file": "README.md",
@@ -96,69 +96,57 @@
               "file": "PLAN-v1.0.7.md",
               "type": "development-plan",
               "version": "1.0.7",
-              "status": "active"
+              "status": "ready-for-release",
+              "progress": "99.5%"
             },
             {
               "file": "PLAN-v1.0.7-chat-ux.md",
               "type": "feature-plan",
               "version": "1.0.7",
-              "status": "in-progress"
-            },
-            {
-              "file": "PLAN-v1.0.7-chat-config-options.md",
-              "type": "feature-plan",
-              "version": "1.0.7",
-              "status": "completed"
-            },
-            {
-              "file": "PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md",
-              "type": "documentation",
-              "purpose": "copilot-handoff"
-            },
-            {
-              "file": "MESSAGE-REFACTOR-COMPLETE.md",
-              "type": "implementation-report",
-              "completedAt": "2025-12-10",
-              "status": "complete"
-            },
-            {
-              "file": "DELETE-MESSAGE-REFACTOR-PLAN.md",
-              "type": "implementation-plan",
-              "completedAt": "2025-12-10",
-              "status": "complete"
-            },
-            {
-              "file": "DELETE-MESSAGE-REFACTOR-SUMMARY.md",
-              "type": "executive-summary",
-              "completedAt": "2025-12-10",
-              "status": "complete"
-            },
-            {
-              "file": "QUICK-CHAT-IMPLEMENTATION-PLAN.md",
-              "type": "feature-plan",
-              "status": "new"
+              "status": "completed",
+              "progress": "100%",
+              "completedAt": "2025-12-10"
             }
           ]
         },
-        "archived": {
-          "path": "plans/archived/",
-          "description": "Archived plans superseded by newer implementations",
-          "files": [
+        "archive": {
+          "path": "plans/archive/",
+          "description": "Archived plans integrated into master plans",
+          "subdirectories": [
             {
-              "file": "DELETE-MESSAGE-ANALYSIS.md",
-              "type": "analysis",
-              "supersededBy": "MESSAGE-REFACTOR-COMPLETE.md"
-            },
-            {
-              "file": "DELETE-MESSAGE-PLAN.md",
-              "type": "implementation-plan",
-              "supersededBy": "MESSAGE-REFACTOR-COMPLETE.md"
+              "name": "v1.0.7",
+              "files": [
+                {
+                  "file": "PLAN-v1.0.7-chat-config-options.md",
+                  "type": "feature-plan",
+                  "status": "integrated-into-master-plan"
+                }
+              ]
             }
           ]
         },
         "completed": {
           "path": "plans/completed/",
           "description": "Completed plans with implementation verified",
+          "subdirectories": [
+            {
+              "name": "message-id-refactor",
+              "files": [
+                {
+                  "file": "DELETE-MESSAGE-REFACTOR-PLAN.md",
+                  "completedAt": "2025-12-10"
+                },
+                {
+                  "file": "DELETE-MESSAGE-REFACTOR-SUMMARY.md",
+                  "completedAt": "2025-12-10"
+                },
+                {
+                  "file": "MESSAGE-REFACTOR-COMPLETE.md",
+                  "completedAt": "2025-12-10"
+                }
+              ]
+            }
+          ],
           "files": [
             {
               "file": "ACTIVITY-LOG-MIGRATION-PLAN.md",
@@ -187,7 +175,7 @@
     "reports": {
       "path": "reports/",
       "description": "Analysis reports and implementation results organized by type",
-      "totalFiles": 8,
+      "totalFiles": 11,
       "categories": {
         "activityLog": {
           "path": "reports/activity-log/",
@@ -229,11 +217,50 @@
         },
         "general": {
           "path": "reports/",
-          "description": "General reports not categorized elsewhere",
+          "description": "General reports and project-wide documentation audits",
           "files": [
-            "BUGS-ANALYSIS.md",
-            "CHAT-MONITOR-ENHANCEMENT-IMPLEMENTATION-REPORT.md",
-            "PROVIDER-RESPONSE-ANALYSIS.md"
+            {
+              "file": "CHAT-MONITOR-ENHANCEMENT-IMPLEMENTATION-REPORT.md",
+              "type": "implementation-report"
+            },
+            {
+              "file": "DOCUMENTATION-AUDIT-2025-12-10.md",
+              "type": "documentation-audit",
+              "filesReviewed": 156,
+              "lines": 400,
+              "status": "complete"
+            },
+            {
+              "file": "MONITOR-BUTTONS-ANALYSIS-2025-12-10.md",
+              "type": "architecture-analysis"
+            },
+            {
+              "file": "MONITOR-EXPORT-ANALYSIS-2025-12-10.md",
+              "type": "feature-analysis",
+              "lines": 428,
+              "status": "complete"
+            }
+          ]
+        },
+        "archived": {
+          "path": "reports/archived/",
+          "description": "Obsolete reports superseded by newer implementations",
+          "subdirectories": [
+            {
+              "name": "obsolete",
+              "files": [
+                {
+                  "file": "BUGS-ANALYSIS.md",
+                  "type": "obsolete-analysis",
+                  "archivedAt": "2025-12-10"
+                },
+                {
+                  "file": "PROVIDER-RESPONSE-ANALYSIS.md",
+                  "type": "obsolete-analysis",
+                  "archivedAt": "2025-12-10"
+                }
+              ]
+            }
           ]
         }
       }

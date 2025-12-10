@@ -58,10 +58,16 @@ plans/
 - **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
 - **FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md** - Service Layer para conexión LLM (✅ Completado 8 dic 2025)
 - **FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md** - Fix Load Models en Admin (✅ Completado 8 dic 2025)
+- **message-id-refactor/** - Message ID Refactor plans (✅ Completado 10 dic 2025)
+  - DELETE-MESSAGE-REFACTOR-PLAN.md
+  - DELETE-MESSAGE-REFACTOR-SUMMARY.md
+  - MESSAGE-REFACTOR-COMPLETE.md
 
 ### archive/
 - **QUICK-CHAT-IMPLEMENTATION-PLAN.md** - Plan detallado Quick Chat (integrado en PLAN-v1.0.7.md)
 - **PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md** - Handoff documentation (integrado en PLAN-v1.0.7.md)
+- **v1.0.7/** - v1.0.7 development plans
+  - PLAN-v1.0.7-chat-config-options.md - Chat Config Options (integrated into main plan)
 
 ---
 

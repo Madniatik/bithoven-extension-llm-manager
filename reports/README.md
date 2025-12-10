@@ -44,9 +44,14 @@ reports/
 - **QUICK-CHAT-MONITOR-FIX-REPORT.md** - Reporte de fixes de integración Quick Chat
 
 ### root level/
-- **BUGS-ANALYSIS.md** - Análisis de bugs Quick Chat
 - **CHAT-MONITOR-ENHANCEMENT-IMPLEMENTATION-REPORT.md** - Reporte de implementación Monitor
-- **PROVIDER-RESPONSE-ANALYSIS.md** - Análisis de estructura de respuestas por provider
+- **DOCUMENTATION-AUDIT-2025-12-10.md** - Comprehensive documentation audit (156 files, 400 lines)
+- **MONITOR-BUTTONS-ANALYSIS-2025-12-10.md** - Monitor buttons architecture analysis
+- **MONITOR-EXPORT-ANALYSIS-2025-12-10.md** - Monitor Export Feature analysis (428 lines)
+
+### archived/obsolete/
+- **BUGS-ANALYSIS.md** - Análisis de bugs Quick Chat (obsoleto)
+- **PROVIDER-RESPONSE-ANALYSIS.md** - Análisis de estructura de respuestas por provider (obsoleto)
 
 ---
 
