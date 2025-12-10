@@ -223,7 +223,7 @@ body.split-resizing * {
 /* Context Window Visual Indicator */
 /* Aplicar al bubble-content-wrapper (donde está el contenido) */
 .bubble-content-wrapper.in-context {
-    border-left: 3px solid var(--bs-light-primary);
+    border-left: 3px solid var(--bs-primary-light);
     opacity: 1;
 }
 
