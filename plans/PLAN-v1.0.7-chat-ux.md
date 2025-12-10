@@ -1,12 +1,13 @@
 # LLM Manager Extension - PLAN v1.0.7 (Chat UX Improvements)
 
 **Fecha de Creación:** 9 de diciembre de 2025  
-**Última Actualización:** 10 de diciembre de 2025  
+**Última Actualización:** 10 de diciembre de 2025, 20:15  
 **Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
 **Estado:** In Progress  
 **Prioridad:** Medium  
-**Progreso:** 95% (19/20 items completados)  
-**Tiempo Estimado:** 16-19 horas (actualizado: +4.75h nuevas features)
+**Progreso:** 100% (20/20 items completados) ✅  
+**Tiempo Estimado:** 16-19 horas (actualizado: +6.75h Context Indicator completo)  
+**Tiempo Real:** ~22 horas
 
 ---
 
@@ -532,7 +533,7 @@ $(document).on('click', '.resend-message-btn', function(e) {
 
 ---
 
-### 10. Context Window Visual Indicator 🆕
+### 10. Context Window Visual Indicator ✅ COMPLETADO
 **Descripción:** Marcador visual en bubbles que indica qué mensajes están incluidos en el contexto actual (`size_context` setting).
 
 **Contexto Técnico:**
@@ -545,6 +546,9 @@ $(document).on('click', '.resend-message-btn', function(e) {
 - ✅ Se actualiza en tiempo real al cambiar `size_context` en Settings
 - ✅ Feedback claro: usuario sabe exactamente qué ve el LLM
 - ✅ Útil para depuración: "¿Por qué el LLM no recuerda esto?" → mensaje fuera de contexto
+- ✅ Toggle enable/disable en Workspace Settings (UX Enhancements)
+- ✅ Aplicación dinámica sin reload (custom events)
+- ✅ Multi-instance support (sessionId scoped localStorage)
 
 **Propuestas de Diseño:**
 
@@ -643,21 +647,37 @@ $(document).ready(function() {
 ```
 
 **Decisión de Diseño:**
-1. **Prioridad 1:** Opción A (border + opacity) - Más sutil, no satura UI
-2. **Prioridad 2:** Opción C (icon indicator) - Muy clean, requiere hover para info
-3. **Descartada:** Opción B (badge) - Demasiado visual, ocupa espacio
+1. ✅ **IMPLEMENTADO:** Opción A (border + opacity) - Más sutil, no satura UI
+2. ✅ **IMPLEMENTADO:** Solo indicador visual para mensajes IN-context (no mostrar out-of-context)
+3. ✅ **IMPLEMENTADO:** Border con 30% opacity (var(--bs-primary) con --bs-border-opacity: 0.3)
 
 **Archivos Modificados:**
-- `QuickChatController.php` - Calcular `is_in_context` flag
-- `bubble-header.blade.php` o `message-bubble.blade.php` - Agregar marcador visual
-- `event-handlers.blade.php` - Función `updateContextIndicators()` + listener settings
-- `split-horizontal.blade.php` - CSS para `.in-context` y `.out-of-context`
-- `chat-administration.blade.php` - Agregar listener en setting `size_context`
+- ✅ `event-handlers.blade.php` - Función `updateContextIndicators()` con toggle check + listener
+- ✅ `split-horizontal.blade.php` - CSS para `.bubble-content-wrapper.in-context`
+- ✅ `chat-settings.blade.php` - Dropdown con context_limit selector (5/10/20/50/All)
+- ✅ `settings-manager.blade.php` - localStorage persistence para context_limit
+- ✅ `ux-enhancements.blade.php` - Toggle "Show Context Window Indicator" + custom event
+- ✅ `settings-form.blade.php` - Load/save context_indicator.enabled en backend config
+- ✅ `ChatWorkspaceConfigValidator.php` - Defaults y validation rules
 
-**Tiempo Estimado:** 2 horas (incluyendo backend + frontend + testing)
-**Tiempo Real:** 2 horas
-**Estado:** ✅ COMPLETADO - Opción A implementada (border + opacity)
-**Commit:** `2bd4769` (2025-12-10)
+**Commits:**
+1. `2927a87` - Fix Context Window Visual Indicator bugs (DOM + settings selector + listeners)
+2. `048aba3` - Update CSS selectors for Context Window Indicator
+3. `9e60716` - Fix All Messages + correct element (.bubble-content-wrapper)
+4. `f51d4f3` - Fix All Messages parsing + softer border color
+5. `62a463a` - Use correct Metronic variable --bs-primary-light
+6. `f2e5798` - Remove visual indicator for out-of-context messages
+7. `d2d02b2` - Add border opacity to context indicator
+8. `07d146e` - Update defaults - max_tokens=8000, context_limit=0
+9. `45e183b` - Add UX toggles (Context Indicator, Streaming, Notifications) - REVERTED
+10. `e7edf38` - Add Context Indicator toggle to UX Enhancements (CLEANED)
+11. `c6de9b3` - Connect Workspace Settings toggle with updateContextIndicators()
+12. `0d17b17` - Apply toggle changes INSTANTLY without reload (custom events)
+
+**Tiempo Estimado:** 2 horas (incluyendo backend + frontend + testing)  
+**Tiempo Real:** 4 horas (+ bugs fixes + toggle implementation + dynamic application)  
+**Estado:** ✅ **COMPLETADO 100%** - Implementación completa con toggle dinámico  
+**Fecha Completado:** 10 de diciembre de 2025  
 **Prioridad:** Alta (muy útil para UX y debugging)
 
 ---
