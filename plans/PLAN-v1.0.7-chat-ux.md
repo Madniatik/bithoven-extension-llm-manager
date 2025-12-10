@@ -32,12 +32,14 @@ Plan anexo dedicado a mejoras visuales y de experiencia de usuario (UX) en el co
 
 ## 📦 IMPLEMENTACIONES UX PENDIENTES
 
-### 1. Notificaciones al Completar Respuesta ⏳
+### 1. Notificaciones al Completar Respuesta ✅ COMPLETADO
 **Descripción:** Mostrar notificación del sistema y/o reproducir sonido cuando el streaming del asistente finaliza.
+
+**Estado:** ✅ Implementado (commits: b742e22, f7d3cae)
 
 **Condición:**
 - ✅ Solo si la pestaña del navegador NO está activa (usuario en otra tab/ventana)
-- ❌ NO notificar si el usuario está viendo el chat activamente
+- ✅ NO notificar si el usuario está viendo el chat activamente
 - ✅ Pedir permiso de notificaciones al usuario la primera vez
 
 **Implementación Dual:**
@@ -1004,8 +1006,8 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 7/16 items completados (44%)  
-**Última Actualización:** 10 de diciembre de 2025, 03:30
+**Estado Actual:** 8/16 items completados (50%)  
+**Última Actualización:** 10 de diciembre de 2025, 04:15
 
 ### Bug Fixes (4/6) ✅
 - [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
@@ -1014,8 +1016,8 @@ textarea.addEventListener('keydown', (e) => {
 - [x] **BUG-5:** Checkmark fade out innecesario (eba6466) - 10 min
 - [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
 - [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min
-- [❌] **BUG-7:** Messages container oculto por monitor - DESCARTADO (2486405, 829345c revertidos)### Implementaciones (2/8) 🔄
-- [ ] Notificación sonora inteligente
+- [❌] **BUG-7:** Messages container oculto por monitor - DESCARTADO (2486405, 829345c revertidos)### Implementaciones (3/8) 🔄
+- [x] **System Notifications + Sound** - COMPLETADO (b742e22, f7d3cae) ✅
 - [ ] Botón borrar mensaje
 - [ ] Indicador streaming status
 - [ ] Header bubble refactor
@@ -1047,12 +1049,12 @@ textarea.addEventListener('keydown', (e) => {
    - 4 partials: monitor-settings, ui-preferences, ux-enhancements, performance-settings
    - Settings: Fancy animations, Sound notifications, Keyboard shortcuts mode A/B
 
-### Fase 3: Core UX Features - 5 horas 🔄 2/5 COMPLETADO
+### Fase 3: Core UX Features - 5 horas 🔄 3/5 COMPLETADO
 1. ✅ **Keyboard Shortcuts** (1.5 horas) - COMPLETADO (b582b8f, cc73d04)
 2. ✅ **OS & Browser Info** (2 horas) - COMPLETADO (b582b8f, cc73d04, b3e5111)
-3. ⏳ **Hover Effects** (30 min) - Quick win visual
-4. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
-5. ⏳ **System Notifications + Sound** (2.5 horas) - Notifications API + Audio API
+3. ✅ **System Notifications + Sound** (2.5 horas) - COMPLETADO (b742e22, f7d3cae)
+4. ⏳ **Hover Effects** (30 min) - Quick win visual
+5. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
 
 ### Fase 4: Advanced Features - 3.5 horas ⏳
 1. ⏳ **Header Bubble Refactor** (1.5 horas) - UI cleanup
@@ -1145,12 +1147,14 @@ Este plan se considerará **100% completado** cuando:
 13. **b582b8f** - feat(chat): OS-aware keyboard shortcuts with configurable modes
 14. **cc73d04** - fix: duplicate sessionId declaration + enhanced PlatformUtils with browser detection
 15. **b3e5111** - feat(chat): add System Information panel in Settings (debugging tool)
+16. **b742e22** - feat(chat): implement system notifications + sound with localStorage persistence
+17. **f7d3cae** - docs(assets): add placeholder structure for notification sounds and icons
 
-**Total:** 15 commits, 4 bug fixes + 1 config + 2 features completados
+**Total:** 17 commits, 4 bug fixes + 1 config + 3 features completados
 
 ---
 
-**Última Actualización:** 9 de diciembre de 2025, 23:45
+**Última Actualización:** 10 de diciembre de 2025, 04:15
 **Responsable Actual:** GitHub Copilot (Claude Sonnet 4.5)
 **Siguiente Copilot:** Leer [HANDOFF-NEXT-COPILOT-CHAT-UX.md](./archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md)
 
@@ -1158,4 +1162,7 @@ Este plan se considerará **100% completado** cuando:
 - ✅ Keyboard Shortcuts con detección OS (Mac/Windows/Linux)
 - ✅ PlatformUtils module (OS + Browser detection)
 - ✅ System Information panel en Settings
+- ✅ System Notifications + Sound con localStorage persistence
+- ✅ Placeholder assets (sounds + icons con READMEs)
+- 📊 50% completado (8/16 items)
 - 📈 Progreso: 29% → 44% (+15%)
