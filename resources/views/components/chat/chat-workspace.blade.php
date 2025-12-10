@@ -41,7 +41,7 @@
 <div class="llm-chat-workspace {{ $customCssClass }}" 
      data-session-id="{{ $session?->id }}" 
      data-monitor-layout="{{ $monitorLayoutValue }}"
-     x-data="chatWorkspace_{{ $session?->id ?? 'default' }}({{ $monitorEnabled ? 'true' : 'false' }}, {{ $monitorOpenByDefault ? 'true' : 'false' }}, '{{ $monitorLayoutValue }}', {{ $session?->id ?? 'null' }})"
+     x-data="chatWorkspace_{{ $session?->id ?? 'default' }}({{ $monitorEnabled ? 'true' : 'false' }}, {{ $monitorOpenByDefault ? 'true' : 'false' }}, '{{ $monitorLayoutValue }}', {{ $session?->id ?? 'null' }}, '{{ $monitorId }}')"
      id="chat-workspace-{{ $session?->id ?? 'default' }}">
     
     @if($monitorLayoutValue === 'split-horizontal')

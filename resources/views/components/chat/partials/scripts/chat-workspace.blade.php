@@ -7,8 +7,9 @@
 <script>
 document.addEventListener('alpine:init', () => {
     // Factory function: creates unique Alpine component per session
-    const createChatWorkspace = (sessionId) => (initialShowMonitor = false, initialMonitorOpen = false, layout = 'sidebar', sid = null) => ({
+    const createChatWorkspace = (sessionId) => (initialShowMonitor = false, initialMonitorOpen = false, layout = 'sidebar', sid = null, mid = null) => ({
         sessionId: sid || sessionId,
+        monitorId: mid || `monitor-${sid || sessionId}`,
         showMonitor: initialShowMonitor,
         monitorOpen: initialMonitorOpen,
         activeTab: 'console', // Default tab: console
@@ -38,7 +39,7 @@ document.addEventListener('alpine:init', () => {
         },
         
         updateMonitorHeader(tab) {
-            const monitorId = this.sessionId; // Use sessionId as monitorId
+            const monitorId = this.monitorId; // Use correct monitorId (e.g., 'monitor-39')
             const iconEl = document.getElementById(`monitor-header-icon-${monitorId}`);
             const textEl = document.getElementById(`monitor-header-text-${monitorId}`);
             
