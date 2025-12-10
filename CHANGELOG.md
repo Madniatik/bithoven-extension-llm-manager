@@ -9,6 +9,159 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v1.0.7
 
+### 🎉 Monitor Export Feature: CSV/JSON/SQL Export for Activity Logs (10 diciembre 2025, 23:45)
+
+**Activity Logs can now be exported in 3 formats with session-aware filtering** ✅
+
+**Total:** 1 commit (f43aee6), 3.5 hours, **Manual testing: 7/7 cases OK**
+
+**What Changed:**
+- ✅ Export CSV with full text (no truncation) + Session ID column + Duration (s) field
+- ✅ Export JSON with complete metadata
+- ✅ Export SQL with INSERT statements ready for database import
+- ✅ Session-aware filtering: Export only logs from current chat session
+- ✅ User-only filtering: Monitor context exports only current user's logs
+- ✅ Dynamic filenames: `llm-activity-session-39-...` or `llm-activity-user-...`
+- ✅ Security: Ownership verification (403 if session doesn't belong to user)
+- ✅ Warning UX: Toast notification for large exports (>1000 records)
+- ✅ Admin integration: Export SQL button added to admin/activity page
+
+**Backend Changes:**
+
+#### Controllers
+- **LLMActivityController::export()** - CSV export enhanced
+  - Added `session_id` filter (Monitor context)
+  - Added `user_only` filter (security)
+  - CSV format: Session ID column, full text (no substr), duration in seconds
+  - Dynamic filename based on context (session vs user)
+  
+- **LLMActivityController::exportJson()** - JSON export enhanced
+  - Same filters as CSV (session_id + user_only)
+  - Full object export with relationships
+  - Dynamic filename
+  
+- **LLMActivityController::exportSql()** - NEW METHOD
+  - SQL INSERT statements with all columns
+  - Header comments: Date, Session ID, Total Records
+  - Escaped values for safe import
+  - Dynamic filename
+
+#### Routes
+```php
+Route::get('activity-export/sql', [LLMActivityController::class, 'exportSql'])
+    ->name('activity.export-sql');
+```
+
+**Frontend Changes:**
+
+#### Monitor Components
+- **monitor-header-buttons.blade.php** - Export dropdown added
+  - Props: `$showExport` (bool), `$sessionId` (int|null)
+  - Dropdown with 3 options: Export CSV (green), Export JSON (blue), Export SQL (primary)
+  - `confirmLargeExport()` onclick handler
+  
+- **split-horizontal-layout.blade.php** - Activity Logs tab config
+  ```blade
+  'showExport' => true,
+  'sessionId' => $session?->id,
+  ```
+
+- **monitor-api.blade.php** - Warning utility
+  ```javascript
+  window.confirmLargeExport(event) {
+      // Warning toast if >1000 records
+      // Loading notification during export
+  }
+  ```
+
+#### Admin Page
+- **admin/activity/index.blade.php** - Export SQL button added
+  - 3 buttons: Export CSV, Export JSON, Export SQL
+  - Uses same routes with query params
+
+**Export Behavior:**
+
+**With Session (Chat Workspace):**
+```
+URL: /admin/llm/activity-export/csv?session_id=39&user_only=1
+Filename: llm-activity-session-39-2025-12-10-143022.csv
+Content: Only logs from session 39 belonging to current user
+```
+
+**Without Session (Quick Chat / Admin):**
+```
+URL: /admin/llm/activity-export/csv?user_only=1
+Filename: llm-activity-user-2025-12-10-143022.csv
+Content: All logs of current user across all sessions
+```
+
+**CSV Format Enhanced:**
+```csv
+ID,Session ID,Date/Time,Provider,Model,User,Prompt (Full),Response (Full),Prompt Tokens,Completion Tokens,Total Tokens,Cost USD,Duration (ms),Duration (s),Status,Error Message
+123,39,2025-12-10 14:25:00,openai,gpt-4,John Doe,"Full prompt text...","Full response text...",15,135,150,0.003,2500,2.5,success,
+```
+
+**SQL Format:**
+```sql
+-- LLM Activity Export
+-- Date: 2025-12-10 14:30:22
+-- Session ID: 39
+-- Total Records: 25
+
+INSERT INTO `llm_manager_usage_logs` 
+(`id`, `session_id`, `user_id`, `configuration_id`, `provider`, `model`, `prompt`, `response`, ...)
+VALUES
+(123, 39, 1, 5, 'openai', 'gpt-4', 'What is Laravel?', 'Laravel is...', ...),
+(124, 39, 1, 5, 'anthropic', 'claude-3-sonnet', 'Explain MVC', 'MVC stands...', ...);
+```
+
+**Security Features:**
+- Session ownership check before export
+- User-only filter enforced in Monitor context
+- 403 Forbidden if attempting to export other user's sessions
+- CSRF protection on all routes
+
+**UX Enhancements:**
+- Warning toast for large datasets (>1000 records): "This may take a few seconds"
+- Loading notification during file generation
+- Dropdown menu in Monitor header (compact, non-intrusive)
+- Separate buttons in Admin page (clear, accessible)
+
+**Files Modified (7):**
+```
+src/Http/Controllers/Admin/LLMActivityController.php
+routes/web.php
+resources/views/components/chat/shared/monitor/monitor-header-buttons.blade.php
+resources/views/components/chat/layouts/split-horizontal-layout.blade.php
+resources/views/components/chat/partials/scripts/monitor-api.blade.php
+resources/views/admin/activity/index.blade.php
+plans/PLAN-v1.0.7-chat-ux.md
+```
+
+**Documentation:**
+- Analysis report: `reports/MONITOR-EXPORT-ANALYSIS-2025-12-10.md` (428 lines)
+- Plan updated: `plans/PLAN-v1.0.7-chat-ux.md` (marked 100% complete, 21/21 items)
+
+**Testing Coverage:**
+- ✅ Export CSV with session_id (filtered correctly)
+- ✅ Export JSON with session_id
+- ✅ Export SQL with session_id
+- ✅ Export without session_id (all user logs)
+- ✅ Security: 403 for unauthorized session access
+- ✅ Filename generation (session-XX vs user)
+- ✅ Dropdown visibility (only Activity Logs tab)
+
+**Time Breakdown:**
+- Analysis & planning: 30 min
+- Backend implementation: 1.5h
+- Frontend implementation: 1h
+- Testing: 30 min
+- **Total:** 3.5 hours
+
+**Related Plan:** PLAN-v1.0.7-chat-ux.md - PHASE 6 complete
+
+---
+
 ### 🔄 Message ID Refactor: Two-Column Approach (10 diciembre 2025, 02:50)
 
 **BREAKING CHANGE: Usage logs now track request and response messages separately** ✅

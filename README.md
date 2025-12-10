@@ -28,6 +28,7 @@ Enterprise-grade LLM management platform for Laravel applications with real-time
 - ✅ **Prompt Templates** - Reusable templates with variable substitution (`{{var}}`)
 - ✅ **Parameter Override** - Runtime customization of temperature, max_tokens, etc.
 - ✅ **Permissions Protocol v2.0** - Granular role-based access control (12 permissions)
+- ✅ **Monitor Export** - Export Activity Logs in 3 formats (CSV/JSON/SQL) with session filtering (NEW v1.0.7)
 
 ### 🤖 Orchestration Platform
 - ✅ **Conversations** - Persistent multi-turn sessions with context management
