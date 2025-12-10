@@ -200,8 +200,8 @@
             const contextLimitInput = document.querySelector('#quick-chat-context-limit');
             const contextLimit = parseInt(contextLimitInput?.value) || 10;
             
-            // Seleccionar el inner wrapper (no el outer .message-bubble)
-            const bubbles = Array.from(messagesContainer?.querySelectorAll('.message-bubble > div') || []);
+            // Seleccionar el bubble-content-wrapper (donde va el borde visual)
+            const bubbles = Array.from(messagesContainer?.querySelectorAll('.bubble-content-wrapper') || []);
             
             // Contar desde el final (más recientes primero)
             const totalBubbles = bubbles.length;
@@ -209,7 +209,12 @@
             bubbles.forEach((bubble, index) => {
                 const positionFromEnd = totalBubbles - index;
                 
-                if (contextLimit === 0 || positionFromEnd <= contextLimit) {
+                // Si contextLimit es 0, todos están in-context
+                // Si no, solo los últimos N mensajes
+                if (contextLimit === 0) {
+                    bubble.classList.add('in-context');
+                    bubble.classList.remove('out-of-context');
+                } else if (positionFromEnd <= contextLimit) {
                     bubble.classList.add('in-context');
                     bubble.classList.remove('out-of-context');
                 } else {
