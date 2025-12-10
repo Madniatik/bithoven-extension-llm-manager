@@ -34,9 +34,9 @@
     
     /* Scroll to bottom floating button */
     .scroll-to-bottom-btn {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
+        position: fixed; /* Fixed respecto al viewport del contenedor */
+        bottom: 80px; /* Ajustado para no tapar el textarea */
+        right: 40px;
         width: 48px;
         height: 48px;
         border-radius: 50%;

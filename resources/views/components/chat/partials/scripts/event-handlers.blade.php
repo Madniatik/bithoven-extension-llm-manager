@@ -1180,6 +1180,12 @@
                 // If stream completed successfully, this is just SSE connection closing (not a real error)
                 if (streamCompleted) {
                     eventSource?.close();
+                    
+                    // Hide streaming indicator
+                    if (window.StreamingStatusIndicator) {
+                        window.StreamingStatusIndicator.hide();
+                    }
+                    
                     sendBtn.disabled = false;
                     sendBtn.classList.remove('d-none');
                     stopBtn?.classList.add('d-none');
@@ -1202,6 +1208,12 @@
                 toastr.error('Streaming connection lost');
 
                 eventSource?.close();
+                
+                // Hide streaming indicator on error
+                if (window.StreamingStatusIndicator) {
+                    window.StreamingStatusIndicator.hide();
+                }
+                
                 sendBtn.disabled = false;
                 sendBtn.classList.remove('d-none');
                 stopBtn?.classList.add('d-none');
@@ -1216,6 +1228,12 @@
                 eventSource.close();
                 eventSource = null;
                 hideThinking();
+                
+                // Hide streaming indicator when stopped manually
+                if (window.StreamingStatusIndicator) {
+                    window.StreamingStatusIndicator.hide();
+                }
+                
                 sendBtn.disabled = false;
                 sendBtn.classList.remove('d-none');
                 stopBtn.classList.add('d-none');
