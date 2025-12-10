@@ -58,9 +58,9 @@
             data-kt-scroll-wrappers="#kt_content, #kt_app_content" data-kt-scroll-offset="{default: '35px', lg: '5px'}">
             {{-- SPLIT CONTAINER --}}
             <div class="split-horizontal-container" id="llm-split-view-{{ $sessionId }}" x-data="splitResizer_{{ $sessionId }}({{ $session?->id ?? 'null' }})"
-                x-init="init()">
+                x-init="init()" style="position: relative;">
                 {{-- CHAT PANE (70% default) --}}
-                <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}" style="overflow-x: hidden; position: relative;">
+                <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}" style="overflow-x: hidden;">
                     
                     {{-- Streaming Status Indicator (sticky top, fuera de messages-container) --}}
                     @include('llm-manager::components.chat.partials.streaming-status-indicator', ['sessionId' => $sessionId])
@@ -68,19 +68,19 @@
                     <div class="py-0" style="overflow-x: hidden;">
                         @include('llm-manager::components.chat.partials.messages-container')
                     </div>
-                    
-                    <!--begin::Scroll to bottom button-->
-                    <button id="scroll-to-bottom-btn-{{ $sessionId }}" 
-                            class="scroll-to-bottom-btn d-none"
-                            title="Scroll to bottom">
-                        <i class="ki-duotone ki-arrow-down fs-2">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                        <span class="unread-badge badge badge-circle badge-danger d-none" id="unread-badge-{{ $sessionId }}">0</span>
-                    </button>
-                    <!--end::Scroll to bottom button-->
                 </div>
+                
+                <!--begin::Scroll to bottom button (fuera del scroll, fixed al split-container)-->
+                <button id="scroll-to-bottom-btn-{{ $sessionId }}" 
+                        class="scroll-to-bottom-btn d-none"
+                        title="Scroll to bottom">
+                    <i class="ki-duotone ki-arrow-down fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                    <span class="unread-badge badge badge-circle badge-danger d-none" id="unread-badge-{{ $sessionId }}">0</span>
+                </button>
+                <!--end::Scroll to bottom button-->
 
                 @if ($showMonitor)
                     {{-- RESIZER BAR (draggable) --}}

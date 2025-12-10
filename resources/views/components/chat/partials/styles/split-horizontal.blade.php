@@ -34,9 +34,9 @@
     
     /* Scroll to bottom floating button */
     .scroll-to-bottom-btn {
-        position: fixed; /* Fixed respecto al viewport del contenedor */
-        bottom: 80px; /* Ajustado para no tapar el textarea */
-        right: 40px;
+        position: absolute; /* Absolute respecto al .split-horizontal-container (position: relative) */
+        bottom: 20px; /* Desde el bottom del container, encima del chat */
+        right: 20px; /* Desde el right del container */
         width: 48px;
         height: 48px;
         border-radius: 50%;
