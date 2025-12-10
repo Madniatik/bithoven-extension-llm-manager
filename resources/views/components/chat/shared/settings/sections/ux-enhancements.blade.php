@@ -65,6 +65,21 @@
         </div>
     </div>
 
+    {{-- Streaming Status Indicator --}}
+    <h5 class="mt-6 mb-4">Streaming Status</h5>
+    
+    <div class="mb-5">
+        <div class="form-check form-check-custom form-check-solid mb-4">
+            <input class="form-check-input" type="checkbox" id="streaming_indicator_enabled_{{ $sessionId }}" checked>
+            <label class="form-check-label fw-semibold text-gray-700" for="streaming_indicator_enabled_{{ $sessionId }}">
+                Show Streaming Status Indicator
+            </label>
+            <div class="text-muted fs-7 mt-1">
+                Display visual indicator at top of messages when AI is generating response (Connecting → Thinking → Typing → Completed).
+            </div>
+        </div>
+    </div>
+
     {{-- System Notifications --}}
     <h5 class="mt-6 mb-4">System Notifications</h5>
     
@@ -334,6 +349,9 @@
             { id: 'checkmark_bounce', type: 'checkbox', defaultValue: true },
             { id: 'scroll_button_fade', type: 'checkbox', defaultValue: true },
             { id: 'hover_effects', type: 'checkbox', defaultValue: true },
+            
+            // Streaming Status Indicator
+            { id: 'streaming_indicator_enabled', type: 'checkbox', defaultValue: true },
             
             // System Notifications
             { id: 'system_notification_enabled', type: 'checkbox', defaultValue: true },

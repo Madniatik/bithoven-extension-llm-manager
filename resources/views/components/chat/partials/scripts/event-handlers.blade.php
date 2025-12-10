@@ -631,6 +631,11 @@
 
             eventSource = new EventSource('{{ route('admin.llm.quick-chat.stream') }}?' + params);
 
+            // ===== STREAMING STATUS INDICATOR: Connecting =====
+            if (window.StreamingStatusIndicator) {
+                window.StreamingStatusIndicator.setState('connecting');
+            }
+
             // Listen for request_data SSE event (Phase 2: Update with complete context_messages)
             eventSource.addEventListener('request_data', (event) => {
                 const data = JSON.parse(event.data);
@@ -695,6 +700,11 @@
                 const data = JSON.parse(event.data);
 
                 if (data.type === 'metadata') {
+                    // ===== STREAMING STATUS INDICATOR: Thinking =====
+                    if (window.StreamingStatusIndicator) {
+                        window.StreamingStatusIndicator.setState('thinking');
+                    }
+                    
                     // Capture input_tokens from metadata event (sent before streaming starts)
                     if (data.input_tokens) {
                         inputTokens = data.input_tokens;
@@ -707,6 +717,11 @@
                         addMonitorLog(`💾 User message ID: ${userMessageId}`, 'debug');
                     }
                 } else if (data.type === 'chunk') {
+                    // ===== STREAMING STATUS INDICATOR: Typing (on first chunk) =====
+                    if (chunkCount === 0 && window.StreamingStatusIndicator) {
+                        window.StreamingStatusIndicator.setState('typing');
+                    }
+                    
                     fullResponse += data.content;
                     chunkCount++;
                     const currentTokens = data.tokens || chunkCount;
@@ -996,6 +1011,12 @@
 
                     eventSource?.close();
                     eventSource = null;
+                    
+                    // ===== STREAMING STATUS INDICATOR: Completed =====
+                    if (window.StreamingStatusIndicator) {
+                        window.StreamingStatusIndicator.setState('completed');
+                    }
+                    
                     sendBtn.disabled = false;
                     sendBtn.classList.remove('d-none');
                     stopBtn?.classList.add('d-none');
