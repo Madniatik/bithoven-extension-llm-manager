@@ -99,6 +99,52 @@ document.addEventListener('alpine:init', () => {
                 if (chatPane) chatPane.style.flex = `${savedChatFlex}%`;
                 if (monitorPane) monitorPane.style.flex = `${savedMonitorFlex}%`;
             }
+            
+            // ✅ BUG-7 FIX: Sync messages-container height with chat pane
+            this.setupMessagesContainerSync();
+        },
+        
+        setupMessagesContainerSync() {
+            const chatPane = document.getElementById(this.getElementId('split-chat-pane'));
+            const messagesContainer = chatPane?.querySelector('[data-kt-element="messages"]');
+            
+            if (!chatPane || !messagesContainer) return;
+            
+            // Helper: Update messages container height based on chat pane
+            const syncHeight = () => {
+                const chatHeight = chatPane.offsetHeight;
+                const scrollBtn = chatPane.querySelector('.scroll-to-bottom-btn');
+                const btnHeight = scrollBtn && !scrollBtn.classList.contains('d-none') ? 68 : 0; // 48px button + 20px margin
+                
+                messagesContainer.style.maxHeight = `${chatHeight - btnHeight - 20}px`; // 20px padding
+            };
+            
+            // Initial sync
+            syncHeight();
+            
+            // Watch for chat pane resize (monitor open/close, splitter drag)
+            const observer = new ResizeObserver(() => {
+                syncHeight();
+            });
+            
+            observer.observe(chatPane);
+            
+            // Watch for scroll button visibility changes
+            const scrollBtnObserver = new MutationObserver(() => {
+                syncHeight();
+            });
+            
+            const scrollBtn = chatPane.querySelector('.scroll-to-bottom-btn');
+            if (scrollBtn) {
+                scrollBtnObserver.observe(scrollBtn, {
+                    attributes: true,
+                    attributeFilter: ['class']
+                });
+            }
+            
+            // Store observers for cleanup
+            this._heightSyncObserver = observer;
+            this._scrollBtnObserver = scrollBtnObserver;
         }
     });
     

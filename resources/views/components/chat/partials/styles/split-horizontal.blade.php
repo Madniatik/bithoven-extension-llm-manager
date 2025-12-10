@@ -8,8 +8,7 @@
 .split-horizontal-container {
     display: flex;
     flex-direction: column;
-    height: 100%; /* ✅ BUG-7 FIX: Usar todo el espacio del parent */
-    max-height: calc(100vh - 400px); /* ✅ Límite superior */
+    height: calc(100vh - 400px); /* Ajustado para header + footer */
     min-height: 500px;
     gap: 0;
 }
@@ -115,8 +114,6 @@
     }.split-chat {
     flex: 70%;
     min-height: 250px;
-    overflow-y: auto; /* ✅ BUG-7 FIX: Scroll interno */
-    position: relative;
 }
 
 .split-monitor {
