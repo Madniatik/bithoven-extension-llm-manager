@@ -229,7 +229,13 @@
 
 <script>
 // ===== STREAMING STATUS INDICATOR MODULE =====
-const StreamingStatusIndicator = (() => {
+// Initialize global registry for multiple instances
+if (!window.StreamingStatusIndicators) {
+    window.StreamingStatusIndicators = {};
+}
+
+// Create instance for this session
+window.StreamingStatusIndicators['{{ $sessionId }}'] = (() => {
     const sessionId = '{{ $sessionId }}';
     let currentState = null;
     let hideTimeout = null;
@@ -428,6 +434,8 @@ const StreamingStatusIndicator = (() => {
     };
 })();
 
-// Make globally accessible
-window.StreamingStatusIndicator = StreamingStatusIndicator;
+// Backward compatibility: Expose first/default instance as StreamingStatusIndicator
+if (!window.StreamingStatusIndicator) {
+    window.StreamingStatusIndicator = window.StreamingStatusIndicators['{{ $sessionId }}'];
+}
 </script>

@@ -632,8 +632,8 @@
             eventSource = new EventSource('{{ route('admin.llm.quick-chat.stream') }}?' + params);
 
             // ===== STREAMING STATUS INDICATOR: Connecting =====
-            if (window.StreamingStatusIndicator) {
-                window.StreamingStatusIndicator.setState('connecting');
+            if (window.StreamingStatusIndicators?.[sessionId]) {
+                window.StreamingStatusIndicators[sessionId].setState('connecting');
             }
 
             // Listen for request_data SSE event (Phase 2: Update with complete context_messages)
@@ -701,8 +701,8 @@
 
                 if (data.type === 'metadata') {
                     // ===== STREAMING STATUS INDICATOR: Thinking =====
-                    if (window.StreamingStatusIndicator) {
-                        window.StreamingStatusIndicator.setState('thinking');
+                    if (window.StreamingStatusIndicators?.[sessionId]) {
+                        window.StreamingStatusIndicators[sessionId].setState('thinking');
                     }
                     
                     // Capture input_tokens from metadata event (sent before streaming starts)
@@ -718,8 +718,8 @@
                     }
                 } else if (data.type === 'chunk') {
                     // ===== STREAMING STATUS INDICATOR: Typing (on first chunk) =====
-                    if (chunkCount === 0 && window.StreamingStatusIndicator) {
-                        window.StreamingStatusIndicator.setState('typing');
+                    if (chunkCount === 0 && window.StreamingStatusIndicators?.[sessionId]) {
+                        window.StreamingStatusIndicators[sessionId].setState('typing');
                     }
                     
                     fullResponse += data.content;
@@ -1013,8 +1013,8 @@
                     eventSource = null;
                     
                     // ===== STREAMING STATUS INDICATOR: Completed =====
-                    if (window.StreamingStatusIndicator) {
-                        window.StreamingStatusIndicator.setState('completed');
+                    if (window.StreamingStatusIndicators?.[sessionId]) {
+                        window.StreamingStatusIndicators[sessionId].setState('completed');
                     }
                     
                     sendBtn.disabled = false;
@@ -1182,8 +1182,8 @@
                     eventSource?.close();
                     
                     // Hide streaming indicator
-                    if (window.StreamingStatusIndicator) {
-                        window.StreamingStatusIndicator.hide();
+                    if (window.StreamingStatusIndicators?.[sessionId]) {
+                        window.StreamingStatusIndicators[sessionId].hide();
                     }
                     
                     sendBtn.disabled = false;
@@ -1210,8 +1210,8 @@
                 eventSource?.close();
                 
                 // Hide streaming indicator on error
-                if (window.StreamingStatusIndicator) {
-                    window.StreamingStatusIndicator.hide();
+                if (window.StreamingStatusIndicators?.[sessionId]) {
+                    window.StreamingStatusIndicators[sessionId].hide();
                 }
                 
                 sendBtn.disabled = false;
@@ -1230,8 +1230,8 @@
                 hideThinking();
                 
                 // Hide streaming indicator when stopped manually
-                if (window.StreamingStatusIndicator) {
-                    window.StreamingStatusIndicator.hide();
+                if (window.StreamingStatusIndicators?.[sessionId]) {
+                    window.StreamingStatusIndicators[sessionId].hide();
                 }
                 
                 sendBtn.disabled = false;

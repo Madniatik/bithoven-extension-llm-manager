@@ -205,11 +205,11 @@
         @if ($showSettings)
             {{-- TAB 2: Chat Settings --}}
             <div x-show="activeMainTab === 'settings'" style="display: none; overflow-x: hidden;" class="scroll-y h-lg-auto px-10 py-8"
-                data-kt-element="settings" data-kt-scroll="true" data-kt-scroll-activate="{default: true, lg: false}"
+                data-kt-element="settings" data-kt-scroll="true" data-kt-scroll-activate="{default: true, lg: true}"
                 data-kt-scroll-max-height="auto"
                 data-kt-scroll-dependencies="#kt_header, #kt_app_header, #kt_app_toolbar, #kt_toolbar, #kt_footer, #kt_app_footer"
                 data-kt-scroll-wrappers="#kt_content, #kt_app_content"
-                data-kt-scroll-offset="{default: '350px', lg: '50px'}">
+                data-kt-scroll-offset="{default: '35px', lg: '50px'}">
                 @include('llm-manager::components.chat.shared.settings.settings-form', [
                     'sessionId' => $sessionId,
                 ])
