@@ -237,7 +237,7 @@
                         // Show test notification
                         new Notification('LLM Manager', {
                             body: 'Notifications are now enabled! You will be notified when AI responses are ready.',
-                            icon: '/vendor/llm-manager/images/logo.png',
+                            icon: '/vendor/bithoven/llm-manager/vendor/llm-manager/images/logo.png',
                             tag: 'test-notification'
                         });
                     } else if (permission === 'denied') {
@@ -284,8 +284,8 @@
                 if (systemEnabled) {
                     const notification = new Notification('LLM Manager - Test Notification', {
                         body: 'This is a test notification. Your settings are working correctly!',
-                        icon: '/vendor/llm-manager/images/logo.png',
-                        badge: '/vendor/llm-manager/images/badge.png',
+                        icon: '/vendor/bithoven/llm-manager/vendor/llm-manager/images/logo.png',
+                        badge: '/vendor/bithoven/llm-manager/vendor/llm-manager/images/badge.png',
                         tag: `test-notification-${Date.now()}`,
                         requireInteraction: false,
                         silent: !soundEnabled
@@ -305,7 +305,7 @@
                 // Sound notification
                 if (soundEnabled) {
                     try {
-                        const audio = new Audio(`/vendor/llm-manager/sounds/${soundFile}`);
+                        const audio = new Audio(`/vendor/bithoven/llm-manager/vendor/llm-manager/sounds/${soundFile}`);
                         audio.volume = 0.5;
                         audio.play().catch(err => {
                             console.warn('[Test Notification] Sound play failed (file may not exist):', soundFile, err);

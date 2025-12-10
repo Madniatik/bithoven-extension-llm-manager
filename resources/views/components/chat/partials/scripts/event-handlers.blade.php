@@ -1019,8 +1019,8 @@
                             
                             const notification = new Notification('LLM Manager - Response Ready', {
                                 body: 'Your AI assistant has completed the response.',
-                                icon: '/vendor/llm-manager/images/logo.png',
-                                badge: '/vendor/llm-manager/images/badge.png',
+                                icon: '/vendor/bithoven/llm-manager/vendor/llm-manager/images/logo.png',
+                                badge: '/vendor/bithoven/llm-manager/vendor/llm-manager/images/badge.png',
                                 tag: `llm-response-${sessionId}`, // Replace previous notifications
                                 requireInteraction: false, // Auto-close after timeout
                                 silent: !soundEnabled // If sound is disabled, use system sound
@@ -1044,7 +1044,7 @@
                             console.log(`[Notifications] Playing sound: ${soundFile}`);
                             
                             try {
-                                const audio = new Audio(`/vendor/llm-manager/sounds/${soundFile}`);
+                                const audio = new Audio(`/vendor/bithoven/llm-manager/vendor/llm-manager/sounds/${soundFile}`);
                                 audio.volume = 0.5; // 50% volume
                                 audio.play()
                                     .then(() => console.log('[Notifications] Sound played successfully'))
