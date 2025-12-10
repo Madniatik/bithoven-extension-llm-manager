@@ -228,8 +228,7 @@ body.split-resizing * {
 }
 
 .bubble-content-wrapper.out-of-context {
-    border-left: 3px solid var(--bs-gray-300);
-    opacity: 0.5;
+    /* Sin indicador visual para mensajes fuera de contexto */
 }
 
 /* Badge circular para numeración */
