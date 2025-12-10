@@ -62,15 +62,15 @@
             <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
                 <thead>
                     <tr class="fw-bold text-muted">
-                        <th class="min-w-50px">#</th>
-                        <th class="min-w-100px">Time</th>
-                        <th class="min-w-100px">Provider</th>
-                        <th class="min-w-150px">Model</th>
-                        <th class="min-w-80px text-end">Tokens</th>
-                        <th class="min-w-100px text-end">Cost</th>
-                        <th class="min-w-80px text-end">Duration</th>
-                        <th class="min-w-100px">Status</th>
-                        <th class="min-w-100px text-end">Actions</th>
+                        <th class="px-10 min-w-50px">#</th>
+                        <th class="px-10 min-w-100px">Time</th>
+                        <th class="px-10 min-w-100px">Provider</th>
+                        <th class="px-10 min-w-150px">Model</th>
+                        <th class="px-10 min-w-80px text-end">Tokens</th>
+                        <th class="px-10 min-w-100px text-end">Cost</th>
+                        <th class="px-10 min-w-80px text-end">Duration</th>
+                        <th class="px-10 min-w-100px">Status</th>
+                        <th class="px-10 min-w-100px text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="activityTableBody">
@@ -162,30 +162,30 @@ const ActivityHistory = {
             
             html += `
                 <tr>
-                    <td>
+                    <td class="px-10">
                         <span class="text-muted fw-semibold">${data.length - index}</span>
                     </td>
-                    <td>
+                    <td class="px-10">
                         <div class="d-flex flex-column">
                             <span class="text-dark fw-bold">${timeStr}</span>
                             <span class="text-muted fs-7">${dateStr}</span>
                         </div>
                     </td>
-                    <td>${providerBadge}</td>
-                    <td>
+                    <td class="px-10">${providerBadge}</td>
+                    <td class="px-10">
                         <span class="text-dark fw-semibold">${activity.model}</span>
                     </td>
-                    <td class="text-end">
+                    <td class="px-10 text-end">
                         <span class="badge badge-light">${activity.tokens.toLocaleString()}</span>
                     </td>
-                    <td class="text-end">
+                    <td class="px-10 text-end">
                         <span class="text-dark fw-bold">$${activity.cost.toFixed(6)}</span>
                     </td>
-                    <td class="text-end">
+                    <td class="px-10 text-end">
                         <span class="text-muted">${activity.duration}s</span>
                     </td>
-                    <td>${statusBadge}</td>
-                    <td class="text-end">
+                    <td class="px-10">${statusBadge}</td>
+                    <td class="px-10 text-end">
                         <button type="button" 
                                 class="btn btn-sm btn-light btn-active-light-primary" 
                                 onclick="ActivityHistory.toggleDetails(${activity.log_id})"
