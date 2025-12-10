@@ -9,6 +9,127 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v1.0.7
 
+### 🔄 Message ID Refactor: Two-Column Approach (10 diciembre 2025, 02:50)
+
+**BREAKING CHANGE: Usage logs now track request and response messages separately** ✅
+
+**Total:** 1 commit (b0942de), ~2 hours, **Manual testing: 100% OK**
+
+**What Changed:**
+- ✅ Database schema: `message_id` → `request_message_id` + `response_message_id`
+- ✅ Request Inspector: Split into two fields (request shown immediately, response after streaming)
+- ✅ Delete message: Nullifies correct field in logs (preserves log data)
+- ✅ Service layer: `startSession()` and `endSession()` updated with new parameters
+- ✅ Controllers: 4 files updated (QuickChat, Conversation, Stream, Message)
+
+**Migration Strategy:**
+- **Manual ALTER TABLE** (no migrate:fresh needed)
+- **Backup created:** `backups/pre-message-refactor-20251210-0146.sql` (4.3MB)
+- **Git tag:** `checkpoint-pre-message-refactor` (safe restore point)
+
+**Database Changes:**
+```sql
+-- Step 1: Drop FK constraint
+ALTER TABLE llm_manager_usage_logs DROP FOREIGN KEY llm_manager_usage_logs_message_id_foreign;
+
+-- Step 2: Drop old index
+ALTER TABLE llm_manager_usage_logs DROP INDEX llm_ul_message_idx;
+
+-- Step 3: Rename column + add new column
+ALTER TABLE llm_manager_usage_logs 
+  CHANGE COLUMN message_id request_message_id BIGINT UNSIGNED NULL,
+  ADD COLUMN response_message_id BIGINT UNSIGNED NULL AFTER request_message_id;
+
+-- Step 4: Add new indexes
+ALTER TABLE llm_manager_usage_logs 
+  ADD INDEX llm_ul_request_msg_idx (request_message_id),
+  ADD INDEX llm_ul_response_msg_idx (response_message_id);
+```
+
+**Code Changes:**
+
+#### Model (LLMUsageLog)
+- **$fillable:** Removed `message_id`, added `request_message_id`, `response_message_id`
+- **Relationships:**
+  - Removed: `message()` → `belongsTo(message_id)`
+  - Added: `requestMessage()` → `belongsTo(request_message_id)`
+  - Added: `responseMessage()` → `belongsTo(response_message_id)`
+
+#### Service Layer (LLMStreamLogger)
+- **startSession():**
+  - Parameter: `$messageId` → `$requestMessageId`
+  - Session key: `db_message_id` → `db_request_message_id`
+- **endSession():**
+  - New parameter: `?int $responseMessageId = null`
+  - Fields updated: `request_message_id`, `response_message_id`
+- **logError():**
+  - Field: `message_id` → `request_message_id`
+  - `response_message_id` stays `NULL` (errors have no response)
+
+#### Controllers
+- **LLMQuickChatController:**
+  - Line 142: Pass `$userMessage->id` as `$requestMessageId` to `startSession()`
+  - Line 350: Pass `$assistantMessage->id` as `$responseMessageId` to `endSession()`
+  - Line 203: Event `request_data` sends `request_message_id` (not `message_id`)
+  
+- **LLMConversationController:**
+  - Reordered: Create assistant message BEFORE `endSession()` to have ID
+  - Line 303: Create `$assistantMessage` first
+  - Line 312: Call `endSession($session, $fullResponse, $metrics, $assistantMessage->id)`
+  
+- **LLMStreamController:**
+  - No changes needed (test endpoint uses `NULL` for both IDs)
+  
+- **LLMMessageController:**
+  - Added nullify logic before delete:
+    ```php
+    LLMUsageLog::where('request_message_id', $message->id)->update(['request_message_id' => null]);
+    LLMUsageLog::where('response_message_id', $message->id)->update(['response_message_id' => null]);
+    $message->delete();
+    ```
+
+#### Frontend (Request Inspector)
+- **monitor-request-inspector.blade.php:**
+  - Split "Message ID" row into two:
+    - "Request Message ID" (shown immediately)
+    - "Response Message ID" (starts as `<span class="text-muted">Pending...</span>`)
+    
+- **request-inspector.blade.php:**
+  - Changed: `meta-message-id` → `meta-request-message-id`
+  - Reads: `data.metadata.request_message_id`
+  
+- **event-handlers.blade.php:**
+  - On `done` event, update response message ID:
+    ```javascript
+    const responseMessageEl = document.getElementById('meta-response-message-id');
+    if (responseMessageEl) {
+        responseMessageEl.innerHTML = `<span class="text-success">${data.message_id}</span>`;
+    }
+    ```
+
+**Rationale:**
+1. **Cleaner separation:** Request (user message) vs Response (assistant message)
+2. **Better queries:** Find logs by either message independently
+3. **Streaming timeline:** Request available BEFORE streaming, response AFTER
+4. **Delete tracking:** Nullify correct field when user/assistant message deleted
+5. **Performance:** Two indexed columns faster than string parsing (`"345:365"`)
+
+**Testing Results:**
+- ✅ Quick Chat: Both IDs populated correctly
+- ✅ Request Inspector: Request ID immediate, Response ID updates on `done` event
+- ✅ Delete user message: `request_message_id` nullified, log preserved
+- ✅ Delete assistant message: `response_message_id` nullified, log preserved
+- ✅ Database: Both columns indexed, queries fast
+
+**Files Modified:** 9 files
+- Migration: `2025_11_18_000002_create_llm_manager_usage_logs_table.php`
+- Model: `LLMUsageLog.php`
+- Service: `LLMStreamLogger.php`
+- Controllers: `LLMQuickChatController.php`, `LLMConversationController.php`, `LLMMessageController.php`
+- Views: `monitor-request-inspector.blade.php`, `request-inspector.blade.php`, `event-handlers.blade.php`
+
+---
+
 ### 🔍 Request Inspector Tab (9 diciembre 2025, 02:20)
 
 **Visual debugging tool for LLM requests implemented!** ✅
