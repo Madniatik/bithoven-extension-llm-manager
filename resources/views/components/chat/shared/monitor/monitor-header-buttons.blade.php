@@ -11,6 +11,7 @@
     - $showDownload: bool (default: true) - Show download button
     - $showCopy: bool (default: true) - Show copy button
     - $showClear: bool (default: true) - Show clear button
+    - $showLoadMore: bool (default: false) - Show load more button (Activity Logs tab)
     - $showFullscreen: bool (default: false) - Show fullscreen toggle (only split layout)
     - $showClose: bool (default: false) - Show close button
     - $size: string (default: 'sm') - Button size ('sm' or 'md')
@@ -20,6 +21,10 @@
     - Estandarización de íconos, tooltips y estilos
     - Separador visual entre grupos de botones
     - Alpine.js bindings para fullscreen toggle
+    
+    Changelog v1.1:
+    - Added Load More button for Activity Logs tab
+    - Renamed functions: copyConsole, downloadConsole, clearConsole
 --}}
 
 @php
@@ -27,6 +32,7 @@
     $showDownload = $showDownload ?? true;
     $showCopy = $showCopy ?? true;
     $showClear = $showClear ?? true;
+    $showLoadMore = $showLoadMore ?? false;
     $showFullscreen = $showFullscreen ?? false;
     $showClose = $showClose ?? false;
     $size = $size ?? 'sm';
@@ -68,8 +74,19 @@
         </button>
     @endif
 
+    @if($showLoadMore)
+        {{-- Load More Activity Logs --}}
+        <button type="button" 
+                class="btn btn-icon btn-{{ $size }} btn-active-light-primary"
+                onclick="ActivityHistory.loadMore()"
+                data-bs-toggle="tooltip" 
+                title="Load 10 more activity logs">
+            {!! getIcon('ki-arrow-down', $iconSize, '', 'i') !!}
+        </button>
+    @endif
+
     {{-- Separator between groups --}}
-    @if(($showRefresh || $showDownload || $showCopy) && ($showClear || $showFullscreen || $showClose))
+    @if(($showRefresh || $showDownload || $showCopy || $showLoadMore) && ($showClear || $showFullscreen || $showClose))
         <div class="separator separator-vertical mx-1"></div>
     @endif
 

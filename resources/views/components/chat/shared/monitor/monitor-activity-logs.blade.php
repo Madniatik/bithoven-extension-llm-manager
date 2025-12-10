@@ -94,17 +94,27 @@
  */
 const ActivityHistory = {
     endpoint: '{{ route("admin.llm.stream.activity-history") }}',
+    currentLimit: 10,      // Current limit for pagination
+    sessionId: null,       // Current session ID
     
     /**
      * Load activity history from database
      * @param {number|null} sessionId - Optional session filter
-     * @param {number} limit - Number of items to load (default: 10)
+     * @param {number|null} limit - Number of items to load (uses currentLimit if null)
      */
-    async load(sessionId = null, limit = 10) {
+    async load(sessionId = null, limit = null) {
+        // Store sessionId for loadMore()
+        if (sessionId !== null) {
+            this.sessionId = sessionId;
+        }
+        
+        // Use provided limit or currentLimit
+        const loadLimit = limit !== null ? limit : this.currentLimit;
+        
         try {
             const params = new URLSearchParams();
-            if (sessionId) params.append('session_id', sessionId);
-            params.append('limit', limit);
+            if (this.sessionId) params.append('session_id', this.sessionId);
+            params.append('limit', loadLimit);
             
             const response = await fetch(`${this.endpoint}?${params.toString()}`);
             
@@ -122,6 +132,37 @@ const ActivityHistory = {
         } catch (error) {
             console.error('Activity History load error:', error);
             this.renderError(error.message);
+        }
+    },
+    
+    /**
+     * Load more activity history records
+     * Increments limit by 10 and reloads
+     */
+    async loadMore() {
+        // Increment limit
+        this.currentLimit += 10;
+        
+        // Reload with new limit
+        await this.load(null, this.currentLimit);
+        
+        // Show success toast
+        if (window.Swal) {
+            const theme = document.documentElement.getAttribute('data-bs-theme');
+            const isDark = theme === 'dark';
+            
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+                background: isDark ? '#1e1e2d' : '#ffffff',
+                color: isDark ? '#ffffff' : '#181c32',
+                icon: 'success',
+                title: `Loaded ${this.currentLimit} records`,
+                iconColor: isDark ? '#ffffff' : '#181c32'
+            });
         }
     },
     
