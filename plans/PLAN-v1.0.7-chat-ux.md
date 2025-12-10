@@ -4,7 +4,7 @@
 **Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
 **Estado:** New  
 **Prioridad:** Medium  
-**Tiempo Estimado:** 8-12 horas → **12-14 horas** (actualizado con BUG-7)
+**Tiempo Estimado:** 10.5-12.5 horas (actualizado: BUG-7 descartado)
 
 ---
 
@@ -458,46 +458,32 @@ newChatBtn?.addEventListener('click', async (e) => {
 
 ---
 
-### BUG-7: Messages Container Oculto por Monitor en Split Mode 🟡
-**Descripción:** En modo split (horizontal layout), cuando se abre el monitor, el borde inferior del contenedor de mensajes queda oculto debajo del panel del monitor. El usuario pierde visibilidad del último mensaje y no puede ver el final de la conversación.
+### BUG-7: Messages Container Oculto por Monitor en Split Mode ❌ DESCARTADO
 
-**Comportamiento Actual:**
-- Split mode usa dos paneles: arriba (chat) y abajo (monitor)
-- Barra divisoria (splitter) controla el tamaño de ambos paneles
-- Cuando monitor se abre, ocupa espacio del panel inferior
-- El `messages-container` mantiene su altura original → últimos mensajes quedan ocultos
-- Usuario tiene que hacer scroll manual para ver mensajes nuevos
+**Problema:**
+- En modo split (monitor visible), cuando el panel monitor está abierto, el bottom del `.messages-container` queda oculto por el panel del monitor
+- Comportamiento actual: Los últimos mensajes del chat quedan tapados por el monitor panel
+- Comportamiento deseado: El `.messages-container` debería linkear su bottom al split point, ajustándose dinámicamente cuando el monitor se abre/cierra
 
-**Comportamiento Deseado:**
-- El borde inferior del `messages-container` debe estar SIEMPRE ligado al punto de split
-- Cuando usuario mueve la barra divisoria:
-  - Panel superior (chat) se redimensiona dinámicamente
-  - `messages-container` ajusta su altura automáticamente
-  - Borde inferior siempre visible en el límite del split
-- Auto-scroll debe seguir funcionando (scroll to bottom cuando llega mensaje nuevo)
+**Decisión:**
+- **DESCARTADO** tras intentar dos soluciones:
+  - **Opción A (CSS):** `height: 100%` + `max-height` en container → Rompió drag del split
+  - **Opción B (JavaScript):** ResizeObserver + MutationObserver → Lógica compleja sin beneficio claro
+  
+**Razón del descarte:**
+- Las soluciones implementadas introducen más complejidad que beneficio
+- El problema es menor (solo afecta cuando monitor está abierto)
+- Los usuarios pueden hacer scroll manual para ver mensajes ocultos
+- El drag del splitter permite ajustar manualmente el espacio chat/monitor
+- Riesgo de romper auto-scroll o crear comportamientos inesperados
 
-**Análisis de Impacto:**
-- ⚠️ **Smart Auto-Scroll:** Puede afectarse si la altura del container cambia durante streaming
-- ⚠️ **isAtBottom() detection:** Depende de `scrollHeight` estable
-- ⚠️ **Scroll Button visibility:** Puede tener conflictos si container se redimensiona mientras usuario scrollea
+**Estado:** ❌ DESCARTADO (no se implementará)
 
-**Solución Propuesta (Opción A - CSS puro):**
-```css
-/* split-horizontal.blade.php */
-#messages-container-{{ $session->id }} {
-    height: calc(100% - 140px); /* 100% del panel superior - header - footer */
-    max-height: calc(100vh - 200px); /* Límite absoluto */
-    overflow-y: auto;
-}
+**Commits de intento:**
+- `2486405` - CSS solution (revertido)
+- `829345c` - JavaScript solution (revertido)
 
-/* Ajustar cuando split se redimensiona */
-.split-panel-top {
-    display: flex;
-    flex-direction: column;
-}
-
-.messages-wrapper {
-    flex: 1; /* Ocupa todo el espacio disponible */
+---
     min-height: 0; /* Permite shrink */
     overflow: hidden;
 }
@@ -551,14 +537,9 @@ syncMessagesContainerHeight();
 4. Scroll manual arriba → Scroll button debe aparecer correctamente
 5. Volver a bottom → Auto-scroll debe reactivarse
 
-**Archivos:**
-- `split-horizontal.blade.php` - CSS height adjustments (Opción A)
-- `event-handlers.blade.php` - ResizeObserver logic (Opción B, si necesario)
-- `split-horizontal-layout.blade.php` - Estructura flex del split
-
-**Tiempo Estimado:** 1.5 horas (incluye testing de regressions)
-
-**Prioridad:** Medium (UX issue, no rompe funcionalidad core)
+**Commits de intento:**
+- `2486405` - CSS solution (revertido)
+- `829345c` - JavaScript solution (revertido)
 
 ---
 
@@ -900,19 +881,17 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 📊 PROGRESO
 
-**Estado Actual:** 7/17 items completados (41%)
-**Última Actualización:** 10 de diciembre de 2025, 02:10
+**Estado Actual:** 7/16 items completados (44%)  
+**Última Actualización:** 10 de diciembre de 2025, 03:30
 
-### Bug Fixes (4/7) ✅
+### Bug Fixes (4/6) ✅
 - [x] **BUG-2:** Textarea resize fix (e59259b) - 15 min
 - [x] **BUG-3:** User bubble icons (64c0518) - 20 min
 - [x] **BUG-1:** Scroll inicial invisible (54b6554) - 30 min
 - [x] **BUG-5:** Checkmark fade out innecesario (eba6466) - 10 min
 - [ ] **BUG-4:** Cancel request investigation - 2h (APLAZADO)
 - [ ] **BUG-6:** New Chat sin advertencia durante streaming - 30 min
-- [ ] **BUG-7:** Messages container oculto por monitor en split mode - 1.5h
-
-### Implementaciones (2/8) 🔄
+- [❌] **BUG-7:** Messages container oculto por monitor - DESCARTADO (2486405, 829345c revertidos)### Implementaciones (2/8) 🔄
 - [ ] Notificación sonora inteligente
 - [ ] Botón borrar mensaje
 - [ ] Indicador streaming status
@@ -929,14 +908,14 @@ textarea.addEventListener('keydown', (e) => {
 
 ## 🎯 ORDEN DE IMPLEMENTACIÓN RECOMENDADO
 
-### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 4/7
+### Fase 1: Bug Fixes (Alta Prioridad) - 1.5 horas ✅ 4/6
 1. ✅ **BUG-2:** Textarea resize (15 min) - COMPLETADO (e59259b)
 2. ✅ **BUG-3:** User bubble icons (20 min) - COMPLETADO (64c0518)
 3. ✅ **BUG-1:** Scroll inicial invisible (30 min) - COMPLETADO (54b6554)
 4. ✅ **BUG-5:** Checkmark fade out (10 min) - COMPLETADO (eba6466)
 5. ⏸️ **BUG-4:** Cancel request investigation (2 horas) - APLAZADO
 6. 🔜 **BUG-6:** New Chat warning (30 min) - PENDIENTE
-7. 🆕 **BUG-7:** Messages container hidden by monitor (1.5h) - NUEVO
+7. ❌ **BUG-7:** Messages container hidden by monitor - DESCARTADO
 
 ### Fase 2: Configuración (1.5 horas) ✅ COMPLETADO
 1. ✅ **Chat Administration Refactoring** (1.5 horas) - COMPLETADO (d093e21, 2cead9a)
@@ -978,7 +957,7 @@ Este plan se considerará **100% completado** cuando:
 - User bubble icons visibles
 - Checkmark permanente en new bubbles
 - New Chat warning durante streaming
-- Messages container ligado al split point (sin conflictos con auto-scroll)
+- BUG-7 (split messages container) evaluado y descartado
 - Cancel request investigation documentada (con o sin solución implementada)
 
 ✅ **Chat Administration actualizado:**
