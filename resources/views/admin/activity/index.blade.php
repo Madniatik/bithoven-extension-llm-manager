@@ -77,6 +77,10 @@
                     <i class="ki-outline ki-file-down fs-4"></i>
                     Export JSON
                 </a>
+                <a href="{{ route('admin.llm.activity.export-sql', request()->query()) }}" class="btn btn-sm btn-light-primary">
+                    <i class="ki-outline ki-file-down fs-4"></i>
+                    Export SQL
+                </a>
                 @if(request()->hasAny(['provider', 'status', 'date_from', 'date_to', 'search']))
                     <a href="{{ route('admin.llm.activity.index') }}" class="btn btn-sm btn-light-danger">
                         <i class="ki-outline ki-cross-circle fs-4"></i>

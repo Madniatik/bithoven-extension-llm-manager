@@ -89,6 +89,7 @@ Route::prefix('admin/llm')
         Route::get('activity/{id}', [LLMActivityController::class, 'show'])->name('activity.show');
         Route::get('activity-export/csv', [LLMActivityController::class, 'export'])->name('activity.export');
         Route::get('activity-export/json', [LLMActivityController::class, 'exportJson'])->name('activity.export-json');
+        Route::get('activity-export/sql', [LLMActivityController::class, 'exportSql'])->name('activity.export-sql');
         
         // New model-based routes (tab interface)
         Route::get('models/{model}', [\Bithoven\LLMManager\Http\Controllers\Admin\LLMModelController::class, 'show'])->name('models.show');

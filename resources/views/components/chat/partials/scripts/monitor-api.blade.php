@@ -613,4 +613,46 @@ window.initLLMMonitor = () => {};
         }
     };
 })();
+
+// ============================================================================
+// Global Utility Functions (not part of LLMMonitor object)
+// ============================================================================
+
+/**
+ * Confirm large export and show loading indicator
+ * Used by Export dropdown in monitor-header-buttons
+ */
+window.confirmLargeExport = function(event) {
+    // Check if ActivityHistory exists and has logs
+    if (typeof ActivityHistory !== 'undefined' && ActivityHistory.logs) {
+        const totalLogs = ActivityHistory.logs.length;
+        
+        // Warning for large datasets
+        if (totalLogs > 1000) {
+            toastr.warning(
+                `You are about to export ${totalLogs} records. This may take a few seconds.`,
+                'Large Export',
+                { 
+                    timeOut: 5000,
+                    progressBar: true
+                }
+            );
+        }
+        
+        // Show loading notification (auto-dismiss after 3s)
+        setTimeout(() => {
+            toastr.info(
+                'Generating export file... Download will start automatically.',
+                'Processing',
+                { 
+                    timeOut: 3000,
+                    progressBar: true
+                }
+            );
+        }, 100);
+    }
+    
+    return true; // Continue with link navigation
+};
 </script>
+

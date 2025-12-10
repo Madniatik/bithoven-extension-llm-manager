@@ -163,6 +163,8 @@
                                             'showCopy' => false,
                                             'showClear' => false,
                                             'showLoadMore' => true,
+                                            'showExport' => true,
+                                            'sessionId' => $session?->id,
                                             'showFullscreen' => true,
                                             'showClose' => true,
                                             'size' => 'sm'

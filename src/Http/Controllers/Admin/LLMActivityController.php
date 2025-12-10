@@ -71,8 +71,25 @@ class LLMActivityController extends Controller
      */
     public function export(Request $request)
     {
-        $query = LLMUsageLog::with(['configuration', 'user'])
+        $query = LLMUsageLog::with(['configuration', 'user', 'session'])
             ->latest('executed_at');
+
+        // Filter by session_id (Monitor context)
+        if ($request->filled('session_id')) {
+            $session = \Bithoven\LLMManager\Models\LLMConversationSession::findOrFail($request->session_id);
+            
+            // Security: Verify session belongs to current user
+            if ($session->user_id !== auth()->id()) {
+                abort(403, 'Unauthorized: This session does not belong to you');
+            }
+            
+            $query->where('session_id', $request->session_id);
+        }
+
+        // Filter by user_only (Monitor context - only current user's logs)
+        if ($request->filled('user_only') && $request->user_only) {
+            $query->where('user_id', auth()->id());
+        }
 
         // Apply same filters as index
         if ($request->filled('provider')) {
@@ -94,7 +111,14 @@ class LLMActivityController extends Controller
 
         $logs = $query->get();
 
-        $filename = 'llm-activity-' . date('Y-m-d-His') . '.csv';
+        // Dynamic filename based on context
+        $filename = 'llm-activity-';
+        if ($request->filled('session_id')) {
+            $filename .= 'session-' . $request->session_id . '-';
+        } elseif ($request->filled('user_only')) {
+            $filename .= 'user-';
+        }
+        $filename .= date('Y-m-d-His') . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
@@ -107,17 +131,19 @@ class LLMActivityController extends Controller
             // Header row
             fputcsv($file, [
                 'ID',
+                'Session ID',
                 'Date/Time',
                 'Provider',
                 'Model',
                 'User',
-                'Prompt',
-                'Response',
+                'Prompt (Full)',
+                'Response (Full)',
                 'Prompt Tokens',
                 'Completion Tokens',
                 'Total Tokens',
                 'Cost USD',
                 'Duration (ms)',
+                'Duration (s)',
                 'Status',
                 'Error Message',
             ]);
@@ -126,17 +152,19 @@ class LLMActivityController extends Controller
             foreach ($logs as $log) {
                 fputcsv($file, [
                     $log->id,
+                    $log->session_id ?? 'N/A',
                     $log->executed_at,
                     $log->configuration->provider ?? 'N/A',
                     $log->configuration->model ?? 'N/A',
                     $log->user->name ?? 'N/A',
-                    substr($log->prompt, 0, 200),
-                    substr($log->response, 0, 200),
+                    $log->prompt,  // Full text
+                    $log->response,  // Full text
                     $log->prompt_tokens,
                     $log->completion_tokens,
                     $log->total_tokens,
                     $log->cost_usd,
                     $log->execution_time_ms,
+                    round($log->execution_time_ms / 1000, 2),  // Duration in seconds
                     $log->status,
                     $log->error_message ?? '',
                 ]);
@@ -153,8 +181,25 @@ class LLMActivityController extends Controller
      */
     public function exportJson(Request $request)
     {
-        $query = LLMUsageLog::with(['configuration', 'user'])
+        $query = LLMUsageLog::with(['configuration', 'user', 'session'])
             ->latest('executed_at');
+
+        // Filter by session_id (Monitor context)
+        if ($request->filled('session_id')) {
+            $session = \Bithoven\LLMManager\Models\LLMConversationSession::findOrFail($request->session_id);
+            
+            // Security: Verify session belongs to current user
+            if ($session->user_id !== auth()->id()) {
+                abort(403, 'Unauthorized: This session does not belong to you');
+            }
+            
+            $query->where('session_id', $request->session_id);
+        }
+
+        // Filter by user_only (Monitor context - only current user's logs)
+        if ($request->filled('user_only') && $request->user_only) {
+            $query->where('user_id', auth()->id());
+        }
 
         // Apply same filters as index
         if ($request->filled('provider')) {
@@ -176,10 +221,125 @@ class LLMActivityController extends Controller
 
         $logs = $query->get();
 
-        $filename = 'llm-activity-' . date('Y-m-d-His') . '.json';
+        // Dynamic filename based on context
+        $filename = 'llm-activity-';
+        if ($request->filled('session_id')) {
+            $filename .= 'session-' . $request->session_id . '-';
+        } elseif ($request->filled('user_only')) {
+            $filename .= 'user-';
+        }
+        $filename .= date('Y-m-d-His') . '.json';
 
         return response()->json($logs, 200, [
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
+    }
+
+    /**
+     * Export logs to SQL
+     */
+    public function exportSql(Request $request)
+    {
+        $query = LLMUsageLog::with(['configuration', 'user', 'session'])
+            ->latest('executed_at');
+
+        // Filter by session_id (Monitor context)
+        if ($request->filled('session_id')) {
+            $session = \Bithoven\LLMManager\Models\LLMConversationSession::findOrFail($request->session_id);
+            
+            // Security: Verify session belongs to current user
+            if ($session->user_id !== auth()->id()) {
+                abort(403, 'Unauthorized: This session does not belong to you');
+            }
+            
+            $query->where('session_id', $request->session_id);
+        }
+
+        // Filter by user_only (Monitor context - only current user's logs)
+        if ($request->filled('user_only') && $request->user_only) {
+            $query->where('user_id', auth()->id());
+        }
+
+        // Apply same filters as index
+        if ($request->filled('provider')) {
+            $query->whereHas('configuration', function ($q) use ($request) {
+                $q->where('provider', $request->provider);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('executed_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('executed_at', '<=', $request->date_to . ' 23:59:59');
+        }
+
+        $logs = $query->get();
+
+        // Dynamic filename based on context
+        $filename = 'llm-activity-';
+        if ($request->filled('session_id')) {
+            $filename .= 'session-' . $request->session_id . '-';
+        } elseif ($request->filled('user_only')) {
+            $filename .= 'user-';
+        }
+        $filename .= date('Y-m-d-His') . '.sql';
+
+        $headers = [
+            'Content-Type' => 'text/plain',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($logs, $request) {
+            $file = fopen('php://output', 'w');
+
+            // SQL Header Comments
+            fwrite($file, "-- LLM Activity Export\n");
+            fwrite($file, "-- Date: " . date('Y-m-d H:i:s') . "\n");
+            if ($request->filled('session_id')) {
+                fwrite($file, "-- Session ID: {$request->session_id}\n");
+            }
+            fwrite($file, "-- Total Records: " . $logs->count() . "\n\n");
+
+            if ($logs->isEmpty()) {
+                fwrite($file, "-- No records found\n");
+                fclose($file);
+                return;
+            }
+
+            // INSERT statements
+            fwrite($file, "INSERT INTO `llm_manager_usage_logs` \n");
+            fwrite($file, "(`id`, `session_id`, `user_id`, `configuration_id`, `provider`, `model`, `prompt`, `response`, `prompt_tokens`, `completion_tokens`, `total_tokens`, `cost_usd`, `execution_time_ms`, `status`, `error_message`, `executed_at`, `created_at`, `updated_at`) \n");
+            fwrite($file, "VALUES\n");
+
+            $totalLogs = $logs->count();
+            foreach ($logs as $index => $log) {
+                $isLast = ($index + 1) === $totalLogs;
+
+                // Escape values for SQL
+                $sessionId = $log->session_id ? "'{$log->session_id}'" : 'NULL';
+                $userId = $log->user_id ? "'{$log->user_id}'" : 'NULL';
+                $configId = $log->configuration_id ? "'{$log->configuration_id}'" : 'NULL';
+                $provider = addslashes($log->configuration->provider ?? 'N/A');
+                $model = addslashes($log->configuration->model ?? 'N/A');
+                $prompt = addslashes($log->prompt);
+                $response = addslashes($log->response);
+                $errorMessage = $log->error_message ? "'" . addslashes($log->error_message) . "'" : 'NULL';
+                $executedAt = $log->executed_at ? "'{$log->executed_at}'" : 'NULL';
+                $createdAt = $log->created_at ? "'{$log->created_at}'" : 'NULL';
+                $updatedAt = $log->updated_at ? "'{$log->updated_at}'" : 'NULL';
+
+                fwrite($file, "({$log->id}, {$sessionId}, {$userId}, {$configId}, '{$provider}', '{$model}', '{$prompt}', '{$response}', {$log->prompt_tokens}, {$log->completion_tokens}, {$log->total_tokens}, {$log->cost_usd}, {$log->execution_time_ms}, '{$log->status}', {$errorMessage}, {$executedAt}, {$createdAt}, {$updatedAt})");
+                fwrite($file, $isLast ? ";\n" : ",\n");
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

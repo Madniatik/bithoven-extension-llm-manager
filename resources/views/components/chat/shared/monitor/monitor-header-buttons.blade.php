@@ -12,6 +12,8 @@
     - $showCopy: bool (default: true) - Show copy button
     - $showClear: bool (default: true) - Show clear button
     - $showLoadMore: bool (default: false) - Show load more button (Activity Logs tab)
+    - $showExport: bool (default: false) - Show export dropdown (Activity Logs tab)
+    - $sessionId: int|null (default: null) - Session ID for export filtering
     - $showFullscreen: bool (default: false) - Show fullscreen toggle (only split layout)
     - $showClose: bool (default: false) - Show close button
     - $size: string (default: 'sm') - Button size ('sm' or 'md')
@@ -25,6 +27,11 @@
     Changelog v1.1:
     - Added Load More button for Activity Logs tab
     - Renamed functions: copyConsole, downloadConsole, clearConsole
+    
+    Changelog v1.2:
+    - Added Export dropdown (CSV, JSON, SQL) for Activity Logs tab
+    - Session-aware exports with session_id parameter
+    - Security: user_only filter for Monitor context
 --}}
 
 @php
@@ -33,6 +40,8 @@
     $showCopy = $showCopy ?? true;
     $showClear = $showClear ?? true;
     $showLoadMore = $showLoadMore ?? false;
+    $showExport = $showExport ?? false;
+    $sessionId = $sessionId ?? null;
     $showFullscreen = $showFullscreen ?? false;
     $showClose = $showClose ?? false;
     $size = $size ?? 'sm';
@@ -85,8 +94,47 @@
         </button>
     @endif
 
+    @if($showExport)
+        {{-- Export Activity Logs Dropdown --}}
+        <div class="btn-group" role="group">
+            <button type="button" 
+                    class="btn btn-icon btn-{{ $size }} btn-active-light-success dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    title="Export activity logs">
+                {!! getIcon('ki-file-down', $iconSize, '', 'i') !!}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item" 
+                       href="{{ route('admin.llm.activity.export', array_filter(['session_id' => $sessionId, 'user_only' => 1])) }}"
+                       onclick="return confirmLargeExport(event)">
+                        <i class="ki-outline ki-file-down fs-5 me-2 text-success"></i>
+                        Export CSV
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" 
+                       href="{{ route('admin.llm.activity.export-json', array_filter(['session_id' => $sessionId, 'user_only' => 1])) }}"
+                       onclick="return confirmLargeExport(event)">
+                        <i class="ki-outline ki-file-down fs-5 me-2 text-info"></i>
+                        Export JSON
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" 
+                       href="{{ route('admin.llm.activity.export-sql', array_filter(['session_id' => $sessionId, 'user_only' => 1])) }}"
+                       onclick="return confirmLargeExport(event)">
+                        <i class="ki-outline ki-file-down fs-5 me-2 text-primary"></i>
+                        Export SQL
+                    </a>
+                </li>
+            </ul>
+        </div>
+    @endif
+
     {{-- Separator between groups --}}
-    @if(($showRefresh || $showDownload || $showCopy || $showLoadMore) && ($showClear || $showFullscreen || $showClose))
+    @if(($showRefresh || $showDownload || $showCopy || $showLoadMore || $showExport) && ($showClear || $showFullscreen || $showClose))
         <div class="separator separator-vertical mx-1"></div>
     @endif
 
