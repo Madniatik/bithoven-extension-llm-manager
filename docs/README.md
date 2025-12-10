@@ -1,7 +1,7 @@
 # LLM Manager Extension - Documentación
 
-**Versión:** 1.0.7-dev  
-**Última actualización:** 7 diciembre 2025
+**Versión:** 1.0.7  
+**Última actualización:** 10 diciembre 2025, 13:10
 
 > 📋 **Quick Index:** Ver [QUICK-INDEX.json](../QUICK-INDEX.json) para navegación optimizada de Copilot
 
