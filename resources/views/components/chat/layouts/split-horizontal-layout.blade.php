@@ -61,6 +61,10 @@
                 x-init="init()">
                 {{-- CHAT PANE (70% default) --}}
                 <div class="split-pane split-chat" id="split-chat-pane-{{ $sessionId }}" style="overflow-x: hidden; position: relative;">
+                    
+                    {{-- Streaming Status Indicator (sticky top, fuera de messages-container) --}}
+                    @include('llm-manager::components.chat.partials.streaming-status-indicator', ['sessionId' => $sessionId])
+                    
                     <div class="py-0" style="overflow-x: hidden;">
                         @include('llm-manager::components.chat.partials.messages-container')
                     </div>
