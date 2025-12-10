@@ -14,10 +14,7 @@
 }
 
 /* Messages Container Responsive Heights */
-.messages-container {
-    max-height: calc(100vh - 0px); /* Desktop: full viewport */
-}
-
+/* Desktop: sin max-height, dejamos que el parent (.split-pane) controle */
 @media (max-width: 991.98px) {
     .messages-container {
         max-height: calc(100vh - 450px); /* Mobile: con offset para header/footer */
