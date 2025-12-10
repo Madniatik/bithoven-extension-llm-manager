@@ -21,6 +21,50 @@ document.addEventListener('alpine:init', () => {
             
             // Tab por defecto: console (sin persistencia)
             this.activeTab = 'console';
+            
+            // Update monitor header on tab change
+            this.$watch('activeTab', (newTab) => {
+                this.updateMonitorHeader(newTab);
+            });
+            
+            // Initialize header on load
+            this.$nextTick(() => {
+                this.updateMonitorHeader(this.activeTab);
+            });
+        },
+        
+        updateMonitorHeader(tab) {
+            const monitorId = this.sessionId; // Use sessionId as monitorId
+            const iconEl = document.getElementById(`monitor-header-icon-${monitorId}`);
+            const textEl = document.getElementById(`monitor-header-text-${monitorId}`);
+            
+            if (!iconEl || !textEl) return;
+            
+            const configs = {
+                console: {
+                    icon: 'ki-satellite',
+                    title: 'Monitor'
+                },
+                activity: {
+                    icon: 'ki-chart-simple',
+                    title: 'Activity Logs'
+                },
+                request: {
+                    icon: 'ki-data',
+                    title: 'Request Inspector'
+                }
+            };
+            
+            const config = configs[tab] || configs.console;
+            
+            // Update icon (use getIcon helper format)
+            iconEl.innerHTML = `<i class="ki-duotone ${config.icon} fs-2x me-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>`;
+            
+            // Update title
+            textEl.textContent = config.title;
         },
         
         addLog(logEntry) {

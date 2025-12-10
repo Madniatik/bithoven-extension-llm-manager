@@ -111,9 +111,11 @@
                             <div class="d-flex flex-wrap justify-content-between align-items-center px-3 py-2 gap-2">
                                 {{-- Left: Title + Inline Metrics --}}
                                 <div class="d-flex align-items-center gap-10 flex-grow-1">
-                                    <h6 class="mb-0 text-gray-800 fw-bold d-flex align-items-center">
-                                        {!! getIcon('ki-satellite', 'fs-2x me-2', '', 'i') !!}
-                                        Monitor
+                                    <h6 class="mb-0 text-gray-800 fw-bold d-flex align-items-center" id="monitor-header-title-{{ $monitorId }}">
+                                        <span id="monitor-header-icon-{{ $monitorId }}">
+                                            {!! getIcon('ki-satellite', 'fs-2x me-2', '', 'i') !!}
+                                        </span>
+                                        <span id="monitor-header-text-{{ $monitorId }}">Monitor</span>
                                     </h6>
 
                                     {{-- Inline Metrics (desktop only) --}}
