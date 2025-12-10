@@ -49,9 +49,9 @@
     </div>
 
     {{-- Card Body (CONTENIDO CAMBIA SEGÚN TAB) --}}
-    <div class="card-body py-0" id="kt_chat_messenger_body" style="overflow-x: hidden;">
+    <div class="card-body p-0" id="kt_chat_messenger_body" style="overflow-x: hidden;">
         {{-- TAB 1: Conversación + Monitor (Split) --}}
-        <div x-show="activeMainTab === 'conversation'" style="display: block; overflow-x: hidden;" class="scroll-y me-n5 pe-5 h-lg-auto"
+        <div x-show="activeMainTab === 'conversation'" style="display: block; overflow-x: hidden;" class="scroll-y h-lg-auto"
             data-kt-element="messages" data-kt-scroll="true" data-kt-scroll-activate="{default: true, lg: false}"
             data-kt-scroll-max-height="auto"
             data-kt-scroll-dependencies="#kt_header, #kt_app_header, #kt_app_toolbar, #kt_toolbar, #kt_footer, #kt_app_footer"

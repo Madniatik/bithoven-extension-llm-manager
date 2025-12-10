@@ -13,6 +13,17 @@
     gap: 0;
 }
 
+/* Messages Container Responsive Heights */
+.messages-container {
+    max-height: calc(100vh - 0px); /* Desktop: full viewport */
+}
+
+@media (max-width: 991.98px) {
+    .messages-container {
+        max-height: calc(100vh - 450px); /* Mobile: con offset para header/footer */
+    }
+}
+
     .split-pane {
         overflow-y: auto;
         scroll-behavior: smooth;
