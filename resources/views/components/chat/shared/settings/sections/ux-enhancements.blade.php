@@ -308,8 +308,7 @@
                         const audio = new Audio(`/vendor/llm-manager/sounds/${soundFile}`);
                         audio.volume = 0.5;
                         audio.play().catch(err => {
-                            console.warn('[Test Notification] Sound play failed:', err);
-                            toastr.warning(`Sound file not found: ${soundFile}`);
+                            console.warn('[Test Notification] Sound play failed (file may not exist):', soundFile, err);
                         });
                         console.log('[Test Notification] Sound played:', soundFile);
                     } catch (error) {
