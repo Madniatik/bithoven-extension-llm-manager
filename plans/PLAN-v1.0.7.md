@@ -22,8 +22,8 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 7. ✅ **Testing Suite** (4-5 horas) - **COMPLETADO 100%** (9 dic 2025) - 33 tests creados
 8. ✅ **Streaming Documentation** (1.5 horas) - **COMPLETADO 100%** (9 dic 2025) - 1050+ líneas
 9. ✅ **Message ID Refactor** (2 horas) - **COMPLETADO 100%** (10 dic 2025) - Two-column approach
-10. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE**
-11. ✅ **Chat UX Improvements** (24 horas) - **COMPLETADO 100%** (21/21 items) - Ver [PLAN-v1.0.7-chat-ux.md](./PLAN-v1.0.7-chat-ux.md)
+10. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE** - Ver [PLAN-GITHUB-RELEASE-v1.0.7.md](./new/PLAN-GITHUB-RELEASE-v1.0.7.md)
+11. ✅ **Chat UX Improvements** (24 horas) - **COMPLETADO 100%** (21/21 items) - Ver [PLAN-v1.0.7-chat-ux.md](./completed/PLAN-v1.0.7-chat-ux.md)
 
 **Tiempo Total Estimado:** 68.5-79.5 horas (actualizado con Chat UX 24h)  
 **Tiempo Invertido:** ~72-76 horas (132+ commits + config system + tests + streaming docs + message refactor + chat UX)  

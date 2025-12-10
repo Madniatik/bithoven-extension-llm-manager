@@ -98,14 +98,23 @@
               "version": "1.0.7",
               "status": "ready-for-release",
               "progress": "99.5%"
+            }
+          ]
+        },
+        "new": {
+          "path": "plans/new/",
+          "description": "Staging area for new plans not yet started",
+          "files": [
+            {
+              "file": "README.md",
+              "type": "documentation"
             },
             {
-              "file": "PLAN-v1.0.7-chat-ux.md",
-              "type": "feature-plan",
+              "file": "PLAN-GITHUB-RELEASE-v1.0.7.md",
+              "type": "task-plan",
               "version": "1.0.7",
-              "status": "completed",
-              "progress": "100%",
-              "completedAt": "2025-12-10"
+              "status": "ready-to-execute",
+              "estimatedTime": "15min"
             }
           ]
         },
@@ -148,6 +157,15 @@
             }
           ],
           "files": [
+            {
+              "file": "PLAN-v1.0.7-chat-ux.md",
+              "type": "feature-plan",
+              "version": "1.0.7",
+              "completedAt": "2025-12-10",
+              "verifiedAt": "2025-12-10T23:59:00+00:00",
+              "items": 21,
+              "timeSpent": "24h"
+            },
             {
               "file": "ACTIVITY-LOG-MIGRATION-PLAN.md",
               "completedAt": "2025-12-07",

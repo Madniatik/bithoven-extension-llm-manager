@@ -1,151 +1,140 @@
 # Plans Directory
 
-Este directorio contiene los **planes de implementación** organizados por estado.
+**Organización de planes de implementación** para el proyecto LLM Manager Extension.
 
 ---
 
-## 📁 Estructura
+## 📂 Estructura de Directorios
 
 ```
 plans/
-├── new/                 # Planes nuevos, no iniciados
-├── in-progress/         # Planes en ejecución activa
-├── completed/           # Planes completados (referencia histórica)
-├── archive/             # Planes archivados (integrados en master plan)
-├── PLAN-v1.0.7.md      # Plan maestro v1.0.7 (85% completado)
-└── README.md           # Este archivo
+├── README.md                         # Este archivo
+├── PLAN-v1.0.7.md                    # Plan maestro v1.0.7 (99.5% completo)
+├── new/                              # Planes nuevos, no iniciados
+│   ├── README.md                     # Workflow de planes nuevos
+│   └── PLAN-GITHUB-RELEASE-v1.0.7.md # GitHub Release (ready to execute, 15min)
+├── completed/                        # Planes completados con verificación
+│   ├── PLAN-v1.0.7-chat-ux.md        # Chat UX 100% (21 items, 24h) ✅
+│   ├── ACTIVITY-LOG-MIGRATION-PLAN.md
+│   ├── CHAT-MONITOR-ENHANCEMENT-PLAN.md
+│   ├── MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md
+│   ├── DATABASE-LOGS-CONSOLIDATION-PLAN.md
+│   └── message-id-refactor/          # Subdirectorio de refactor completo
+│       ├── DELETE-MESSAGE-REFACTOR-PLAN.md
+│       ├── DELETE-MESSAGE-REFACTOR-SUMMARY.md
+│       └── MESSAGE-REFACTOR-COMPLETE.md
+└── archive/                          # Planes archivados (integrados en plan maestro)
+    └── v1.0.7/
+        └── PLAN-v1.0.7-chat-config-options.md  # Integrado en PLAN-v1.0.7.md
+
 ```
 
 ---
 
-## 🎯 Propósito
+## 🔄 Workflow de Planes
 
-**Diferencia entre Plan vs Reporte:**
-- **Plan**: Documento de planificación con tareas/fases a ejecutar (futuro)
-- **Reporte**: Documento que analiza/reporta resultados de ejecución (pasado)
+### 1. **new/** - Planes Nuevos (No Iniciados)
+- **Propósito:** Staging area para planes futuros
+- **Estado:** Ready to execute (preparados pero no iniciados)
+- **Acción:** Crear plan detallado con pasos claros
+- **Ejemplo:** PLAN-GITHUB-RELEASE-v1.0.7.md (15min, ready to execute)
 
-**Planes incluyen:**
-- ✅ Objetivos claros
-- ✅ Fases/tareas con checkboxes `[ ]`
-- ✅ Estimaciones de tiempo
-- ✅ Criterios de éxito
-- ✅ Estado actual (NEW, IN-PROGRESS, COMPLETED, BLOCKED)
+### 2. **Root (plans/)** - Planes Activos
+- **Propósito:** Planes maestros en progreso
+- **Estado:** In progress / Ready for release
+- **Acción:** Desarrollo activo
+- **Ejemplo:** PLAN-v1.0.7.md (99.5% completo, solo GitHub release pendiente)
 
----
+### 3. **completed/** - Planes Completados
+- **Propósito:** Planes finalizados con verificación
+- **Estado:** 100% completado con evidencia (commits, testing, docs)
+- **Acción:** Mover desde root/ a completed/ al terminar
+- **Ejemplo:** PLAN-v1.0.7-chat-ux.md (21 items, 24h, 132+ commits)
 
-## 📋 Planes Actuales
-
-### Master Plan
-- **PLAN-v1.0.7.md** - Plan maestro consolidado (85% completado, 110+ commits)
-  - Quick Chat Feature (100%)
-  - Monitor System v2.0 (100%)
-  - Provider Connection Service Layer (100%)
-  - UI/UX Optimizations (92%)
-  - Testing Suite (Pendiente)
-  - Streaming Documentation (Pendiente)
-  - GitHub Release (Pendiente)
-
-### new/
-- **DUAL-SELECT-MODEL-PICKER-PROPOSAL.md** - Propuesta para selector dual Provider+Model
-
-### in-progress/
-- *(vacío - ningún plan en ejecución activa)*
-
-### completed/
-- **ACTIVITY-LOG-MIGRATION-PLAN.md** - Database-driven Activity History (✅ Completado 7 dic 2025, 21:45)
-- **CHAT-MONITOR-ENHANCEMENT-PLAN.md** - Upgrade Monitor UI (✅ 8/8 fases completadas)
-- **MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md** - Hybrid Adapter + Configurable UI (✅ Completado)
-- **DATABASE-LOGS-CONSOLIDATION-PLAN.md** - Eliminar tabla redundante conversation_logs
-- **FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md** - Service Layer para conexión LLM (✅ Completado 8 dic 2025)
-- **FIX-PROVIDERS-CONNECTION-IN-ADMIN-MODELS.md** - Fix Load Models en Admin (✅ Completado 8 dic 2025)
-- **message-id-refactor/** - Message ID Refactor plans (✅ Completado 10 dic 2025)
-  - DELETE-MESSAGE-REFACTOR-PLAN.md
-  - DELETE-MESSAGE-REFACTOR-SUMMARY.md
-  - MESSAGE-REFACTOR-COMPLETE.md
-
-### archive/
-- **QUICK-CHAT-IMPLEMENTATION-PLAN.md** - Plan detallado Quick Chat (integrado en PLAN-v1.0.7.md)
-- **PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md** - Handoff documentation (integrado en PLAN-v1.0.7.md)
-- **v1.0.7/** - v1.0.7 development plans
-  - PLAN-v1.0.7-chat-config-options.md - Chat Config Options (integrated into main plan)
+### 4. **archive/** - Planes Archivados
+- **Propósito:** Planes integrados en planes maestros
+- **Estado:** Merged into parent plan
+- **Acción:** Archivar cuando ya no es necesario como referencia independiente
+- **Ejemplo:** PLAN-v1.0.7-chat-config-options.md → integrado en PLAN-v1.0.7.md
 
 ---
 
-## 🔄 Workflow
+## 📋 Planes Activos
 
-### 1. Crear nuevo plan
-```bash
-# Crear en plans/new/
-touch plans/new/MY-FEATURE-PLAN.md
-```
-
-**Template mínimo:**
-```markdown
-# Feature Name Plan
-**Date:** YYYY-MM-DD  
-**Status:** 🔴 NEW  
-**Estimated Time:** Xh
-
-## Objetivos
-- [ ] Goal 1
-- [ ] Goal 2
-
-## Fases
-### Phase 1: Title (Xh)
-- [ ] Task 1
-- [ ] Task 2
-
-## Success Criteria
-- ✅ Criterion 1
-```
-
-### 2. Iniciar plan
-```bash
-# Mover a in-progress/
-mv plans/new/MY-FEATURE-PLAN.md plans/in-progress/
-```
-
-**Actualizar header:**
-```markdown
-**Status:** 🟡 IN-PROGRESS  
-**Started:** YYYY-MM-DD
-```
-
-### 3. Completar plan
-```bash
-# Mover a completed/
-mv plans/in-progress/MY-FEATURE-PLAN.md plans/completed/
-```
-
-**Actualizar header:**
-```markdown
-**Status:** ✅ COMPLETED  
-**Completed:** YYYY-MM-DD
-```
-
-### 4. Bloquear plan
-Si un plan encuentra blockers críticos:
-
-```markdown
-**Status:** 🔴 BLOCKED  
-**Blocker:** Description of blocker
-```
-
-Puede permanecer en `new/` o `in-progress/` hasta resolver blocker.
+### PLAN-v1.0.7.md (Master Plan)
+- **Estado:** Ready for Release (99.5%)
+- **Progreso:** 11 categorías, 10 completadas, 1 pendiente
+- **Pendiente:** GitHub Release Management (~1 hora)
+- **Commits:** 132+ commits desde v1.0.6
+- **Features:** Quick Chat, Monitor v2.0, Provider Service, Request Inspector, Chat Config, Testing Suite, Streaming Docs, Message ID Refactor, Chat UX (21 items)
 
 ---
 
-## 📚 Referencias
+## ✅ Planes Completados Recientes
 
-**Carpetas relacionadas:**
-- `docs/` - Documentación técnica e instrucciones
-- `reports/` - Reportes de análisis y resultados
+### PLAN-v1.0.7-chat-ux.md (10 dic 2025)
+- **Estado:** 100% Completado (21/21 items)
+- **Tiempo:** 24 horas
+- **Features:** Notificaciones, Delete Message, Streaming Status, Header Refactor, Keyboard Shortcuts, Context Window Indicator, Monitor Export (CSV/JSON/SQL), Smart Auto-Scroll System
+- **Commits:** 132+ (incluidos en v1.0.7)
+- **Testing:** 100% (33/33 features)
 
-**Convención de nombres:**
-- Usar `UPPERCASE-WITH-DASHES-PLAN.md`
-- Incluir `-PLAN` en el nombre
-- Ejemplos: `FEATURE-X-PLAN.md`, `REFACTOR-Y-PLAN.md`
+### ACTIVITY-LOG-MIGRATION-PLAN.md (7 dic 2025)
+- **Estado:** 100% Completado
+- **Tiempo:** 6 horas (vs 8-13h estimado)
+- **Features:** DB persistence, dual-monitor support, auto-refresh
+
+### Message ID Refactor (10 dic 2025)
+- **Estado:** 100% Completado
+- **Subdirectorio:** completed/message-id-refactor/
+- **Approach:** Two-column delete (message_id + id fallback)
+- **Migration:** ALTER TABLE (VARCHAR 255)
 
 ---
 
-**Last Updated:** 8 de diciembre de 2025, 16:32
+## 🆕 Planes Pendientes (new/)
+
+### PLAN-GITHUB-RELEASE-v1.0.7.md
+- **Estado:** Ready to execute (15 minutos)
+- **Descripción:** Crear página de Release oficial en GitHub
+- **Requisitos:** Tag v1.0.7 ya publicado ✅
+- **Incluye:** Release notes completas (copy-paste ready)
+
+---
+
+## 🗃️ Planes Archivados
+
+### archive/v1.0.7/
+- **PLAN-v1.0.7-chat-config-options.md**
+  - Integrado en PLAN-v1.0.7.md (sección 6)
+  - Config options panel, settings persistence
+  - No necesita consulta independiente
+
+---
+
+## 📊 Estadísticas
+
+- **Planes Activos:** 1 (PLAN-v1.0.7.md - 99.5%)
+- **Planes Completados:** 5 + 1 subdirectorio (3 files)
+- **Planes Pendientes (new/):** 1 (GitHub Release - 15min)
+- **Planes Archivados:** 1
+- **Total Features Implementadas:** 80+ features across all plans
+- **Commits Totales:** 132+ commits en v1.0.7
+
+---
+
+## 🎯 Próximos Pasos
+
+1. **Ejecutar PLAN-GITHUB-RELEASE-v1.0.7.md** (15 minutos)
+   - Crear Release page en GitHub
+   - Publicar release notes
+   - Marcar v1.0.7 como Latest Release
+
+2. **Mover PLAN-v1.0.7.md a completed/** (cuando termine GitHub Release)
+   - Actualizar QUICK-INDEX.json
+   - Crear PLAN-v1.0.8.md (Monitor UX Improvements)
+
+---
+
+**Última Actualización:** 10 de diciembre de 2025, 00:21  
+**Versión QUICK-INDEX:** 1.2.0
