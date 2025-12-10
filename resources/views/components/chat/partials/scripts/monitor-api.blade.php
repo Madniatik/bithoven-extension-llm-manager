@@ -62,9 +62,9 @@ window.initLLMMonitor = () => {};
     // Import monitor modules
     const { default: MonitorStorage } = await import(`${basePath}/core/MonitorStorage.js`);
     const { default: MonitorUI } = await import(`${basePath}/ui/render.js`);
-    const { clearLogs, clearAll } = await import(`${basePath}/actions/clear.js`);
-    const { copyLogs } = await import(`${basePath}/actions/copy.js`);
-    const { downloadLogs } = await import(`${basePath}/actions/download.js`);
+    const { clearConsole, clearAll } = await import(`${basePath}/actions/clear.js`);
+    const { copyConsole } = await import(`${basePath}/actions/copy.js`);
+    const { downloadConsole } = await import(`${basePath}/actions/download.js`);
     
     // MonitorInstance class (inline because it needs all imports)
     class MonitorInstance {
@@ -283,20 +283,49 @@ window.initLLMMonitor = () => {};
         }
         
         // Action Methods
-        clearLogs() {
-            return clearLogs(this.sessionId, this.ui);
+        clearConsole() {
+            return clearConsole(this.sessionId, this.ui);
         }
         
         clear() {
             return clearAll(this.sessionId, this.storage, this.ui, () => this.reset());
         }
         
-        async copyLogs() {
-            return copyLogs(this.sessionId, this.ui);
+        async copyConsole() {
+            return copyConsole(this.sessionId, this.ui);
         }
         
+        downloadConsole() {
+            return downloadConsole(this.sessionId, this.ui);
+        }
+        
+        // ============================================================
+        // DEPRECATED ALIASES (backwards compatibility)
+        // Will be removed in v2.0
+        // ============================================================
+        
+        /**
+         * @deprecated Use clearConsole() instead. Will be removed in v2.0
+         */
+        clearLogs() {
+            console.warn('MonitorInstance.clearLogs() is DEPRECATED. Use clearConsole() instead. Removal in v2.0');
+            return this.clearConsole();
+        }
+        
+        /**
+         * @deprecated Use copyConsole() instead. Will be removed in v2.0
+         */
+        async copyLogs() {
+            console.warn('MonitorInstance.copyLogs() is DEPRECATED. Use copyConsole() instead. Removal in v2.0');
+            return this.copyConsole();
+        }
+        
+        /**
+         * @deprecated Use downloadConsole() instead. Will be removed in v2.0
+         */
         downloadLogs() {
-            return downloadLogs(this.sessionId, this.ui);
+            console.warn('MonitorInstance.downloadLogs() is DEPRECATED. Use downloadConsole() instead. Removal in v2.0');
+            return this.downloadConsole();
         }
     }
     
@@ -508,27 +537,56 @@ window.initLLMMonitor = () => {};
         },
         
         /**
-         * Clear logs (optional sessionId)
+         * Clear console logs (optional sessionId)
+         */
+        clearConsole(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) monitor.clearConsole();
+        },
+        
+        /**
+         * Copy console logs (optional sessionId)
+         */
+        copyConsole(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) monitor.copyConsole();
+        },
+        
+        /**
+         * Download console logs (optional sessionId)
+         */
+        downloadConsole(sessionId = null) {
+            const monitor = this._getMonitor(sessionId);
+            if (monitor) monitor.downloadConsole();
+        },
+        
+        // ============================================================
+        // DEPRECATED ALIASES (backwards compatibility)
+        // Will be removed in v2.0
+        // ============================================================
+        
+        /**
+         * @deprecated Use clearConsole() instead. Will be removed in v2.0
          */
         clearLogs(sessionId = null) {
-            const monitor = this._getMonitor(sessionId);
-            if (monitor) monitor.clearLogs();
+            console.warn('LLMMonitor.clearLogs() is DEPRECATED. Use clearConsole() instead. Removal in v2.0');
+            return this.clearConsole(sessionId);
         },
         
         /**
-         * Copy logs (optional sessionId)
+         * @deprecated Use copyConsole() instead. Will be removed in v2.0
          */
         copyLogs(sessionId = null) {
-            const monitor = this._getMonitor(sessionId);
-            if (monitor) monitor.copyLogs();
+            console.warn('LLMMonitor.copyLogs() is DEPRECATED. Use copyConsole() instead. Removal in v2.0');
+            return this.copyConsole(sessionId);
         },
         
         /**
-         * Download logs (optional sessionId)
+         * @deprecated Use downloadConsole() instead. Will be removed in v2.0
          */
         downloadLogs(sessionId = null) {
-            const monitor = this._getMonitor(sessionId);
-            if (monitor) monitor.downloadLogs();
+            console.warn('LLMMonitor.downloadLogs() is DEPRECATED. Use downloadConsole() instead. Removal in v2.0');
+            return this.downloadConsole(sessionId);
         },
         
         /**

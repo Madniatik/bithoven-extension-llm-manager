@@ -1,6 +1,6 @@
 /**
- * Clear Actions
- * Handles clearing logs and complete monitor reset
+ * Clear Console Actions
+ * Handles clearing console logs and complete monitor reset
  */
 
 /**
@@ -30,11 +30,11 @@ function showToast(options) {
 }
 
 /**
- * Clear logs only (preserve metrics and history)
+ * Clear console logs only (preserve metrics and history)
  * @param {string} sessionId
  * @param {MonitorUI} ui
  */
-export function clearLogs(sessionId, ui) {
+export function clearConsole(sessionId, ui) {
     ui.clearLogsDisplay();
     ui.log('Console cleared', 'info');
     

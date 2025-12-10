@@ -20,36 +20,24 @@ export default class MonitorUI {
     /**
      * Log message to console
      * @param {string} message
-     * @param {string} type - info|success|error|warning|debug|chunk|header|separator
+     * @param {string} type - info|success|error|warning
      */
     log(message, type = 'info') {
         const logsEl = this.getElement('monitor-logs');
         if (!logsEl) return;
         
-        const timestamp = new Date().toLocaleTimeString('es-ES');
-        
-        // Extended color mapping (7 tipos + backward compatibility)
+        const timestamp = new Date().toLocaleTimeString();
         const colors = {
-            success: 'text-success fw-bold',
-            error: 'text-danger fw-bold',
-            debug: 'text-muted',
-            info: 'text-primary',
-            chunk: 'text-gray-700',
-            header: 'text-dark fw-bold fs-6',
-            separator: 'text-gray-400',
-            warning: 'text-warning' // Mantener compatibilidad
+            info: 'text-gray-400',
+            success: 'text-success',
+            error: 'text-danger',
+            warning: 'text-warning'
         };
         
         const logEntry = document.createElement('div');
-        logEntry.className = colors[type] || 'text-gray-800';
+        logEntry.className = colors[type];
         logEntry.setAttribute('data-timestamp', Date.now());
-        
-        // Timestamp condicional (no en separadores/headers/líneas vacías)
-        if (message.startsWith('━') || message === '' || type === 'header' || type === 'separator') {
-            logEntry.textContent = message;
-        } else {
-            logEntry.textContent = `[${timestamp}] ${message}`;
-        }
+        logEntry.textContent = `[${timestamp}] ${message}`;
         
         logsEl.appendChild(logEntry);
         

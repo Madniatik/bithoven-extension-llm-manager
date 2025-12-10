@@ -1,6 +1,6 @@
 /**
- * Download Logs Action
- * Downloads monitor logs as .txt file
+ * Download Console Action
+ * Downloads monitor console logs as .txt file
  */
 
 /**
@@ -30,12 +30,12 @@ function showToast(options) {
 }
 
 /**
- * Download logs as text file
+ * Download console logs as text file
  * @param {string} sessionId
  * @param {MonitorUI} ui
  * @returns {boolean}
  */
-export function downloadLogs(sessionId, ui) {
+export function downloadConsole(sessionId, ui) {
     // Check if logs exist
     if (!ui.hasLogs()) {
         showToast({

@@ -1,6 +1,6 @@
 /**
- * Copy Logs Action
- * Copies monitor logs to clipboard
+ * Copy Console Action
+ * Copies monitor console logs to clipboard
  */
 
 /**
@@ -28,12 +28,12 @@ function showToast(options) {
 }
 
 /**
- * Copy logs to clipboard
+ * Copy console logs to clipboard
  * @param {string} sessionId
  * @param {MonitorUI} ui
  * @returns {Promise<boolean>}
  */
-export async function copyLogs(sessionId, ui) {
+export async function copyConsole(sessionId, ui) {
     // Check if logs exist
     if (!ui.hasLogs()) {
         showToast({

@@ -47,23 +47,23 @@
     @endif
 
     @if($showDownload)
-        {{-- Download Logs --}}
+        {{-- Download Console Logs --}}
         <button type="button" 
                 class="btn btn-icon btn-{{ $size }} btn-active-light-success"
-                onclick="window.LLMMonitor.downloadLogs('{{ $monitorId }}')"
+                onclick="window.LLMMonitor.downloadConsole('{{ $monitorId }}')"
                 data-bs-toggle="tooltip" 
-                title="Download logs">
+                title="Download console logs">
             {!! getIcon('ki-cloud-download', $iconSize, '', 'i') !!}
         </button>
     @endif
 
     @if($showCopy)
-        {{-- Copy Logs --}}
+        {{-- Copy Console Logs --}}
         <button type="button" 
                 class="btn btn-icon btn-{{ $size }} btn-active-light-primary"
-                onclick="window.LLMMonitor.copyLogs('{{ $monitorId }}')"
+                onclick="window.LLMMonitor.copyConsole('{{ $monitorId }}')"
                 data-bs-toggle="tooltip" 
-                title="Copy logs to clipboard">
+                title="Copy console logs to clipboard">
             {!! getIcon('ki-copy', $iconSize, '', 'i') !!}
         </button>
     @endif
@@ -75,12 +75,12 @@
 
     {{-- GRUPO 2: Destructive Actions (Clear, Fullscreen, Close) --}}
     @if($showClear)
-        {{-- Clear All --}}
+        {{-- Clear Console --}}
         <button type="button" 
                 class="btn btn-icon btn-{{ $size }} btn-active-light-danger"
-                onclick="window.LLMMonitor.clear('{{ $monitorId }}')"
+                onclick="window.LLMMonitor.clearConsole('{{ $monitorId }}')"
                 data-bs-toggle="tooltip" 
-                title="Clear all monitoring data">
+                title="Clear console logs">
             {!! getIcon('ki-trash', $iconSize, '', 'i') !!}
         </button>
     @endif
