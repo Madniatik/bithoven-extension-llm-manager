@@ -65,7 +65,7 @@ document.addEventListener('alpine:init', () => {
                     title: 'Monitor'
                 },
                 activity: {
-                    icon: 'ki-chart-simple',
+                    icon: 'ki-chart-simple-3',
                     title: 'Activity Logs'
                 },
                 request: {

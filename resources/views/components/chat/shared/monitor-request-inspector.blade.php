@@ -254,3 +254,15 @@
         </div>
     </div>
 </div>
+
+<style>
+/* Suavizar hover colors en accordions del Request Inspector */
+#request-inspector-container .card-header.collapsible.cursor-pointer:hover {
+    background-color: var(--bs-primary-light) !important;
+    transition: background-color 0.15s ease-in-out;
+}
+
+#request-inspector-container .card-header.collapsible.cursor-pointer {
+    transition: background-color 0.15s ease-in-out;
+}
+</style>
