@@ -221,12 +221,13 @@ body.split-resizing * {
 }
 
 /* Context Window Visual Indicator */
-.message-bubble.in-context {
+/* Aplicar a inner wrapper (no al outer .message-bubble) */
+.message-bubble > div.in-context {
     border-left: 3px solid var(--bs-primary);
     opacity: 1;
 }
 
-.message-bubble.out-of-context {
+.message-bubble > div.out-of-context {
     border-left: 3px solid var(--bs-gray-300);
     opacity: 0.5;
 }

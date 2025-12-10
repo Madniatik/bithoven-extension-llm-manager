@@ -65,7 +65,7 @@
 
                 {{-- Bubble Number Badge (antes del timestamp) --}}
                 @if($bubbleNumber > 0)
-                <span class="badge badge-light-secondary badge-xs ms-2 p-0" data-bubble-number-badge style="font-size: 0.7rem;">{{ $bubbleNumber }}</span>
+                <span class="badge badge-light-secondary badge-xs ms-2" data-bubble-number-badge style="font-size: 0.7rem;">{{ $bubbleNumber }}</span>
                 @endif
                 
                 <span class="text-gray-500 fw-semibold fs-8 ms-1" data-bubble-timestamp="">
