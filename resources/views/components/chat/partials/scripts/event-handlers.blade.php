@@ -196,12 +196,26 @@
         // Context Window Visual Indicator
         // Actualizar indicadores visuales de qué mensajes están en contexto
         const updateContextIndicators = () => {
-            // Selector correcto del setting (chat-settings.blade.php)
-            const contextLimitInput = document.querySelector('#quick-chat-context-limit');
-            const contextLimit = contextLimitInput?.value ? parseInt(contextLimitInput.value, 10) : 10;
+            // Verificar si el Context Indicator está habilitado (desde Workspace Settings)
+            const sessionId = '{{ $session?->id ?? "default" }}';
+            const contextIndicatorEnabled = localStorage.getItem(`llm_context_indicator_enabled_${sessionId}`);
+            const isEnabled = contextIndicatorEnabled !== null ? contextIndicatorEnabled === 'true' : true; // Default: enabled
             
             // Seleccionar el bubble-content-wrapper (donde va el borde visual)
             const bubbles = Array.from(messagesContainer?.querySelectorAll('.bubble-content-wrapper') || []);
+            
+            // Si el toggle está OFF, remover todas las clases y salir
+            if (!isEnabled) {
+                bubbles.forEach(bubble => {
+                    bubble.classList.remove('in-context', 'out-of-context');
+                });
+                console.log('[Context Indicator] DISABLED - All indicators removed');
+                return;
+            }
+            
+            // Selector correcto del setting (chat-settings.blade.php)
+            const contextLimitInput = document.querySelector('#quick-chat-context-limit');
+            const contextLimit = contextLimitInput?.value ? parseInt(contextLimitInput.value, 10) : 10;
             
             // Contar desde el final (más recientes primero)
             const totalBubbles = bubbles.length;
@@ -223,7 +237,7 @@
                 }
             });
             
-            console.log(`[Context Indicator] Updated: ${contextLimit === 0 ? 'ALL' : contextLimit} messages in context (total: ${totalBubbles})`);
+            console.log(`[Context Indicator] ENABLED - Updated: ${contextLimit === 0 ? 'ALL' : contextLimit} messages in context (total: ${totalBubbles})`);
         };
 
         const appendMessage = (role, content, tokens = 0, messageId = null, hidden = false) => {

@@ -365,6 +365,9 @@
             { id: 'scroll_button_fade', type: 'checkbox', defaultValue: true },
             { id: 'hover_effects', type: 'checkbox', defaultValue: true },
             
+            // Context Window Indicator
+            { id: 'context_indicator_enabled', type: 'checkbox', defaultValue: true },
+            
             // Streaming Status Indicator
             { id: 'streaming_indicator_enabled', type: 'checkbox', defaultValue: true },
             
@@ -417,6 +420,12 @@
             if (setting.type === 'checkbox') {
                 element.addEventListener('change', (e) => {
                     saveSetting(setting.id, e.target.checked);
+                    
+                    // Si es context_indicator_enabled, trigger updateContextIndicators
+                    if (setting.id === 'context_indicator_enabled' && typeof updateContextIndicators === 'function') {
+                        updateContextIndicators();
+                        console.log('[Settings] Context Indicator toggled, updating bubbles...');
+                    }
                 });
             } else if (setting.type === 'select') {
                 element.addEventListener('change', (e) => {
