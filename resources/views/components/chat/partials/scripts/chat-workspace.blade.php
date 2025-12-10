@@ -12,6 +12,8 @@ document.addEventListener('alpine:init', () => {
         monitorId: mid || `monitor-${sid || sessionId}`,
         showMonitor: initialShowMonitor,
         monitorOpen: initialMonitorOpen,
+        monitorFullscreen: false, // Fullscreen state
+        monitorOriginalSize: null, // Store original size for restore
         activeTab: 'console', // Default tab: console
         layout: layout,
         logs: [], // Monitor logs array
@@ -131,6 +133,33 @@ document.addEventListener('alpine:init', () => {
             this.activeTab = tab;
             this.monitorOpen = true;
             // NO persistir en localStorage
+        },
+        
+        toggleMonitorFullscreen() {
+            const monitorPane = document.getElementById(`split-monitor-pane-${this.sessionId}`);
+            const chatPane = document.getElementById(`split-chat-pane-${this.sessionId}`);
+            
+            if (!monitorPane || !chatPane) {
+                console.error('[Fullscreen] Monitor or Chat pane not found');
+                return;
+            }
+            
+            if (!this.monitorFullscreen) {
+                // Enter fullscreen: Store original size and hide chat
+                this.monitorOriginalSize = monitorPane.style.height;
+                chatPane.style.display = 'none';
+                monitorPane.style.height = '100%';
+                this.monitorFullscreen = true;
+                
+                console.log('[Fullscreen] Entered fullscreen mode');
+            } else {
+                // Exit fullscreen: Restore original size and show chat
+                chatPane.style.display = '';
+                monitorPane.style.height = this.monitorOriginalSize || '30%';
+                this.monitorFullscreen = false;
+                
+                console.log('[Fullscreen] Exited fullscreen mode');
+            }
         }
     });
     

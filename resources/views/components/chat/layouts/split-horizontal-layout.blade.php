@@ -167,6 +167,18 @@
                                         {!! getIcon('ki-trash', 'fs-1', '', 'i') !!}
                                     </button>
 
+                                    {{-- Fullscreen Toggle --}}
+                                    <button type="button" class="btn btn-icon btn-sm btn-active-light-primary"
+                                        @click="toggleMonitorFullscreen()"
+                                        data-bs-toggle="tooltip" :title="monitorFullscreen ? 'Exit fullscreen' : 'Fullscreen'">
+                                        <span x-show="!monitorFullscreen">
+                                            {!! getIcon('ki-maximize', 'fs-1', '', 'i') !!}
+                                        </span>
+                                        <span x-show="monitorFullscreen" style="display: none;">
+                                            {!! getIcon('ki-cross-square', 'fs-1', '', 'i') !!}
+                                        </span>
+                                    </button>
+
                                     {{-- Close --}}
                                     <button type="button" class="btn btn-icon btn-sm btn-active-light-danger"
                                         @click="monitorOpen = false" data-bs-toggle="tooltip" title="Close monitor">
