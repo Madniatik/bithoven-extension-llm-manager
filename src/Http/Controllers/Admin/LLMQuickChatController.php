@@ -133,13 +133,13 @@ class LLMQuickChatController extends Controller
                     'max_tokens' => $validated['max_tokens'] ?? $configuration->default_parameters['max_tokens'] ?? 8000,
                 ];
 
-                // Pass real DB session_id and message_id for usage tracking
+                // Pass real DB session_id and request_message_id for usage tracking
                 $logSession = $this->streamLogger->startSession(
                     $configuration,
                     $validated['prompt'],
                     $params,
                     $session->id, // DB session_id
-                    $userMessage->id // DB message_id (user message)
+                    $userMessage->id // DB request_message_id (user message)
                 );
                 
                 $provider = $this->llmManager->config($configuration->id)->getProvider();
@@ -198,7 +198,7 @@ class LLMQuickChatController extends Controller
                         'endpoint' => $configuration->api_endpoint ?? 'N/A',
                         'timestamp' => now()->toIso8601String(),
                         'session_id' => $session->id,
-                        'message_id' => $userMessage->id,
+                        'request_message_id' => $userMessage->id, // User message (request)
                     ],
                     'parameters' => [
                         'temperature' => $params['temperature'],
@@ -347,7 +347,7 @@ class LLMQuickChatController extends Controller
                     ],
                 ]);
 
-                $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics);
+                $usageLog = $this->streamLogger->endSession($logSession, $fullResponse, $metrics, $assistantMessage->id);
 
                 // Update message with cost from usage log
                 $assistantMessage->update(['cost_usd' => $usageLog->cost_usd]);

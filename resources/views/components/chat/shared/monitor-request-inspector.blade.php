@@ -61,8 +61,14 @@
                                     <td id="meta-session-id" class="text-gray-800 font-monospace fs-8">-</td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-semibold text-gray-600">Message ID</td>
-                                    <td id="meta-message-id" class="text-gray-800 font-monospace fs-8">-</td>
+                                    <td class="fw-semibold text-gray-600">Request Message ID</td>
+                                    <td id="meta-request-message-id" class="text-gray-800 font-monospace fs-8">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold text-gray-600">Response Message ID</td>
+                                    <td id="meta-response-message-id" class="text-gray-800 font-monospace fs-8">
+                                        <span class="text-muted">Pending...</span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

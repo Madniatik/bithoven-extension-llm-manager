@@ -839,6 +839,12 @@
                         if (assistantBubble) {
                             assistantBubble.dataset.messageId = data.message_id;
 
+                            // Update Request Inspector: Response Message ID (change "Pending..." to actual ID)
+                            const responseMessageEl = document.getElementById('meta-response-message-id');
+                            if (responseMessageEl) {
+                                responseMessageEl.innerHTML = `<span class="text-success">${data.message_id}</span>`;
+                            }
+
                             // Increment message counter (assistant response saved)
                             updateMessageCount(1);
 

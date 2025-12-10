@@ -22,7 +22,8 @@ window.populateRequestInspector = function(data) {
     document.getElementById('meta-endpoint').textContent = data.metadata.endpoint || 'N/A';
     document.getElementById('meta-timestamp').textContent = data.metadata.timestamp || 'N/A';
     document.getElementById('meta-session-id').textContent = data.metadata.session_id || data.metadata.conversation_id || 'N/A';
-    document.getElementById('meta-message-id').textContent = data.metadata.message_id || 'N/A';
+    document.getElementById('meta-request-message-id').textContent = data.metadata.request_message_id || 'N/A';
+    // Response message ID starts as "Pending..." (updated by 'done' event)
 
     // 2. Populate Parameters
     document.getElementById('param-temperature').textContent = data.parameters.temperature ?? 'N/A';

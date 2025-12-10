@@ -22,8 +22,9 @@ class LLMUsageLog extends Model
     protected $fillable = [
         'llm_configuration_id',
         'user_id',
-        'session_id',       // NEW: Link to conversation session
-        'message_id',       // NEW: Link to specific message
+        'session_id',              // Link to conversation session
+        'request_message_id',      // User message (request)
+        'response_message_id',     // Assistant message (response)
         'extension_slug',
         'prompt',
         'response',
@@ -89,9 +90,14 @@ class LLMUsageLog extends Model
         return $this->belongsTo(LLMConversationSession::class, 'session_id');
     }
 
-    public function message(): BelongsTo
+    public function requestMessage(): BelongsTo
     {
-        return $this->belongsTo(LLMConversationMessage::class, 'message_id');
+        return $this->belongsTo(LLMConversationMessage::class, 'request_message_id');
+    }
+
+    public function responseMessage(): BelongsTo
+    {
+        return $this->belongsTo(LLMConversationMessage::class, 'response_message_id');
     }
 
     public function customMetrics(): HasMany

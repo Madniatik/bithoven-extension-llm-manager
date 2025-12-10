@@ -297,10 +297,7 @@ class LLMConversationController extends Controller
                     'metrics' => $metrics,
                 ]);
 
-                // 6. Save usage log
-                $usageLog = $this->streamLogger->endSession($session, $fullResponse, $metrics);
-
-                // 7. Save assistant message to database
+                // 6. Save assistant message to database FIRST
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $conversation->id,
                     'llm_configuration_id' => $configuration->id,
@@ -309,6 +306,9 @@ class LLMConversationController extends Controller
                     'content' => $fullResponse,
                     'tokens' => $metrics['usage']['completion_tokens'] ?? $tokenCount,
                 ]);
+
+                // 7. Save usage log with response_message_id
+                $usageLog = $this->streamLogger->endSession($session, $fullResponse, $metrics, $assistantMessage->id);
 
                 // 8. Update conversation totals
                 $conversation->update([

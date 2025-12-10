@@ -29,7 +29,15 @@ class LLMMessageController extends Controller
             ], 403);
         }
 
-        // Delete message (logs are preserved - no FK constraint)
+        // Nullify message references in usage logs (preserve logs, remove reference)
+        // Check both request_message_id (user messages) and response_message_id (assistant messages)
+        LLMUsageLog::where('request_message_id', $message->id)
+            ->update(['request_message_id' => null]);
+        
+        LLMUsageLog::where('response_message_id', $message->id)
+            ->update(['response_message_id' => null]);
+
+        // Delete message
         $message->delete();
 
         return response()->json([

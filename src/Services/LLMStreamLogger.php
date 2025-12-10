@@ -15,7 +15,7 @@ class LLMStreamLogger
      * @param string $prompt
      * @param array $parameters
      * @param int|null $sessionId DB session_id for conversation tracking (optional)
-     * @param int|null $messageId DB message_id for message tracking (optional)
+     * @param int|null $requestMessageId DB request_message_id (user message) for tracking (optional)
      * @return array Session data with session_id and start_time
      */
     public function startSession(
@@ -23,12 +23,12 @@ class LLMStreamLogger
         string $prompt,
         array $parameters,
         ?int $sessionId = null,
-        ?int $messageId = null
+        ?int $requestMessageId = null
     ): array {
         return [
             'session_id' => Str::uuid()->toString(), // Temporary UUID for logger tracking
             'db_session_id' => $sessionId, // Real DB session_id
-            'db_message_id' => $messageId, // Real DB message_id
+            'db_request_message_id' => $requestMessageId, // Real DB request_message_id (user message)
             'start_time' => microtime(true),
             'configuration' => $configuration,
             'prompt' => $prompt,
@@ -42,9 +42,10 @@ class LLMStreamLogger
      * @param array $session Session data from startSession()
      * @param string $response Full response text
      * @param array $metrics Metrics from provider: ['usage' => [...], 'model' => '...', 'finish_reason' => '...']
+     * @param int|null $responseMessageId DB response_message_id (assistant message) created after streaming
      * @return LLMUsageLog
      */
-    public function endSession(array $session, string $response, array $metrics): LLMUsageLog
+    public function endSession(array $session, string $response, array $metrics, ?int $responseMessageId = null): LLMUsageLog
     {
         $executionTimeMs = (int) ((microtime(true) - $session['start_time']) * 1000);
 
@@ -61,7 +62,8 @@ class LLMStreamLogger
             'llm_configuration_id' => $session['configuration']->id,
             'user_id' => auth()->id(),
             'session_id' => $session['db_session_id'] ?? null, // Real DB session_id (if provided)
-            'message_id' => $session['db_message_id'] ?? null, // Real DB message_id (if provided)
+            'request_message_id' => $session['db_request_message_id'] ?? null, // User message (request)
+            'response_message_id' => $responseMessageId, // Assistant message (response)
             'extension_slug' => 'llm-manager', // Can be overridden
             'prompt' => $session['prompt'],
             'response' => $response,
@@ -127,7 +129,8 @@ class LLMStreamLogger
             'llm_configuration_id' => $session['configuration']->id,
             'user_id' => auth()->id(),
             'session_id' => $session['db_session_id'] ?? null, // Real DB session_id (if provided)
-            'message_id' => $session['db_message_id'] ?? null, // Real DB message_id (if provided)
+            'request_message_id' => $session['db_request_message_id'] ?? null, // User message (request)
+            'response_message_id' => null, // No response on error
             'extension_slug' => 'llm-manager',
             'prompt' => $session['prompt'],
             'response' => '',
