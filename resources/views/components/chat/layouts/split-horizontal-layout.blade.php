@@ -200,7 +200,7 @@
 
         @if ($showSettings)
             {{-- TAB 2: Chat Settings --}}
-            <div x-show="activeMainTab === 'settings'" style="display: none; overflow-x: hidden;" class="scroll-y me-n5 pe-5 h-lg-auto"
+            <div x-show="activeMainTab === 'settings'" style="display: none; overflow-x: hidden;" class="scroll-y h-lg-auto px-10 py-8"
                 data-kt-element="settings" data-kt-scroll="true" data-kt-scroll-activate="{default: true, lg: false}"
                 data-kt-scroll-max-height="auto"
                 data-kt-scroll-dependencies="#kt_header, #kt_app_header, #kt_app_toolbar, #kt_toolbar, #kt_footer, #kt_app_footer"
