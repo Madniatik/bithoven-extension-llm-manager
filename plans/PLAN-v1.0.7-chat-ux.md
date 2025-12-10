@@ -1,9 +1,11 @@
 # LLM Manager Extension - PLAN v1.0.7 (Chat UX Improvements)
 
 **Fecha de Creación:** 9 de diciembre de 2025  
+**Última Actualización:** 10 de diciembre de 2025  
 **Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
-**Estado:** New  
+**Estado:** In Progress  
 **Prioridad:** Medium  
+**Progreso:** 56% (9/16 items completados)  
 **Tiempo Estimado:** 11.5-13.5 horas (actualizado: +1h system notifications)
 
 ---
@@ -204,30 +206,52 @@ updatePermissionStatus();
 
 ---
 
-### 3. Indicador de Streaming Status ⏳
+### 3. ✅ Indicador de Streaming Status (10 dic 2025) - **COMPLETADO**
 **Descripción:** Mostrar indicador visual cuando el asistente está generando respuesta.
 
-**Estados:**
-1. **Connecting...** - Al abrir EventSource (icono spinner circular)
-2. **Thinking...** - Primer chunk recibido (icono spinner)
-3. **Typing...** - Texto fluyendo (icono blinking dots, estilo WhatsApp)
-4. **Completed** - Fade out y desaparecer
+**Implementación Realizada:**
+- ✅ **4 Estados:** Connecting (amber) → Thinking (blue) → Typing (green) → Completed (bright green)
+- ✅ **Posición:** Sticky header en top del `.split-chat` (siempre visible al scroll)
+- ✅ **Animaciones:** slideDown (entrada), spin (spinner), blink (dots), fadeOut (salida)
+- ✅ **Configuración:** Toggle on/off en Settings → UX Enhancements
+- ✅ **Auto-hide:** Desaparece después de 1.5s al completar
+- ✅ **Event Handling:** Hide en error y stop manual
 
-**Posiciones Propuestas:**
-- **Opción A:** Sticky header en top del messages-container (siempre visible al hacer scroll)
-- **Opción B:** Footer flotante debajo de scroll-to-bottom button
-- **Opción C:** Inline badge en header del último mensaje del asistente
+**Estados y Transiciones:**
+```javascript
+EventSource.open → setState('connecting')        // Amber spinner
+metadata event → setState('thinking')           // Blue spinner  
+first chunk → setState('typing')                // Green dots blinking
+done event → setState('completed') → hide()     // Bright green → fadeOut
+error/stop → hide()                             // Immediate hide
+```
 
-**Reutilización de Código:**
-- Revisar `MonitorAPI.js` y `MonitorInstance.js` - tienen listeners de `open`, `chunk`, `done`
-- Posible shared utility: `StreamingStatusIndicator.js` con estados y transiciones
+**Estructura HTML:**
+```blade
+<div id="streaming-status-indicator" class="sticky-indicator" style="display: none;">
+    <div class="indicator-icon"></div>
+    <span class="indicator-text"></span>
+</div>
+```
 
-**Archivos:**
-- `streaming-status-indicator.blade.php` (nuevo partial)
-- `event-handlers.blade.php` - Listeners para cambiar estado
-- CSS animations para spinner y blinking dots
+**Archivos Modificados:**
+- ✅ `streaming-status-indicator.blade.php` (280 líneas) - Componente completo
+- ✅ `split-horizontal-layout.blade.php` - Include antes de messages-container
+- ✅ `event-handlers.blade.php` - setState() en todos los eventos + hide() en error/stop
+- ✅ `ux-enhancements.blade.php` - Toggle streaming_indicator_enabled
+- ✅ `split-horizontal.blade.php` - CSS del scroll-bottom button (position: fixed)
 
-**Tiempo Estimado:** 2.5 horas
+**Fixes Aplicados:**
+- ✅ Fix #1: Indicador scrolling con mensajes → Movido a nivel `.split-chat` (sticky)
+- ✅ Fix #2: Botón scroll-bottom scrolling → Cambiado de `absolute` a `fixed`
+- ✅ Fix #3: Indicador no desaparece en error/stop → Agregado hide() en ambos handlers
+
+**Configuración:**
+- localStorage key: `llm_streaming_indicator_enabled_{sessionId}`
+- Default: `true` (habilitado)
+- Persistence: Automática con Settings Panel
+
+**Tiempo Real:** 2.5 horas (commits: c5f79ec, e699e9a, cc8b1f6, 16a0b8b)
 
 ---
 
@@ -1049,12 +1073,12 @@ textarea.addEventListener('keydown', (e) => {
    - 4 partials: monitor-settings, ui-preferences, ux-enhancements, performance-settings
    - Settings: Fancy animations, Sound notifications, Keyboard shortcuts mode A/B
 
-### Fase 3: Core UX Features - 5 horas 🔄 3/5 COMPLETADO
+### Fase 3: Core UX Features - 5 horas ✅ 4/5 COMPLETADO
 1. ✅ **Keyboard Shortcuts** (1.5 horas) - COMPLETADO (b582b8f, cc73d04)
 2. ✅ **OS & Browser Info** (2 horas) - COMPLETADO (b582b8f, cc73d04, b3e5111)
-3. ✅ **System Notifications + Sound** (2.5 horas) - COMPLETADO (b742e22, f7d3cae)
-4. ⏳ **Hover Effects** (30 min) - Quick win visual
-5. ⏳ **Streaming Status Indicator** (2.5 horas) - Feature más complejo
+3. ✅ **System Notifications + Sound** (2.5 horas) - COMPLETADO (b742e22, f7d3cae, 84152d8, 89aa73c, 6b83908, cc8b1f6, 07212f4)
+4. ✅ **Streaming Status Indicator** (2.5 horas) - COMPLETADO (c5f79ec, e699e9a, cc8b1f6, 16a0b8b)
+5. ⏳ **Hover Effects** (30 min) - Quick win visual
 
 ### Fase 4: Advanced Features - 3.5 horas ⏳
 1. ⏳ **Header Bubble Refactor** (1.5 horas) - UI cleanup
@@ -1143,18 +1167,26 @@ Este plan se considerará **100% completado** cuando:
 11. **2cead9a** - chore: remove old settings-form.blade.php from partials
 12. **dbcdbd4** - docs: update plan - FASE 2 Configuration complete (5/14 items, 36%)
 
-### FASE 3: Core UX Features (9 dic 2025)
+### FASE 3: Core UX Features (9-10 dic 2025)
 13. **b582b8f** - feat(chat): OS-aware keyboard shortcuts with configurable modes
 14. **cc73d04** - fix: duplicate sessionId declaration + enhanced PlatformUtils with browser detection
 15. **b3e5111** - feat(chat): add System Information panel in Settings (debugging tool)
 16. **b742e22** - feat(chat): implement system notifications + sound with localStorage persistence
 17. **f7d3cae** - docs(assets): add placeholder structure for notification sounds and icons
+18. **84152d8** - feat(chat): add test notification button with complete flow testing
+19. **89aa73c** - fix(chat): update asset paths for dev-mode symlink structure
+20. **6b83908** - feat(chat): download notification sound files from Mixkit
+21. **cc8b1f6** - feat(chat): download placeholder icons for notifications
+22. **07212f4** - fix(chat): remove toastr warning from test notification (console only)
+23. **c5f79ec** - feat(chat): implement Streaming Status Indicator with 4 states
+24. **e699e9a** - fix(chat): correct Streaming Status Indicator and scroll-bottom button positioning
+25. **16a0b8b** - fix(chat): hide Streaming Status Indicator on error and stop events
 
-**Total:** 17 commits, 4 bug fixes + 1 config + 3 features completados
+**Total:** 25 commits, 4 bug fixes + 1 config + 4 features completados (80% FASE 3)
 
 ---
 
-**Última Actualización:** 10 de diciembre de 2025, 04:15
+**Última Actualización:** 10 de diciembre de 2025, 15:30
 **Responsable Actual:** GitHub Copilot (Claude Sonnet 4.5)
 **Siguiente Copilot:** Leer [HANDOFF-NEXT-COPILOT-CHAT-UX.md](./archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md)
 
@@ -1163,6 +1195,9 @@ Este plan se considerará **100% completado** cuando:
 - ✅ PlatformUtils module (OS + Browser detection)
 - ✅ System Information panel en Settings
 - ✅ System Notifications + Sound con localStorage persistence
-- ✅ Placeholder assets (sounds + icons con READMEs)
-- 📊 50% completado (8/16 items)
-- 📈 Progreso: 29% → 44% (+15%)
+- ✅ Test notification button con flujo completo
+- ✅ Asset management (5 sounds + 2 icons)
+- ✅ Streaming Status Indicator (4 estados, sticky, animaciones, settings toggle)
+- ✅ Bug fixes: asset paths, toastr warnings, positioning, event handling
+- 📊 56% completado (9/16 items)
+- 📈 Progreso: 29% → 56% (+27%)
