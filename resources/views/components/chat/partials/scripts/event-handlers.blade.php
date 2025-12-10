@@ -198,7 +198,7 @@
         const updateContextIndicators = () => {
             // Selector correcto del setting (chat-settings.blade.php)
             const contextLimitInput = document.querySelector('#quick-chat-context-limit');
-            const contextLimit = parseInt(contextLimitInput?.value) || 10;
+            const contextLimit = contextLimitInput?.value ? parseInt(contextLimitInput.value, 10) : 10;
             
             // Seleccionar el bubble-content-wrapper (donde va el borde visual)
             const bubbles = Array.from(messagesContainer?.querySelectorAll('.bubble-content-wrapper') || []);
