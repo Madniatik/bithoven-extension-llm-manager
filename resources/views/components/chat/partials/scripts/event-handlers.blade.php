@@ -1002,6 +1002,68 @@
                     messageInput.disabled = false;
                     messageInput.focus();
 
+                    // ===== SYSTEM NOTIFICATIONS + SOUND =====
+                    // Only notify if tab is not active (user is in another tab/window)
+                    if (document.visibilityState === 'hidden') {
+                        console.log('[Notifications] Tab is hidden, checking notification settings...');
+                        
+                        // Get notification preferences from localStorage
+                        const systemNotificationEnabled = localStorage.getItem(`llm_system_notification_enabled_${sessionId}`) !== 'false'; // Default: true
+                        const soundEnabled = localStorage.getItem(`llm_sound_enabled_${sessionId}`) !== 'false'; // Default: true
+                        const soundFile = localStorage.getItem(`llm_sound_file_${sessionId}`) || 'notification.mp3';
+                        const vibrateEnabled = localStorage.getItem(`llm_vibrate_enabled_${sessionId}`) === 'true'; // Default: false
+                        
+                        // A. System Notification (Notifications API)
+                        if (systemNotificationEnabled && 'Notification' in window && Notification.permission === 'granted') {
+                            console.log('[Notifications] Showing system notification...');
+                            
+                            const notification = new Notification('LLM Manager - Response Ready', {
+                                body: 'Your AI assistant has completed the response.',
+                                icon: '/vendor/llm-manager/images/logo.png',
+                                badge: '/vendor/llm-manager/images/badge.png',
+                                tag: `llm-response-${sessionId}`, // Replace previous notifications
+                                requireInteraction: false, // Auto-close after timeout
+                                silent: !soundEnabled // If sound is disabled, use system sound
+                            });
+                            
+                            // Click handler: focus this tab
+                            notification.onclick = () => {
+                                window.focus();
+                                notification.close();
+                                console.log('[Notifications] User clicked notification, focusing window');
+                            };
+                            
+                            // Auto-close after 5 seconds
+                            setTimeout(() => notification.close(), 5000);
+                        } else if (systemNotificationEnabled && 'Notification' in window && Notification.permission === 'default') {
+                            console.log('[Notifications] Permission not granted yet, skipping system notification');
+                        }
+                        
+                        // B. Sound Notification (Audio API)
+                        if (soundEnabled) {
+                            console.log(`[Notifications] Playing sound: ${soundFile}`);
+                            
+                            try {
+                                const audio = new Audio(`/vendor/llm-manager/sounds/${soundFile}`);
+                                audio.volume = 0.5; // 50% volume
+                                audio.play()
+                                    .then(() => console.log('[Notifications] Sound played successfully'))
+                                    .catch(err => console.warn('[Notifications] Sound play failed:', err));
+                            } catch (error) {
+                                console.error('[Notifications] Audio error:', error);
+                            }
+                        }
+                        
+                        // C. Vibration (Mobile only)
+                        if (vibrateEnabled && 'vibrate' in navigator) {
+                            console.log('[Notifications] Vibrating device...');
+                            navigator.vibrate([200, 100, 200]); // Vibrate pattern: 200ms on, 100ms off, 200ms on
+                        }
+                    } else {
+                        console.log('[Notifications] Tab is active, skipping notifications');
+                    }
+                    // ===== END NOTIFICATIONS =====
+
                 } else if (data.type === 'error') {
                     hideThinking();
                     clearInterval(statsUpdateInterval);

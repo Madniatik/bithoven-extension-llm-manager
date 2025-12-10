@@ -65,6 +65,30 @@
         </div>
     </div>
 
+    {{-- System Notifications --}}
+    <h5 class="mt-6 mb-4">System Notifications</h5>
+    
+    <div class="mb-5">
+        <div class="form-check form-check-custom form-check-solid mb-4">
+            <input class="form-check-input" type="checkbox" id="system_notification_enabled_{{ $sessionId }}" checked>
+            <label class="form-check-label fw-semibold text-gray-700" for="system_notification_enabled_{{ $sessionId }}">
+                Enable System Notifications
+            </label>
+            <div class="text-muted fs-7 mt-1">
+                Show native OS notification when AI response is ready (requires browser permission).
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-5" id="notification_permission_status_{{ $sessionId }}">
+        {{-- Dynamic permission status will be inserted here --}}
+    </div>
+
+    <button type="button" class="btn btn-sm btn-light-primary mb-5" id="request_notification_permission_{{ $sessionId }}">
+        {!! getIcon('ki-notification', 'fs-3 me-1', '', 'i') !!}
+        Request Notification Permission
+    </button>
+
     {{-- Sound Notifications --}}
     <h5 class="mt-6 mb-4">Sound Notifications</h5>
     
@@ -123,9 +147,177 @@
     {{-- Update Mode B description with correct modifier key --}}
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const sessionId = '{{ $sessionId }}';
+        
+        // ===== SYSTEM NOTIFICATIONS PERMISSION HANDLER =====
+        const updateNotificationPermissionStatus = () => {
+            const statusDiv = document.getElementById(`notification_permission_status_${sessionId}`);
+            if (!statusDiv) return;
+            
+            // Check if Notifications API is supported
+            if (!('Notification' in window)) {
+                statusDiv.innerHTML = `
+                    <div class="alert alert-warning d-flex align-items-center">
+                        {!! getIcon('ki-information', 'fs-2 me-3', '', 'i') !!}
+                        <div>
+                            <strong>Not Supported</strong><br>
+                            <span class="text-muted fs-7">Your browser doesn't support system notifications.</span>
+                        </div>
+                    </div>
+                `;
+                // Disable button and checkbox
+                document.getElementById(`request_notification_permission_${sessionId}`).disabled = true;
+                document.getElementById(`system_notification_enabled_${sessionId}`).disabled = true;
+                return;
+            }
+            
+            const permission = Notification.permission;
+            const statusHTML = {
+                'granted': `
+                    <div class="alert alert-success d-flex align-items-center">
+                        {!! getIcon('ki-check-circle', 'fs-2 me-3', '', 'i') !!}
+                        <div>
+                            <strong>Notifications Enabled</strong><br>
+                            <span class="text-muted fs-7">You will receive OS notifications when responses are ready.</span>
+                        </div>
+                    </div>
+                `,
+                'denied': `
+                    <div class="alert alert-danger d-flex align-items-center">
+                        {!! getIcon('ki-cross-circle', 'fs-2 me-3', '', 'i') !!}
+                        <div>
+                            <strong>Notifications Blocked</strong><br>
+                            <span class="text-muted fs-7">You have blocked notifications. Please enable them in your browser settings.</span>
+                        </div>
+                    </div>
+                `,
+                'default': `
+                    <div class="alert alert-warning d-flex align-items-center">
+                        {!! getIcon('ki-information', 'fs-2 me-3', '', 'i') !!}
+                        <div>
+                            <strong>Permission Required</strong><br>
+                            <span class="text-muted fs-7">Click the button below to enable system notifications.</span>
+                        </div>
+                    </div>
+                `
+            };
+            
+            statusDiv.innerHTML = statusHTML[permission];
+            
+            // Hide request button if already granted or denied
+            const requestBtn = document.getElementById(`request_notification_permission_${sessionId}`);
+            if (requestBtn) {
+                requestBtn.style.display = (permission === 'default') ? 'inline-flex' : 'none';
+            }
+        };
+        
+        // Request notification permission
+        const requestBtn = document.getElementById(`request_notification_permission_${sessionId}`);
+        if (requestBtn) {
+            requestBtn.addEventListener('click', async () => {
+                if (!('Notification' in window)) {
+                    toastr.error('Your browser doesn\'t support notifications');
+                    return;
+                }
+                
+                try {
+                    const permission = await Notification.requestPermission();
+                    updateNotificationPermissionStatus();
+                    
+                    if (permission === 'granted') {
+                        toastr.success('System notifications enabled successfully!');
+                        
+                        // Show test notification
+                        new Notification('LLM Manager', {
+                            body: 'Notifications are now enabled! You will be notified when AI responses are ready.',
+                            icon: '/vendor/llm-manager/images/logo.png',
+                            tag: 'test-notification'
+                        });
+                    } else if (permission === 'denied') {
+                        toastr.warning('Notifications permission denied. You can enable them later in browser settings.');
+                    }
+                } catch (error) {
+                    console.error('[Notifications] Request permission error:', error);
+                    toastr.error('Failed to request notification permission');
+                }
+            });
+        }
+        
+        // Initialize permission status on load
+        updateNotificationPermissionStatus();
+        
+        // ===== SETTINGS PERSISTENCE =====
+        // Lista de todos los settings que se deben guardar/cargar
+        const settingsConfig = [
+            // Fancy Animations
+            { id: 'fancy_enabled', type: 'checkbox', defaultValue: true },
+            { id: 'checkmark_bounce', type: 'checkbox', defaultValue: true },
+            { id: 'scroll_button_fade', type: 'checkbox', defaultValue: true },
+            { id: 'hover_effects', type: 'checkbox', defaultValue: true },
+            
+            // System Notifications
+            { id: 'system_notification_enabled', type: 'checkbox', defaultValue: true },
+            
+            // Sound Notifications
+            { id: 'sound_enabled', type: 'checkbox', defaultValue: true },
+            { id: 'sound_file', type: 'select', defaultValue: 'notification.mp3' },
+            { id: 'vibrate_enabled', type: 'checkbox', defaultValue: false },
+        ];
+        
+        // Función para cargar settings desde localStorage
+        const loadSettings = () => {
+            console.log('[Settings] Loading UX settings from localStorage...');
+            
+            settingsConfig.forEach(setting => {
+                const element = document.getElementById(`${setting.id}_${sessionId}`);
+                if (!element) return;
+                
+                const storageKey = `llm_${setting.id}_${sessionId}`;
+                const savedValue = localStorage.getItem(storageKey);
+                
+                if (setting.type === 'checkbox') {
+                    // Parse boolean value
+                    const value = savedValue !== null ? savedValue === 'true' : setting.defaultValue;
+                    element.checked = value;
+                    console.log(`[Settings] Loaded ${setting.id}: ${value}`);
+                } else if (setting.type === 'select') {
+                    // Set select value
+                    const value = savedValue !== null ? savedValue : setting.defaultValue;
+                    element.value = value;
+                    console.log(`[Settings] Loaded ${setting.id}: ${value}`);
+                }
+            });
+        };
+        
+        // Función para guardar un setting específico
+        const saveSetting = (settingId, value) => {
+            const storageKey = `llm_${settingId}_${sessionId}`;
+            localStorage.setItem(storageKey, value);
+            console.log(`[Settings] Saved ${settingId}: ${value}`);
+        };
+        
+        // Agregar event listeners para auto-save
+        settingsConfig.forEach(setting => {
+            const element = document.getElementById(`${setting.id}_${sessionId}`);
+            if (!element) return;
+            
+            if (setting.type === 'checkbox') {
+                element.addEventListener('change', (e) => {
+                    saveSetting(setting.id, e.target.checked);
+                });
+            } else if (setting.type === 'select') {
+                element.addEventListener('change', (e) => {
+                    saveSetting(setting.id, e.target.value);
+                });
+            }
+        });
+        
+        // Cargar settings al inicializar
+        loadSettings();
+        
+        // ===== KEYBOARD SHORTCUTS (EXISTING CODE) =====
         if (typeof PlatformUtils !== 'undefined') {
             const modifier = PlatformUtils.getModifierKey(); // 'Cmd' o 'Ctrl'
-            const sessionId = '{{ $sessionId }}';
             
             // Update Mode B option text (replace MOD placeholder)
             const modeBOption = document.getElementById(`mode_b_option_${sessionId}`);
@@ -144,4 +336,3 @@
     });
     </script>
 </div>
-
