@@ -1,8 +1,8 @@
-# 🚀 LLM Manager Extension v1.0.7
+# 🚀 LLM Manager Extension v1.0.8 (In Progress)
 
 **Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Version](https://img.shields.io/badge/version-1.0.8--dev-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
 [![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -10,6 +10,11 @@
 Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, database-driven activity logs, comprehensive admin UI, and granular chat configuration system.
 
 **✨ v1.0.7 Released:** Chat Workspace Configuration System (23 docs, 3376+ lines), Monitor Export (CSV/JSON/SQL), UX Enhancements (21 items), Database Activity Logs, Settings Panel with DB Persistence - Production Ready (10 Dec 2025)
+
+**🔄 v1.0.8 In Progress (33%):** Architecture Refactoring + Provider Repositories Ecosystem
+- ✅ FASE 1: Service Layer (100%) - Cache layer, 25 tests, zero breaking changes
+- ✅ FASE 2: Core Import System (100%) - Validator + import/list commands, 19 tests
+- 🔄 FASE 3: First Provider Package (Ollama) - In Planning
 
 ---
 
