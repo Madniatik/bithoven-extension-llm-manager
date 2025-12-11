@@ -5,10 +5,14 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Bithoven\LLMManager\Models\LLMUsageLog;
 use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 use Illuminate\Http\Request;
 
 class LLMActivityController extends Controller
 {
+    public function __construct(
+        private readonly LLMConfigurationService $configService
+    ) {}
     /**
      * Display activity logs with filters
      */
@@ -49,9 +53,7 @@ class LLMActivityController extends Controller
         $logs = $query->paginate(20);
 
         // Get providers for filter
-        $providers = LLMConfiguration::select('provider')
-            ->distinct()
-            ->pluck('provider');
+        $providers = $this->configService->getProviders();
 
         return view('llm-manager::admin.activity.index', compact('logs', 'providers'));
     }

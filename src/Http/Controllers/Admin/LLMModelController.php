@@ -5,9 +5,13 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 
 class LLMModelController extends Controller
 {
+    public function __construct(
+        private readonly LLMConfigurationService $configService
+    ) {}
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -19,7 +23,7 @@ class LLMModelController extends Controller
         $validated['is_active'] = false; // Inactive until configured
         $validated['model'] = 'pending-configuration'; // Placeholder until user configures
 
-        $configuration = LLMConfiguration::create($validated);
+        $configuration = $this->configService->create($validated);
 
         // Return JSON for AJAX requests
         if ($request->wantsJson()) {

@@ -9,12 +9,14 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Response;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMStreamLogger;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 
 class LLMStreamController extends Controller
 {
     public function __construct(
         private readonly LLMManager $llmManager,
-        private readonly LLMStreamLogger $streamLogger
+        private readonly LLMStreamLogger $streamLogger,
+        private readonly LLMConfigurationService $configService
     ) {}
 
     /**
@@ -23,7 +25,7 @@ class LLMStreamController extends Controller
     public function test()
     {
         // Get all active configurations
-        $configurations = LLMConfiguration::active()->get();
+        $configurations = $this->configService->getActive();
 
         return view('llm-manager::admin.stream.test', compact('configurations'));
     }
@@ -91,7 +93,7 @@ class LLMStreamController extends Controller
         $validated['temperature'] = isset($validated['temperature']) ? (float) $validated['temperature'] : null;
         $validated['max_tokens'] = isset($validated['max_tokens']) ? (int) $validated['max_tokens'] : null;
 
-        $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
+        $configuration = $this->configService->findOrFail($validated['configuration_id']);
 
         // Increase PHP execution time for streaming (can take a while)
         set_time_limit(300); // 5 minutes

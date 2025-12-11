@@ -10,6 +10,7 @@ use Bithoven\LLMManager\Models\LLMConfiguration;
 use Bithoven\LLMManager\Services\Conversations\LLMConversationManager;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMStreamLogger;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 use Illuminate\Support\Facades\Response;
 
 class LLMConversationController extends Controller
@@ -17,7 +18,8 @@ class LLMConversationController extends Controller
     public function __construct(
         private readonly LLMManager $llmManager,
         private readonly LLMStreamLogger $streamLogger,
-        private readonly LLMConversationManager $conversationManager
+        private readonly LLMConversationManager $conversationManager,
+        private readonly LLMConfigurationService $configService
     ) {}
 
     public function index()
@@ -31,7 +33,7 @@ class LLMConversationController extends Controller
 
     public function create()
     {
-        $configurations = LLMConfiguration::active()->get();
+        $configurations = $this->configService->getActive();
 
         return view('llm-manager::admin.conversations.create', compact('configurations'));
     }
@@ -43,7 +45,7 @@ class LLMConversationController extends Controller
             'title' => 'nullable|string|max:255',
         ]);
 
-        $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
+        $configuration = $this->configService->findOrFail($validated['configuration_id']);
         
         $conversation = $this->conversationManager->createSession(
             $configuration,
@@ -70,7 +72,7 @@ class LLMConversationController extends Controller
         ])->findOrFail($id);
         
         // Get all active configurations for model selector
-        $configurations = LLMConfiguration::active()->get();
+        $configurations = $this->configService->getActive();
 
         return view('llm-manager::admin.conversations.show', compact('conversation', 'configurations'));
     }
@@ -124,7 +126,7 @@ class LLMConversationController extends Controller
             ], 422);
         }
         
-        $configuration = LLMConfiguration::findOrFail($configurationId);
+        $configuration = $this->configService->findOrFail($configurationId);
 
         // If conversation has ended or expired, don't allow streaming
         if ($conversation->ended_at || ($conversation->expires_at && $conversation->expires_at->isPast())) {

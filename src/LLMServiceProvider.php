@@ -13,6 +13,7 @@ use Bithoven\LLMManager\Services\LLMExecutor;
 use Bithoven\LLMManager\Services\LLMBudgetManager;
 use Bithoven\LLMManager\Services\LLMMetricsService;
 use Bithoven\LLMManager\Services\LLMPromptService;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 use Bithoven\LLMManager\Services\Conversations\LLMConversationManager;
 use Bithoven\LLMManager\Services\LLMRAGService;
 use Bithoven\LLMManager\Services\LLMEmbeddingsService;
@@ -61,6 +62,11 @@ class LLMServiceProvider extends ServiceProvider
 
         $this->app->singleton(LLMPromptService::class, function ($app) {
             return new LLMPromptService();
+        });
+
+        // Register configuration service (FASE 1 - v1.0.8)
+        $this->app->singleton(LLMConfigurationService::class, function ($app) {
+            return new LLMConfigurationService();
         });
 
         // Register orchestration services

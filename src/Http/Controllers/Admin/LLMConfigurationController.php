@@ -6,15 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Models\LLMConfiguration;
 use Bithoven\LLMManager\Services\LLMProviderService;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 
 class LLMConfigurationController extends Controller
 {
-    protected $providerService;
-
-    public function __construct(LLMProviderService $providerService)
-    {
-        $this->providerService = $providerService;
-    }
+    public function __construct(
+        private readonly LLMProviderService $providerService,
+        private readonly LLMConfigurationService $configService
+    ) {}
 
     /**
      * Display a listing of configurations.
@@ -22,10 +21,7 @@ class LLMConfigurationController extends Controller
      */
     public function index()
     {
-        $configurations = LLMConfiguration::withCount('usageLogs')
-            ->orderBy('is_active', 'desc')
-            ->orderBy('name')
-            ->get();
+        $configurations = $this->configService->getAll();
 
         return view('llm-manager::admin.configurations.index', compact('configurations'));
     }

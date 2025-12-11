@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Services\Conversations\LLMConversationManager;
 use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 
 class LLMChatController extends Controller
 {
+    public function __construct(
+        private readonly LLMConfigurationService $configService
+    ) {}
     public function start(Request $request, LLMConversationManager $manager)
     {
         $validated = $request->validate([
@@ -18,9 +22,7 @@ class LLMChatController extends Controller
         ]);
 
         try {
-            $config = LLMConfiguration::where('slug', $validated['config'])
-                ->active()
-                ->firstOrFail();
+            $config = $this->configService->findBySlugOrFail($validated['config']);
 
             $session = $manager->createSession(
                 $config,

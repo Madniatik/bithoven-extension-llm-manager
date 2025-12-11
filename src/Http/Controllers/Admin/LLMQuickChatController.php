@@ -10,6 +10,7 @@ use Bithoven\LLMManager\Services\ChatWorkspaceConfigValidator;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMStreamLogger;
+use Bithoven\LLMManager\Services\LLMConfigurationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
@@ -17,7 +18,8 @@ class LLMQuickChatController extends Controller
 {
     public function __construct(
         private readonly LLMManager $llmManager,
-        private readonly LLMStreamLogger $streamLogger
+        private readonly LLMStreamLogger $streamLogger,
+        private readonly LLMConfigurationService $configService
     ) {}
     
     /**
@@ -31,7 +33,7 @@ class LLMQuickChatController extends Controller
      */
     public function index($sessionId = null)
     {
-        $configurations = LLMConfiguration::active()->get();
+        $configurations = $this->configService->getActive();
         $defaultConfig = $configurations->first();
         
         if (!$defaultConfig) {
@@ -99,7 +101,7 @@ class LLMQuickChatController extends Controller
         ]);
 
         $session = LLMConversationSession::findOrFail($validated['session_id']);
-        $configuration = LLMConfiguration::findOrFail($validated['configuration_id']);
+        $configuration = $this->configService->findOrFail($validated['configuration_id']);
         
         // Force fresh load to get latest parameters
         $configuration->refresh();
@@ -407,7 +409,7 @@ class LLMQuickChatController extends Controller
         $title = $customTitle ?: ('Quick Chat - ' . now()->format('Y-m-d H:i'));
         
         // Create new session with custom title
-        $defaultConfig = LLMConfiguration::active()->first();
+        $defaultConfig = $this->configService->getActive()->first();
         
         if (!$defaultConfig) {
             return redirect()->route('admin.llm.configurations.index')
