@@ -28,6 +28,9 @@ use Bithoven\LLMManager\Console\Commands\LLMMCPAddCommand;
 use Bithoven\LLMManager\Console\Commands\LLMIndexDocumentsCommand;
 use Bithoven\LLMManager\Console\Commands\LLMGenerateEmbeddingsCommand;
 use Bithoven\LLMManager\Console\Commands\LLMTestCommand;
+use Bithoven\LLMManager\Console\Commands\ImportProviderConfigs;
+use Bithoven\LLMManager\Console\Commands\ListProviderPackages;
+use Bithoven\LLMManager\Services\ProviderRepositoryValidator;
 
 class LLMServiceProvider extends ServiceProvider
 {
@@ -67,6 +70,11 @@ class LLMServiceProvider extends ServiceProvider
         // Register configuration service (FASE 1 - v1.0.8)
         $this->app->singleton(LLMConfigurationService::class, function ($app) {
             return new LLMConfigurationService();
+        });
+
+        // Register provider repository validator (FASE 2 - v1.0.8)
+        $this->app->singleton(ProviderRepositoryValidator::class, function ($app) {
+            return new ProviderRepositoryValidator();
         });
 
         // Register orchestration services
@@ -182,6 +190,9 @@ class LLMServiceProvider extends ServiceProvider
                 LLMIndexDocumentsCommand::class,
                 LLMGenerateEmbeddingsCommand::class,
                 LLMTestCommand::class,
+                // Provider Repositories commands (FASE 2 - v1.0.8)
+                ImportProviderConfigs::class,
+                ListProviderPackages::class,
             ]);
         }
 
