@@ -1,6 +1,6 @@
 # LLM Manager Extension - Deployment Guide
 
-**Version:** v1.0.8-dev  
+**Version:** v0.4.0-dev  
 **Last Updated:** 12 de diciembre de 2025
 
 ## 📦 Quick Deployment
@@ -309,7 +309,7 @@ curl https://production.com/vendor/bithoven/llm-manager/js/monitor/core/MonitorS
 php artisan backup:restore
 
 # 2. Downgrade extension
-composer require bithoven/llm-manager:1.0.6
+composer require bithoven/llm-manager:0.2.2
 
 # 3. Republish old assets
 php artisan vendor:publish --tag=llm-assets --force
@@ -355,7 +355,7 @@ curl http://localhost:8000/vendor/bithoven/llm-manager/js/monitor/core/MonitorSt
 
 ---
 
-**Version:** v1.0.8-dev (33% complete)  
+**Version:** v0.4.0-dev (33% complete)  
 **Last Updated:** 12 de diciembre de 2025  
 **Critical Note:** Always publish assets after composer update!  
 **Latest Feature:** Service Layer + Provider Repositories (FASE 1-2 complete)

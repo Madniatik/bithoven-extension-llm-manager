@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('session_id')->constrained('llm_manager_conversation_sessions')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // User who sent the message
-            $table->foreignId('llm_configuration_id')->nullable()->constrained('llm_manager_configurations')->onDelete('set null'); // LLM config used for this message
+            $table->foreignId('llm_provider_configuration_id')->nullable()->constrained('llm_manager_provider_configurations', indexName: 'llm_cm_config_fk')->onDelete('set null'); // LLM config used for this message
             $table->string('model', 100)->nullable(); // Snapshot of actual model used (e.g., "gpt-4", "qwen3:4b")
             $table->enum('role', ['system', 'user', 'assistant', 'tool'])->default('user');
             $table->longText('content');

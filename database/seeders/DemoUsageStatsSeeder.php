@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Bithoven\LLMManager\Models\LLMUsageLog;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use App\Models\User;
 
 class DemoUsageStatsSeeder extends Seeder
@@ -18,7 +18,7 @@ class DemoUsageStatsSeeder extends Seeder
     public function run(): void
     {
         // Get all configurations (expects 3: Ollama, OpenAI, OpenRouter)
-        $configurations = LLMConfiguration::all();
+        $configurations = LLMProviderConfiguration::all();
         
         if ($configurations->isEmpty()) {
             $this->command->warn('No LLM configurations found. Please run LLMConfigurationSeeder first.');
@@ -57,7 +57,7 @@ class DemoUsageStatsSeeder extends Seeder
     /**
      * Create logs for today (last 6 hours)
      */
-    protected function createTodayLogs(LLMConfiguration $config, int $userId): void
+    protected function createTodayLogs(LLMProviderConfiguration $config, int $userId): void
     {
         for ($i = 0; $i < 8; $i++) {
             $executedAt = now()->subHours(rand(0, 6));
@@ -87,7 +87,7 @@ class DemoUsageStatsSeeder extends Seeder
     /**
      * Create logs for this week
      */
-    protected function createWeekLogs(LLMConfiguration $config, int $userId): void
+    protected function createWeekLogs(LLMProviderConfiguration $config, int $userId): void
     {
         for ($i = 0; $i < 15; $i++) {
             $executedAt = now()->subDays(rand(1, 6))->subHours(rand(0, 23));
@@ -118,7 +118,7 @@ class DemoUsageStatsSeeder extends Seeder
     /**
      * Create logs for this month
      */
-    protected function createMonthLogs(LLMConfiguration $config, int $userId): void
+    protected function createMonthLogs(LLMProviderConfiguration $config, int $userId): void
     {
         for ($i = 0; $i < 25; $i++) {
             $executedAt = now()->subDays(rand(7, 29))->subHours(rand(0, 23));
@@ -148,7 +148,7 @@ class DemoUsageStatsSeeder extends Seeder
     /**
      * Create logs across multiple extensions
      */
-    protected function createExtensionLogs(LLMConfiguration $config, int $userId): void
+    protected function createExtensionLogs(LLMProviderConfiguration $config, int $userId): void
     {
         $extensions = ['llm-manager', 'tickets', 'dummy'];
         

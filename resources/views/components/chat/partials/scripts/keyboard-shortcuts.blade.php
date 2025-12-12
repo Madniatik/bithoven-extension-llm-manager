@@ -10,7 +10,7 @@
     - PlatformUtils (platform-utils.blade.php)
     - ChatWorkspaceConfigValidator (config.ux.keyboard.shortcuts_mode)
     
-    @version 1.0.0
+    @version 0.1.0
     @requires PlatformUtils
 --}}
 

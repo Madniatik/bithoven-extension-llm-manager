@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Models\LLMConversationSession;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\Conversations\LLMConversationManager;
 use Bithoven\LLMManager\Services\LLMManager;
 use Bithoven\LLMManager\Services\LLMStreamLogger;
@@ -41,7 +41,7 @@ class LLMConversationController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'configuration_id' => 'required|exists:llm_manager_configurations,id',
+            'configuration_id' => 'required|exists:llm_manager_provider_configurations,id',
             'title' => 'nullable|string|max:255',
         ]);
 
@@ -109,7 +109,7 @@ class LLMConversationController extends Controller
             'message' => 'required|string|max:5000',
             'temperature' => 'nullable|numeric|min:0|max:2',
             'max_tokens' => 'nullable|integer|min:1|max:4000',
-            'configuration_id' => 'nullable|integer|exists:llm_manager_configurations,id',
+            'configuration_id' => 'nullable|integer|exists:llm_manager_provider_configurations,id',
             'context_limit' => 'nullable|integer|min:0|max:100',
         ]);
 
@@ -148,7 +148,7 @@ class LLMConversationController extends Controller
                 // 1. Save user message to database
                 $userMessage = LLMConversationMessage::create([
                     'session_id' => $conversation->id,
-                    'llm_configuration_id' => $configuration->id,
+                    'llm_provider_configuration_id' => $configuration->id,
                     'role' => 'user',
                     'content' => $validated['message'],
                     'tokens' => str_word_count($validated['message']), // Rough estimate
@@ -221,7 +221,7 @@ class LLMConversationController extends Controller
                 // Emit request_data event for Request Inspector tab
                 $requestData = [
                     'metadata' => [
-                        'provider' => $configuration->provider,
+                        'provider' => $configuration->provider->slug,
                         'model' => $configuration->model,
                         'endpoint' => $configuration->api_endpoint ?? 'N/A',
                         'timestamp' => now()->toIso8601String(),
@@ -302,7 +302,7 @@ class LLMConversationController extends Controller
                 // 6. Save assistant message to database FIRST
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $conversation->id,
-                    'llm_configuration_id' => $configuration->id,
+                    'llm_provider_configuration_id' => $configuration->id,
                     'model' => $metrics['model'] ?? $configuration->model, // Snapshot (prefer from provider response)
                     'role' => 'assistant',
                     'content' => $fullResponse,

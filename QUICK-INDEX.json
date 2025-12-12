@@ -93,9 +93,9 @@
               "type": "documentation"
             },
             {
-              "file": "PLAN-v1.0.7.md",
+              "file": "PLAN-v0.3.0.md",
               "type": "development-plan",
-              "version": "1.0.7",
+              "version": "0.3.0",
               "status": "ready-for-release",
               "progress": "99.5%"
             }
@@ -110,9 +110,9 @@
               "type": "documentation"
             },
             {
-              "file": "PLAN-GITHUB-RELEASE-v1.0.7.md",
+              "file": "PLAN-GITHUB-RELEASE-v0.3.0.md",
               "type": "task-plan",
-              "version": "1.0.7",
+              "version": "0.3.0",
               "status": "ready-to-execute",
               "estimatedTime": "15min"
             }
@@ -123,10 +123,10 @@
           "description": "Archived plans integrated into master plans",
           "subdirectories": [
             {
-              "name": "v1.0.7",
+              "name": "v0.3.0",
               "files": [
                 {
-                  "file": "PLAN-v1.0.7-chat-config-options.md",
+                  "file": "PLAN-v0.3.0-chat-config-options.md",
                   "type": "feature-plan",
                   "status": "integrated-into-master-plan"
                 }
@@ -158,9 +158,9 @@
           ],
           "files": [
             {
-              "file": "PLAN-v1.0.7-chat-ux.md",
+              "file": "PLAN-v0.3.0-chat-ux.md",
               "type": "feature-plan",
-              "version": "1.0.7",
+              "version": "0.3.0",
               "completedAt": "2025-12-10",
               "verifiedAt": "2025-12-10T23:59:00+00:00",
               "items": 21,
@@ -298,8 +298,8 @@
     "debugSnippets": "docs/debug/QUICK-DEBUG.js",
     "providers": "docs/providers/PROVIDER-COMPARISON.md",
     "contributing": "docs/CONTRIBUTING.md",
-    "planDevelopment": "plans/PLAN-v1.0.7.md",
-    "planHandoff": "plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md",
+    "planDevelopment": "plans/PLAN-v0.3.0.md",
+    "planHandoff": "plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md",
     "planQuickChat": "plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md",
     "activityLogPlan": "plans/completed/ACTIVITY-LOG-MIGRATION-PLAN.md",
     "activityLogReport": "reports/activity-log/ACTIVITY-LOG-MIGRATION-REPORT-2025-12-07.md",

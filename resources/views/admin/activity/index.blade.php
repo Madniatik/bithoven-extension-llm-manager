@@ -126,7 +126,7 @@
                                         <span class="text-muted fs-7">{{ $log->executed_at->format('d/m/Y') }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge badge-light-primary">{{ $log->configuration->provider ?? 'N/A' }}</span>
+                                        <span class="badge badge-light-primary">{{ $log->configuration->provider->name ?? 'N/A' }}</span>
                                     </td>
                                     <td>
                                         <span class="text-gray-800 fs-7">{{ $log->configuration->model ?? 'N/A' }}</span>

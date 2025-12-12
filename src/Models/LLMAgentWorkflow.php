@@ -23,7 +23,7 @@ class LLMAgentWorkflow extends Model
         'extension_slug',
         'workflow_definition',
         'agents_config',
-        'llm_configuration_id',
+        'llm_provider_configuration_id',
         'max_steps',
         'timeout_seconds',
         'is_active',
@@ -43,7 +43,7 @@ class LLMAgentWorkflow extends Model
      */
     public function configuration(): BelongsTo
     {
-        return $this->belongsTo(LLMConfiguration::class, 'llm_configuration_id');
+        return $this->belongsTo(LLMProviderConfiguration::class, 'llm_provider_configuration_id');
     }
 
     /**

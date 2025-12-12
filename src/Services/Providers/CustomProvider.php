@@ -3,12 +3,12 @@
 namespace Bithoven\LLMManager\Services\Providers;
 
 use Bithoven\LLMManager\Contracts\LLMProviderInterface;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Illuminate\Support\Facades\Http;
 
 class CustomProvider implements LLMProviderInterface
 {
-    public function __construct(protected LLMConfiguration $configuration)
+    public function __construct(protected LLMProviderConfiguration $configuration)
     {
     }
 

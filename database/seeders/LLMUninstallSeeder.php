@@ -12,7 +12,7 @@ use Spatie\Permission\Models\Permission;
  * Cleans up all LLM Manager permissions and role assignments during extension uninstallation.
  * Implements Extension Permissions Protocol v2.0 cleanup strategy.
  * 
- * @version 1.0.0
+ * @version 0.1.0
  */
 class LLMUninstallSeeder extends Seeder
 {

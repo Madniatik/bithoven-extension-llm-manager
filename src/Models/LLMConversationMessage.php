@@ -22,7 +22,7 @@ class LLMConversationMessage extends Model
     protected $fillable = [
         'session_id',
         'user_id',
-        'llm_configuration_id',
+        'llm_provider_configuration_id',
         'model', // Snapshot of the actual model used (e.g., "gpt-4", "qwen3:4b")
         'role',
         'content',
@@ -76,9 +76,15 @@ class LLMConversationMessage extends Model
         return $this->belongsTo(\App\Models\User::class);
     }
 
+    public function providerConfiguration(): BelongsTo
+    {
+        return $this->belongsTo(LLMProviderConfiguration::class, 'llm_provider_configuration_id');
+    }
+    
+    // Alias for backward compatibility
     public function llmConfiguration(): BelongsTo
     {
-        return $this->belongsTo(LLMConfiguration::class, 'llm_configuration_id');
+        return $this->providerConfiguration();
     }
 
     /**
@@ -160,7 +166,7 @@ class LLMConversationMessage extends Model
                 $this->session && 
                 $this->session->relationLoaded('configuration') && 
                 $this->session->configuration) {
-                return $this->session->configuration->provider;
+                return $this->session->configuration->provider->slug;
             }
 
             return null;

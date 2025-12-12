@@ -33,7 +33,7 @@
                         <select name="provider" id="provider-select" class="form-select form-select-solid form-select-lg" 
                                 onchange="updateModelField(this.value)" disabled>
                             @foreach($providers as $key => $config)
-                                <option value="{{ $key }}" {{ $model->provider === $key ? 'selected' : '' }}>
+                                <option value="{{ $key }}" {{ $model->provider->slug === $key ? 'selected' : '' }}>
                                     {{ ucfirst($key) }}
                                 </option>
                             @endforeach

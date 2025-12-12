@@ -5,7 +5,7 @@ namespace Bithoven\LLMManager\View\Components\Chat;
 use Illuminate\View\Component;
 use Illuminate\Support\Collection;
 use Bithoven\LLMManager\Models\LLMConversationSession;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\ChatWorkspaceConfigValidator;
 
 /**
@@ -17,7 +17,7 @@ use Bithoven\LLMManager\Services\ChatWorkspaceConfigValidator;
  * Supports both legacy props (backward compatible) and new config array system.
  * 
  * @package Bithoven\LLMManager\View\Components\Chat
- * @version 1.0.7
+ * @version 0.3.0
  */
 class Workspace extends Component
 {
@@ -91,7 +91,7 @@ class Workspace extends Component
         bool $showToolbar = true
     ) {
         $this->session = $session;
-        $this->configurations = $configurations ?? LLMConfiguration::where('is_active', true)->get();
+        $this->configurations = $configurations ?? LLMProviderConfiguration::where('is_active', true)->get();
 
         // CONFIG SYSTEM: Decide entre config array (nuevo) o legacy props
         if ($config !== null) {

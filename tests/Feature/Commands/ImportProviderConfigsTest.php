@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Artisan;
  * Import Provider Configs Command Integration Tests
  * 
  * @package Bithoven\LLMManager\Tests\Feature\Commands
- * @version 1.0.0
- * @since 1.0.8
+ * @version 0.1.0
+ * @since 0.4.0
  */
 class ImportProviderConfigsTest extends TestCase
 {

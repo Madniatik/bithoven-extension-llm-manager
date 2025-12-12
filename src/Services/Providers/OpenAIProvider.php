@@ -3,14 +3,14 @@
 namespace Bithoven\LLMManager\Services\Providers;
 
 use Bithoven\LLMManager\Contracts\LLMProviderInterface;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use OpenAI;
 
 class OpenAIProvider implements LLMProviderInterface
 {
     protected $client;
 
-    public function __construct(protected LLMConfiguration $configuration)
+    public function __construct(protected LLMProviderConfiguration $configuration)
     {
         $this->client = OpenAI::client($configuration->api_key);
     }

@@ -27,7 +27,7 @@
                 <label class="col-lg-4 fw-semibold text-muted">Provider</label>
                 <div class="col-lg-8 fv-row">
                     <span class="fw-semibold text-gray-800 fs-6">
-                        <span class="badge badge-light-primary">{{ ucfirst($model->provider) }}</span>
+                        <span class="badge badge-light-primary">{{ ucfirst($model->provider->name) }}</span>
                     </span>
                 </div>
             </div>

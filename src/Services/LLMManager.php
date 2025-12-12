@@ -3,7 +3,7 @@
 namespace Bithoven\LLMManager\Services;
 
 use Illuminate\Support\Facades\App;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\Providers\OllamaProvider;
 use Bithoven\LLMManager\Services\Providers\OpenAIProvider;
 use Bithoven\LLMManager\Services\Providers\AnthropicProvider;
@@ -13,7 +13,7 @@ use Bithoven\LLMManager\Contracts\LLMProviderInterface;
 
 class LLMManager
 {
-    protected ?LLMConfiguration $configuration = null;
+    protected ?LLMProviderConfiguration $configuration = null;
     protected array $parameters = [];
     protected ?string $extensionSlug = null;
     protected ?string $context = null;
@@ -21,7 +21,7 @@ class LLMManager
     public function __construct(protected $app)
     {
         // Set default configuration
-        $defaultConfig = LLMConfiguration::default()->first();
+        $defaultConfig = LLMProviderConfiguration::default()->first();
         if ($defaultConfig) {
             $this->configuration = $defaultConfig;
         }
@@ -36,12 +36,12 @@ class LLMManager
     {
         // If identifier is numeric, treat as ID (preferred for immutability)
         if (is_int($identifier)) {
-            $config = LLMConfiguration::where('id', $identifier)
+            $config = LLMProviderConfiguration::where('id', $identifier)
                 ->active()
                 ->firstOrFail();
         } else {
             // Otherwise treat as slug (for backward compatibility)
-            $config = LLMConfiguration::where('slug', $identifier)
+            $config = LLMProviderConfiguration::where('slug', $identifier)
                 ->active()
                 ->firstOrFail();
         }
@@ -126,7 +126,7 @@ class LLMManager
     /**
      * Create or get conversation session
      */
-    public function conversation(string $sessionId = null): string
+    public function conversation(?string $sessionId = null): string
     {
         $conversationManager = App::make(Conversations\LLMConversationManager::class);
 
@@ -209,20 +209,20 @@ class LLMManager
             throw new \Exception('No LLM configuration set. Call config() first.');
         }
         
-        return match ($this->configuration->provider) {
+        return match ($this->configuration->provider->slug) {
             'ollama' => new OllamaProvider($this->configuration),
             'openai' => new OpenAIProvider($this->configuration),
             'anthropic' => new AnthropicProvider($this->configuration),
             'openrouter' => new OpenRouterProvider($this->configuration),
             'custom' => new CustomProvider($this->configuration),
-            default => throw new \Exception("Unsupported provider: {$this->configuration->provider}"),
+            default => throw new \Exception("Unsupported provider: {$this->configuration->provider->slug}"),
         };
     }
 
     /**
      * Get current configuration or configuration by ID
      */
-    public function getConfiguration(?int $id = null): ?LLMConfiguration
+    public function getConfiguration(?int $id = null): ?LLMProviderConfiguration
     {
         // If no ID provided, return current configuration
         if ($id === null) {
@@ -230,7 +230,7 @@ class LLMManager
             if (!$this->configuration) {
                 $defaultId = config('llm-manager.default_configuration_id');
                 if ($defaultId) {
-                    $this->configuration = LLMConfiguration::find($defaultId);
+                    $this->configuration = LLMProviderConfiguration::find($defaultId);
                 }
             }
             return $this->configuration;
@@ -246,7 +246,7 @@ class LLMManager
         }
         
         // Load configuration by ID
-        $config = LLMConfiguration::find($id);
+        $config = LLMProviderConfiguration::find($id);
         
         if (!$config) {
             throw new \RuntimeException('LLM configuration not found');
@@ -270,7 +270,7 @@ class LLMManager
      */
     public function activeConfigurations(): \Illuminate\Database\Eloquent\Collection
     {
-        return LLMConfiguration::active()->get();
+        return LLMProviderConfiguration::active()->get();
     }
 
     /**
@@ -278,7 +278,7 @@ class LLMManager
      */
     public function configurationsByProvider(string $provider): \Illuminate\Database\Eloquent\Collection
     {
-        return LLMConfiguration::forProvider($provider)->active()->get();
+        return LLMProviderConfiguration::forProvider($provider)->active()->get();
     }
 
     /**
@@ -292,13 +292,20 @@ class LLMManager
             throw new \RuntimeException('No LLM configuration set');
         }
         
-        return match ($config->provider) {
+        // Load provider relationship if not already loaded
+        if (!$config->relationLoaded('provider')) {
+            $config->load('provider');
+        }
+        
+        $providerSlug = $config->provider->slug;
+        
+        return match ($providerSlug) {
             'ollama' => new OllamaProvider($config),
             'openai' => new OpenAIProvider($config),
             'anthropic' => new AnthropicProvider($config),
             'openrouter' => new OpenRouterProvider($config),
             'custom' => new CustomProvider($config),
-            default => throw new \RuntimeException("Unsupported LLM provider: {$config->provider}"),
+            default => throw new \RuntimeException("Unsupported LLM provider: {$providerSlug}"),
         };
     }
 }

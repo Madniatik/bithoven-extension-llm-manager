@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\File;
  * from the bithoven ecosystem.
  * 
  * @package Bithoven\LLMManager\Console\Commands
- * @version 1.0.0
- * @since 1.0.8
+ * @version 0.4.0
+ * @since 0.4.0
  */
 class ListProviderPackages extends Command
 {

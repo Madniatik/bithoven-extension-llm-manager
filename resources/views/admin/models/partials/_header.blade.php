@@ -40,7 +40,7 @@
                                     <span class="path2"></span>
                                     <span class="path3"></span>
                                 </i>
-                                {{ ucfirst($model->provider) }}
+                                {{ ucfirst($model->provider->name) }}
                             </span>
                             
                             <span class="d-flex align-items-center text-gray-500 me-5 mb-2">

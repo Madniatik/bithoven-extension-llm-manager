@@ -22,6 +22,7 @@ return new class extends Migration
             $table->json('example_values')->nullable(); // {"ticket_content": "My printer...", "user_name": "John"}
             $table->json('default_parameters')->nullable(); // Optional parameters for this template
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_global')->default(false)->comment('Available to all extensions');
             $table->text('description')->nullable();
             $table->timestamps();
             

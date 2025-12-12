@@ -37,4 +37,4 @@ See [PLAN-v1.2.0.md](../plans/PLAN-v1.2.0.md) for detailed roadmap (when created
 
 ---
 
-**Note:** This directory is reserved for future development. No MCP servers are currently implemented in v1.0.7.
+**Note:** This directory is reserved for future development. No MCP servers are currently implemented in v0.3.0.

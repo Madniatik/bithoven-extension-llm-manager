@@ -2,7 +2,7 @@
 
 namespace Bithoven\LLMManager\Http\Controllers\Admin;
 
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Models\LLMUsageLog;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -43,7 +43,7 @@ class LLMStreamController extends Controller
             'limit' => 'nullable|integer|min:1|max:100',
         ]);
 
-        $query = LLMUsageLog::with('configuration')
+        $query = LLMUsageLog::with('configuration.provider')
             ->where('user_id', auth()->id());
 
         // Filter by session_id if provided
@@ -58,7 +58,7 @@ class LLMStreamController extends Controller
         $activityHistory = $logs->map(function ($log) {
             return [
                 'timestamp' => $log->executed_at?->toIso8601String() ?? null,
-                'provider' => $log->configuration?->provider ?? 'unknown',
+                'provider' => $log->configuration?->provider?->slug ?? 'unknown',
                 'model' => $log->configuration?->model ?? 'unknown',
                 'tokens' => $log->total_tokens,
                 'cost' => round($log->cost_usd, 6),
@@ -84,7 +84,7 @@ class LLMStreamController extends Controller
     {
         $validated = $request->validate([
             'prompt' => 'required|string|max:5000',
-            'configuration_id' => 'required|integer|exists:llm_manager_configurations,id',
+            'configuration_id' => 'required|integer|exists:llm_manager_provider_configurations,id',
             'temperature' => 'nullable|string',
             'max_tokens' => 'nullable|string',
         ]);
@@ -209,7 +209,7 @@ class LLMStreamController extends Controller
         set_time_limit(300); // 5 minutes
         
         // Verify provider supports streaming
-        if (!in_array($configuration->provider, ['ollama', 'openai'])) {
+        if (!in_array($configuration->provider->slug, ['ollama', 'openai'])) {
             return response()->json([
                 'error' => 'Provider does not support streaming'
             ], 400);

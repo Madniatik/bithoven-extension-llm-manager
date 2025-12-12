@@ -77,7 +77,7 @@
         <!--begin::Item-->
         <div class="d-flex align-items-center mb-7">
             <span class="fw-semibold fs-7 text-gray-600 flex-grow-1">Provider</span>
-            <span class="badge badge-light-primary fs-8 fw-bold">{{ ucfirst($model->provider) }}</span>
+            <span class="badge badge-light-primary fs-8 fw-bold">{{ ucfirst($model->provider->name) }}</span>
         </div>
         <!--end::Item-->
 

@@ -24,7 +24,7 @@ class LLMConversationSession extends Model
         'session_id',
         'user_id',
         'extension_slug',
-        'llm_configuration_id',
+        'llm_provider_configuration_id',
         'title',
         'metadata',
         'started_at',
@@ -69,7 +69,7 @@ class LLMConversationSession extends Model
 
     public function configuration(): BelongsTo
     {
-        return $this->belongsTo(LLMConfiguration::class, 'llm_configuration_id');
+        return $this->belongsTo(LLMProviderConfiguration::class, 'llm_provider_configuration_id');
     }
 
     public function messages(): HasMany
@@ -125,7 +125,7 @@ class LLMConversationSession extends Model
     /**
      * Extend session expiration
      */
-    public function extend(int $seconds = null): void
+    public function extend(?int $seconds = null): void
     {
         $seconds = $seconds ?? config('llm-manager.conversations.session_ttl', 3600);
         $this->expires_at = now()->addSeconds($seconds);

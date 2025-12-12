@@ -2,7 +2,7 @@
 
 namespace Bithoven\LLMManager\Services;
 
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Models\LLMUsageLog;
 use Illuminate\Support\Str;
 
@@ -11,7 +11,7 @@ class LLMStreamLogger
     /**
      * Start a streaming session and return session data
      *
-     * @param LLMConfiguration $configuration
+     * @param LLMProviderConfiguration $configuration
      * @param string $prompt
      * @param array $parameters
      * @param int|null $sessionId DB session_id for conversation tracking (optional)
@@ -19,7 +19,7 @@ class LLMStreamLogger
      * @return array Session data with session_id and start_time
      */
     public function startSession(
-        LLMConfiguration $configuration,
+        LLMProviderConfiguration $configuration,
         string $prompt,
         array $parameters,
         ?int $sessionId = null,
@@ -53,13 +53,13 @@ class LLMStreamLogger
         
         // Use provider-calculated cost if available (e.g., OpenRouter), otherwise calculate
         $cost = $metrics['cost'] ?? $this->calculateCost(
-            $session['configuration']->provider,
+            $session['configuration']->provider->slug,
             $metrics['model'] ?? $session['configuration']->model,
             $usage
         );
 
         return LLMUsageLog::create([
-            'llm_configuration_id' => $session['configuration']->id,
+            'llm_provider_configuration_id' => $session['configuration']->id,
             'user_id' => auth()->id(),
             'session_id' => $session['db_session_id'] ?? null, // Real DB session_id (if provided)
             'request_message_id' => $session['db_request_message_id'] ?? null, // User message (request)
@@ -126,7 +126,7 @@ class LLMStreamLogger
         $executionTimeMs = (int) ((microtime(true) - $session['start_time']) * 1000);
 
         return LLMUsageLog::create([
-            'llm_configuration_id' => $session['configuration']->id,
+            'llm_provider_configuration_id' => $session['configuration']->id,
             'user_id' => auth()->id(),
             'session_id' => $session['db_session_id'] ?? null, // Real DB session_id (if provided)
             'request_message_id' => $session['db_request_message_id'] ?? null, // User message (request)

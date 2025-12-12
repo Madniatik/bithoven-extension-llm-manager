@@ -120,7 +120,7 @@ class LLMWorkflowEngine
         $prompt = $this->interpolateVariables($stateDefinition['prompt']);
 
         // Use workflow's LLM configuration
-        if ($workflow->llm_configuration_id) {
+        if ($workflow->llm_provider_configuration_id) {
             $this->llmManager->config($workflow->configuration->slug);
         }
 

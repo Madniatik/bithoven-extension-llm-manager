@@ -2,10 +2,10 @@
 
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 
-// Admin > LLM > Models > {Model}
-Breadcrumbs::for('admin.llm.models.show', function (BreadcrumbTrail $trail, LLMConfiguration $model) {
+// Admin > LLM Manager > Models > {model}
+Breadcrumbs::for('admin.llm.models.show', function (BreadcrumbTrail $trail, LLMProviderConfiguration $model) {
     $trail->parent('admin.llm.configurations.index');
     $trail->push($model->name, route('admin.llm.models.show', $model));
 });

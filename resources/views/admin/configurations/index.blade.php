@@ -45,7 +45,7 @@
                                         <span
                                             class="symbol-label bg-light-{{ $config->is_active ? 'success' : 'danger' }}">
                                             <i
-                                                class="ki-duotone ki-{{ $config->provider === 'openai' ? 'abstract-26' : ($config->provider === 'ollama' ? 'cpu' : 'abstract-25') }} fs-2x text-{{ $config->is_active ? 'success' : 'danger' }}">
+                                                class="ki-duotone ki-{{ $config->provider->slug === 'openai' ? 'abstract-26' : ($config->provider->slug === 'ollama' ? 'cpu' : 'abstract-25') }} fs-2x text-{{ $config->is_active ? 'success' : 'danger' }}">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
                                             </i>
@@ -62,7 +62,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge badge-light-primary">{{ strtoupper($config->provider) }}</span>
+                                <span class="badge badge-light-primary">{{ strtoupper($config->provider->slug) }}</span>
                             </td>
                             <td>{{ $config->model }}</td>
                             <td>

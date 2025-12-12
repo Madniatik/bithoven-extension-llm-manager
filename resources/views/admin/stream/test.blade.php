@@ -27,7 +27,7 @@
                         <option value="">Select configuration...</option>
                         @foreach ($configurations as $config)
                             <option value="{{ $config->id }}">
-                                {{ $config->name }} ({{ $config->provider }} - {{ $config->model }})
+                                {{ $config->name }} ({{ $config->provider->slug }} - {{ $config->model }})
                             </option>
                         @endforeach
                     </select>

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Bithoven\LLMManager\Services\LLMManager context(string $context)
  * @method static array embed(string|array $text)
  * @method static array chat(string $sessionId, string $message)
- * @method static string conversation(string $sessionId = null)
+ * @method static string conversation(?string $sessionId = null)
  * @method static array template(string $slug, array $variables)
  * @method static array workflow(string $slug, array $input)
  * @method static array rag(string $query, string $extensionSlug = null)

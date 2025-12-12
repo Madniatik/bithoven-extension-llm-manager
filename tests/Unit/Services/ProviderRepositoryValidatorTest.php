@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\File;
  * Provider Repository Validator Unit Tests
  * 
  * @package Bithoven\LLMManager\Tests\Unit\Services
- * @version 1.0.0
- * @since 1.0.8
+ * @version 0.1.0
+ * @since 0.4.0
  */
 class ProviderRepositoryValidatorTest extends TestCase
 {
@@ -30,7 +30,7 @@ class ProviderRepositoryValidatorTest extends TestCase
     public function it_validates_valid_configuration()
     {
         $config = [
-            'version' => '1.0.0',
+            'version' => '0.1.0',
             'metadata' => [
                 'package' => 'bithoven/llm-provider-test',
                 'created_at' => '2025-12-11T00:00:00Z',
@@ -73,7 +73,7 @@ class ProviderRepositoryValidatorTest extends TestCase
     public function it_fails_validation_when_metadata_is_missing()
     {
         $config = [
-            'version' => '1.0.0',
+            'version' => '0.1.0',
             'configuration' => [],
         ];
 
@@ -146,7 +146,7 @@ class ProviderRepositoryValidatorTest extends TestCase
     /** @test */
     public function it_checks_schema_version_compatibility()
     {
-        $compatible = $this->validator->isCompatibleVersion('1.0.0');
+        $compatible = $this->validator->isCompatibleVersion('0.1.0');
         $this->assertTrue($compatible);
 
         $incompatible = $this->validator->isCompatibleVersion('2.0.0');
@@ -159,7 +159,7 @@ class ProviderRepositoryValidatorTest extends TestCase
     private function getMinimalValidConfig(array $overrides = []): array
     {
         $config = [
-            'version' => '1.0.0',
+            'version' => '0.1.0',
             'metadata' => [
                 'package' => 'bithoven/llm-provider-test',
                 'created_at' => '2025-12-11T00:00:00Z',

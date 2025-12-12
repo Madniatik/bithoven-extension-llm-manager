@@ -2,7 +2,7 @@
     LLM Chat Workspace Component
     
     Componente maestro con layout configurable para monitor
-    Sistema de configuración granular (v1.0.7+)
+    Sistema de configuración granular (v0.3.0+)
     
     Props (desde Workspace.php):
     - $session: LLMConversationSession|null

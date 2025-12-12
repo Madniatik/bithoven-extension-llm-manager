@@ -5,7 +5,7 @@ namespace Bithoven\LLMManager\Http\Controllers\API;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Bithoven\LLMManager\Services\Conversations\LLMConversationManager;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\LLMConfigurationService;
 
 class LLMChatController extends Controller

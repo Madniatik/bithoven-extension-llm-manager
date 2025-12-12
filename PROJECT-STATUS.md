@@ -31,7 +31,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ## 🎯 Estado por Versión
 
-### ✅ v1.0.0 (Released: 18 Nov 2025) - 100% COMPLETE
+### ✅ v0.1.0 (Released: 18 Nov 2025) - 100% COMPLETE
 
 **Core Features:**
 - ✅ Multi-provider support (Ollama, OpenAI, Anthropic, Custom)
@@ -53,7 +53,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ---
 
-### ✅ v1.0.4 (Released: 28 Nov 2025) - 100% COMPLETE
+### ✅ v0.2.0 (Released: 28 Nov 2025) - 100% COMPLETE
 
 **Estado:** 🟢 **STREAMING PRODUCTION-READY**
 
@@ -80,7 +80,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ---
 
-### ✅ v1.0.5 (Released: 3 Dec 2025) - 100% COMPLETE
+### ✅ v0.2.1 (Released: 3 Dec 2025) - 100% COMPLETE
 
 **Estado:** 🟢 **CHATWORKSPACE OPTIMIZATIONS**
 
@@ -94,7 +94,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ---
 
-### ✅ v1.0.6 (Released: 3 Dec 2025) - 100% COMPLETE
+### ✅ v0.2.2 (Released: 3 Dec 2025) - 100% COMPLETE
 
 **Estado:** 🟢 **MULTI-INSTANCE PRODUCTION-READY**
 
@@ -121,7 +121,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - Shared: `monitor.blade.php`, `monitor-console.blade.php`
 
 **Documentation:**
-- ✅ `docs/components/CHAT-WORKSPACE.md` updated to v1.0.6
+- ✅ `docs/components/CHAT-WORKSPACE.md` updated to v0.2.2
 - ✅ New section: "Multi-Instance Support" (500+ lines)
 - ✅ Multi-instance API examples and use cases
 - ✅ Testing examples for parallel chat instances
@@ -153,7 +153,7 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - Backward compatibility: 100% maintained
 - Breaking changes: NONE
 
-**v1.0.5 + v1.0.6 Combined:**
+**v0.2.1 + v0.2.2 Combined:**
 - Code reduction: 63% (740 → 270 lines in components)
 - Legacy removed: 1,213 lines
 - Total optimization: ~1,683 lines removed
@@ -162,20 +162,20 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 
 ---
 
-### ✅ v1.0.7 (Ready for Release) - MILESTONE COMPLETE
+### ✅ v0.3.0 (Ready for Release) - MILESTONE COMPLETE
 
 **Estado:** 🟢 **READY FOR RELEASE** (99.5% complete - Only GitHub release pending)
 
 **Focus:** Quick Chat Feature + Activity Log DB Migration + UI/UX Optimizations + Request Inspector + Message ID Refactor + Testing Suite + Streaming Documentation + Chat UX System + Monitor Export
 
-**Ver detalles completos en:** `plans/PLAN-v1.0.7.md` + `plans/PLAN-v1.0.7-chat-ux.md`
+**Ver detalles completos en:** `plans/PLAN-v0.3.0.md` + `plans/PLAN-v0.3.0-chat-ux.md`
 
 #### Progreso por Categoría (11/11 complete):
 
 **1. ✅ Quick Chat Feature (100% complete)** - 12-15h invertidas
 - ✅ FASE 1-4: Estructura, HTML/CSS, Mock Data, Validación
 - ✅ FASE 6: Lógica conectada con streaming real
-- ✅ FASE 7: Componentización (completado en v1.0.6)
+- ✅ FASE 7: Componentización (completado en v0.2.2)
 - ✅ FASE 5: DESIGN-SPECS.md (completado)
 - **Extras implementados:**
   - Enhanced data capture (model, raw_response, tabs UI)
@@ -221,11 +221,11 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - Copy/Download functionality for prompts and JSON
 
 **6. ✅ Chat Workspace Configuration System (100% complete)** - 12-15h (9 dic 2025)
-- See [PLAN-v1.0.7-chat-config-options.md](plans/PLAN-v1.0.7-chat-config-options.md)
+- See [PLAN-v0.3.0-chat-config-options.md](plans/PLAN-v0.3.0-chat-config-options.md)
 
 **7. ✅ Testing Suite (100% complete)** - 4-5h (9 dic 2025)
 - 33 manual tests created and documented
-- 100% feature coverage (v1.0.0 - v1.0.7)
+- 100% feature coverage (v0.1.0 - v0.3.0)
 
 **8. ✅ Streaming Documentation (100% complete)** - 1.5h (9 dic 2025)
 - 1050+ lines of comprehensive streaming guide
@@ -237,12 +237,12 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - 9 files updated (model, controllers, service layer)
 
 **10. ⏳ GitHub Release Management (PENDING)** - 1h
-- Tag v1.0.7 creation
+- Tag v0.3.0 creation
 - Release notes compilation
 - Push to GitHub
 
 **11. ✅ Chat UX Improvements (100% complete)** - 24h total (10 dic 2025)
-- See [PLAN-v1.0.7-chat-ux.md](plans/PLAN-v1.0.7-chat-ux.md)
+- See [PLAN-v0.3.0-chat-ux.md](plans/PLAN-v0.3.0-chat-ux.md)
 - 21/21 items complete (6 phases)
 - **PHASE 6:** Monitor Export Feature (3.5h)
   - CSV/JSON/SQL export formats
@@ -253,12 +253,12 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
   - Files: 7 modified (980 insertions)
   - Commit: f43aee6
 
-**Tiempo Invertido v1.0.7:** 72-76 horas (132+ commits)  
-**Estado v1.0.7:** ✅ RELEASED (10 dic 2025)
+**Tiempo Invertido v0.3.0:** 72-76 horas (132+ commits)  
+**Estado v0.3.0:** ✅ RELEASED (10 dic 2025)
 
 #### Commits Destacados:
 ```
-31a09dd - docs: comprehensive audit v1.0.7 + chat UX plan complete [CURRENT HEAD]
+31a09dd - docs: comprehensive audit v0.3.0 + chat UX plan complete [CURRENT HEAD]
 f43aee6 - feat: monitor export (CSV/JSON/SQL) with session filtering
 6f9169b - docs: update CHANGELOG + archive refactor planning
 b0942de - refactor: message_id → request/response columns
@@ -269,9 +269,9 @@ aa61302 - Move Activity Log plan to completed/
 #### Documentation Updates (10 dic 2025):
 - ✅ CHANGELOG.md: Monitor Export section added (170 lines)
 - ✅ README.md: Advanced Features updated with Monitor Export
-- ✅ PLAN-v1.0.7.md: Chat UX marked 100% complete (99.5% total)
-- ✅ PLAN-v1.0.7-chat-ux.md: All 21/21 items complete
-- ✅ PROJECT-STATUS.md: Updated to v1.0.7 ready state
+- ✅ PLAN-v0.3.0.md: Chat UX marked 100% complete (99.5% total)
+- ✅ PLAN-v0.3.0-chat-ux.md: All 21/21 items complete
+- ✅ PROJECT-STATUS.md: Updated to v0.3.0 ready state
 - ✅ reports/DOCUMENTATION-AUDIT-2025-12-10.md: 400-line comprehensive audit
   - 156 files reviewed
   - +67% documentation clarity
@@ -280,13 +280,13 @@ aa61302 - Move Activity Log plan to completed/
 
 ---
 
-### 🔄 v1.0.8 (In Progress) - 33% COMPLETE
+### 🔄 v0.4.0 (In Progress) - 33% COMPLETE
 
 **Estado:** 🔄 **ARCHITECTURE REFACTORING IN PROGRESS**
 
 **Focus:** Service Layer + Provider Repositories Ecosystem
 
-**Ver detalles completos en:** `plans/new/PLAN-v1.0.8/README.md`
+**Ver detalles completos en:** `plans/new/PLAN-v0.4.0/README.md`
 
 #### Progreso por Fase (2/6 complete):
 
@@ -297,7 +297,7 @@ aa61302 - Move Activity Log plan to completed/
 - ✅ 25 tests (20 unit + 5 integration)
 - ✅ Zero breaking changes
 - **Commit:** b743f93
-- **Tag:** v1.0.8-fase1-complete
+- **Tag:** v0.4.0-fase1-complete
 - **Metrics:** 893 insertions, 29 deletions, 13 files
 
 **✅ FASE 2: Core Import System (100% complete)** - 3h (11 dic 2025, 17:55)
@@ -307,7 +307,7 @@ aa61302 - Move Activity Log plan to completed/
 - ✅ 19 tests (8 unit + 11 integration)
 - ✅ ServiceProvider registration
 - **Commit:** f7a532c
-- **Tag:** v1.0.8-fase2-complete
+- **Tag:** v0.4.0-fase2-complete
 - **Metrics:** 1,181 insertions, 8 files
 
 **🔄 FASE 3: First Provider Package** - 4h (In Planning)
@@ -321,7 +321,7 @@ aa61302 - Move Activity Log plan to completed/
 - FASE 5: Advanced Features (6h)
 - FASE 6: Marketplace & Community (8h)
 
-**Tiempo Invertido v1.0.8:** 5 horas de 36h (14%)  
+**Tiempo Invertido v0.4.0:** 5 horas de 36h (14%)  
 **Fases Completadas:** 2/6 (33%)
 
 #### Arquitectura Implementada:
@@ -350,27 +350,27 @@ GitHub Repos → Composer → vendor/ → php artisan llm:import → DB → App
 ### Archivos de Estado (Actualizados)
 
 **✅ Completados:**
-- `PROJECT-STATUS.md` - Este archivo (estado consolidado v1.0.6)
-- `CHANGELOG.md` - v1.0.0 a v1.0.6 completo
-- `README.md` - Features overview + quick start (v1.0.6)
-- `extension.json` - Metadata actualizado (version 1.0.6)
+- `PROJECT-STATUS.md` - Este archivo (estado consolidado v0.2.2)
+- `CHANGELOG.md` - v0.1.0 a v0.2.2 completo
+- `README.md` - Features overview + quick start (v0.2.2)
+- `extension.json` - Metadata actualizado (version 0.2.2)
 - `docs/README.md` - Documentation index actualizado
-- `docs/components/CHAT-WORKSPACE.md` - Complete guide v1.0.6 (1,705 lines)
-- `plans/PLAN-v1.0.7.md` - Roadmap próxima versión
+- `docs/components/CHAT-WORKSPACE.md` - Complete guide v0.2.2 (1,705 lines)
+- `plans/PLAN-v0.3.0.md` - Roadmap próxima versión
 
 **📝 Para Eliminar:**
-- `LLM-MANAGER-PENDING-WORK.md` - ⚠️ OBSOLETO (reemplazado por plans/PLAN-v1.0.7.md)
-- `STREAMING-IMPLEMENTATION-STATUS.md` - ⚠️ OBSOLETO (streaming 100% done en v1.0.4)
-- `PENDING-WORK-ANALYSIS.md` - ⚠️ OBSOLETO (era para v1.0.0)
+- `LLM-MANAGER-PENDING-WORK.md` - ⚠️ OBSOLETO (reemplazado por plans/PLAN-v0.3.0.md)
+- `STREAMING-IMPLEMENTATION-STATUS.md` - ⚠️ OBSOLETO (streaming 100% done en v0.2.0)
+- `PENDING-WORK-ANALYSIS.md` - ⚠️ OBSOLETO (era para v0.1.0)
 
 **✅ Reportes Históricos (Archivar):**
 - `STREAMING-TEST-REPORT.md` - Test results (pre-release)
 - `STREAMING-FIXES-2025-11-24.md` - Implementation fixes log
-- `ADMIN-UI-SUMMARY.md` - v1.0.0 UI summary
-- `DOCUMENTATION-COMPLETE-REPORT.md` - v1.0.0 docs report
-- `UNIT-TESTS-SESSION-SUMMARY.md` - v1.0.0 testing session
-- `TESTS-FINAL-REPORT.md` - v1.0.0 final tests
-- `TEST-PROGRESS-REPORT.md` - v1.0.0 testing progress
+- `ADMIN-UI-SUMMARY.md` - v0.1.0 UI summary
+- `DOCUMENTATION-COMPLETE-REPORT.md` - v0.1.0 docs report
+- `UNIT-TESTS-SESSION-SUMMARY.md` - v0.1.0 testing session
+- `TESTS-FINAL-REPORT.md` - v0.1.0 final tests
+- `TEST-PROGRESS-REPORT.md` - v0.1.0 testing progress
 
 ### Documentación de Usuario (7 archivos)
 
@@ -417,7 +417,7 @@ GitHub Repos → Composer → vendor/ → php artisan llm:import → DB → App
 
 ## 🐛 Bugs & Known Issues
 
-### ✅ Resueltos en v1.0.4
+### ✅ Resueltos en v0.2.0
 
 1. **Permissions 403 Error** (CRITICAL - RESOLVED)
    - **Problema:** Error 403 al acceder a `/admin/llm` después de desinstalar Dummy extension
@@ -463,10 +463,10 @@ GitHub Repos → Composer → vendor/ → php artisan llm:import → DB → App
 
 ```
 bithoven-extension-llm-manager/
-├── PROJECT-STATUS.md                      # ✅ Estado consolidado v1.0.6
-├── CHANGELOG.md                           # ✅ Actualizado (v1.0.6)
-├── README.md                              # ✅ Features overview v1.0.6
-├── extension.json                         # ✅ Version 1.0.6
+├── PROJECT-STATUS.md                      # ✅ Estado consolidado v0.2.2
+├── CHANGELOG.md                           # ✅ Actualizado (v0.2.2)
+├── README.md                              # ✅ Features overview v0.2.2
+├── extension.json                         # ✅ Version 0.2.2
 ├── composer.json                          # ✅ PSR-4 autoload
 │
 ├── docs/                                  # ✅ Documentación completa (7 archivos)
@@ -479,7 +479,7 @@ bithoven-extension-llm-manager/
 │   └── CONTRIBUTING.md
 │
 ├── plans/                                 # ✅ Planificación de versiones
-│   └── PLAN-v1.0.7.md                     # ✅ Roadmap próxima versión
+│   └── PLAN-v0.3.0.md                     # ✅ Roadmap próxima versión
 │
 ├── src/                                   # Backend implementation
 │   ├── Data/
@@ -487,23 +487,23 @@ bithoven-extension-llm-manager/
 │   │       └── LLMPermissions.php         # ✅ Permissions v2.0
 │   ├── Services/
 │   │   ├── LLMManager.php
-│   │   ├── LLMStreamLogger.php            # ✅ v1.0.4 Metrics logging
+│   │   ├── LLMStreamLogger.php            # ✅ v0.2.0 Metrics logging
 │   │   └── ...
 │   ├── Providers/
-│   │   ├── OllamaProvider.php             # ✅ v1.0.4 NDJSON streaming
-│   │   ├── OpenAIProvider.php             # ✅ v1.0.4 SDK streaming
+│   │   ├── OllamaProvider.php             # ✅ v0.2.0 NDJSON streaming
+│   │   ├── OpenAIProvider.php             # ✅ v0.2.0 SDK streaming
 │   │   └── ...
 │   └── Http/
 │       └── Controllers/
 │           └── Admin/
-│               ├── LLMStreamController.php # ✅ v1.0.4 SSE endpoints
+│               ├── LLMStreamController.php # ✅ v0.2.0 SSE endpoints
 │               └── ...
 │
 ├── resources/
 │   └── views/
 │       └── admin/
 │           ├── stream/
-│           │   └── test.blade.php         # ✅ v1.0.4 Streaming UI
+│           │   └── test.blade.php         # ✅ v0.2.0 Streaming UI
 │           └── ...
 │
 ├── database/
@@ -518,7 +518,7 @@ bithoven-extension-llm-manager/
 │   ├── web.php                            # ✅ Streaming routes
 │   └── breadcrumbs.php                    # ✅ Breadcrumbs
 │
-├── tests/                                 # ⏳ v1.0.7 - PHPUnit tests pending
+├── tests/                                 # ⏳ v0.3.0 - PHPUnit tests pending
 │
 └── archived-reports/                      # 📁 NUEVO - Reportes históricos
     ├── STREAMING-TEST-REPORT.md
@@ -557,9 +557,9 @@ php artisan permission:cache-reset
 ```
 
 **4. Decisión:**
-- **Opción A:** Comenzar v1.0.7 (Quick Chat + UI/UX + Testing)
-- **Opción B:** Publicar v1.0.6 en GitHub y empezar v1.0.7
-- **Opción C:** Consolidar documentación antes de v1.0.7
+- **Opción A:** Comenzar v0.3.0 (Quick Chat + UI/UX + Testing)
+- **Opción B:** Publicar v0.2.2 en GitHub y empezar v0.3.0
+- **Opción C:** Consolidar documentación antes de v0.3.0
 
 ---
 
@@ -567,33 +567,33 @@ php artisan permission:cache-reset
 
 | Versión | Features | Backend | Frontend | Testing | Docs | Total |
 |---------|----------|---------|----------|---------|------|-------|
-| **v1.0.0** | ✅ 100% | ✅ 100% | ✅ 100% | ✅ 100% | ✅ 100% | **100%** |
-| **v1.0.1-v1.0.3** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
-| **v1.0.4** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 90% | **78%** |
-| **v1.0.5** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
-| **v1.0.6** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
-| **v1.0.7** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | 🟡 65% | **82%** |
+| **v0.1.0** | ✅ 100% | ✅ 100% | ✅ 100% | ✅ 100% | ✅ 100% | **100%** |
+| **v0.1.1-v0.1.3** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
+| **v0.2.0** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 90% | **78%** |
+| **v0.2.1** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
+| **v0.2.2** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | ✅ 100% | **80%** |
+| **v0.3.0** | ✅ 100% | ✅ 100% | ✅ 100% | ⏳ 0% | 🟡 65% | **82%** |
 
-**Promedio General:** **94% completado (v1.0.0-v1.0.7)**
-**v1.0.7 Progress:** 82% (50+ commits, Quick Chat 100%, Activity Log DB Migration COMPLETE)
+**Promedio General:** **94% completado (v0.1.0-v0.3.0)**
+**v0.3.0 Progress:** 82% (50+ commits, Quick Chat 100%, Activity Log DB Migration COMPLETE)
 
 ---
 
 ## 💡 Recomendación
 
-### ✅ OPCIÓN 1: Publicar v1.0.6 YA (Recomendado)
+### ✅ OPCIÓN 1: Publicar v0.2.2 YA (Recomendado)
 
 **Razones:**
 - Multi-instance support 100% funcional y testeado en browser
-- Streaming 100% funcional (v1.0.4)
-- Component optimizations complete (v1.0.5)
+- Streaming 100% funcional (v0.2.0)
+- Component optimizations complete (v0.2.1)
 - Permissions v2.0 implementado y working
 - Metrics logging capturing real data
 - Legacy code cleanup (1,213 lines removed)
 - Production-ready y 100% backward compatible
 
 **Pendientes son nice-to-have, no blockers:**
-- Testing suite (puede agregarse en v1.0.7)
+- Testing suite (puede agregarse en v0.3.0)
 - Quick Chat feature (nueva funcionalidad)
 - UI/UX optimizations (mejoras incrementales)
 - Streaming docs detallada (nice-to-have)
@@ -601,14 +601,14 @@ php artisan permission:cache-reset
 **Acción:**
 ```bash
 # Tag release
-git tag -a v1.0.6 -m "Release v1.0.6: Multi-Instance Support + Legacy Cleanup"
-git push origin v1.0.6
+git tag -a v0.2.2 -m "Release v0.2.2: Multi-Instance Support + Legacy Cleanup"
+git push origin v0.2.2
 
 # Publicar en GitHub
 # Crear release notes basado en CHANGELOG.md
 ```
 
-### 📋 OPCIÓN 2: Completar v1.0.7 antes de publicar
+### 📋 OPCIÓN 2: Completar v0.3.0 antes de publicar
 
 **Tiempo estimado:** 5-7 horas adicionales
 
@@ -622,13 +622,13 @@ git push origin v1.0.6
 
 ---
 
-**🎉 LLM Manager v1.0.7 - 82% Complete!**
+**🎉 LLM Manager v0.3.0 - 82% Complete!**
 
 **Última Actualización:** 7 de diciembre de 2025, 21:45h
 **Estado:** 🟢 **QUICK CHAT 100% + ACTIVITY LOG DB MIGRATION COMPLETE**
-**Próxima Acción:** Testing Suite (opcional), Ready for v1.0.7 Release
+**Próxima Acción:** Testing Suite (opcional), Ready for v0.3.0 Release
 
-**Changelog v1.0.6:**
+**Changelog v0.2.2:**
 - ✅ Multi-instance support (9 files modified)
 - ✅ Legacy cleanup (17 files, 1,213 lines removed)
 - ✅ Documentation complete (1,705 lines CHAT-WORKSPACE.md)
@@ -637,6 +637,6 @@ git push origin v1.0.6
 
 **Cronología de Versiones:**
 ```
-v1.0.0 (18 Nov) → v1.0.1 (26 Nov) → v1.0.2 (26 Nov) → v1.0.3 (27 Nov)
-→ v1.0.4 (28 Nov) → v1.0.5 (3 Dec) → v1.0.6 (3 Dec) → v1.0.7 (Planned)
+v0.1.0 (18 Nov) → v0.1.1 (26 Nov) → v0.1.2 (26 Nov) → v0.1.3 (27 Nov)
+→ v0.2.0 (28 Nov) → v0.2.1 (3 Dec) → v0.2.2 (3 Dec) → v0.3.0 (Planned)
 ```

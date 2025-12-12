@@ -3,7 +3,7 @@
 namespace Bithoven\LLMManager\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
 use Bithoven\LLMManager\Models\LLMConversationSession;
 use App\Models\User;
@@ -16,7 +16,7 @@ class DemoConversationsSeeder extends Seeder
     public function run(): void
     {
         // Get first configuration (Ollama by default)
-        $config = LLMConfiguration::first();
+        $config = LLMProviderConfiguration::first();
         
         if (!$config) {
             $this->command->warn('No LLM configurations found. Please run LLMConfigurationSeeder first.');

@@ -108,7 +108,7 @@
                                             @endif
                                         </span>
                                         @if($message->role === 'assistant')
-                                            <span class="badge badge-light-primary badge-sm ms-2">{{ $conversation->configuration->provider }}</span>
+                                            <span class="badge badge-light-primary badge-sm ms-2">{{ $conversation->configuration->provider->name }}</span>
                                             <span class="badge badge-light-info badge-sm">{{ $conversation->configuration->model }}</span>
                                         @endif
                                         <span class="text-gray-500 fw-semibold fs-8 ms-2">
@@ -212,7 +212,7 @@
                             <select id="configuration_id" name="configuration_id" class="form-select">
                                 @foreach($configurations as $config)
                                     <option value="{{ $config->id }}" 
-                                        data-provider="{{ ucfirst($config->provider) }}"
+                                        data-provider="{{ ucfirst($config->provider->name) }}"
                                         data-model="{{ $config->model }}"
                                         {{ ($conversation->configuration && $config->id == $conversation->configuration->id) ? 'selected' : '' }}>
                                         {{ $config->name }}

@@ -20,7 +20,7 @@ class LLMUsageLog extends Model
     }
 
     protected $fillable = [
-        'llm_configuration_id',
+        'llm_provider_configuration_id',
         'user_id',
         'session_id',              // Link to conversation session
         'request_message_id',      // User message (request)
@@ -77,7 +77,7 @@ class LLMUsageLog extends Model
      */
     public function configuration(): BelongsTo
     {
-        return $this->belongsTo(LLMConfiguration::class, 'llm_configuration_id');
+        return $this->belongsTo(LLMProviderConfiguration::class, 'llm_provider_configuration_id');
     }
 
     public function user(): BelongsTo

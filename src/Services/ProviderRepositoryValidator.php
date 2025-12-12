@@ -12,15 +12,15 @@ use Illuminate\Support\Facades\File;
  * according to bithoven LLM configuration schema.
  * 
  * @package Bithoven\LLMManager\Services
- * @version 1.0.0
- * @since 1.0.8
+ * @version 0.4.0
+ * @since 0.4.0
  */
 class ProviderRepositoryValidator
 {
     /**
      * JSON Schema version supported
      */
-    private const SCHEMA_VERSION = '1.0.0';
+    private const SCHEMA_VERSION = '0.1.0';
 
     /**
      * Validate provider config JSON file structure

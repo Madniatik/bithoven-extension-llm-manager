@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\LLMConfigurationService;
 
 class LLMModelController extends Controller
@@ -15,7 +15,7 @@ class LLMModelController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:llm_manager_configurations,name',
+            'name' => 'required|string|max:255|unique:llm_manager_provider_configurations,name',
             'provider' => 'required|string|in:ollama,openai,anthropic,openrouter,local,custom',
         ]);
 
@@ -39,9 +39,9 @@ class LLMModelController extends Controller
             ->with('success', 'Configuration created successfully. Please configure model and API key.');
     }
     
-    public function show(LLMConfiguration $model)
+    public function show(LLMProviderConfiguration $model)
     {
-        $model->loadCount('usageLogs');
+        $model->load('provider')->loadCount('usageLogs');
         
         // Calculate statistics
         $stats = (object) [
@@ -56,15 +56,15 @@ class LLMModelController extends Controller
         
         // Get provider config
         $providers = config('llm-manager.providers', []);
-        $providerConfig = $providers[$model->provider] ?? [];
+        $providerConfig = $providers[$model->provider->slug] ?? [];
         
         return view('llm-manager::admin.models.show', compact('model', 'stats', 'recentLogs', 'providerConfig', 'providers'));
     }
     
-    public function update(Request $request, LLMConfiguration $model)
+    public function update(Request $request, LLMProviderConfiguration $model)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:llm_manager_configurations,name,' . $model->id,
+            'name' => 'required|string|max:255|unique:llm_manager_provider_configurations,name,' . $model->id,
             'model' => 'required|string',
             'api_key' => 'nullable|string',
             'parameters' => 'nullable|array',
@@ -81,7 +81,7 @@ class LLMModelController extends Controller
         ]);
     }
     
-    public function updateAdvanced(Request $request, LLMConfiguration $model)
+    public function updateAdvanced(Request $request, LLMProviderConfiguration $model)
     {
         $validated = $request->validate([
             'api_endpoint' => 'nullable|url',

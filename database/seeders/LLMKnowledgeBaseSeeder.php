@@ -170,7 +170,7 @@ MARKDOWN
                 'embedding_model' => null,
                 'metadata' => [
                     'source' => 'system',
-                    'version' => '1.0.0',
+                    'version' => '0.1.0',
                     'author' => 'BITHOVEN Team',
                     'language' => 'en',
                 ],
@@ -304,7 +304,7 @@ MARKDOWN
                 'embedding_model' => null,
                 'metadata' => [
                     'source' => 'system',
-                    'version' => '1.0.0',
+                    'version' => '0.1.0',
                     'author' => 'BITHOVEN Team',
                     'language' => 'en',
                 ],

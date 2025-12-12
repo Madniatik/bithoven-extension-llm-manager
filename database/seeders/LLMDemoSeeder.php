@@ -5,6 +5,7 @@ namespace Bithoven\LLMManager\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Bithoven\LLMManager\Models\LLMParameterOverride;
 use Bithoven\LLMManager\Models\LLMAgentWorkflow;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 
 class LLMDemoSeeder extends Seeder
 {
@@ -16,10 +17,11 @@ class LLMDemoSeeder extends Seeder
     public function run(): void
     {
         // IMPORTANT: Ensure core seeders run first
-        if (\Bithoven\LLMManager\Models\LLMConfiguration::count() === 0) {
+        if (LLMProviderConfiguration::count() === 0) {
             $this->command->info('⚠️  No configurations found. Running core seeders first...');
             $this->call([
-                LLMConfigurationSeeder::class,
+                LLMProvidersSeeder::class,
+                LLMProviderConfigurationSeeder::class,
                 LLMToolDefinitionsSeeder::class,
                 LLMMCPConnectorsSeeder::class,
             ]);
@@ -27,11 +29,11 @@ class LLMDemoSeeder extends Seeder
 
         // Demo Parameter Overrides
         // Only create if we have configurations
-        if (\Bithoven\LLMManager\Models\LLMConfiguration::where('id', 1)->exists()) {
+        if (LLMProviderConfiguration::where('id', 1)->exists()) {
             $overrides = [
                 [
                     'extension_slug' => 'tickets',
-                    'llm_configuration_id' => 1,
+                    'llm_provider_configuration_id' => 1,
                     'context' => 'urgent_ticket',
                     'override_parameters' => [
                         'temperature' => 0.2, // More deterministic for urgent tickets
@@ -52,7 +54,7 @@ class LLMDemoSeeder extends Seeder
         }
 
         // Demo Workflow
-        if (\Bithoven\LLMManager\Models\LLMConfiguration::where('id', 1)->exists()) {
+        if (LLMProviderConfiguration::where('id', 1)->exists()) {
             $workflows = [
                 [
                     'name' => 'Multi-Step Ticket Resolution',
@@ -87,7 +89,7 @@ class LLMDemoSeeder extends Seeder
                         'analyzer' => ['role' => 'categorize tickets', 'model' => 'ollama-llama32'],
                         'responder' => ['role' => 'generate responses', 'model' => 'openai-gpt4o'],
                     ],
-                    'llm_configuration_id' => 1,
+                    'llm_provider_configuration_id' => 1,
                     'max_steps' => 10,
                     'timeout_seconds' => 60,
                     'is_active' => true,

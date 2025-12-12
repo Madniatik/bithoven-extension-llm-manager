@@ -26,8 +26,8 @@
     $userInitial = $userName ? strtoupper(substr($userName, 0, 1)) : 'U';
 
     // Assistant info
-    $provider = $message?->llmConfiguration?->provider ?? '';
-    $model = $message?->llmConfiguration?->model ?? '';
+    $provider = $message?->providerConfiguration?->provider?->name ?? '';
+    $model = $message?->providerConfiguration?->model ?? '';
 
     // Metadata
     $totalTokens = $message?->tokens ?? 0;

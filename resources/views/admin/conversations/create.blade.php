@@ -37,7 +37,7 @@
                                 @foreach($configurations as $config)
                                     <option value="{{ $config->id }}" {{ old('configuration_id') == $config->id ? 'selected' : '' }}>
                                         {{ $config->name }} 
-                                        <span class="text-muted">({{ ucfirst($config->provider) }} - {{ $config->model }})</span>
+                                        <span class="text-muted">({{ ucfirst($config->provider->name) }} - {{ $config->model }})</span>
                                     </option>
                                 @endforeach
                             </select>

@@ -3,7 +3,7 @@
 namespace Bithoven\LLMManager\Services\Providers;
 
 use Bithoven\LLMManager\Contracts\LLMProviderInterface;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 
 /**
  * Mock Provider for testing streaming functionality without a real LLM
@@ -15,7 +15,7 @@ class MockProvider implements LLMProviderInterface
         "Each word is sent as a separate chunk to demonstrate the streaming capability. " .
         "This provider is useful for testing and development without needing a real LLM service.";
 
-    public function __construct(protected LLMConfiguration $configuration)
+    public function __construct(protected LLMProviderConfiguration $configuration)
     {
     }
 

@@ -2,7 +2,7 @@
     UX ENHANCEMENTS SECTION
     
     Configuración de animaciones, sonidos y atajos de teclado
-    Nueva sección para PLAN-v1.0.7-chat-ux.md
+    Nueva sección para PLAN-v0.3.0-chat-ux.md
 --}}
 
 @php

@@ -3,7 +3,7 @@
 namespace Bithoven\LLMManager\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Models\LLMConversationSession;
 use Bithoven\LLMManager\Models\LLMUserWorkspacePreference;
 use Bithoven\LLMManager\Services\ChatWorkspaceConfigValidator;
@@ -66,7 +66,7 @@ class LLMQuickChatController extends Controller
                     'session_id' => 'quick_chat_' . uniqid(),
                     'title' => 'Quick Chat - ' . now()->format('Y-m-d H:i'),
                     'user_id' => auth()->id(),
-                    'llm_configuration_id' => $defaultConfig->id,
+                    'llm_provider_configuration_id' => $defaultConfig->id,
                     'extension_slug' => null,
                 ]);
             }
@@ -94,7 +94,7 @@ class LLMQuickChatController extends Controller
         $validated = $request->validate([
             'session_id' => 'required|exists:llm_manager_conversation_sessions,id',
             'prompt' => 'required|string|max:5000',
-            'configuration_id' => 'required|exists:llm_manager_configurations,id',
+            'configuration_id' => 'required|exists:llm_manager_provider_configurations,id',
             'temperature' => 'nullable|numeric|min:0|max:2',
             'max_tokens' => 'nullable|integer|min:1|max:128000',
             'context_limit' => 'nullable|integer|min:0|max:100',
@@ -120,7 +120,7 @@ class LLMQuickChatController extends Controller
                 $userMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),
-                    'llm_configuration_id' => $configuration->id,
+                    'llm_provider_configuration_id' => $configuration->id,
                     'role' => 'user',
                     'content' => $validated['prompt'],
                     'tokens' => $promptTokensEstimate, // Estimated tokens of prompt only
@@ -195,7 +195,7 @@ class LLMQuickChatController extends Controller
                 // Emit request_data event for Request Inspector tab
                 $requestData = [
                     'metadata' => [
-                        'provider' => $configuration->provider,
+                        'provider' => $configuration->provider->slug,
                         'model' => $configuration->model,
                         'endpoint' => $configuration->api_endpoint ?? 'N/A',
                         'timestamp' => now()->toIso8601String(),
@@ -317,7 +317,7 @@ class LLMQuickChatController extends Controller
                 $assistantMessage = LLMConversationMessage::create([
                     'session_id' => $session->id,
                     'user_id' => auth()->id(),
-                    'llm_configuration_id' => $configuration->id,
+                    'llm_provider_configuration_id' => $configuration->id,
                     'model' => $metrics['model'] ?? $configuration->model, // Snapshot (prefer from provider response)
                     'role' => 'assistant',
                     'content' => $fullResponse,
@@ -327,7 +327,7 @@ class LLMQuickChatController extends Controller
                     'raw_response' => $metrics['raw_response'] ?? null,
                     'metadata' => [
                         'model' => $configuration->model,
-                        'provider' => $configuration->provider,
+                        'provider' => $configuration->provider->slug,
                         'max_tokens' => $params['max_tokens'],
                         'temperature' => $params['temperature'],
                         'chunks_count' => $tokenCount,
@@ -366,7 +366,7 @@ class LLMQuickChatController extends Controller
                     'ttft' => $ttft,
                     'content' => $fullResponse, // Include content for error messages (when no chunks sent)
                     'metadata' => [
-                        'provider' => $configuration->provider,
+                        'provider' => $configuration->provider->slug,
                         'model' => $configuration->model,
                         'is_error' => $isEmptyResponse, // Flag error messages
                     ],
@@ -420,7 +420,7 @@ class LLMQuickChatController extends Controller
             'session_id' => 'quick_chat_' . uniqid(),
             'title' => $title,
             'user_id' => auth()->id(),
-            'llm_configuration_id' => $defaultConfig->id,
+            'llm_provider_configuration_id' => $defaultConfig->id,
             'extension_slug' => null,
         ]);
         
@@ -490,7 +490,7 @@ class LLMQuickChatController extends Controller
                 'id' => $message->session->id,
                 'session_id' => $message->session->session_id,
                 'title' => $message->session->title,
-                'llm_configuration_id' => $message->session->llm_configuration_id,
+                'llm_provider_configuration_id' => $message->session->llm_provider_configuration_id,
             ],
         ]);
     }

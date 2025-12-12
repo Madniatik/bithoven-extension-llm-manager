@@ -12,7 +12,7 @@ use InvalidArgumentException;
  * Proporciona defaults, validación de tipos y reglas lógicas.
  * 
  * @package Bithoven\LLMManager\Services
- * @version 1.0.7
+ * @version 0.3.0
  */
 class ChatWorkspaceConfigValidator
 {

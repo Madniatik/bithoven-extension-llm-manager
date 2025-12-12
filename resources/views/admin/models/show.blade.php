@@ -143,7 +143,7 @@
                 const url = "{{ route('admin.llm.configurations.test') }}";
 
                 // Get current values from model
-                const provider = '{{ $model->provider }}';
+                const provider = '{{ $model->provider->slug }}';
                 const apiEndpoint = '{{ $model->api_endpoint ?? '' }}';
                 
                 const apiKeyInput = document.getElementById('api-key-input');
@@ -158,7 +158,7 @@
                 // Monitor logs
                 Monitor.info('llm-monitor', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
                 Monitor.info('llm-monitor', '🧪 Iniciando Test de Conexión');
-                Monitor.debug('llm-monitor', `Provider: {{ ucfirst($model->provider) }}`);
+                Monitor.debug('llm-monitor', `Provider: {{ ucfirst($model->provider->name) }}`);
                 Monitor.debug('llm-monitor', `Model: {{ $model->model }}`);
                 Monitor.info('llm-monitor', '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 

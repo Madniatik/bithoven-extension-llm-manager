@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('session_id', 100)->unique();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('extension_slug', 100)->nullable();
-            $table->foreignId('llm_configuration_id')->constrained('llm_manager_configurations')->onDelete('cascade');
+            $table->foreignId('llm_provider_configuration_id')
+                ->constrained('llm_manager_provider_configurations', indexName: 'llm_cs_config_fk')
+                ->onDelete('restrict')
+                ->comment('FK to provider configurations');
             $table->string('title', 255)->nullable();
             $table->json('metadata')->nullable(); // Context, tags, etc.
             $table->timestamp('started_at')->useCurrent();

@@ -26,7 +26,7 @@
             @if($session)
                 <span class="badge badge-light-info">Session ID: {{ $session->id }}</span>
                 @if ($session->configuration)
-                    <span class="badge badge-light-primary">{{ ucfirst($session->configuration->provider) }}</span>
+                    <span class="badge badge-light-primary">{{ ucfirst($session->configuration->provider->name) }}</span>
                 @endif
             @endif
         </div>

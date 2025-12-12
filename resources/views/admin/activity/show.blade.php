@@ -39,7 +39,7 @@
                 <!--begin::Provider-->
                 <div class="col-md-2">
                     <div class="fw-bold text-muted mb-1">Provider</div>
-                    <span class="badge badge-light-primary fs-6">{{ $log->configuration->provider ?? 'N/A' }}</span>
+                    <span class="badge badge-light-primary fs-6">{{ $log->configuration->provider->name ?? 'N/A' }}</span>
                 </div>
                 <!--end::Provider-->
 

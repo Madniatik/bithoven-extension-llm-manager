@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\LLMProviderService;
 use Bithoven\LLMManager\Services\LLMConfigurationService;
 
@@ -29,7 +29,7 @@ class LLMConfigurationController extends Controller
     /**
      * Remove the specified configuration.
      */
-    public function destroy(LLMConfiguration $configuration)
+    public function destroy(LLMProviderConfiguration $configuration)
     {
         $configuration->delete();
 
@@ -38,7 +38,7 @@ class LLMConfigurationController extends Controller
             ->with('success', 'Configuration deleted successfully');
     }
 
-    public function toggleActive(LLMConfiguration $configuration)
+    public function toggleActive(LLMProviderConfiguration $configuration)
     {
         $configuration->is_active = !$configuration->is_active;
         $configuration->save();

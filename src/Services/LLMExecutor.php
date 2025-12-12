@@ -2,7 +2,7 @@
 
 namespace Bithoven\LLMManager\Services;
 
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Models\LLMUsageLog;
 use Bithoven\LLMManager\Contracts\LLMProviderInterface;
 use Bithoven\LLMManager\Services\Providers\OllamaProvider;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Event;
 
 class LLMExecutor
 {
-    protected LLMConfiguration $configuration;
+    protected LLMProviderConfiguration $configuration;
     protected ?string $extensionSlug = null;
     protected ?string $context = null;
     protected array $customParameters = [];
@@ -27,7 +27,7 @@ class LLMExecutor
     /**
      * Set configuration
      */
-    public function setConfiguration(LLMConfiguration $configuration): void
+    public function setConfiguration(LLMProviderConfiguration $configuration): void
     {
         $this->configuration = $configuration;
     }
@@ -153,12 +153,12 @@ class LLMExecutor
      */
     protected function getProvider(): LLMProviderInterface
     {
-        return match ($this->configuration->provider) {
+        return match ($this->configuration->provider->slug) {
             'ollama' => new OllamaProvider($this->configuration),
             'openai' => new OpenAIProvider($this->configuration),
             'anthropic' => new AnthropicProvider($this->configuration),
             'custom' => new CustomProvider($this->configuration),
-            default => throw new \Exception("Unsupported provider: {$this->configuration->provider}"),
+            default => throw new \Exception("Unsupported provider: {$this->configuration->provider->slug}"),
         };
     }
 
@@ -168,7 +168,7 @@ class LLMExecutor
     protected function calculateCost(int $promptTokens, int $completionTokens): float
     {
         // Pricing per 1M tokens (example rates)
-        $pricing = match ($this->configuration->provider) {
+        $pricing = match ($this->configuration->provider->slug) {
             'openai' => [
                 'gpt-4o' => ['prompt' => 2.50, 'completion' => 10.00],
                 'gpt-4o-mini' => ['prompt' => 0.15, 'completion' => 0.60],
@@ -202,7 +202,7 @@ class LLMExecutor
         ?string $errorMessage = null
     ): LLMUsageLog {
         return LLMUsageLog::create([
-            'llm_configuration_id' => $this->configuration->id,
+            'llm_provider_configuration_id' => $this->configuration->id,
             'user_id' => auth()->id(),
             'extension_slug' => $this->extensionSlug,
             'prompt' => $prompt,

@@ -1,7 +1,7 @@
 # Estado del Proyecto: Pendientes y Próximos Pasos
 
 **Fecha:** 8 de diciembre de 2025, 17:15  
-**Versión:** v1.0.7-dev  
+**Versión:** v0.3.0-dev  
 **Última Sesión:** OpenAI Test Connection Fix (COMPLETADA ✅)
 
 ---
@@ -197,7 +197,7 @@ Operaciones batch en Admin:
 
 ## 📊 Estado del Proyecto
 
-### Versión Actual: v1.0.7-dev
+### Versión Actual: v0.3.0-dev
 
 **Funcionalidades Completadas:**
 - ✅ Monitor System v2.0 (Hybrid Adapter)
@@ -223,7 +223,7 @@ Operaciones batch en Admin:
 
 ## 📈 Próximos Milestones
 
-### v1.0.8 (Estimado: 2 semanas)
+### v0.4.0 (Estimado: 2 semanas)
 **Objetivos:**
 - [ ] Unit tests completos (LLMProviderService)
 - [ ] Dual-Select Model Picker (si aprobado)

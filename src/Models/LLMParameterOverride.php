@@ -19,7 +19,7 @@ class LLMParameterOverride extends Model
 
     protected $fillable = [
         'extension_slug',
-        'llm_configuration_id',
+        'llm_provider_configuration_id',
         'context',
         'override_parameters',
         'merge_strategy',
@@ -39,7 +39,7 @@ class LLMParameterOverride extends Model
      */
     public function configuration(): BelongsTo
     {
-        return $this->belongsTo(LLMConfiguration::class, 'llm_configuration_id');
+        return $this->belongsTo(LLMProviderConfiguration::class, 'llm_provider_configuration_id');
     }
 
     /**

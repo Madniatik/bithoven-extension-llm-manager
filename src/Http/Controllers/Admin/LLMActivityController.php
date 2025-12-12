@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Bithoven\LLMManager\Models\LLMUsageLog;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Services\LLMConfigurationService;
 use Illuminate\Http\Request;
 
@@ -23,8 +23,8 @@ class LLMActivityController extends Controller
 
         // Filter by provider
         if ($request->filled('provider')) {
-            $query->whereHas('configuration', function ($q) use ($request) {
-                $q->where('provider', $request->provider);
+            $query->whereHas('configuration.provider', function ($q) use ($request) {
+                $q->where('slug', $request->provider);
             });
         }
 
@@ -73,7 +73,7 @@ class LLMActivityController extends Controller
      */
     public function export(Request $request)
     {
-        $query = LLMUsageLog::with(['configuration', 'user', 'session'])
+        $query = LLMUsageLog::with(['configuration.provider', 'user', 'session'])
             ->latest('executed_at');
 
         // Filter by session_id (Monitor context)
@@ -95,8 +95,8 @@ class LLMActivityController extends Controller
 
         // Apply same filters as index
         if ($request->filled('provider')) {
-            $query->whereHas('configuration', function ($q) use ($request) {
-                $q->where('provider', $request->provider);
+            $query->whereHas('configuration.provider', function ($q) use ($request) {
+                $q->where('slug', $request->provider);
             });
         }
 
@@ -156,7 +156,7 @@ class LLMActivityController extends Controller
                     $log->id,
                     $log->session_id ?? 'N/A',
                     $log->executed_at,
-                    $log->configuration->provider ?? 'N/A',
+                    $log->configuration->provider->slug ?? 'N/A',
                     $log->configuration->model ?? 'N/A',
                     $log->user->name ?? 'N/A',
                     $log->prompt,  // Full text
@@ -205,8 +205,8 @@ class LLMActivityController extends Controller
 
         // Apply same filters as index
         if ($request->filled('provider')) {
-            $query->whereHas('configuration', function ($q) use ($request) {
-                $q->where('provider', $request->provider);
+            $query->whereHas('configuration.provider', function ($q) use ($request) {
+                $q->where('slug', $request->provider);
             });
         }
 
@@ -242,7 +242,7 @@ class LLMActivityController extends Controller
      */
     public function exportSql(Request $request)
     {
-        $query = LLMUsageLog::with(['configuration', 'user', 'session'])
+        $query = LLMUsageLog::with(['configuration.provider', 'user', 'session'])
             ->latest('executed_at');
 
         // Filter by session_id (Monitor context)
@@ -264,8 +264,8 @@ class LLMActivityController extends Controller
 
         // Apply same filters as index
         if ($request->filled('provider')) {
-            $query->whereHas('configuration', function ($q) use ($request) {
-                $q->where('provider', $request->provider);
+            $query->whereHas('configuration.provider', function ($q) use ($request) {
+                $q->where('slug', $request->provider);
             });
         }
 
@@ -326,7 +326,7 @@ class LLMActivityController extends Controller
                 $sessionId = $log->session_id ? "'{$log->session_id}'" : 'NULL';
                 $userId = $log->user_id ? "'{$log->user_id}'" : 'NULL';
                 $configId = $log->configuration_id ? "'{$log->configuration_id}'" : 'NULL';
-                $provider = addslashes($log->configuration->provider ?? 'N/A');
+                $provider = addslashes($log->configuration->provider->slug ?? 'N/A');
                 $model = addslashes($log->configuration->model ?? 'N/A');
                 $prompt = addslashes($log->prompt);
                 $response = addslashes($log->response);

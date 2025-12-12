@@ -77,7 +77,7 @@ echo "════════════════════════�
 echo ""
 echo "Repo URL: $REPO_URL"
 echo "Branch: main"
-echo "Tag: v1.0.0-pre-installation"
+echo "Tag: v0.1.0-pre-installation"
 echo "Commits: 1"
 echo "Files: 104"
 echo ""

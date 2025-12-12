@@ -2,7 +2,7 @@
 
 namespace Bithoven\LLMManager\Services\Conversations;
 
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 use Bithoven\LLMManager\Models\LLMConversationSession;
 use Bithoven\LLMManager\Models\LLMConversationMessage;
 use Bithoven\LLMManager\Services\LLMExecutor;
@@ -14,7 +14,7 @@ class LLMConversationManager
      * Create a new conversation session
      */
     public function createSession(
-        LLMConfiguration $configuration,
+        LLMProviderConfiguration $configuration,
         ?string $extensionSlug = null,
         ?int $userId = null,
         ?string $title = null
@@ -22,7 +22,7 @@ class LLMConversationManager
         $session = LLMConversationSession::create([
             'user_id' => $userId,
             'extension_slug' => $extensionSlug,
-            'llm_configuration_id' => $configuration->id,
+            'llm_provider_configuration_id' => $configuration->id,
             'title' => $title ?? 'New Conversation',
             'is_active' => true,
         ]);
@@ -39,7 +39,7 @@ class LLMConversationManager
     public function sendMessage(
         string $sessionId,
         string $message,
-        ?LLMConfiguration $configuration = null
+        ?LLMProviderConfiguration $configuration = null
     ): array {
         $session = LLMConversationSession::where('session_id', $sessionId)
             ->active()

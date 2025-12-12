@@ -4,7 +4,7 @@ namespace Bithoven\LLMManager\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Bithoven\LLMManager\Models\LLMConfiguration;
+use Bithoven\LLMManager\Models\LLMProviderConfiguration;
 
 /**
  * LLMConfigurationService - Service Layer for LLM Configuration Management
@@ -16,8 +16,8 @@ use Bithoven\LLMManager\Models\LLMConfiguration;
  * - Event dispatching for monitoring
  * 
  * @package Bithoven\LLMManager\Services
- * @version 1.0.0
- * @since 1.0.8
+ * @version 0.4.0
+ * @since 0.4.0
  */
 class LLMConfigurationService
 {
@@ -30,7 +30,7 @@ class LLMConfigurationService
      * Get all active configurations with optional caching
      * 
      * @param bool $cached Whether to use cache (default: true)
-     * @return Collection<LLMConfiguration>
+     * @return Collection<LLMProviderConfiguration>
      * 
      * @example
      * // Get cached active configs (fast, recommended for display)
@@ -42,13 +42,13 @@ class LLMConfigurationService
     public function getActive(bool $cached = true): Collection
     {
         if (!$cached) {
-            return LLMConfiguration::active()->get();
+            return LLMProviderConfiguration::with('provider')->active()->get();
         }
 
         return Cache::remember(
             'llm.configs.active',
             self::CACHE_TTL,
-            fn() => LLMConfiguration::active()->get()
+            fn() => LLMProviderConfiguration::with('provider')->active()->get()
         );
     }
 
@@ -56,7 +56,7 @@ class LLMConfigurationService
      * Find configuration by ID
      * 
      * @param int $id Configuration ID
-     * @return LLMConfiguration|null
+     * @return LLMProviderConfiguration|null
      * 
      * @example
      * $config = $service->find(1);
@@ -64,38 +64,38 @@ class LLMConfigurationService
      *     echo $config->name;
      * }
      */
-    public function find(int $id): ?LLMConfiguration
+    public function find(int $id): ?LLMProviderConfiguration
     {
-        return LLMConfiguration::find($id);
+        return LLMProviderConfiguration::find($id);
     }
 
     /**
      * Find configuration by ID or fail
      * 
      * @param int $id Configuration ID
-     * @return LLMConfiguration
+     * @return LLMProviderConfiguration
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * 
      * @example
      * $config = $service->findOrFail($request->config_id);
      */
-    public function findOrFail(int $id): LLMConfiguration
+    public function findOrFail(int $id): LLMProviderConfiguration
     {
-        return LLMConfiguration::findOrFail($id);
+        return LLMProviderConfiguration::findOrFail($id);
     }
 
     /**
      * Find active configuration by slug
      * 
      * @param string $slug Configuration slug (unique identifier)
-     * @return LLMConfiguration|null
+     * @return LLMProviderConfiguration|null
      * 
      * @example
      * $config = $service->findBySlug('gpt-4o-mini');
      */
-    public function findBySlug(string $slug): ?LLMConfiguration
+    public function findBySlug(string $slug): ?LLMProviderConfiguration
     {
-        return LLMConfiguration::where('slug', $slug)
+        return LLMProviderConfiguration::where('slug', $slug)
             ->active()
             ->first();
     }
@@ -104,12 +104,12 @@ class LLMConfigurationService
      * Find active configuration by slug or fail
      * 
      * @param string $slug Configuration slug
-     * @return LLMConfiguration
+     * @return LLMProviderConfiguration
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findBySlugOrFail(string $slug): LLMConfiguration
+    public function findBySlugOrFail(string $slug): LLMProviderConfiguration
     {
-        return LLMConfiguration::where('slug', $slug)
+        return LLMProviderConfiguration::where('slug', $slug)
             ->active()
             ->firstOrFail();
     }
@@ -117,7 +117,7 @@ class LLMConfigurationService
     /**
      * Get default configuration (is_default = true)
      * 
-     * @return LLMConfiguration|null
+     * @return LLMProviderConfiguration|null
      * 
      * @example
      * $default = $service->getDefault();
@@ -125,16 +125,16 @@ class LLMConfigurationService
      *     throw new Exception('No default config set');
      * }
      */
-    public function getDefault(): ?LLMConfiguration
+    public function getDefault(): ?LLMProviderConfiguration
     {
-        return LLMConfiguration::default()->first();
+        return LLMProviderConfiguration::default()->first();
     }
 
     /**
      * Get configurations for specific provider
      * 
-     * @param string $provider Provider name (ollama, openai, anthropic, etc.)
-     * @return Collection<LLMConfiguration>
+     * @param string $provider Provider slug (ollama, openai, anthropic, etc.)
+     * @return Collection<LLMProviderConfiguration>
      * 
      * @example
      * $openaiConfigs = $service->getByProvider('openai');
@@ -144,14 +144,14 @@ class LLMConfigurationService
         return Cache::remember(
             "llm.configs.provider.{$provider}",
             self::CACHE_TTL,
-            fn() => LLMConfiguration::forProvider($provider)->active()->get()
+            fn() => LLMProviderConfiguration::with('provider')->forProvider($provider)->active()->get()
         );
     }
 
     /**
      * Get all distinct providers
      * 
-     * @return Collection<string> Collection of provider names
+     * @return Collection<string> Collection of provider slugs
      * 
      * @example
      * $providers = $service->getProviders();
@@ -162,17 +162,21 @@ class LLMConfigurationService
         return Cache::remember(
             'llm.configs.providers',
             self::CACHE_TTL,
-            fn() => LLMConfiguration::select('provider')
-                ->distinct()
-                ->active()
-                ->pluck('provider')
+            function() {
+                return LLMProviderConfiguration::with('provider')
+                    ->active()
+                    ->get()
+                    ->pluck('provider.slug')
+                    ->unique()
+                    ->values();
+            }
         );
     }
 
     /**
      * Get all configurations (including inactive)
      * 
-     * @return Collection<LLMConfiguration>
+     * @return Collection<LLMProviderConfiguration>
      * 
      * @example
      * // Admin panel - show all configs
@@ -180,7 +184,8 @@ class LLMConfigurationService
      */
     public function getAll(): Collection
     {
-        return LLMConfiguration::withCount('usageLogs')
+        return LLMProviderConfiguration::with('provider')
+            ->withCount('usageLogs')
             ->orderBy('is_active', 'desc')
             ->orderBy('name')
             ->get();
@@ -201,9 +206,9 @@ class LLMConfigurationService
      *     'is_active' => true,
      * ]);
      */
-    public function create(array $data): LLMConfiguration
+    public function create(array $data): LLMProviderConfiguration
     {
-        $config = LLMConfiguration::create($data);
+        $config = LLMProviderConfiguration::create($data);
         $this->clearCache();
 
         return $config;
@@ -212,7 +217,7 @@ class LLMConfigurationService
     /**
      * Update existing configuration
      * 
-     * @param LLMConfiguration $config Configuration to update
+     * @param LLMProviderConfiguration $config Configuration to update
      * @param array $data New attributes
      * @return bool
      * 
@@ -221,7 +226,7 @@ class LLMConfigurationService
      *     'default_parameters' => ['max_tokens' => 8000],
      * ]);
      */
-    public function update(LLMConfiguration $config, array $data): bool
+    public function update(LLMProviderConfiguration $config, array $data): bool
     {
         $updated = $config->update($data);
 
@@ -235,7 +240,7 @@ class LLMConfigurationService
     /**
      * Delete configuration
      * 
-     * @param LLMConfiguration $config Configuration to delete
+     * @param LLMProviderConfiguration $config Configuration to delete
      * @return bool|null
      * 
      * @example
@@ -243,7 +248,7 @@ class LLMConfigurationService
      *     flash('Configuration deleted successfully');
      * }
      */
-    public function delete(LLMConfiguration $config): ?bool
+    public function delete(LLMProviderConfiguration $config): ?bool
     {
         $deleted = $config->delete();
 
@@ -257,14 +262,14 @@ class LLMConfigurationService
     /**
      * Toggle active status
      * 
-     * @param LLMConfiguration $config Configuration to toggle
+     * @param LLMProviderConfiguration $config Configuration to toggle
      * @return bool
      * 
      * @example
      * $service->toggleActive($config);
      * // is_active: true → false or false → true
      */
-    public function toggleActive(LLMConfiguration $config): bool
+    public function toggleActive(LLMProviderConfiguration $config): bool
     {
         $config->is_active = !$config->is_active;
         $saved = $config->save();
@@ -279,17 +284,17 @@ class LLMConfigurationService
     /**
      * Set configuration as default
      * 
-     * @param LLMConfiguration $config Configuration to set as default
+     * @param LLMProviderConfiguration $config Configuration to set as default
      * @return bool
      * 
      * @example
      * $service->setAsDefault($config);
      * // Unsets previous default, sets this one
      */
-    public function setAsDefault(LLMConfiguration $config): bool
+    public function setAsDefault(LLMProviderConfiguration $config): bool
     {
         // Unset previous default
-        LLMConfiguration::where('is_default', true)
+        LLMProviderConfiguration::where('is_default', true)
             ->update(['is_default' => false]);
 
         // Set new default
@@ -318,7 +323,7 @@ class LLMConfigurationService
         Cache::forget('llm.configs.providers');
 
         // Clear provider-specific caches
-        $providers = LLMConfiguration::select('provider')
+        $providers = LLMProviderConfiguration::select('provider')
             ->distinct()
             ->pluck('provider');
 

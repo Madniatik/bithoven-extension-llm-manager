@@ -5,6 +5,7 @@ namespace Bithoven\LLMManager\Console\Commands;
 use Illuminate\Console\Command;
 use Bithoven\LLMManager\Services\LLMConfigurationService;
 use Bithoven\LLMManager\Services\ProviderRepositoryValidator;
+use Bithoven\LLMManager\Models\LLMProvider;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -14,8 +15,8 @@ use Illuminate\Support\Facades\DB;
  * Composer packages (e.g., bithoven/llm-provider-openai).
  * 
  * @package Bithoven\LLMManager\Console\Commands
- * @version 1.0.0
- * @since 1.0.8
+ * @version 0.4.0
+ * @since 0.4.0
  */
 class ImportProviderConfigs extends Command
 {
@@ -66,6 +67,19 @@ class ImportProviderConfigs extends Command
         $this->info("🔍 Importing configurations for provider: {$provider}");
         $this->newLine();
 
+        // Check for archived provider (includes archived in query)
+        $providerModel = LLMProvider::withArchived()->where('slug', $provider)->first();
+        $isRestoring = false;
+
+        if ($providerModel && $providerModel->isArchived()) {
+            $this->warn("📦 Provider '{$provider}' was archived");
+            $this->line("   Archived at: " . $providerModel->archived_at->format('Y-m-d H:i:s'));
+            $this->line("   Reason: " . ($providerModel->metadata['archive_reason'] ?? 'unknown'));
+            $this->newLine();
+            $this->info("♻️  Restoring provider...");
+            $isRestoring = true;
+        }
+
         // Determine package path
         $packagePath = $this->getPackagePath($provider);
 
@@ -111,11 +125,48 @@ class ImportProviderConfigs extends Command
             $this->newLine();
         }
 
+        // Restore provider if archived
+        if ($isRestoring && !$isDryRun) {
+            $providerModel->restore();
+            
+            // Update metadata
+            $metadata = $providerModel->metadata ?? [];
+            $metadata['restore_count'] = ($metadata['restore_count'] ?? 0) + 1;
+            $metadata['restored_at'] = now()->toIso8601String();
+            $providerModel->update([
+                'metadata' => $metadata,
+                'version' => $manifest['version'] ?? null,
+            ]);
+
+            $this->info("✅ Provider '{$provider}' restored successfully");
+            $this->newLine();
+        } elseif (!$providerModel && !$isDryRun) {
+            // Create new provider record if doesn't exist
+            $providerModel = LLMProvider::create([
+                'slug' => $provider,
+                'name' => $manifest['display_name'] ?? ucfirst($provider),
+                'package' => $manifest['package_name'] ?? "bithoven/llm-provider-{$provider}",
+                'version' => $manifest['version'] ?? null,
+                'api_endpoint' => $manifest['api_endpoint'] ?? null,
+                'capabilities' => $manifest['capabilities'] ?? [],
+                'is_active' => true,
+                'is_installed' => true,
+                'metadata' => [
+                    'type' => $manifest['type'] ?? 'cloud',
+                    'requires_api_key' => $manifest['requires_api_key'] ?? true,
+                    'imported_at' => now()->toIso8601String(),
+                ],
+            ]);
+
+            $this->info("✅ Provider '{$provider}' registered");
+            $this->newLine();
+        }
+
         // Import configurations
-        $this->importConfigurations($configFiles, $isDryRun, $isForce);
+        $this->importConfigurations($configFiles, $isDryRun, $isForce, $providerModel);
 
         // Display summary
-        $this->displaySummary();
+        $this->displaySummary($isRestoring);
 
         return Command::SUCCESS;
     }
@@ -164,17 +215,17 @@ class ImportProviderConfigs extends Command
     /**
      * Import configurations from files
      */
-    private function importConfigurations(array $files, bool $isDryRun, bool $isForce): void
+    private function importConfigurations(array $files, bool $isDryRun, bool $isForce, ?LLMProvider $provider): void
     {
         foreach ($files as $file) {
-            $this->importConfigFile($file, $isDryRun, $isForce);
+            $this->importConfigFile($file, $isDryRun, $isForce, $provider);
         }
     }
 
     /**
      * Import a single configuration file
      */
-    private function importConfigFile(string $filePath, bool $isDryRun, bool $isForce): void
+    private function importConfigFile(string $filePath, bool $isDryRun, bool $isForce, ?LLMProvider $provider): void
     {
         $filename = basename($filePath);
 
@@ -190,6 +241,11 @@ class ImportProviderConfigs extends Command
 
             $data = $result['data'];
             $config = $data['configuration'];
+            
+            // Add provider_id if available
+            if ($provider) {
+                $config['provider_id'] = $provider->id;
+            }
 
             // Check if configuration already exists
             $existing = $this->configService->findBySlug($config['slug']);
@@ -258,7 +314,7 @@ class ImportProviderConfigs extends Command
     /**
      * Display import summary
      */
-    private function displaySummary(): void
+    private function displaySummary(bool $isRestoring = false): void
     {
         $this->newLine();
         
@@ -289,7 +345,11 @@ class ImportProviderConfigs extends Command
             if ($this->option('dry-run')) {
                 $this->info("✨ Validation successful! Remove --dry-run to import.");
             } else {
-                $this->info("✨ Configurations imported successfully!");
+                if ($isRestoring) {
+                    $this->info("♻️  Provider restored and configurations imported successfully!");
+                } else {
+                    $this->info("✨ Configurations imported successfully!");
+                }
             }
         }
     }

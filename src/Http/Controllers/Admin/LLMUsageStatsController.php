@@ -54,7 +54,7 @@ class LLMUsageStatsController extends Controller
 
         // Group by configuration
         $byConfiguration = $query->get()
-            ->groupBy('llm_configuration_id')
+            ->groupBy('llm_provider_configuration_id')
             ->map(function ($logs) {
                 return [
                     'count' => $logs->count(),

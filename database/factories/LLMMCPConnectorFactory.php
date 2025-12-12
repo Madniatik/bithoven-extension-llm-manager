@@ -23,7 +23,7 @@ class LLMMCPConnectorFactory extends Factory
             'is_active' => true,
             'last_connected_at' => now()->subHours(fake()->numberBetween(1, 24)),
             'metadata' => [
-                'version' => '1.0.0',
+                'version' => '0.1.0',
             ],
         ];
     }
