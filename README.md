@@ -1,20 +1,20 @@
-# 🚀 LLM Manager Extension v1.0.8 (In Progress)
+# 🚀 LLM Manager Extension v0.4.0 (In Development)
 
 **Multi-Provider LLM Orchestration Platform**
 
-[![Version](https://img.shields.io/badge/version-1.0.8--dev-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
+[![Version](https://img.shields.io/badge/version-0.4.0--dev-blue.svg)](https://github.com/Madniatik/bithoven-extension-llm-manager)
 [![Laravel](https://img.shields.io/badge/Laravel-11+-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-purple.svg)](https://php.net)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Enterprise-grade LLM management platform for Laravel applications with real-time streaming, multi-agent orchestration, RAG system, database-driven activity logs, comprehensive admin UI, and granular chat configuration system.
+Enterprise-grade LLM management platform for Laravel applications with real-time streaming, service layer architecture, provider repositories ecosystem, RAG system, and comprehensive admin UI.
 
-**✨ v1.0.7 Released:** Chat Workspace Configuration System (23 docs, 3376+ lines), Monitor Export (CSV/JSON/SQL), UX Enhancements (21 items), Database Activity Logs, Settings Panel with DB Persistence - Production Ready (10 Dec 2025)
+**✅ v0.3.0 Released (10 Dec 2025):** Chat Workspace Configuration System, Monitor Export (CSV/JSON/SQL), Database Activity Logs - Production Ready
 
-**🔄 v1.0.8 In Progress (33%):** Architecture Refactoring + Provider Repositories Ecosystem
-- ✅ FASE 1: Service Layer (100%) - Cache layer, 25 tests, zero breaking changes
-- ✅ FASE 2: Core Import System (100%) - Validator + import/list commands, 19 tests
-- 🔄 FASE 3: First Provider Package (Ollama) - In Planning
+**🔄 v0.4.0 In Development (33% Complete):** Architecture Refactoring + Provider Repositories
+- ✅ FASE 1: Service Layer (Complete) - LLMConfigurationService with cache, 25 tests, 90% query reduction
+- ✅ FASE 2: Import System (Complete) - Provider packages from Composer, validation, 19 tests
+- 🔄 FASE 3: First Provider Package (Next) - bithoven/llm-provider-ollama with 15+ configs
 
 ---
 
@@ -22,11 +22,11 @@ Enterprise-grade LLM management platform for Laravel applications with real-time
 
 ### 🎯 Core LLM Management
 - ✅ **Multi-Provider Support** - Ollama, OpenAI, Anthropic, OpenRouter, Custom endpoints
+- ✅ **Service Layer Architecture** - Centralized configuration management with 90% query reduction (v1.0.8)
+- ✅ **Provider Repositories** - Composer-based config packages with import/export system (v1.0.8)
 - ✅ **Real-Time Streaming** - SSE-based streaming with live token counting and cost tracking
-- ✅ **Per-Extension Configurations** - Isolated configs for each extension/module
+- ✅ **Configuration Management** - LLMConfigurationService with caching, testing support, 15 methods
 - ✅ **Budget Tracking** - Cost monitoring with usage logs and alerts
-- ✅ **Provider Cache** - Auto-discovery of available models
-- ✅ **Fallback System** - Automatic failover between configurations
 
 ### 📊 Advanced Features
 - ✅ **Custom Metrics** - Extensions create domain-specific metrics with JSON metadata
@@ -55,14 +55,14 @@ Enterprise-grade LLM management platform for Laravel applications with real-time
 Complete documentation available in the `docs/` directory:
 
 ### 📖 User Guides
-- **[Installation Guide](docs/INSTALLATION.md)** - Setup, requirements, post-install configuration
-- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup, streaming, budget controls
-- **[Usage Guide](docs/USAGE-GUIDE.md)** - Practical examples for all features
-- **[FAQ](docs/FAQ.md)** - Troubleshooting and common questions
+- **[Installation Guide](docs/guides/INSTALLATION.md)** - Setup, requirements, post-install configuration
+- **[Configuration Guide](docs/guides/CONFIGURATION.md)** - Provider setup, streaming, budget controls
+- **[Usage Guide](docs/guides/USAGE-GUIDE.md)** - Practical examples for all features
+- **[FAQ](docs/guides/FAQ.md)** - Troubleshooting and common questions
 
 ### 🔧 Developer Documentation
-- **[API Reference](docs/API-REFERENCE.md)** - Facades, services, models, REST endpoints
-- **[Code Examples](docs/EXAMPLES.md)** - Copy-paste ready code snippets
+- **[API Reference](docs/reference/API-REFERENCE.md)** - Facades, services, models, REST endpoints
+- **[Code Examples](docs/guides/EXAMPLES.md)** - Copy-paste ready code snippets
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - Development workflow and guidelines
 
 ### 🧩 Components

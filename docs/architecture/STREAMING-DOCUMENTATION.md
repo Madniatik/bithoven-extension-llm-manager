@@ -1,6 +1,6 @@
 # LLM Streaming System Documentation
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Fecha:** 9 de diciembre de 2025  
 **Estado:** Production Ready
 

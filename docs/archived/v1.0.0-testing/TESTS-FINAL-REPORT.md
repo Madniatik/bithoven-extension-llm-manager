@@ -1,7 +1,7 @@
 # LLM Manager Extension - Test Suite Final Report
 
 **Date:** November 18, 2025  
-**Version:** v1.0.0  
+**Version:** v0.1.0  
 **Commit:** 74dc5e2
 
 ---

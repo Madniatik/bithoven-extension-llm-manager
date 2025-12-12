@@ -1,9 +1,47 @@
 # Provider Configuration Repositories - LLM Manager
 
 **Fecha:** 11 de diciembre de 2025  
-**Versión:** 1.0.0  
+**Versión:** 1.0.1  
 **Concepto:** Provider Config Repositories (Composer Packages)  
 **Recomendación:** ✅ **FEATURE DE ALTO VALOR** (implementar después de Service Layer)
+
+---
+
+## ⚠️ CRITICAL: Provider Repositories ≠ Bithoven Extensions
+
+### Aclaración Arquitectónica
+
+**Provider Repositories son:**
+- ✅ Composer packages estándar (`composer require bithoven/llm-provider-*`)
+- ✅ Data-only packages (config files JSON, NO código funcional)
+- ✅ Complementos de la extensión `llm-manager`
+- ✅ Gestionados vía comandos `llm:import`, `llm:packages`
+- ✅ Instalados en `vendor/bithoven/llm-provider-*/`
+
+**Provider Repositories NO son:**
+- ❌ Bithoven Extensions (NO tienen `extension.json`)
+- ❌ Gestionados por Extension Manager
+- ❌ Instalados vía `php artisan bithoven:extension:install`
+- ❌ Listados en `php artisan bithoven:extension:list`
+- ❌ Requieren Service Provider, Seeders, Migrations, Routes, etc.
+
+### Arquitectura Correcta
+
+```
+BITHOVEN CPANEL (App Core)
+  └─ Extension Manager
+      └─ llm-manager Extension ← Installed via Extension Manager
+          ├─ LLMConfigurationService
+          ├─ llm:import command
+          └─ llm:packages command
+              ▼
+          Composer Packages (Data Only)
+          ├─ vendor/bithoven/llm-provider-ollama/
+          ├─ vendor/bithoven/llm-provider-openai/
+          └─ vendor/bithoven/llm-provider-anthropic/
+```
+
+**Ver análisis completo:** [PROVIDER-REPOSITORIES-ARCHITECTURE-ANALYSIS.md](PROVIDER-REPOSITORIES-ARCHITECTURE-ANALYSIS.md)
 
 ---
 
@@ -23,12 +61,21 @@
 
 ### ¿Qué es un Provider Repository?
 
-Un **Provider Repository** es un Composer package que contiene:
-- ✅ Configuraciones pre-optimizadas de modelos LLM
+Un **Provider Repository** es un **Composer package complementario** que contiene:
+- ✅ Configuraciones pre-optimizadas de modelos LLM (JSON files)
 - ✅ Templates de prompts específicos del provider
 - ✅ Best practices y parámetros recomendados
 - ✅ Metadata (pricing, capabilities, limits)
 - ✅ System prompts probados en producción
+
+**NO contiene:**
+- ❌ Service Providers
+- ❌ Migraciones de base de datos
+- ❌ Seeders
+- ❌ Rutas (web.php, api.php)
+- ❌ Controllers/Models/Services
+- ❌ Vistas Blade
+- ❌ Permisos (Spatie Permissions)
 
 ### Problema que Resuelve
 
@@ -43,7 +90,13 @@ Un **Provider Repository** es un Composer package que contiene:
 
 **CON REPOSITORIES (automatizado):**
 ```bash
+# Step 1: Instalar extension llm-manager (ONE TIME)
+php artisan bithoven:extension:install llm-manager
+
+# Step 2: Instalar provider package (AS NEEDED)
 composer require bithoven/llm-provider-openai
+
+# Step 3: Importar configs a llm-manager
 php artisan llm:import openai
 
 ✅ 10 configuraciones importadas:

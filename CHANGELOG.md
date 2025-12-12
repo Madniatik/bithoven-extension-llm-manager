@@ -7,7 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] - Work in Progress Towards v1.0.8
+## 🔄 Version Migration Notice (12 Dec 2025)
+
+**IMPORTANT:** Version numbering has been migrated to follow proper semantic versioning for pre-release software.
+
+### Version Mapping
+- `v0.1.0` → `v0.1.0` (Core Platform)
+- `v0.2.0` → `v0.2.0` (Streaming)
+- `v0.2.1` → `v0.2.1` (Optimizations)
+- `v0.2.2` → `v0.2.2` (Multi-Instance)
+- `v0.3.0` → `v0.3.0` (Monitor Export + Chat UX)
+- `v0.4.0` → `v0.4.0` (Provider Repositories)
+
+**Rationale:** The extension is in active development and has not been officially released. Using v0.x versioning properly indicates pre-release status. True `v0.1.0` will represent the first stable public release.
+
+**Impact:** All git tags, documentation, and configuration files updated. No breaking changes to functionality.
+
+---
+
+## [Unreleased] - Work in Progress Towards v0.4.0
 
 ### 🎉 FASE 2: Provider Repositories - Core Import System (11 diciembre 2025)
 
@@ -123,7 +141,7 @@ src/Http/Controllers/Admin/LLMModelController.php
 
 ---
 
-## [Unreleased] - Work in Progress Towards v1.0.7
+## [Unreleased] - Work in Progress Towards v0.3.0
 
 ### 🎉 Monitor Export Feature: CSV/JSON/SQL Export for Activity Logs (10 diciembre 2025, 23:45)
 
@@ -251,12 +269,12 @@ resources/views/components/chat/shared/monitor/monitor-header-buttons.blade.php
 resources/views/components/chat/layouts/split-horizontal-layout.blade.php
 resources/views/components/chat/partials/scripts/monitor-api.blade.php
 resources/views/admin/activity/index.blade.php
-plans/PLAN-v1.0.7-chat-ux.md
+plans/PLAN-v0.3.0-chat-ux.md
 ```
 
 **Documentation:**
 - Analysis report: `reports/MONITOR-EXPORT-ANALYSIS-2025-12-10.md` (428 lines)
-- Plan updated: `plans/PLAN-v1.0.7-chat-ux.md` (marked 100% complete, 21/21 items)
+- Plan updated: `plans/PLAN-v0.3.0-chat-ux.md` (marked 100% complete, 21/21 items)
 
 **Testing Coverage:**
 - ✅ Export CSV with session_id (filtered correctly)
@@ -274,7 +292,7 @@ plans/PLAN-v1.0.7-chat-ux.md
 - Testing: 30 min
 - **Total:** 3.5 hours
 
-**Related Plan:** PLAN-v1.0.7-chat-ux.md - PHASE 6 complete
+**Related Plan:** PLAN-v0.3.0-chat-ux.md - PHASE 6 complete
 
 ---
 
@@ -578,14 +596,14 @@ ALTER TABLE llm_manager_usage_logs
 - `public/js/monitor/core/MonitorInstance.js` - localStorage-based init/complete methods
 
 #### Documentation
-- `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md` - Lesson 16 added, revert documented
+- `plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md` - Lesson 16 added, revert documented
 - `PROJECT-STATUS.md` - Progress updated to 75%, 7 commits listed
 
 ---
 
 ### Quick Chat Feature Enhancements (90% Complete)
 
-**30+ commits implementados** trabajando hacia v1.0.7:
+**30+ commits implementados** trabajando hacia v0.3.0:
 
 #### Enhanced Data Capture (commits 721e271, 0cd80d4)
 - **Added** `model` field to messages table - Captures actual model used (not just config)
@@ -667,7 +685,7 @@ ALTER TABLE llm_manager_usage_logs
 - **Result** Clean console for production use
 
 #### Documentation Updates (commit 523f663)
-- **Updated** `plans/PLAN-v1.0.7.md` with actual progress:
+- **Updated** `plans/PLAN-v0.3.0.md` with actual progress:
   - Quick Chat Feature: 95% complete (FASE 1-4,6-7 done)
   - UI/UX Optimizations: 80% complete
   - 30+ commits documented
@@ -697,7 +715,7 @@ ALTER TABLE llm_messages ADD COLUMN cost_usd DECIMAL(10,6) NULL;
 
 ---
 
-## [1.0.6] - 2025-12-03
+## [0.6.0] - 2025-12-03
 
 ### Added - Multi-Instance Support for ChatWorkspace Component
 
@@ -819,7 +837,7 @@ ALTER TABLE llm_messages ADD COLUMN cost_usd DECIMAL(10,6) NULL;
 
 #### Documentation
 
-- `docs/components/CHAT-WORKSPACE.md` - Updated to v1.0.6
+- `docs/components/CHAT-WORKSPACE.md` - Updated to v0.2.2
 - New section: "Multi-Instance Support" (500+ lines)
 - Multi-instance API examples
 - Use cases y best practices
@@ -846,7 +864,7 @@ monitor.start();
 
 ---
 
-## [1.0.5] - 2025-12-03
+## [0.5.0] - 2025-12-03
 
 ### Changed - ChatWorkspace Component Optimizations (63% code reduction)
 
@@ -995,7 +1013,7 @@ php artisan optimize:clear
 
 ---
 
-## [1.0.3] - 2025-11-27
+## [0.3.0] - 2025-11-27
 
 ### Removed - Code Sanitation
 
@@ -1059,7 +1077,7 @@ SELECT COUNT(*) FROM permissions WHERE name LIKE 'extensions:llm-manager:%';
 
 ---
 
-## [1.0.1] - 2025-11-26
+## [0.1.0] - 2025-11-26
 
 ### Fixed - Seeder Architecture
 
@@ -1115,7 +1133,7 @@ SELECT COUNT(*) FROM permissions WHERE name LIKE 'extensions:llm-manager:%';
 
 ---
 
-## [1.0.4] - 2025-11-28
+## [0.4.0] - 2025-11-28
 
 ### Added - Real-Time Streaming & Permissions v2.0
 
@@ -1171,7 +1189,7 @@ _Other Providers_ (Stubs Ready)
 
 **Breaking Change:** `LLMProviderInterface::stream()` signature updated
 ```php
-// OLD (v1.0.0)
+// OLD (v0.1.0)
 public function stream(string $prompt, array $context, array $parameters, callable $callback): void
 
 // NEW (v1.1.0)
@@ -1417,7 +1435,7 @@ class LLMPermissions {
 - Browser cache issue with CSS changes (requires hard refresh)
 - Activity table limited to 10 items in localStorage
 
-**Migration from v1.0.0:**
+**Migration from v0.1.0:**
 - No database changes required
 - Composer update recommended (`composer update bithoven/llm-manager`)
 - Clear caches: `php artisan optimize:clear`
@@ -1511,7 +1529,7 @@ class LLMPermissions {
 
 ---
 
-## [1.0.0] - 2025-11-18
+## [0.0.0] - 2025-11-18
 
 ### Added - Initial Release v3.0
 
@@ -1702,5 +1720,5 @@ class LLMPermissions {
 
 ---
 
-[unreleased]: https://github.com/bithoven/llm-manager/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/bithoven/llm-manager/releases/tag/v1.0.0
+[unreleased]: https://github.com/bithoven/llm-manager/compare/v0.1.0...HEAD
+[0.0.0]: https://github.com/bithoven/llm-manager/releases/tag/v0.1.0

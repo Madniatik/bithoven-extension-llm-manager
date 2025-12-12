@@ -1,6 +1,6 @@
 # Monitor Export Feature
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (10 dic 2025)  
 **Tiempo Implementación:** 3.5h  
 **Commits:** f43aee6
@@ -393,5 +393,5 @@ private function getActivityLogs($sessionId = null)
 
 ---
 
-**Documentación Verificada:** PLAN-v1.0.7-chat-ux.md (Monitor Export Feature)  
+**Documentación Verificada:** PLAN-v0.3.0-chat-ux.md (Monitor Export Feature)  
 **Última Actualización:** 10 de diciembre de 2025

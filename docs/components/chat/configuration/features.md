@@ -169,4 +169,4 @@ Features adicionales de UX:
 
 ---
 
-**Documentación Verificada:** `docs/components/CHAT-WORKSPACE-CONFIG.md.archived` + `PLAN-v1.0.7-chat-ux.md`
+**Documentación Verificada:** `docs/components/CHAT-WORKSPACE-CONFIG.md.archived` + `PLAN-v0.3.0-chat-ux.md`

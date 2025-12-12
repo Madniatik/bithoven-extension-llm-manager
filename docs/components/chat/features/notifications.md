@@ -1,6 +1,6 @@
 # Notifications System
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (9 dic 2025)  
 **Commits:** b742e22, f7d3cae
 
@@ -16,4 +16,4 @@
 - Volumen 50%
 - Configurable en Settings
 
-**Documentación Verificada:** PLAN-v1.0.7-chat-ux.md (Notificaciones al Completar Respuesta)
+**Documentación Verificada:** PLAN-v0.3.0-chat-ux.md (Notificaciones al Completar Respuesta)

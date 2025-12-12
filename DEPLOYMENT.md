@@ -1,5 +1,8 @@
 # LLM Manager Extension - Deployment Guide
 
+**Version:** v1.0.8-dev  
+**Last Updated:** 12 de diciembre de 2025
+
 ## 📦 Quick Deployment
 
 ### 1. Update Extension in CPANEL
@@ -352,7 +355,7 @@ curl http://localhost:8000/vendor/bithoven/llm-manager/js/monitor/core/MonitorSt
 
 ---
 
-**Version:** v1.0.7-dev (82% complete)  
-**Last Updated:** 7 de diciembre de 2025, 21:45  
+**Version:** v1.0.8-dev (33% complete)  
+**Last Updated:** 12 de diciembre de 2025  
 **Critical Note:** Always publish assets after composer update!  
-**Latest Feature:** Activity Log DB Migration (7 dic 2025) - database-driven history complete
+**Latest Feature:** Service Layer + Provider Repositories (FASE 1-2 complete)

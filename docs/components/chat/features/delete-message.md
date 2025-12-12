@@ -1,6 +1,6 @@
 # Delete Message Feature
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (10 dic 2025)  
 **Approach:** Two-column delete (message_id + id fallback)
 

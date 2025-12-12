@@ -209,7 +209,7 @@ php artisan bithoven:extension:install llm-manager
 
 ## 📊 Estado del Proyecto
 
-### Versión: v1.0.0
+### Versión: v0.1.0
 ### Branch: main
 ### Commits: 2
 - ✅ `a41620c` - Initial implementation (104 files)
@@ -217,7 +217,7 @@ php artisan bithoven:extension:install llm-manager
 
 ### Repositorio
 - **GitHub:** https://github.com/Madniatik/bithoven-extension-llm-manager
-- **Tag:** v1.0.0-pre-installation
+- **Tag:** v0.1.0-pre-installation
 - **Status:** Tests committed and pushed
 
 ---

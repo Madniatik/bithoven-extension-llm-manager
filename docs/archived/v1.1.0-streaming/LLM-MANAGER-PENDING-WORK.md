@@ -36,7 +36,7 @@ Todos los items pendientes documentados aquí han sido:
 
 ## 📊 Estado General del Proyecto (HISTÓRICO - Nov 25, 2025)
 
-### Versión v1.0.0 (Released)
+### Versión v0.1.0 (Released)
 ✅ **100% Completo** - Funcionalidad core estable y documentada
 
 ### Versión v1.1.0 (En Desarrollo - 85% completo) [AHORA: 100% COMPLETO]
@@ -577,7 +577,7 @@ public function dashboard()
 
 ## 🔄 Migration Path
 
-### From v1.0.0 to v1.1.0
+### From v0.1.0 to v1.1.0
 
 **Database Changes:**
 ```bash
@@ -653,7 +653,7 @@ php artisan migrate  # Will add new tables/columns for streaming
 1. **RESOLVER PERMISSIONS ISSUE** - Critical blocker
 2. Implementar Phase 2: Statistics Dashboard
 3. Update CHANGELOG.md con v1.1.0 features
-4. Create migration guide v1.0.0 → v1.1.0
+4. Create migration guide v0.1.0 → v1.1.0
 5. Test asset versioning fix
 
 ### SHORT TERM (1-2 weeks)

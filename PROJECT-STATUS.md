@@ -1,14 +1,14 @@
 # LLM Manager Extension - Estado del Proyecto
 
-**Última Actualización:** 11 de diciembre de 2025, 18:00
-**Versión Actual:** v1.0.7 ✅ **RELEASED**
-**Próxima Versión:** v1.0.8 🔄 **IN PROGRESS (33% complete - FASE 1-2 done)**
+**Última Actualización:** 12 de diciembre de 2025
+**Versión Actual:** v0.3.0 ✅ **RELEASED**
+**Próxima Versión:** v0.4.0 🔄 **IN DEVELOPMENT (33% complete - FASE 1-2 done)**
 **Branch Activo:** main
-**Estado:** 🟢 **v1.0.8 IN PROGRESS - Service Layer + Import System Complete**
+**Estado:** 🟢 **v0.4.0 IN DEVELOPMENT - Service Layer + Import System Complete**
 
-**✅ MILESTONE v1.0.7:** Monitor Export Feature + Chat UX System 100% complete (10 dic 2025). Activity Logs can now be exported in CSV/JSON/SQL formats with session-aware filtering. Chat UX improvements include Activity Log DB migration, Request Inspector, Delete Message, Message ID Refactor, and comprehensive testing suite (33/33 features).
+**✅ MILESTONE v0.3.0:** Monitor Export Feature + Chat UX System 100% complete (10 dic 2025). Activity Logs can now be exported in CSV/JSON/SQL formats with session-aware filtering. Chat UX improvements include Activity Log DB migration, Request Inspector, Delete Message, Message ID Refactor, and comprehensive testing suite (33/33 features).
 
-**🔄 MILESTONE v1.0.8 (In Progress):** Architecture Refactoring + Provider Repositories Ecosystem
+**🔄 MILESTONE v0.4.0 (In Progress):** Architecture Refactoring + Provider Repositories Ecosystem
 - ✅ FASE 1: Service Layer (100%) - 2h, 893 lines, 25 tests
 - ✅ FASE 2: Core Import System (100%) - 3h, 1,181 lines, 19 tests
 - 🔄 FASE 3: First Provider Package (Ollama) - In Planning
@@ -18,15 +18,14 @@
 
 ## 📊 Resumen Ejecutivo
 
-LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona gestión completa de Large Language Models (LLMs) con soporte para múltiples proveedores, streaming en tiempo real, RAG (Retrieval-Augmented Generation), workflows multi-agente, y sistema híbrido de herramientas.
+LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona gestión completa de Large Language Models (LLMs) con soporte para múltiples proveedores, streaming en tiempo real, service layer architecture, y provider repositories ecosystem.
 
-**✅ v1.0.0:** Core functionality 100% completo y documentado
-**✅ v1.0.1-v1.0.3:** Bugfixes y optimizaciones menores
-**✅ v1.0.4:** Real-time streaming + permissions v2.0 + metrics logging
-**✅ v1.0.5:** ChatWorkspace optimizations (63% code reduction)
-**✅ v1.0.6:** Multi-instance support + Legacy cleanup
-**✅ v1.0.7:** Monitor Export + Chat UX System (21 items, 132 commits)
-**🔄 v1.0.8:** Service Layer + Provider Repositories (2/6 phases, 5h/36h)
+**✅ v0.1.0:** Core functionality - Multi-provider, configurations, admin UI
+**✅ v0.2.0:** Real-time streaming + permissions v2.0 + metrics logging
+**✅ v0.2.1:** ChatWorkspace optimizations (63% code reduction)
+**✅ v0.2.2:** Multi-instance support + Legacy cleanup
+**✅ v0.3.0:** Monitor Export + Chat UX System + Database Activity Logs
+**🔄 v0.4.0:** Service Layer + Provider Repositories (2/6 phases complete)
 
 ---
 
@@ -43,17 +42,14 @@ LLM Manager es una extensión **enterprise-grade** para Laravel que proporciona 
 - ✅ Documentación completa (4,925 líneas, 7 archivos)
 
 **Advanced Features:**
-- ✅ Custom Metrics System (numerical + JSON data)
 - ✅ Prompt Templates (reusable with variables)
 - ✅ Parameter Override (runtime configuration)
 - ✅ Conversations (persistent sessions + context)
-- ✅ RAG System (document chunking + embeddings + semantic search)
-- ✅ Multi-Agent Workflows (state machine + orchestration)
-- ✅ Hybrid Tools (Function Calling + 4 MCP bundled servers)
+- ✅ Provider Connection Service Layer
 
-**Database:** 13 tablas completas con migraciones
-**Testing:** 100% features tested (33/33)
-**Documentation:** 100% complete (7 files)
+**Database:** 16 tablas completas con migraciones
+**Testing:** Manual testing complete (33/33 features)
+**Documentation:** Complete user guides and API reference
 
 ---
 

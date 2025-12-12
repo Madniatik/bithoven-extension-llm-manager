@@ -988,7 +988,7 @@ $post = $workflow->generateBlogPost('Modern PHP Development Best Practices');
 ### Example 2: Streaming Responses
 
 ```php
-// Note: Streaming support available since v1.0.4
+// Note: Streaming support available since v0.2.0
 
 use Bithoven\LLMManager\Facades\LLM;
 

@@ -1,10 +1,10 @@
 # Smart Auto-Scroll System
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (9 dic 2025)  
 **Features:** 6 features ChatGPT-style
 
-[Ver PLAN-v1.0.7-chat-ux.md para detalles completos]
+[Ver PLAN-v0.3.0-chat-ux.md para detalles completos]
 
 ## 6 Features Implementadas
 
@@ -18,4 +18,4 @@
 ## Bonus
 - Checkmark animado (bounce 0.5→1.2→1, fade out 2s)
 
-**Documentación Verificada:** PLAN-v1.0.7-chat-ux.md (Smart Auto-Scroll System)
+**Documentación Verificada:** PLAN-v0.3.0-chat-ux.md (Smart Auto-Scroll System)

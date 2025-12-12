@@ -1,6 +1,6 @@
 # Chat Workspace Documentation
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Fecha:** 10 de diciembre de 2025  
 **Estado:** Production Ready
 
@@ -52,7 +52,7 @@ Esta documentación cubre todas las funcionalidades del componente Chat Workspac
 
 ## ✨ Features
 
-### Funcionalidades v1.0.7
+### Funcionalidades v0.3.0
 1. **[Monitor Export](./features/monitor-export.md)** - Export Activity Logs (CSV/JSON/SQL)
 2. **[Context Window](./features/context-window.md)** - Indicador visual de contexto
 3. **[Request Inspector](./features/request-inspector.md)** - Debugging de requests completos
@@ -143,7 +143,7 @@ Esta documentación cubre todas las funcionalidades del componente Chat Workspac
 
 ## 📈 Versión History
 
-### v1.0.7 (10 dic 2025)
+### v0.3.0 (10 dic 2025)
 - Monitor Export Feature (CSV/JSON/SQL)
 - Context Window Indicator (6.75h, 100% completo)
 - Request Inspector Tab (hybrid population)
@@ -152,7 +152,7 @@ Esta documentación cubre todas las funcionalidades del componente Chat Workspac
 - Notificaciones + Sonidos
 - Chat UX System (21 items, 24h)
 
-### v1.0.6
+### v0.2.2
 - Quick Chat Feature básico
 - Monitor System v2.0
 - Provider Service Layer
@@ -180,4 +180,4 @@ Para contribuir a la documentación:
 
 **Última Actualización:** 10 de diciembre de 2025  
 **Documentación Versión:** 2.0 (Modular)  
-**Extension Versión:** v1.0.7
+**Extension Versión:** v0.3.0

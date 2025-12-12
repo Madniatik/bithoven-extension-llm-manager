@@ -468,7 +468,7 @@ monitor.clear();
 
 ## 📊 Comparación: Antes vs Ahora
 
-| Aspecto | Before (v1.0.6) | After (v2.0) |
+| Aspecto | Before (v0.2.2) | After (v2.0) |
 |---------|----------------|--------------|
 | **Código** | 300 líneas en Blade | 7 archivos JS modulares |
 | **Separación** | JS mezclado con HTML | JS separado completamente |
@@ -561,4 +561,4 @@ resources/views/components/chat/shared/monitor.blade.php
 **Versión:** v2.0  
 **Fecha:** 4 de diciembre de 2025, 15:52  
 **Autor:** Claude (Claude Sonnet 4.5)  
-**Proyecto:** LLM Manager Extension v1.0.7
+**Proyecto:** LLM Manager Extension v0.3.0

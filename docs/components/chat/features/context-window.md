@@ -1,6 +1,6 @@
 # Context Window Visual Indicator
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (10 dic 2025)  
 **Tiempo Implementación:** 6.75h (including fixes + toggle + dynamic application)  
 **Commits:** 2927a87, 048aba3, 9e60716, f51d4f3, 62a463a, f2e5798, d2d02b2, 07d146e, e7edf38, c6de9b3, 0d17b17
@@ -393,5 +393,5 @@ document.getElementById('contextIndicatorToggle').addEventListener('change', fun
 
 ---
 
-**Documentación Verificada:** PLAN-v1.0.7-chat-ux.md (Context Window Visual Indicator)  
+**Documentación Verificada:** PLAN-v0.3.0-chat-ux.md (Context Window Visual Indicator)  
 **Última Actualización:** 10 de diciembre de 2025

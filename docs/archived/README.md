@@ -6,19 +6,19 @@ Esta carpeta contiene documentación histórica de versiones anteriores de LLM M
 
 ## 📂 Estructura
 
-### `v1.0.0-testing/`
-Documentación de testing y validación de v1.0.0 (completada 18 Nov 2025)
+### `v0.1.0-testing/`
+Documentación de testing y validación de v0.1.0 (completada 18 Nov 2025)
 
-- `PENDING-WORK-ANALYSIS.md` - Análisis inicial de trabajo pendiente (pre-v1.0.0 release)
-- `ADMIN-UI-SUMMARY.md` - Resumen de interfaz de administración v1.0.0
+- `PENDING-WORK-ANALYSIS.md` - Análisis inicial de trabajo pendiente (pre-v0.1.0 release)
+- `ADMIN-UI-SUMMARY.md` - Resumen de interfaz de administración v0.1.0
 - `DOCUMENTATION-COMPLETE-REPORT.md` - Reporte de documentación completada
 - `TEST-PROGRESS-REPORT.md` - Progreso de testing manual
 - `TESTS-FINAL-REPORT.md` - Reporte final de tests
 - `UNIT-TESTS-SESSION-SUMMARY.md` - Resumen de sesión de unit tests
-- `RELEASE-v1.0.0.md` - Notas de preparación para release v1.0.0
-- `RELEASE-NOTES-v1.0.0.md` - Notas de release v1.0.0
+- `RELEASE-v0.1.0.md` - Notas de preparación para release v0.1.0
+- `RELEASE-NOTES-v0.1.0.md` - Notas de release v0.1.0
 
-**Relevancia:** Útil para entender cómo se validó v1.0.0, pero todo ese trabajo está completado.
+**Relevancia:** Útil para entender cómo se validó v0.1.0, pero todo ese trabajo está completado.
 
 ### `v1.1.0-streaming/`
 Documentación de implementación y testing de streaming (v1.1.0)
@@ -49,10 +49,12 @@ Documentación miscelánea
 
 ## 🔍 Cuándo Referirse a Archivo Histórico
 
-1. **Necesitas entender cómo se testó v1.0.0** → Ver `v1.0.0-testing/`
+1. **Necesitas entender cómo se testó v0.1.0** → Ver `v0.1.0-testing/`
 2. **Necesitas historial de fixes de streaming** → Ver `v1.1.0-streaming/STREAMING-FIXES-2025-11-24.md`
 3. **Necesitas contexto de decisiones pasadas** → Ver archivos relevantes aquí
 4. **Para todo lo demás** → Usa documentación activa en raíz
+
+**⚠️ Nota:** Contenido duplicado con CHANGELOG.md y PROJECT-STATUS.md ha sido eliminado. Los archivos históricos se mantienen únicamente para contexto de implementación y decisiones de diseño.
 
 ---
 
@@ -69,6 +71,7 @@ docs/archived/v1.2.0-hybrid-tools/
 
 ---
 
-**Última Actualización:** 10 de diciembre de 2025  
-**Estado:** Archivos históricos consolidados en docs/archived/ (moved from /archived-docs/)
+**Última Actualización:** 12 de diciembre de 2025  
+**Estado:** Archivos históricos consolidados en docs/archived/ (moved from /archived-docs/)  
+**Política:** Contenido duplicado con CHANGELOG.md/PROJECT-STATUS.md eliminado
 

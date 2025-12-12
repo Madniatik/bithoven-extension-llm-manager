@@ -28,7 +28,7 @@
 El **Chat Workspace Component** es un componente Blade optimizado para interfaces de chat LLM con soporte para:
 
 - ✅ **Dual Layout System:** Sidebar (vertical) y Split-Horizontal (horizontal)
-- ✅ **Multi-Instance Support:** Múltiples chats simultáneos en la misma página ⭐ **v1.0.6**
+- ✅ **Multi-Instance Support:** Múltiples chats simultáneos en la misma página ⭐ **v0.2.2**
 - ✅ **Monitor Integrado:** Métricas en tiempo real, historial de actividad, console logs
 - ✅ **Streaming Support:** Compatible con Server-Sent Events (SSE)
 - ✅ **Alpine.js Reactive:** Componentes reactivos sin Vue/React
@@ -39,7 +39,7 @@ El **Chat Workspace Component** es un componente Blade optimizado para interface
 ### Arquitectura
 
 ```
-ChatWorkspace Component (v1.0.6 - Multi-Instance)
+ChatWorkspace Component (v0.2.2 - Multi-Instance)
 ├── Layouts (intercambiables)
 │   ├── Sidebar Layout (60/40 vertical)
 │   └── Split-Horizontal Layout (70/30 horizontal resizable)
@@ -190,7 +190,7 @@ Monitor dividido horizontalmente con resize drag.
 
 ### Descripción
 
-**Desde v1.0.6**, el componente Chat Workspace soporta **múltiples instancias simultáneas** en la misma página sin conflictos.
+**Desde v0.2.2**, el componente Chat Workspace soporta **múltiples instancias simultáneas** en la misma página sin conflictos.
 
 Cada instancia es completamente independiente con:
 - ✅ **Alpine.js scopes únicos** - `chatWorkspace_{{sessionId}}`
@@ -405,7 +405,7 @@ window.addEventListener('llm-streaming-chunk', (event) => {
 
 ### Limitaciones Conocidas
 
-**v1.0.6 - Sin limitaciones críticas:**
+**v0.2.2 - Sin limitaciones críticas:**
 - ✅ Soporta 2+ instancias simultáneas
 - ✅ Monitors independientes funcionan correctamente
 - ✅ LocalStorage sin conflictos
@@ -545,7 +545,7 @@ document.addEventListener('alpine:init', () => {
 
 ---
 
-### 3. JavaScript: window.LLMMonitorFactory API (v1.0.6)
+### 3. JavaScript: window.LLMMonitorFactory API (v0.2.2)
 
 **Ubicación:** `partials/scripts/monitor-api.blade.php`  
 **Scope:** Global Factory (multi-instance support)
@@ -672,7 +672,7 @@ window.LLMMonitorFactory.getOrCreate('default').start();
 
 ---
 
-### Monitor Activity Logs Tab ⭐ **NEW in v1.0.7-dev**
+### Monitor Activity Logs Tab ⭐ **NEW in v0.3.0-dev**
 
 **Feature:** Dual-tab system en monitor (Console + Activity Logs)
 
@@ -758,7 +758,7 @@ const activeTab = Alpine.store('chatWorkspace_{{sessionId}}').activeTab;
 
 #### Database Persistence Roadmap
 
-**Current State (v1.0.7-dev):**
+**Current State (v0.3.0-dev):**
 - ✅ localStorage persistence functional
 - ⏳ DB persistence pending
 

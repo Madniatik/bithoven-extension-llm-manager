@@ -1,7 +1,7 @@
 # LLM Manager Extension - Test Progress Report
 
 **Date:** 18 de noviembre de 2025  
-**Version:** v1.0.0  
+**Version:** v0.1.0  
 **AI Agent:** Claude (Claude Sonnet 4.5, Anthropic)
 
 ---

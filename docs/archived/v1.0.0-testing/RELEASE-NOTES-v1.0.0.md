@@ -1,6 +1,6 @@
 # LLM Manager v3.0.0 - Release Notes
 
-# LLM Manager v1.0.0 - Release Notes
+# LLM Manager v0.1.0 - Release Notes
 
 **Release Date:** November 18, 2025  
 **Type:** First Stable Release - Complete Platform

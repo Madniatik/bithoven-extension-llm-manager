@@ -1,6 +1,7 @@
 # 📦 Installation Guide
 
-**LLM Manager Extension v1.0**
+**LLM Manager Extension v0.4.0-dev**  
+**Last Updated:** 12 de diciembre de 2025
 
 ---
 

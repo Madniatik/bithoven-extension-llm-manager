@@ -106,20 +106,20 @@ Documentación específica de providers LLM.
 Componente principal para interfaces de chat LLM con soporte para layouts duales, monitor integrado y sistema de configuración granular.
 
 **📖 Documentación:**
-- **[Chat Configuration System](components/chat/README.md)** - Sistema completo de configuración (v1.0.7)
+- **[Chat Configuration System](components/chat/README.md)** - Sistema completo de configuración (v0.3.0)
 - **[Legacy Guide](reference/components/CHAT-WORKSPACE.md)** - Guía legacy del componente (v2.1)
 
 **Características principales:**
-- ✅ **Config Array System:** Configuración granular mediante array único (v1.0.7)
+- ✅ **Config Array System:** Configuración granular mediante array único (v0.3.0)
 - ✅ **Dual Layout System:** Sidebar (vertical) y Split-Horizontal (horizontal resizable)
 - ✅ **Monitor Integrado:** 3 tabs (Console, Request Inspector, Activity Log)
-- ✅ **Monitor Export:** CSV/JSON/SQL con session filtering (v1.0.7)
-- ✅ **UX Enhancements:** Context Window Indicator, Auto-Scroll, Notifications (v1.0.7)
-- ✅ **Settings Panel:** Personalización de UI con DB persistence (v1.0.7)
+- ✅ **Monitor Export:** CSV/JSON/SQL con session filtering (v0.3.0)
+- ✅ **UX Enhancements:** Context Window Indicator, Auto-Scroll, Notifications (v0.3.0)
+- ✅ **Settings Panel:** Personalización de UI con DB persistence (v0.3.0)
 - ✅ **Streaming Support:** Compatible con Server-Sent Events (SSE)
 - ✅ **Alpine.js Reactive:** Componentes reactivos sin Vue/React
 - ✅ **Code Partitioning:** Carga condicional para máxima performance (15-39% reducción)
-- ✅ **Backward Compatible:** Legacy props siguen funcionando (v1.0.7)
+- ✅ **Backward Compatible:** Legacy props siguen funcionando (v0.3.0)
 
 **Quick Links:**
 - [Introduction](components/chat/getting-started/introduction.md) - Beneficios y arquitectura
@@ -128,7 +128,7 @@ Componente principal para interfaces de chat LLM con soporte para layouts duales
 - [Configuration Reference](components/chat/configuration/reference.md) - Todas las opciones
 - [Performance Tips](components/chat/guides/performance.md) - Optimizaciones (bundle reduction)
 
-**Estado:** ✅ v1.0.7 - Production Ready (97% completado)  
+**Estado:** ✅ v0.3.0 - Production Ready (97% completado)  
 **Testing:** 27/27 tests passing ✅
 
 ---
@@ -211,7 +211,7 @@ OPENAI_API_KEY=your-api-key
 ```
 LLM Manager Extension
 ├── Quick Chat (Interfaz principal)
-│   └── ChatWorkspace Component (v1.0.7)
+│   └── ChatWorkspace Component (v0.3.0)
 │       ├── Config Array System
 │       │   ├── Features (monitor, settings_panel, persistence, toolbar)
 │       │   ├── UI Elements (layouts, buttons, mode)
@@ -223,7 +223,7 @@ LLM Manager Extension
 │       ├── Monitor Components
 │       │   ├── Full Monitor (3 tabs: console, request inspector, activity log)
 │       │   └── Console Only (solo consola)
-│       ├── UX Enhancements (v1.0.7)
+│       ├── UX Enhancements (v0.3.0)
 │       │   ├── Context Window Indicator
 │       │   ├── Smart Auto-Scroll
 │       │   ├── Browser Notifications
@@ -235,13 +235,13 @@ LLM Manager Extension
 ├── Admin Panel
 │   ├── Configurations Manager
 │   ├── Sessions Manager
-│   ├── Settings Panel (v1.0.7)
+│   ├── Settings Panel (v0.3.0)
 │   └── Settings
 └── API
     ├── Streaming Endpoint (SSE)
     ├── Chat Endpoint
     ├── Session Management
-    └── Workspace Preferences (v1.0.7)
+    └── Workspace Preferences (v0.3.0)
         ├── Save Settings
         ├── Get Settings
         └── Reset to Defaults
@@ -251,7 +251,7 @@ LLM Manager Extension
 
 ## 📊 Métricas de Performance
 
-### Chat Workspace Component v1.0.7
+### Chat Workspace Component v0.3.0
 
 **Code Partitioning (v2.1):**
 
@@ -262,7 +262,7 @@ LLM Manager Extension
 | monitor-console.blade.php | 60 líneas | 20 líneas | **66%** ⬇️ |
 | **Total componentes** | **740 líneas** | **270 líneas** | **63%** ⬇️ |
 
-**Bundle Size Optimization (v1.0.7):**
+**Bundle Size Optimization (v0.3.0):**
 
 | Configuración | Bundle Size | Reducción |
 |---------------|-------------|-----------|
@@ -277,8 +277,8 @@ LLM Manager Extension
 - ✅ Carga condicional optimizada (15-39% reducción)
 - ✅ Testing facilitado (componentes aislados)
 - ✅ Mantenibilidad mejorada significativamente
-- ✅ Config Array System con validación (v1.0.7)
-- ✅ Settings Panel con DB persistence (v1.0.7)
+- ✅ Config Array System con validación (v0.3.0)
+- ✅ Settings Panel con DB persistence (v0.3.0)
 
 **Ver:** [Performance Tips](components/chat/guides/performance.md)
 
@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ## 📝 Changelog
 
-### v1.0.7 (9 diciembre 2025)
+### v0.3.0 (9 diciembre 2025)
 
 **Chat Workspace Configuration System:**
 - ✅ Config Array System implementado (configuración granular)
@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - ✅ Helper methods en componentes
 - ✅ Documentation modular completa (23 archivos, 3376 líneas)
 
-**UX Enhancements (21 items - PLAN-v1.0.7-chat-ux.md):**
+**UX Enhancements (21 items - PLAN-v0.3.0-chat-ux.md):**
 - ✅ Monitor Export (CSV/JSON/SQL con session filtering)
 - ✅ Context Window Visual Indicator (border + opacity)
 - ✅ Smart Auto-Scroll System (6 features ChatGPT-style)
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - ✅ Request Inspector Tab (hybrid architecture)
 - ✅ Message ID Refactor (centralized system)
 
-### v1.0.6 (3 diciembre 2025)
+### v0.2.2 (3 diciembre 2025)
 
 **ChatWorkspace Component Multi-Instance Support:**
 - ✅ Multi-instance architecture with unique Alpine.js scopes
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - ✅ 100% backward compatible
 - ✅ Legacy partials cleanup (1,213 lines removed)
 
-### v1.0.5 (3 diciembre 2025)
+### v0.2.1 (3 diciembre 2025)
 
 **ChatWorkspace Component Optimizations:**
 - ✅ Monitor code partitioning (56% reduction)
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - ✅ Null-safe DOM checks added
 - ✅ Complete usage documentation created
 
-### v1.0.4 (28 noviembre 2025)
+### v0.2.0 (28 noviembre 2025)
 
 **Streaming Support & Permissions:**
 - ✅ Split-horizontal code partitioning (66% reduction)

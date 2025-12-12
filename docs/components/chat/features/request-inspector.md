@@ -1,10 +1,10 @@
 # Request Inspector Tab
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (9 dic 2025)  
 **Commits:** 20d41ac, 130227f, 60c45cc, 85e3abb, 4329429
 
-[Ver PLAN-v1.0.7.md líneas 100-150 para detalles completos]
+[Ver PLAN-v0.3.0.md líneas 100-150 para detalles completos]
 
 ## Overview
 Visual debugging tool que muestra el request completo enviado al modelo LLM.
@@ -22,4 +22,4 @@ Visual debugging tool que muestra el request completo enviado al modelo LLM.
 ## Implementation Details
 [Referencia completa en architecture/STREAMING-DOCUMENTATION.md]
 
-**Documentación Verificada:** PLAN-v1.0.7.md (Request Inspector Tab)
+**Documentación Verificada:** PLAN-v0.3.0.md (Request Inspector Tab)

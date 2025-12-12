@@ -1,4 +1,4 @@
-# 🚀 LLM Manager v1.0.0 - Official Release
+# 🚀 LLM Manager v0.1.0 - Official Release
 
 **Release Date:** November 21, 2025  
 **Status:** Production Ready ✅  
@@ -8,7 +8,7 @@
 
 ## 🎉 Overview
 
-LLM Manager v1.0.0 is a **complete enterprise-grade LLM orchestration platform** for Laravel applications. This release delivers a fully tested, documented, and production-ready extension with 100% feature coverage.
+LLM Manager v0.1.0 is a **complete enterprise-grade LLM orchestration platform** for Laravel applications. This release delivers a fully tested, documented, and production-ready extension with 100% feature coverage.
 
 ---
 
@@ -312,7 +312,7 @@ Special thanks to:
 
 ## 🎊 Final Notes
 
-**LLM Manager v1.0.0 is production-ready and battle-tested.**
+**LLM Manager v0.1.0 is production-ready and battle-tested.**
 
 - ✅ 6 core modules fully functional
 - ✅ 33/33 features tested
@@ -324,6 +324,6 @@ Special thanks to:
 
 ---
 
-**Download:** [GitHub Releases](https://github.com/bithoven/llm-manager/releases/tag/v1.0.0)  
+**Download:** [GitHub Releases](https://github.com/bithoven/llm-manager/releases/tag/v0.1.0)  
 **Documentation:** [docs/README.md](docs/)  
 **Examples:** [docs/EXAMPLES.md](docs/EXAMPLES.md)
