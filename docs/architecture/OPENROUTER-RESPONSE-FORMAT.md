@@ -4,7 +4,7 @@
 
 OpenRouter is a unified API gateway that **standardizes responses to OpenAI-compatible format** regardless of the underlying model (Claude, GPT-4, Gemini, etc.).
 
-**Version:** 1.0.0  
+**Version:** 0.1.0  
 **Last Updated:** 2025-12-04  
 **Source:** OpenRouter Documentation + Testing
 

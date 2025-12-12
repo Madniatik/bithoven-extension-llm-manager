@@ -1,6 +1,6 @@
 # 📖 LLM Manager - Usage Guide
 
-**Version:** 1.0.4  
+**Version:** 0.2.0  
 **Last Updated:** 3 de diciembre de 2025
 
 ---
@@ -235,7 +235,7 @@ Use the LLM facade to make your first request...
 Metadata:
 {
   "author": "Bithoven Team",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "tags": ["quickstart", "installation"]
 }
 ```

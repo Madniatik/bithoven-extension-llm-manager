@@ -1,4 +1,4 @@
-# PLAN: GitHub Release v1.0.7
+# PLAN: GitHub Release v0.3.0
 
 **Creado:** 10 de diciembre de 2025, 00:30  
 **Estado:** PENDIENTE (Ready to Execute)  
@@ -9,11 +9,11 @@
 
 ## 📋 Objetivo
 
-Crear página de Release oficial en GitHub con interfaz visual para v1.0.7.
+Crear página de Release oficial en GitHub con interfaz visual para v0.3.0.
 
 ## ✅ Pre-requisitos (Completados)
 
-- [x] Tag v1.0.7 creado y publicado
+- [x] Tag v0.3.0 creado y publicado
 - [x] 131 commits subidos a origin/main
 - [x] extension.json con changelog completo
 - [x] Documentación sincronizada
@@ -26,8 +26,8 @@ URL: https://github.com/Madniatik/bithoven-extension-llm-manager/releases/new
 ```
 
 ### 2. Configurar Release
-- **Tag:** Seleccionar `v1.0.7` (ya existe)
-- **Title:** `v1.0.7 - Monitor Export + Chat UX System Complete`
+- **Tag:** Seleccionar `v0.3.0` (ya existe)
+- **Title:** `v0.3.0 - Monitor Export + Chat UX System Complete`
 - **Description:** Ver sección "Release Notes" abajo
 
 ### 3. Publicar
@@ -39,7 +39,7 @@ URL: https://github.com/Madniatik/bithoven-extension-llm-manager/releases/new
 ## 📝 Release Notes (Copy-Paste)
 
 ```markdown
-# 🎉 v1.0.7 - Monitor Export + Chat UX System Complete
+# 🎉 v0.3.0 - Monitor Export + Chat UX System Complete
 
 **Release Date:** 10 de diciembre de 2025  
 **Implementation Time:** 72-76 hours  
@@ -170,7 +170,7 @@ MODIFY COLUMN id VARCHAR(255) NOT NULL;
 
 ### Via Composer (from GitHub tag)
 ```bash
-composer require bithoven/llm-manager:1.0.7
+composer require bithoven/llm-manager:0.3.0
 ```
 
 ### Manual Installation
@@ -192,7 +192,7 @@ ALTER TABLE llm_messages MODIFY COLUMN id VARCHAR(255) NOT NULL;
 
 ## 🚀 Next Steps
 
-See **PLAN-v1.0.8.md** for upcoming features:
+See **PLAN-v0.4.0.md** for upcoming features:
 - Monitor UX Improvements (6 items, ~10h)
 - Enhanced export options
 - Real-time monitoring updates
@@ -233,7 +233,7 @@ See **PLAN-v1.0.8.md** for upcoming features:
 
 ## 📌 Notas
 
-- El tag v1.0.7 ya está publicado (requisito cumplido)
+- El tag v0.3.0 ya está publicado (requisito cumplido)
 - La Release es solo presentación visual adicional
 - No afecta funcionamiento de Composer (ya funciona con el tag)
 - Se puede hacer en cualquier momento futuro

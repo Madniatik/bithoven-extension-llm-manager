@@ -7,24 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 🔄 Version Migration Notice (12 Dec 2025)
-
-**IMPORTANT:** Version numbering has been migrated to follow proper semantic versioning for pre-release software.
-
-### Version Mapping
-- `v0.1.0` → `v0.1.0` (Core Platform)
-- `v0.2.0` → `v0.2.0` (Streaming)
-- `v0.2.1` → `v0.2.1` (Optimizations)
-- `v0.2.2` → `v0.2.2` (Multi-Instance)
-- `v0.3.0` → `v0.3.0` (Monitor Export + Chat UX)
-- `v0.4.0` → `v0.4.0` (Provider Repositories)
-
-**Rationale:** The extension is in active development and has not been officially released. Using v0.x versioning properly indicates pre-release status. True `v0.1.0` will represent the first stable public release.
-
-**Impact:** All git tags, documentation, and configuration files updated. No breaking changes to functionality.
-
----
-
 ## [Unreleased] - Work in Progress Towards v0.4.0
 
 ### 🎉 FASE 2: Provider Repositories - Core Import System (11 diciembre 2025)

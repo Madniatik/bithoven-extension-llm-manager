@@ -1,9 +1,9 @@
-# Plan de Refactorización v1.0.8 - LLM Manager
+# Plan de Refactorización v0.4.0 - LLM Manager
 
 **Fecha de Creación:** 11 de diciembre de 2025  
 **Última Actualización:** 12 de diciembre de 2025  
 **Estado:** 🟢 En Progreso (FASE 2.5 Completada - 3/6 fases)  
-**Versión Target:** 1.0.8  
+**Versión Target:** 0.4.0  
 **Complejidad:** Media-Alta  
 **Duración Estimada:** ~36 horas (~1 semana)  
 **Progreso:** 50% (18 horas completadas)
@@ -174,7 +174,7 @@ Este plan documenta una refactorización integral del sistema de configuración 
 
 **Tiempo real:** 2 horas (50% más rápido que estimado)  
 **Commit:** b743f93  
-**Tag:** v1.0.8-fase1-complete
+**Tag:** v0.4.0-fase1-complete
 
 **Dependencias:** Ninguna  
 **Bloqueante para:** FASE 2 (Provider Repositories)
@@ -194,7 +194,7 @@ Este plan documenta una refactorización integral del sistema de configuración 
 
 **Tiempo real:** 3 horas (50% más rápido que estimado)  
 **Commit:** f7a532c  
-**Tag:** v1.0.8-fase2-complete
+**Tag:** v0.4.0-fase2-complete
 
 **Dependencias:** FASE 1 (Service Layer necesario) ✅  
 **Bloqueante para:** FASE 3 (Primer package)

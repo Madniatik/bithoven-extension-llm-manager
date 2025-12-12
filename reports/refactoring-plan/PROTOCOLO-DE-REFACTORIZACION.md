@@ -1,7 +1,7 @@
 # Protocolo de Refactorización - LLM Configuration Handling
 
 **Fecha:** 10 de diciembre de 2025  
-**Versión:** 1.0.0  
+**Versión:** 0.1.0  
 **Extensión:** bithoven-extension-llm-manager  
 **Autor:** AI Analysis (Claude Sonnet 4.5)
 
@@ -452,7 +452,7 @@ $configService->getDefault();       // Get default config
 
 **6.2. Migration Guide**
 ```markdown
-## Migration Guide v1.0.7 → v1.0.8
+## Migration Guide v0.3.0 → v0.4.0
 
 ### For Extension Developers
 If your extension accesses LLMConfiguration directly, inject LLMConfigurationService instead:

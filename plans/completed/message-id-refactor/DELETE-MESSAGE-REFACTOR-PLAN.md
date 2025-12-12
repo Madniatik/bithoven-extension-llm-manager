@@ -215,9 +215,9 @@ Refactor `llm_manager_usage_logs` table from single `message_id` column to two s
   - Explain relationship between messages and logs
 
 - [ ] **8.4** Move planning docs
-  - Move `DELETE-MESSAGE-REFACTOR-PLAN.md` → `plans/PLAN-v1.0.7-message-refactor.md`
+  - Move `DELETE-MESSAGE-REFACTOR-PLAN.md` → `plans/PLAN-v0.3.0-message-refactor.md`
   - Update `DELETE-MESSAGE-ANALYSIS.md` (add conclusions section)
-  - Archive old docs to `archived-docs/v1.0.6/`
+  - Archive old docs to `archived-docs/v0.2.2/`
 
 ---
 

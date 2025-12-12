@@ -57,8 +57,8 @@ CREATE TABLE llm_manager_usage_logs (
     completion_tokens INT UNSIGNED DEFAULT 0,
     total_tokens INT UNSIGNED DEFAULT 0,
     cost_usd DECIMAL(10,6) NULL,
-    currency VARCHAR(3) NULL,          -- Nuevo en v1.0.6
-    cost_original DECIMAL(10,6) NULL,  -- Nuevo en v1.0.6
+    currency VARCHAR(3) NULL,          -- Nuevo en v0.2.2
+    cost_original DECIMAL(10,6) NULL,  -- Nuevo en v0.2.2
     execution_time_ms INT UNSIGNED NULL,
     status ENUM('success', 'error', 'timeout') DEFAULT 'success',
     error_message TEXT NULL,
@@ -450,7 +450,7 @@ grep -r "LLMConversationLog" database/seeders/
 **Hallazgo crítico del CHANGELOG:**
 
 ```markdown
-## [Unreleased] - Work in Progress Towards v1.0.7
+## [Unreleased] - Work in Progress Towards v0.3.0
 
 ### ⚠️ CRITICAL UPDATE (6 diciembre 2025) - DB Persistence Revert
 
@@ -710,7 +710,7 @@ php artisan migrate
 **5.3 Actualizar version**
 ```bash
 # CHANGELOG.md
-## [1.0.7] - 2025-12-07
+## [0.3.0] - 2025-12-07
 
 ### Removed
 - **BREAKING (non-impacting):** `llm_manager_conversation_logs` table

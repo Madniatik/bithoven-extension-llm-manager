@@ -2,7 +2,7 @@
 
 **Quick Answer:** No, cada provider tiene un formato completamente diferente.
 
-**Version:** 1.0.8-dev  
+**Version:** 0.4.0-dev  
 **Last Updated:** 12 de diciembre de 2025
 
 ---

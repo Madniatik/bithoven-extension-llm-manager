@@ -61,7 +61,7 @@ llm_manager_configurations (TABLA OBSOLETA)
 │ slug        varchar(100) UNIQUE  # openai, anthropic, etc │
 │ name        varchar(100)         # OpenAI, Anthropic, etc │
 │ package     varchar(255) NULL    # bithoven/llm-provider-*│
-│ version     varchar(20) NULL     # 1.0.0                  │
+│ version     varchar(20) NULL     # 0.1.0                  │
 │ api_endpoint varchar(255) NULL   # https://api.openai.com │
 │ capabilities json NULL           # {vision, streaming, etc}│
 │ is_active   boolean              # Available for use      │
@@ -418,7 +418,7 @@ php artisan llm:import anthropic
 │ 1. Read manifest.json                                   │
 │    ├─ provider: "anthropic"                             │
 │    ├─ package: "bithoven/llm-provider-anthropic"        │
-│    ├─ version: "1.0.0"                                  │
+│    ├─ version: "0.1.0"                                  │
 │    └─ configurations: 6                                 │
 │                                                         │
 │ 2. Create/Update Provider Record                        │

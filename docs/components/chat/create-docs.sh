@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script para crear archivos de documentación parcializados restantes
-# Basado en PLAN-v1.0.7-chat-ux.md verificado
+# Basado en PLAN-v0.3.0-chat-ux.md verificado
 
 DOCS_DIR="/Users/madniatik/CODE/LARAVEL/BITHOVEN/EXTENSIONS/bithoven-extension-llm-manager/docs/components/chat"
 
@@ -11,11 +11,11 @@ echo "📚 Creando documentación parcializada restante..."
 cat > "$DOCS_DIR/features/request-inspector.md" << 'EOF'
 # Request Inspector Tab
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (9 dic 2025)  
 **Commits:** 20d41ac, 130227f, 60c45cc, 85e3abb, 4329429
 
-[Ver PLAN-v1.0.7.md líneas 100-150 para detalles completos]
+[Ver PLAN-v0.3.0.md líneas 100-150 para detalles completos]
 
 ## Overview
 Visual debugging tool que muestra el request completo enviado al modelo LLM.
@@ -33,13 +33,13 @@ Visual debugging tool que muestra el request completo enviado al modelo LLM.
 ## Implementation Details
 [Referencia completa en architecture/STREAMING-DOCUMENTATION.md]
 
-**Documentación Verificada:** PLAN-v1.0.7.md (Request Inspector Tab)
+**Documentación Verificada:** PLAN-v0.3.0.md (Request Inspector Tab)
 EOF
 
 cat > "$DOCS_DIR/features/delete-message.md" << 'EOF'
 # Delete Message Feature
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (10 dic 2025)  
 **Approach:** Two-column delete (message_id + id fallback)
 
@@ -66,11 +66,11 @@ EOF
 cat > "$DOCS_DIR/features/auto-scroll.md" << 'EOF'
 # Smart Auto-Scroll System
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (9 dic 2025)  
 **Features:** 6 features ChatGPT-style
 
-[Ver PLAN-v1.0.7-chat-ux.md para detalles completos]
+[Ver PLAN-v0.3.0-chat-ux.md para detalles completos]
 
 ## 6 Features Implementadas
 
@@ -84,13 +84,13 @@ cat > "$DOCS_DIR/features/auto-scroll.md" << 'EOF'
 ## Bonus
 - Checkmark animado (bounce 0.5→1.2→1, fade out 2s)
 
-**Documentación Verificada:** PLAN-v1.0.7-chat-ux.md (Smart Auto-Scroll System)
+**Documentación Verificada:** PLAN-v0.3.0-chat-ux.md (Smart Auto-Scroll System)
 EOF
 
 cat > "$DOCS_DIR/features/notifications.md" << 'EOF'
 # Notifications System
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Estado:** ✅ Completado (9 dic 2025)  
 **Commits:** b742e22, f7d3cae
 
@@ -106,7 +106,7 @@ cat > "$DOCS_DIR/features/notifications.md" << 'EOF'
 - Volumen 50%
 - Configurable en Settings
 
-**Documentación Verificada:** PLAN-v1.0.7-chat-ux.md (Notificaciones al Completar Respuesta)
+**Documentación Verificada:** PLAN-v0.3.0-chat-ux.md (Notificaciones al Completar Respuesta)
 EOF
 
 echo "✅ Documentación parcializada creada"

@@ -202,5 +202,5 @@ LLMMonitorFactory.get('session-id')?.downloadLogs()
 
 ---
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Última actualización:** 4 de diciembre de 2025, 15:14

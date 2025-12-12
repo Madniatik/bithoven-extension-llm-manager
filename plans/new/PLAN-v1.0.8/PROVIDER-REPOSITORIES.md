@@ -1,7 +1,7 @@
 # Provider Configuration Repositories - LLM Manager
 
 **Fecha:** 11 de diciembre de 2025  
-**Versión:** 1.0.1  
+**Versión:** 0.1.1  
 **Concepto:** Provider Config Repositories (Composer Packages)  
 **Recomendación:** ✅ **FEATURE DE ALTO VALOR** (implementar después de Service Layer)
 
@@ -210,7 +210,7 @@ bithoven/llm-provider-openai/
 ```json
 {
   "$schema": "https://bithoven.dev/schemas/llm-config-v1.json",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "metadata": {
     "package": "bithoven/llm-provider-openai",
     "created_at": "2025-12-11T00:00:00Z",

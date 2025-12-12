@@ -1,4 +1,4 @@
-# 🔄 HANDOFF: Implementación de PLAN v1.0.7
+# 🔄 HANDOFF: Implementación de PLAN v0.3.0
 
 **Fecha:** 06 de diciembre de 2025, 06:30  
 **AI Agent Anterior:** Claude (Claude Sonnet, 4.5, Anthropic)  
@@ -6,7 +6,7 @@
 **Último Commit:** `f24d957` - feat(ui): implement Activity Logs tab system in monitor (Option A - dual buttons)  
 **Repositorio:** bithoven-extension-llm-manager  
 **Rama:** main  
-**Estado:** v1.0.7 - 75% completado (Quick Chat + Monitor v2.0 completos, Activity Logs con localStorage)
+**Estado:** v0.3.0 - 75% completado (Quick Chat + Monitor v2.0 completos, Activity Logs con localStorage)
 
 **⚠️ NOTA CRÍTICA:** Se revirtieron 7 commits (cc94a7d-f8fb81c) de implementación INCORRECTA de DB persistence. Ver sección "Lecciones Críticas" punto 16.
 
@@ -16,9 +16,9 @@
 
 ### Estado Actual del Proyecto
 
-**Versión Actual:** v1.0.6  
-**Versión Objetivo:** v1.0.7  
-**Última Release:** Tag v1.0.6 pusheado a GitHub (3 dic 2025)
+**Versión Actual:** v0.2.2  
+**Versión Objetivo:** v0.3.0  
+**Última Release:** Tag v0.2.2 pusheado a GitHub (3 dic 2025)
 
 **🎉 TRABAJO COMPLETADO (Sesión 5 dic 2025):**
 
@@ -29,7 +29,7 @@
    - OpenRouter integration completa
    - Token breakdown en tiempo real
    - Session management por ID
-   - Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 1
+   - Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 1
 
 2. ✅ **Monitor System v2.0 - 100% COMPLETADO** (NO estaba en plan original)
    - Modular Architecture (partitioned JS, export functions)
@@ -37,7 +37,7 @@
    - Asset Publishing System
    - Sidebar layout para Quick Chat
    - Alpine.js compatibility completa
-   - Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
+   - Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 2
 
 3. ✅ **UI/UX Optimizations - 88% COMPLETADO**
    - Real-time token display con progress bar
@@ -55,7 +55,7 @@
      - Keyboard shortcuts (Ctrl/Cmd + Enter)
      - Notificación sonora opcional
      - Microinteracciones (hover effects, checkmark animado)
-   - Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 2
+   - Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 2
 
 4. ✅ **Debug Console Refactor - COMPLETADO** (trabajo extra, fuera de plan)
    - Two-tier architecture (global enabled + per-component level)
@@ -92,7 +92,7 @@
    - Actualizar [USAGE-GUIDE.md](docs/USAGE-GUIDE.md)
    - Actualizar [API-REFERENCE.md](docs/API-REFERENCE.md)
 
-4. ⏳ **GitHub Release v1.0.7** - 30min
+4. ⏳ **GitHub Release v0.3.0** - 30min
    - Preparar release notes
    - Actualizar [CHANGELOG.md](CHANGELOG.md)
    - Crear tag y publicar
@@ -105,9 +105,9 @@
 
 ## 🎯 TAREA PRINCIPAL
 
-**Completar PLAN v1.0.7 (25% restante)** según el archivo:
+**Completar PLAN v0.3.0 (25% restante)** según el archivo:
 ```
-/Users/madniatik/CODE/LARAVEL/BITHOVEN/EXTENSIONS/bithoven-extension-llm-manager/plans/PLAN-v1.0.7.md
+/Users/madniatik/CODE/LARAVEL/BITHOVEN/EXTENSIONS/bithoven-extension-llm-manager/plans/PLAN-v0.3.0.md
 ```
 
 ### ✅ CATEGORÍAS COMPLETADAS (75%)
@@ -174,26 +174,26 @@
 
 **Entregable:** Documentación completa de streaming (~600-800 líneas)
 
-#### 6. ⏳ GitHub Release v1.0.7 (1h) - PRIORIDAD ALTA
+#### 6. ⏳ GitHub Release v0.3.0 (1h) - PRIORIDAD ALTA
 **Tareas:**
 - **Preparar Release Notes** (30min):
-  - Revisar 40+ commits desde v1.0.6
+  - Revisar 40+ commits desde v0.2.2
   - Secciones: Quick Chat, Monitor System v2.0, UI/UX, Debug Console, Bug Fixes
   - Breaking Changes: Ninguno (PATCH release)
   
 - **Actualizar [CHANGELOG.md](CHANGELOG.md)** (15min):
-  - Añadir sección v1.0.7 con fecha
+  - Añadir sección v0.3.0 con fecha
   - Agrupar cambios por categoría
   
 - **Crear Tag y Publicar** (15min):
   ```bash
-  git tag -a v1.0.7 -m "Release v1.0.7 - Quick Chat + Monitor System v2.0"
-  git push origin v1.0.7
+  git tag -a v0.3.0 -m "Release v0.3.0 - Quick Chat + Monitor System v2.0"
+  git push origin v0.3.0
   ```
   - Crear GitHub Release con release notes
   - Attach assets si necesario
 
-**Entregable:** v1.0.7 publicado en GitHub
+**Entregable:** v0.3.0 publicado en GitHub
 
 ---
 
@@ -252,7 +252,7 @@
     - ~600 líneas de documentación reescritas
     - [README.md](README.md) también necesitaba arquitectura actualizada
 
-12. **[plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) es el source of truth para tracking**
+12. **[plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) es el source of truth para tracking**
     - Monitor System v2.0 NO estaba en plan original (8-10h trabajo)
     - Siempre actualizar PLAN cuando se completa trabajo extra
     - Documentar tiempo invertido y commits reales
@@ -314,9 +314,9 @@ cc94a7d - feat(monitor): persist activity logs to DB with message_id [REVERTED]
 **Razón del revert:** Implementación incorrecta usando tabla equivocada (`llm_manager_conversation_logs` en lugar de `llm_manager_usage_logs`)
 
 ### Tags Existentes
-- `v1.0.0` (18 nov 2025) - Initial release
-- `v1.0.0-pre-installation` - Pre-installation state
-- `v1.0.6` (3 dic 2025) - Multi-Instance Support & Legacy Cleanup
+- `v0.1.0` (18 nov 2025) - Initial release
+- `v0.1.0-pre-installation` - Pre-installation state
+- `v0.2.2` (3 dic 2025) - Multi-Instance Support & Legacy Cleanup
 
 ### Branch
 - **main** - Sincronizada con origin/main (push completo)
@@ -327,19 +327,19 @@ cc94a7d - feat(monitor): persist activity logs to DB with message_id [REVERTED]
 ## 🔧 ARCHIVOS CLAVE A CONSULTAR
 
 ### Documentación del Proyecto
-1. **[plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md)** - Roadmap completo de la release
+1. **[plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md)** - Roadmap completo de la release
 2. **[PROJECT-STATUS.md](PROJECT-STATUS.md)** - Estado consolidado del proyecto
 3. **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios
 4. **[README.md](README.md)** - Overview y quick start
 
 ### Documentación Técnica (docs/)
-1. **[docs/components/CHAT-WORKSPACE.md](docs/components/CHAT-WORKSPACE.md)** - Componente principal (v1.0.6)
+1. **[docs/components/CHAT-WORKSPACE.md](docs/components/CHAT-WORKSPACE.md)** - Componente principal (v0.2.2)
 2. **[docs/README.md](docs/README.md)** - Changelog resumido
 3. **[docs/FAQ.md](docs/FAQ.md)** - Preguntas frecuentes
 4. **[docs/EXAMPLES.md](docs/EXAMPLES.md)** - Ejemplos de uso
 
 ### Configuración
-1. **[extension.json](extension.json)** - Metadata y changelog (v1.0.6)
+1. **[extension.json](extension.json)** - Metadata y changelog (v0.2.2)
 2. **[composer.json](composer.json)** - Dependencias PHP
 3. **[config/llm-manager.php](config/llm-manager.php)** - Configuración de la extensión
 
@@ -351,10 +351,10 @@ cc94a7d - feat(monitor): persist activity logs to DB with message_id [REVERTED]
 
 ```bash
 # Leer este archivo primero
-read_file('plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md')
+read_file('plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md')
 
 # Luego cargar el plan de trabajo
-read_file('plans/PLAN-v1.0.7.md')
+read_file('plans/PLAN-v0.3.0.md')
 
 # Consultar estado actual
 read_file('PROJECT-STATUS.md')
@@ -397,7 +397,7 @@ git diff
   3. Keyboard shortcuts (Ctrl/Cmd + Enter para enviar)
   4. Notificación sonora opcional al completar
   5. Microinteracciones (hover effects, checkmark animado)
-- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 3 (sección 2.3, 2.5)
+- Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 3 (sección 2.3, 2.5)
 
 #### Opción B: Testing Suite (RECOMENDADO para producción)
 - **Tiempo:** 4-5 horas
@@ -408,7 +408,7 @@ git diff
   2. Unit tests (LLMStreamLoggerTest, LLMProviderFactoryTest)
   3. GitHub Actions CI/CD workflow
   4. Testing documentation
-- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 4
+- Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 4
 
 #### Opción C: Streaming Documentation
 - **Tiempo:** 1.5 horas
@@ -418,23 +418,23 @@ git diff
   1. Crear docs/STREAMING.md (~600-800 líneas)
   2. Actualizar [docs/USAGE-GUIDE.md](docs/USAGE-GUIDE.md)
   3. Actualizar [docs/API-REFERENCE.md](docs/API-REFERENCE.md)
-- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 5
+- Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 5
 
-#### Opción D: GitHub Release v1.0.7
+#### Opción D: GitHub Release v0.3.0
 - **Tiempo:** 1 hora
 - **Prioridad:** ALTA (publicar trabajo completado)
 - **Impacto:** Release oficial con 40+ commits
 - **Tareas:**
   1. Preparar release notes (Quick Chat, Monitor System v2.0, UI/UX, Debug Console)
   2. Actualizar [CHANGELOG.md](CHANGELOG.md)
-  3. Crear tag v1.0.7 y publicar
-- Ver: [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) → Categoría 6
+  3. Crear tag v0.3.0 y publicar
+- Ver: [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) → Categoría 6
 
 **Recomendación de orden:**
 1. **Testing Suite** (bloqueante para release, 4-5h)
 2. **UI/UX Finishing Touches** (mejoras rápidas, 1-2h)
 3. **Streaming Documentation** (documentación, 1.5h)
-4. **GitHub Release v1.0.7** (publicación final, 1h)
+4. **GitHub Release v0.3.0** (publicación final, 1h)
 
 ### Paso 4: Planificar con manage_todo_list
 
@@ -445,7 +445,7 @@ manage_todo_list({
     todoList: [
         {
             id: 1,
-            title: "Analizar plans/PLAN-v1.0.7 Categoría 4 (Testing)",
+            title: "Analizar plans/PLAN-v0.3.0 Categoría 4 (Testing)",
             status: "in-progress"
         },
         {
@@ -513,11 +513,11 @@ manage_todo_list({
 ```
 bithoven-extension-llm-manager/
 ├── plans/
-│   └── plans/PLAN-v1.0.7.md     # ← TU ROADMAP PRINCIPAL
+│   └── plans/PLAN-v0.3.0.md     # ← TU ROADMAP PRINCIPAL
 ├── PROJECT-STATUS.md            # Estado consolidado
 ├── CHANGELOG.md                 # Historial de cambios
 ├── README.md                    # Overview
-├── extension.json               # Metadata (v1.0.6)
+├── extension.json               # Metadata (v0.2.2)
 ├── composer.json                # Dependencias
 ├── config/
 │   └── llm-manager.php         # Configuración
@@ -531,7 +531,7 @@ bithoven-extension-llm-manager/
 │       ├── admin/              # Admin UI
 │       ├── components/         # Blade components
 │       │   └── chat/           # ChatWorkspace component
-│       └── quick-chat/         # ✅ YA CREADO en v1.0.7
+│       └── quick-chat/         # ✅ YA CREADO en v0.3.0
 ├── routes/
 │   ├── web.php                 # Rutas web (Quick Chat ya registrado)
 │   └── api.php                 # Rutas API
@@ -544,8 +544,8 @@ bithoven-extension-llm-manager/
 │   ├── README.md               # Changelog resumido
 │   ├── FAQ.md                  # Preguntas frecuentes
 │   └── EXAMPLES.md             # Ejemplos de uso
-│   └── STREAMING.md            # ⏳ PENDIENTE - Crear para v1.0.7
-└── tests/                      # ⏳ PENDIENTE - Crear tests para v1.0.7
+│   └── STREAMING.md            # ⏳ PENDIENTE - Crear para v0.3.0
+└── tests/                      # ⏳ PENDIENTE - Crear tests para v0.3.0
     ├── Unit/                   # Unit tests (LLMStreamLoggerTest, LLMProviderFactoryTest)
     ├── Feature/                # Feature tests (LLMStreamingTest, LLMPermissionsTest)
     └── Browser/                # Browser tests (opcional, Laravel Dusk)
@@ -564,7 +564,7 @@ bithoven-extension-llm-manager/
 
 ### Componentes Clave
 
-1. **ChatWorkspace Component** (v1.0.6) - ✅ COMPLETADO
+1. **ChatWorkspace Component** (v0.2.2) - ✅ COMPLETADO
    - Multi-instance support
    - Dual layout: sidebar + split-horizontal
    - Monitor integrado
@@ -597,7 +597,7 @@ Route::get('/', [AdminController::class, 'index'])->name('admin.index');
 Route::get('/configurations', [ConfigurationController::class, 'index'])->name('configurations.index');
 Route::get('/chat-sessions', [ChatSessionController::class, 'index'])->name('chat-sessions.index');
 
-// ✅ NUEVO en v1.0.7: Quick Chat routes
+// ✅ NUEVO en v0.3.0: Quick Chat routes
 Route::get('/quick-chat', [LLMQuickChatController::class, 'index'])->name('quick-chat.index');
 Route::get('/quick-chat/{session}', [LLMQuickChatController::class, 'show'])->name('quick-chat.show');
 Route::post('/quick-chat/stream', [LLMQuickChatController::class, 'stream'])->name('quick-chat.stream');
@@ -610,7 +610,7 @@ Route::post('/chat/stream', [ChatController::class, 'stream'])->name('chat.strea
 // ... más rutas API
 ```
 
-### Quick Chat Requirements (v1.0.7) - ✅ YA COMPLETADO
+### Quick Chat Requirements (v0.3.0) - ✅ YA COMPLETADO
 
 **Estado:** ✅ COMPLETADO 100% (30+ commits)
 
@@ -751,8 +751,8 @@ grep_search('pattern', isRegexp=true)
 
 Antes de empezar a codificar, verifica:
 
-- [x] Leído PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md completo (este archivo)
-- [x] Leído [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) completo (estado actualizado a 82%)
+- [x] Leído PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md completo (este archivo)
+- [x] Leído [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) completo (estado actualizado a 82%)
 - [x] Revisado lecciones aprendidas (16 lecciones críticas arriba)
 - [x] Verificado git status (4ef45c5 - docs: update plans/README.md)
 - [x] Revisado últimos commits (15 commits desde f24d957)
@@ -761,17 +761,17 @@ Antes de empezar a codificar, verifica:
   - [ ] Opción A: Testing Suite (4-5h, CRÍTICO para release)
   - [ ] Opción B: UI/UX Finishing Touches (1-2h, mejoras rápidas)
   - [ ] Opción C: Streaming Documentation (1.5h)
-  - [ ] Opción D: GitHub Release v1.0.7 (1h, final)
+  - [ ] Opción D: GitHub Release v0.3.0 (1h, final)
 - [x] Creado manage_todo_list con tareas específicas
 - [x] Entendido estructura del proyecto (Extension Manager, Debug Console)
 - [x] Consultado docs/ completo (14 archivos, 15,373 líneas)
-- [x] Revisado [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) categorías completadas (Quick Chat 100%, Monitor v2.0 100%, Activity Log 100%)
+- [x] Revisado [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) categorías completadas (Quick Chat 100%, Monitor v2.0 100%, Activity Log 100%)
 
 ---
 
 ## 🎯 OBJETIVO FINAL
 
-**Entregar v1.0.7 con:**
+**Entregar v0.3.0 con:**
 
 ✅ Quick Chat feature funcional - **YA COMPLETADO 100%**  
 ✅ Monitor System v2.0 completo - **YA COMPLETADO 100%**  
@@ -779,7 +779,7 @@ Antes de empezar a codificar, verifica:
 ⏳ UI/UX finishing touches - **PENDIENTE 10%** (typewriter, scroll, shortcuts, sonido, microinteracciones)  
 ⏳ Testing suite completa (min 70% coverage) - **PENDIENTE** (bloqueante para release)  
 ⏳ Documentación de streaming actualizada - **PENDIENTE** (docs/STREAMING.md)  
-⏳ Release v1.0.7 publicada en GitHub - **PENDIENTE** (release notes, CHANGELOG, tag)  
+⏳ Release v0.3.0 publicada en GitHub - **PENDIENTE** (release notes, CHANGELOG, tag)  
 
 **Métricas esperadas:**
 - Complexity: 78% → 75% (reducción esperada con tests)
@@ -827,7 +827,7 @@ scripts/troubleshooting/validate-git-commit.sh
 
 Cuando completes tu trabajo o necesites pasar a otro Copilot:
 
-1. **Actualizar [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md)** con progreso actualizado
+1. **Actualizar [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md)** con progreso actualizado
    - Marcar categorías completadas
    - Actualizar progreso general (75% → X%)
    - Añadir commits realizados
@@ -841,12 +841,12 @@ Cuando completes tu trabajo o necesites pasar a otro Copilot:
    - Solo si hay cambios significativos en arquitectura
    - Actualizar métricas (Testing coverage, Documentation %)
 
-4. **Crear nuevo PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md** si es necesario
+4. **Crear nuevo PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md** si es necesario
    - Solo si hay cambios mayores en contexto
    - Actualizar último commit, fecha, progreso
 
 5. **Actualizar [CHANGELOG.md](CHANGELOG.md)** cuando completes features
-   - Añadir entradas para v1.0.7
+   - Añadir entradas para v0.3.0
    - Agrupar cambios por categoría
 
 6. **Documentar lecciones aprendidas** si encuentras problemas
@@ -857,14 +857,14 @@ Cuando completes tu trabajo o necesites pasar a otro Copilot:
 
 ## 💡 TIPS FINALES
 
-1. **Consulta [plans/PLAN-v1.0.7.md](PLAN-v1.0.7.md) frecuentemente** - es tu biblia, actualizado con 75% completado
+1. **Consulta [plans/PLAN-v0.3.0.md](PLAN-v0.3.0.md) frecuentemente** - es tu biblia, actualizado con 75% completado
 2. **Usa manage_todo_list extensivamente** - mantén visibilidad del progreso
 3. **Lee las 15 lecciones aprendidas** - evita errores previos (two-tier architecture, setting() vs config(), etc.)
 4. **Testea en browser** - especialmente JavaScript/Alpine.js (Chrome DevTools Console)
 5. **Commitea frecuentemente** - pequeños commits incrementales con mensajes descriptivos
 6. **Pregunta si dudas** - mejor confirmar que asumir (evita reverts como en Debug Console)
 7. **Revisa trabajo completado** - Quick Chat y Monitor System v2.0 son buenos ejemplos
-8. **Prioriza Testing Suite** - bloqueante para release v1.0.7 (4-5 horas críticas)
+8. **Prioriza Testing Suite** - bloqueante para release v0.3.0 (4-5 horas críticas)
 9. **Documenta cambios** - [CHANGELOG.md](CHANGELOG.md) debe reflejar 40+ commits de trabajo
 10. **Usa GitKraken MCP tool para commits** - evita límite de 72 caracteres del pre-commit hook
 
@@ -909,7 +909,7 @@ Cuando completes tu trabajo o necesites pasar a otro Copilot:
 
 ---
 
-**¡Éxito con v1.0.7! 🚀**
+**¡Éxito con v0.3.0! 🚀**
 
 ---
 

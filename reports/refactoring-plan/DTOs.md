@@ -1,7 +1,7 @@
 # Data Transfer Objects (DTOs) - LLM Configuration
 
 **Fecha:** 10 de diciembre de 2025  
-**Versión:** 1.0.0  
+**Versión:** 0.1.0  
 **Patrón:** Data Transfer Objects (DTOs)  
 **Recomendación:** ⚠️ **COMPLEMENTO, no solución primaria**
 

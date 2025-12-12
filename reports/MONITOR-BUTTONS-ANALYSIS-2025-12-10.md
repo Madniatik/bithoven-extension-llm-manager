@@ -399,7 +399,7 @@ $showLoadMore = $showLoadMore ?? false;
 
 ### Documentación
 - [ ] Este archivo: `MONITOR-BUTTONS-ANALYSIS-2025-12-10.md`
-- [ ] `PLAN-v1.0.7-chat-ux.md` (agregar nuevo item)
+- [ ] `PLAN-v0.3.0-chat-ux.md` (agregar nuevo item)
 - [ ] `CHANGELOG.md` (breaking changes + nueva feature)
 
 ---
@@ -455,7 +455,7 @@ copyLogs(sessionId) {
 
 ## 🔗 Referencias
 
-- **Issue:** PLAN-v1.0.7-chat-ux.md (nuevo item)
+- **Issue:** PLAN-v0.3.0-chat-ux.md (nuevo item)
 - **Commit anterior:** Restructuración monitor/ folder (b5a6caa)
 - **Documentación:** Monitor System v2.0 Implementation
 - **API Docs:** `docs/components/CHAT-WORKSPACE-CONFIG.md`

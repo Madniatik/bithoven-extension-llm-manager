@@ -22,8 +22,8 @@ Enterprise-grade LLM management platform for Laravel applications with real-time
 
 ### 🎯 Core LLM Management
 - ✅ **Multi-Provider Support** - Ollama, OpenAI, Anthropic, OpenRouter, Custom endpoints
-- ✅ **Service Layer Architecture** - Centralized configuration management with 90% query reduction (v1.0.8)
-- ✅ **Provider Repositories** - Composer-based config packages with import/export system (v1.0.8)
+- ✅ **Service Layer Architecture** - Centralized configuration management with 90% query reduction (v0.4.0)
+- ✅ **Provider Repositories** - Composer-based config packages with import/export system (v0.4.0)
 - ✅ **Real-Time Streaming** - SSE-based streaming with live token counting and cost tracking
 - ✅ **Configuration Management** - LLMConfigurationService with caching, testing support, 15 methods
 - ✅ **Budget Tracking** - Cost monitoring with usage logs and alerts
@@ -33,13 +33,13 @@ Enterprise-grade LLM management platform for Laravel applications with real-time
 - ✅ **Prompt Templates** - Reusable templates with variable substitution (`{{var}}`)
 - ✅ **Parameter Override** - Runtime customization of temperature, max_tokens, etc.
 - ✅ **Permissions Protocol v2.0** - Granular role-based access control (12 permissions)
-- ✅ **Monitor Export** - Export Activity Logs in 3 formats (CSV/JSON/SQL) with session filtering (NEW v1.0.7)
+- ✅ **Monitor Export** - Export Activity Logs in 3 formats (CSV/JSON/SQL) with session filtering (NEW v0.3.0)
 
 ### 🤖 Orchestration Platform
 - ✅ **Conversations** - Persistent multi-turn sessions with context management
 - ✅ **RAG System** - Document chunking + embeddings + semantic search
 - ✅ **Multi-Agent Workflows** - State machine orchestration (planned v1.2.0)
-- ✅ **Activity Monitoring** - Database-driven execution logs with auto-refresh, cross-device persistence, and unlimited history (NEW v1.0.7)
+- ✅ **Activity Monitoring** - Database-driven execution logs with auto-refresh, cross-device persistence, and unlimited history (NEW v0.3.0)
 
 ### 🛠️ Hybrid Tools System (Planned v1.2.0)
 - ⏳ **Function Calling** - Native OpenAI/Anthropic/Gemini support
@@ -66,18 +66,18 @@ Complete documentation available in the `docs/` directory:
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - Development workflow and guidelines
 
 ### 🧩 Components
-- **[Chat Configuration System](docs/components/chat/README.md)** - Chat Workspace Configuration System v1.0.7 (23 docs, production ready)
+- **[Chat Configuration System](docs/components/chat/README.md)** - Chat Workspace Configuration System v0.3.0 (23 docs, production ready)
 - **[Chat Workspace Component](docs/reference/components/CHAT-WORKSPACE.md)** - Legacy guide for ChatWorkspace v2.2 (Multi-Instance Support)
 
 ### 📊 Project Status
-- **[Changelog](CHANGELOG.md)** - Complete version history with Monitor Export Feature (v1.0.0 - v1.0.7)
-- **[Project Status](PROJECT-STATUS.md)** - v1.0.7 ready for release (99.5% complete - only GitHub release pending)
+- **[Changelog](CHANGELOG.md)** - Complete version history with Monitor Export Feature (v0.1.0 - v0.3.0)
+- **[Project Status](PROJECT-STATUS.md)** - v0.3.0 ready for release (99.5% complete - only GitHub release pending)
 - **[Testing Status](#-testing-status)** - Manual testing coverage (33/33 features - 100%)
 - **[Roadmap](#-roadmap)** - Future features and releases
 
-### 🎨 Component Features (v1.0.7)
+### 🎨 Component Features (v0.3.0)
 
-- **Chat Workspace Configuration System v1.0.7** - Granular Configuration (NEW)
+- **Chat Workspace Configuration System v0.3.0** - Granular Configuration (NEW)
   - ✅ Config Array System: Configuración mediante array único (vs legacy props)
   - ✅ ChatWorkspaceConfigValidator: Validación + merge con defaults
   - ✅ Settings Panel UI: Personalización de UI con DB persistence
@@ -101,7 +101,7 @@ Complete documentation available in the `docs/` directory:
   - 10 reusable partials created
   - [Legacy documentation](docs/reference/components/CHAT-WORKSPACE.md)
 
-- **UX Enhancements v1.0.7** - Chat UX System (21 items - PLAN-v1.0.7-chat-ux.md)
+- **UX Enhancements v0.3.0** - Chat UX System (21 items - PLAN-v0.3.0-chat-ux.md)
   - ✅ Context Window Visual Indicator: Border + opacity para mensajes en contexto
   - ✅ Smart Auto-Scroll System: 6 features ChatGPT-style (scroll detection, counter, badge)
   - ✅ Browser + Sound Notifications: Dual implementation
@@ -111,7 +111,7 @@ Complete documentation available in the `docs/` directory:
   - [Context Window](docs/components/chat/features/context-window.md)
   - [Auto-Scroll](docs/components/chat/features/auto-scroll.md)
 
-- **Activity Log System v1.0.7** - Database-driven Activity History + Monitor Export
+- **Activity Log System v0.3.0** - Database-driven Activity History + Monitor Export
   - ✅ Cross-device persistence: Access history from any device
   - ✅ Unlimited history: No localStorage 5MB cap limitation
   - ✅ Auto-refresh: Real-time updates after streaming completion
@@ -132,7 +132,7 @@ Complete documentation available in the `docs/` directory:
 3. **🎨 Laravel-Native** - Built for Laravel 11+ with Blade components, Eloquent, and Artisan commands
 4. **🔒 Enterprise Security** - Granular RBAC (12 permissions across 4 roles), encrypted API keys
 5. **📦 Zero-Config Installation** - One command setup via BITHOVEN Extension Manager
-6. **🔄 Cross-Device Persistence** - Database-driven Activity History accessible from any device (NEW v1.0.7)
+6. **🔄 Cross-Device Persistence** - Database-driven Activity History accessible from any device (NEW v0.3.0)
 
 ---
 
@@ -417,7 +417,7 @@ php artisan permission:cache-reset                    # Clear permission cache
 
 ### Manual Testing Coverage: 100% ✅
 
-**Version:** v1.0.7-dev  
+**Version:** v0.3.0-dev  
 **Completed:** 7 de diciembre de 2025  
 **Features Tested:** 33/33 (100%)  
 **Bugs Fixed:** 18 (including 3 Activity Log bugs)
@@ -429,8 +429,8 @@ php artisan permission:cache-reset                    # Clear permission cache
 | **Tool Definitions** | 7/7 | ✅ Complete | Registry, schemas, handlers |
 | **Conversations** | 4/4 | ✅ Complete | Sessions, messages, export |
 | **Statistics** | 6/6 | ✅ Complete | Charts, filters, export |
-| **Streaming (v1.0.4)** | ✅ | ✅ Complete | SSE, metrics, activity logs |
-| **Activity Logs (v1.0.7)** | ✅ | ✅ Complete | Database-driven, auto-refresh, filtering |
+| **Streaming (v0.2.0)** | ✅ | ✅ Complete | SSE, metrics, activity logs |
+| **Activity Logs (v0.3.0)** | ✅ | ✅ Complete | Database-driven, auto-refresh, filtering |
 
 ### Test Reports
 - **Testing Guide:** `CPANEL/reports/llm-manager-testing-guide.md`
@@ -510,7 +510,7 @@ $results = $rag->search('How to create a controller?', extension: 'docs');
 
 **Current Version:** v2.2.0 (Production Ready - Multi-Instance Support)
 
-### ✅ Completed (v1.0.0)
+### ✅ Completed (v0.1.0)
 
 **Backend (100%)**
 - ✅ 49 Foundation files (ServiceProvider, migrations, models, seeders, config)
@@ -723,7 +723,7 @@ See [LICENSE](LICENSE) file for full details.
 
 ---
 
-**Version:** v1.0.7 (Production Ready)  
+**Version:** v0.3.0 (Production Ready)  
 **Last Updated:** 10 de diciembre de 2025, 13:30  
 **Status:** ✅ Production Release - Chat Configuration System + Monitor Export + UX Enhancements Complete  
 **Latest Features:**

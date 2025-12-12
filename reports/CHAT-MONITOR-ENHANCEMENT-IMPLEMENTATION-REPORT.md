@@ -1,7 +1,7 @@
 # Chat Monitor Enhancement - Implementation Report
 
 **Date:** December 7, 2025  
-**Version:** llm-manager v1.0.7 (pending)  
+**Version:** llm-manager v0.3.0 (pending)  
 **Status:** ✅ IMPLEMENTED - Ready for testing  
 **Related Documents:** 
 - Planning: `docs/CHAT-MONITOR-ENHANCEMENT-PLAN.md`
@@ -462,7 +462,7 @@ All parameters are optional with null defaults. Existing code using old signatur
 3. Check backward compatibility with existing chats
 4. Validate multi-instance support
 
-### Short-term (v1.0.7)
+### Short-term (v0.3.0)
 1. Update CHANGELOG.md with enhancement details
 2. Create demo video showing new UI
 3. Update user documentation

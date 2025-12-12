@@ -1,4 +1,4 @@
-# HANDS-OFF: Plan de Refactorización v1.0.8
+# HANDS-OFF: Plan de Refactorización v0.4.0
 
 **Fecha de Creación:** 11 de diciembre de 2025  
 **Propósito:** Handoff completo para implementación del plan  
@@ -27,7 +27,7 @@ Este handoff documenta el plan completo de refactorización del sistema de confi
 
 ## 📂 Documentación del Plan
 
-**Ubicación:** `plans/new/PLAN-v1.0.8/`
+**Ubicación:** `plans/new/PLAN-v0.4.0/`
 
 ### Archivos (3,276 líneas totales):
 
@@ -180,10 +180,10 @@ git commit -m "feat: implement service layer"  # Max 72 chars
 read_file('QUICK-INDEX.json')
 
 # Leer plan completo
-read_file('plans/new/PLAN-v1.0.8/README.md')
+read_file('plans/new/PLAN-v0.4.0/README.md')
 
 # Leer implementación (antes de codificar)
-read_file('plans/new/PLAN-v1.0.8/SERVICE-LAYER.md')
+read_file('plans/new/PLAN-v0.4.0/SERVICE-LAYER.md')
 ```
 
 ---
@@ -199,10 +199,10 @@ read_file('plans/new/PLAN-v1.0.8/SERVICE-LAYER.md')
 read_file('QUICK-INDEX.json')
 
 # 2. Plan completo
-read_file('plans/new/PLAN-v1.0.8/README.md')
+read_file('plans/new/PLAN-v0.4.0/README.md')
 
 # 3. Guía de implementación
-read_file('plans/new/PLAN-v1.0.8/SERVICE-LAYER.md')
+read_file('plans/new/PLAN-v0.4.0/SERVICE-LAYER.md')
 
 # 4. Código actual del modelo
 read_file('src/Models/LLMConfiguration.php', 1, 100)
@@ -220,7 +220,7 @@ read_file('src/Http/Controllers/Admin/LLMConfigurationController.php', 1, 150)
 **Método:**
 ```bash
 # Leer código del plan
-read_file('plans/new/PLAN-v1.0.8/SERVICE-LAYER.md', 180, 580)
+read_file('plans/new/PLAN-v0.4.0/SERVICE-LAYER.md', 180, 580)
 
 # Crear archivo con código completo
 create_file(
@@ -383,7 +383,7 @@ mcp_gitkraken_git_add_or_commit(...)
 ### Documentación del Plan
 
 ```bash
-# Ubicación: plans/new/PLAN-v1.0.8/
+# Ubicación: plans/new/PLAN-v0.4.0/
 
 README.md                           # Índice completo
 PROTOCOLO-DE-REFACTORIZACION.md     # Análisis y decisión
@@ -493,15 +493,15 @@ extension.json                # Extension metadata
 **Copiar y pegar en nueva sesión de Copilot:**
 
 ```
-Hola! Voy a continuar con la implementación del Plan de Refactorización v1.0.8 del proyecto bithoven-extension-llm-manager.
+Hola! Voy a continuar con la implementación del Plan de Refactorización v0.4.0 del proyecto bithoven-extension-llm-manager.
 
 Por favor:
 
 1. Lee el archivo de handoff completo:
-   plans/new/PLAN-v1.0.8/HANDS-OFF-COPILOT-PLAN-v1.0.8.md
+   plans/new/PLAN-v0.4.0/HANDS-OFF-COPILOT-PLAN-v0.4.0.md
 
 2. Luego lee la guía de implementación:
-   plans/new/PLAN-v1.0.8/SERVICE-LAYER.md
+   plans/new/PLAN-v0.4.0/SERVICE-LAYER.md
 
 3. Cuando estés listo, confirma que:
    - Entiendes el contexto del plan

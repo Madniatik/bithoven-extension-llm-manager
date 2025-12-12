@@ -66,10 +66,10 @@
     },
     
     "changelog": {
-        "v1.0.7": {
+        "v0.3.0": {
             "date": "2025-12-10",
             "changes": [
-                "🎉 RELEASE: v1.0.7 Complete - Monitor Export + Chat UX System",
+                "🎉 RELEASE: v0.3.0 Complete - Monitor Export + Chat UX System",
                 "✅ FEATURE: Monitor Export (CSV/JSON/SQL) with session-aware filtering",
                 "✅ FEATURE: Activity Log DB Migration - cross-device persistence, unlimited history",
                 "✅ FEATURE: Request Inspector Tab - hybrid population (immediate + SSE)",
@@ -92,7 +92,7 @@
             "breaking_changes": true,
             "components": ["monitoring", "database", "ui", "docs", "testing"]
         },
-        "v1.0.6": {
+        "v0.2.2": {
             "date": "2025-12-03",
             "changes": [
                 "🚀 MAJOR: Multi-instance support for ChatWorkspace component",
@@ -113,7 +113,7 @@
             "breaking_changes": false,
             "components": ["ui", "components", "scripts", "docs"]
         },
-        "v1.0.5": {
+        "v0.2.1": {
             "date": "2025-12-03",
             "changes": [
                 "🎨 REFACTOR: ChatWorkspace component v2.1 optimizations (63% code reduction)",
@@ -134,7 +134,7 @@
             "breaking_changes": false,
             "components": ["ui", "components", "docs"]
         },
-        "v1.0.4": {
+        "v0.2.0": {
             "date": "2025-11-28",
             "changes": [
                 "🚀 FEATURE: Real-time streaming support (SSE) with OllamaProvider and OpenAIProvider",
@@ -152,7 +152,7 @@
             "breaking_changes": true,
             "components": ["streaming", "providers", "permissions", "ui"]
         },
-        "v1.0.3": {
+        "v0.1.3": {
             "date": "2025-11-27",
             "changes": [
                 "REFACTOR: Code sanitation - removed 190 lines of dead code from ServiceProvider",
@@ -169,10 +169,10 @@
             "breaking_changes": false,
             "components": ["code", "seeders", "config"]
         },
-        "v1.0.2": {
+        "v0.1.2": {
             "date": "2025-11-26",
             "changes": [
-                "Updated to extension.json schema v1.0.0",
+                "Updated to extension.json schema v0.1.0",
                 "Added created_at and updated_at timestamps",
                 "Removed deprecated fields (menu, post_install, features)",
                 "Added category, icon, tags for marketplace",
@@ -182,7 +182,7 @@
             "breaking_changes": false,
             "components": ["config"]
         },
-        "v1.0.1": {
+        "v0.1.1": {
             "date": "2025-11-26",
             "changes": [
                 "CRITICAL FIX: Separated core data from demo seeders",
@@ -197,7 +197,7 @@
                 "seeders"
             ]
         },
-        "v1.0.0": {
+        "v0.1.0": {
             "date": "2025-11-18",
             "changes": [
                 "Initial release v3.0: LLM Orchestration Platform",

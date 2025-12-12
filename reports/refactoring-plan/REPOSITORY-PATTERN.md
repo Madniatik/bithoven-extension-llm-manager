@@ -1,7 +1,7 @@
 # Repository Pattern - LLM Configuration Repository
 
 **Fecha:** 10 de diciembre de 2025  
-**Versión:** 1.0.0  
+**Versión:** 0.1.0  
 **Patrón:** Repository Pattern  
 **Recomendación:** ⚠️ **OVER-ENGINEERING para este caso**
 

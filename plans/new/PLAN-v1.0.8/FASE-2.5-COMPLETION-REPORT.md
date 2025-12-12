@@ -355,7 +355,7 @@ php artisan config:clear
 
 ## 📄 Documentación Actualizada
 
-### PLAN-v1.0.8/README.md
+### PLAN-v0.4.0/README.md
 - ✅ FASE 2.5 marcada como completada
 - ✅ Tiempo real actualizado (6 horas)
 - ✅ Progreso general: 50% (3/6 fases)

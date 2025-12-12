@@ -1,7 +1,7 @@
 # Service Layer Pattern - LLM Configuration Service
 
 **Fecha:** 10 de diciembre de 2025  
-**Versión:** 1.0.0  
+**Versión:** 0.1.0  
 **Patrón:** Service Layer  
 **Recomendación:** ✅ **OPCIÓN RECOMENDADA**
 

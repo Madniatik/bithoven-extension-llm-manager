@@ -1,6 +1,6 @@
 # 📖 LLM Manager - Frequently Asked Questions (FAQ)
 
-**Version:** 1.0.0  
+**Version:** 0.1.0  
 **Last Updated:** 21 de noviembre de 2025
 
 ---

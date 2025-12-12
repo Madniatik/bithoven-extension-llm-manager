@@ -1,6 +1,6 @@
 # Chat Workspace Configuration System
 
-**Versión:** v1.0.7  
+**Versión:** v0.3.0  
 **Fecha:** 9 de diciembre de 2025  
 **Estado:** Production Ready (97% completado)
 
@@ -1233,7 +1233,7 @@ php vendor/bin/phpunit \
 
 ## Changelog
 
-### v1.0.7 (9 diciembre 2025)
+### v0.3.0 (9 diciembre 2025)
 
 - ✅ Config Array System implementado
 - ✅ ChatWorkspaceConfigValidator con validación completa
@@ -1251,11 +1251,11 @@ php vendor/bin/phpunit \
 ## Soporte
 
 **Issues:** [GitHub Issues](https://github.com/Madniatik/bithoven-extension-llm-manager/issues)  
-**Plan Detallado:** [PLAN-v1.0.7-chat-config-options.md](../plans/PLAN-v1.0.7-chat-config-options.md)  
-**Plan Principal:** [PLAN-v1.0.7.md](../plans/PLAN-v1.0.7.md)
+**Plan Detallado:** [PLAN-v0.3.0-chat-config-options.md](../plans/PLAN-v0.3.0-chat-config-options.md)  
+**Plan Principal:** [PLAN-v0.3.0.md](../plans/PLAN-v0.3.0.md)
 
 ---
 
 **Autor:** Claude (Claude Sonnet 4.5, Anthropic)  
 **Fecha:** 9 de diciembre de 2025  
-**Versión:** 1.0.7
+**Versión:** 0.3.0

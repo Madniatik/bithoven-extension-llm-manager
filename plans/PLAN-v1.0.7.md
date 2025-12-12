@@ -1,16 +1,16 @@
-# LLM Manager Extension - Plan v1.0.7
+# LLM Manager Extension - Plan v0.3.0
 
 **Fecha de Creación:** 3 de diciembre de 2025  
 **Fecha de Actualización:** 10 de diciembre de 2025, 23:59  
-**Versión Actual:** v1.0.6  
-**Versión Objetivo:** v1.0.7  
-**Estado:** Ready for Release (132+ commits desde v1.0.6)
+**Versión Actual:** v0.2.2  
+**Versión Objetivo:** v0.3.0  
+**Estado:** Ready for Release (132+ commits desde v0.2.2)
 
 ---
 
 ## 📋 RESUMEN EJECUTIVO
 
-Este documento consolida **todos los items pendientes reales** para la versión v1.0.7, identificados desde los archivos de planificación y conversaciones del chat.
+Este documento consolida **todos los items pendientes reales** para la versión v0.3.0, identificados desde los archivos de planificación y conversaciones del chat.
 
 **Categorías:**
 1. ✅ **Quick Chat Feature** (7-10 horas) - **COMPLETADO 100%**
@@ -18,18 +18,18 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 3. ✅ **UI/UX Optimizations** (6-8 horas) - **COMPLETADO 92%**
 4. ✅ **Provider Connection Service Layer** (4-5 horas) - **COMPLETADO 100%** (8 dic 2025)
 5. ✅ **Request Inspector Tab** (2-3 horas) - **COMPLETADO 100%** (9 dic 2025)
-6. ✅ **Chat Workspace Configuration System** (12-15 horas) - **COMPLETADO 99.5%** (9 dic 2025) - Ver [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md)
+6. ✅ **Chat Workspace Configuration System** (12-15 horas) - **COMPLETADO 99.5%** (9 dic 2025) - Ver [PLAN-v0.3.0-chat-config-options.md](./PLAN-v0.3.0-chat-config-options.md)
 7. ✅ **Testing Suite** (4-5 horas) - **COMPLETADO 100%** (9 dic 2025) - 33 tests creados
 8. ✅ **Streaming Documentation** (1.5 horas) - **COMPLETADO 100%** (9 dic 2025) - 1050+ líneas
 9. ✅ **Message ID Refactor** (2 horas) - **COMPLETADO 100%** (10 dic 2025) - Two-column approach
-10. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE** - Ver [PLAN-GITHUB-RELEASE-v1.0.7.md](./new/PLAN-GITHUB-RELEASE-v1.0.7.md)
-11. ✅ **Chat UX Improvements** (24 horas) - **COMPLETADO 100%** (21/21 items) - Ver [PLAN-v1.0.7-chat-ux.md](./completed/PLAN-v1.0.7-chat-ux.md)
+10. ⏳ **GitHub Release Management** (1 hora) - **PENDIENTE** - Ver [PLAN-GITHUB-RELEASE-v0.3.0.md](./new/PLAN-GITHUB-RELEASE-v0.3.0.md)
+11. ✅ **Chat UX Improvements** (24 horas) - **COMPLETADO 100%** (21/21 items) - Ver [PLAN-v0.3.0-chat-ux.md](./completed/PLAN-v0.3.0-chat-ux.md)
 
 **Tiempo Total Estimado:** 68.5-79.5 horas (actualizado con Chat UX 24h)  
 **Tiempo Invertido:** ~72-76 horas (132+ commits + config system + tests + streaming docs + message refactor + chat UX)  
 **Progreso General:** **99.5%** (solo GitHub Release pendiente)
 
-**Nota de Versionado:** Esta es una release PATCH (v1.0.7) porque todas las features son backward compatible y no hay breaking changes.
+**Nota de Versionado:** Esta es una release PATCH (v0.3.0) porque todas las features son backward compatible y no hay breaking changes.
 
 ---
 
@@ -63,9 +63,9 @@ Este documento consolida **todos los items pendientes reales** para la versión 
 ### Estado Post-Revert (commit f24d957 → 1bd668e)
 - ✅ Activity Logs tab funcional con localStorage (dual-button system)
 - ⏳ DB persistence pendiente (requiere análisis de /stream/test)
-- ✅ Documentation updated (plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT, PROJECT-STATUS, session achievements)
+- ✅ Documentation updated (plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT, PROJECT-STATUS, session achievements)
 
-**Documentación:** Ver plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md Lesson 16 para detalles completos
+**Documentación:** Ver plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md Lesson 16 para detalles completos
 
 ---
 
@@ -318,7 +318,7 @@ api_key: apiKey || null  // ✅ Envía valor real
 #### Next Steps
 - ⏳ Unit tests para LLMProviderService
 - ⏳ Cross-browser testing
-- ⏳ Cache invalidation manual (opcional para v1.0.8)
+- ⏳ Cache invalidation manual (opcional para v0.4.0)
 
 ### ✅ Activity Logs Tab System (Commits f24d957, 1bd668e) - **COMPLETADO**
 
@@ -343,7 +343,7 @@ api_key: apiKey || null  // ✅ Envía valor real
   - Mejor UX con separación clara de funciones
 
 - ✅ **Documentation** (Commit 1bd668e)
-  - plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md actualizado (Lesson 16, revert details)
+  - plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md actualizado (Lesson 16, revert details)
   - PROJECT-STATUS.md actualizado (75% progress, commits listed)
   - session-manager.json con 3 achievements (Activity Logs, Critical Lesson, Docs Update)
 
@@ -352,7 +352,7 @@ api_key: apiKey || null  // ✅ Envía valor real
 - `resources/views/components/chat/partials/modals/modal-monitor.blade.php`
 - `public/js/monitor/ui/render.js`
 - `public/js/monitor/core/MonitorInstance.js`
-- `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md`
+- `plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md`
 - `PROJECT-STATUS.md`
 
 #### Next Steps
@@ -1066,7 +1066,7 @@ docs(monitor): document request inspector feature in CHAT-WORKSPACE.md
 
 **Prioridad:** ALTA (debugging crítico para desarrollo)
 
-**Target:** Incluir en v1.0.7 si tiempo lo permite, o mover a v1.0.8
+**Target:** Incluir en v0.3.0 si tiempo lo permite, o mover a v0.4.0
 
 ---
 
@@ -1335,8 +1335,8 @@ Implementar feature de "Quick Chat" - chat rápido sin persistencia en DB, solo 
 
 ---
 
-#### FASE 7: Componentización (2-3 horas) ✅ COMPLETADO (v1.0.6)
-**Nota:** Esta fase se completó en v1.0.6 con multi-instance architecture
+#### FASE 7: Componentización (2-3 horas) ✅ COMPLETADO (v0.2.2)
+**Nota:** Esta fase se completó en v0.2.2 con multi-instance architecture
 
 - [x] Extraer componente Blade reutilizable
   - `resources/views/components/chat/chat-workspace.blade.php`
@@ -1355,7 +1355,7 @@ Implementar feature de "Quick Chat" - chat rápido sin persistencia en DB, solo 
 **Entregable:** ✅ COMPLETADO
 - Sistema completamente modular y reutilizable
 - Multi-instance support funcional
-- Documentado en CHANGELOG v1.0.6
+- Documentado en CHANGELOG v0.2.2
 
 ### Git Commits Realizados (Últimas 24h)
 ```bash
@@ -1683,7 +1683,7 @@ feat(llm): add microinteractions and hover effects
 **⚠️ NOTA IMPORTANTE:** Los tests del **Chat Workspace Configuration System** YA ESTÁN COMPLETOS (27/27 passing):
 - ✅ Unit Tests: `tests/Unit/Services/ChatWorkspaceConfigValidatorTest.php` (13/13 ✅)
 - ✅ Feature Tests: `tests/Feature/Components/ChatWorkspaceConfigTest.php` (14/14 ✅)
-- Ver detalles en [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md) FASE 6
+- Ver detalles en [PLAN-v0.3.0-chat-config-options.md](./PLAN-v0.3.0-chat-config-options.md) FASE 6
 
 **Esta sección cubre SOLO tests pendientes de:** Streaming, Permissions, Provider Service Layer
 
@@ -1941,27 +1941,27 @@ docs: add comprehensive streaming documentation (1050+ lines)
 
 ---
 
-## 🚀 CATEGORÍA 8: GitHub Release v1.0.7
+## 🚀 CATEGORÍA 8: GitHub Release v0.3.0
 
 **Prioridad:** ALTA (Publicar trabajo completado)  
 **Tiempo Estimado:** 1 hora  
 **Fuente:** Proceso de release estándar
 
 ### Objetivo
-Publicar release oficial de v1.0.7 en GitHub con toda la documentación.
+Publicar release oficial de v0.3.0 en GitHub con toda la documentación.
 
 ### Tareas
 
 #### 5.1 Preparar Release Notes (30 min) - ⏳ PENDIENTE
 
-**Revisar commits desde v1.0.6:**
+**Revisar commits desde v0.2.2:**
 ```bash
-git log v1.0.6..HEAD --oneline
+git log v0.2.2..HEAD --oneline
 ```
 
 **Secciones del Release:**
 ```markdown
-# v1.0.7 - Quick Chat + Provider Connection Service Layer
+# v0.3.0 - Quick Chat + Provider Connection Service Layer
 
 ## 🎉 New Features
 
@@ -2017,7 +2017,7 @@ None - This is a PATCH release (fully backward compatible)
 
 ## 🔄 Migration Guide
 
-No migrations required - v1.0.7 is drop-in compatible with v1.0.6
+No migrations required - v0.3.0 is drop-in compatible with v0.2.2
 
 ## 📦 Dependencies
 
@@ -2043,7 +2043,7 @@ No migrations required - v1.0.7 is drop-in compatible with v1.0.6
 
 **Añadir sección:**
 ```markdown
-## [1.0.7] - 2025-12-08
+## [0.3.0] - 2025-12-08
 
 ### Added
 - Quick Chat feature (30+ commits)
@@ -2085,15 +2085,15 @@ No migrations required - v1.0.7 is drop-in compatible with v1.0.6
 **Comandos:**
 ```bash
 # Crear tag anotado
-git tag -a v1.0.7 -m "Release v1.0.7 - Quick Chat + Provider Connection Service Layer"
+git tag -a v0.3.0 -m "Release v0.3.0 - Quick Chat + Provider Connection Service Layer"
 
 # Push tag a GitHub
-git push origin v1.0.7
+git push origin v0.3.0
 
 # Crear GitHub Release
 # (Interfaz web de GitHub o gh CLI)
-gh release create v1.0.7 \
-  --title "v1.0.7 - Quick Chat + Provider Connection" \
+gh release create v0.3.0 \
+  --title "v0.3.0 - Quick Chat + Provider Connection" \
   --notes-file release-notes.md
 ```
 
@@ -2102,7 +2102,7 @@ gh release create v1.0.7 \
 - Migration files (si hay nuevas)
 
 **Entregable:** ⏳ PENDIENTE
-- Tag v1.0.7 creado
+- Tag v0.3.0 creado
 - GitHub Release publicado
 - Assets attachados (si aplica)
 
@@ -2142,13 +2142,13 @@ gh release create v1.0.7 \
 - ✅ Activity Logs tab funcional con localStorage (dual-button system)
 - ✅ DB persistence completada posteriormente (7 dic 2025) con tabla correcta
 
-**Documentación:** Ver `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md` Lesson 16 para detalles completos
+**Documentación:** Ver `plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md` Lesson 16 para detalles completos
 
 ---
 
 ## 📋 PLANES COMPLETADOS (Referencia)
 
-Durante el desarrollo de v1.0.7 se completaron los siguientes planes independientes que ahora están archivados en `plans/completed/`:
+Durante el desarrollo de v0.3.0 se completaron los siguientes planes independientes que ahora están archivados en `plans/completed/`:
 
 ### 1. FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md (496 líneas)
 **Completado:** 8 dic 2025  
@@ -2242,7 +2242,7 @@ Durante el desarrollo de v1.0.7 se completaron los siguientes planes independien
 
 ---
 
-## 🎓 LECCIONES CONSOLIDADAS (v1.0.7)
+## 🎓 LECCIONES CONSOLIDADAS (v0.3.0)
 
 ### Lecciones Técnicas (1-15)
 
@@ -2478,7 +2478,7 @@ data: {"usage": {...}}
 
 ---
 
-## 🚀 CATEGORÍA 7: GitHub Release v1.0.7
+## 🚀 CATEGORÍA 7: GitHub Release v0.3.0
 
 **Prioridad:** MEDIA (Nice-to-have para v1.2.0)  
 **Tiempo Estimado:** 1.5 horas  
@@ -2610,7 +2610,7 @@ Publicar trabajo completado en v2.2.0 y planificar releases futuras.
 ---
 
 #### 5.3 Planificar v1.2.0 Release - 15 min
-- [ ] Crear GitHub Milestone "v1.0.7"
+- [ ] Crear GitHub Milestone "v0.3.0"
 - [ ] Crear Issues para cada categoría de este PLAN:
   - Issue #1: Quick Chat Feature
   - Issue #2: UI/UX Optimizations
@@ -2621,7 +2621,7 @@ Publicar trabajo completado en v2.2.0 y planificar releases futuras.
 - [ ] Estimar fecha de release (ej: ~20-25 horas = 3-4 días)
 
 **Entregable:**
-- Milestone v1.0.7 creado
+- Milestone v0.3.0 creado
 - Issues creados y etiquetados
 
 ---
@@ -2659,24 +2659,24 @@ Publicar trabajo completado en v2.2.0 y planificar releases futuras.
    ↓
 5. ⏳ Streaming Documentation - PENDIENTE
    ↓
-6. ⏳ GitHub Release v1.0.7 - PENDIENTE
+6. ⏳ GitHub Release v0.3.0 - PENDIENTE
 ```
 
 **Próximos Pasos Inmediatos:**
 1. Finalizar UI/UX pendientes (typewriter, keyboard shortcuts, notificación sonora) - 1-2h
 2. Implementar Testing Suite completo - 4-5h
 3. Crear docs/STREAMING.md - 1.5h
-4. Release v1.0.7 en GitHub - 30min
+4. Release v0.3.0 en GitHub - 30min
 
 **Tiempo Restante Estimado:** 6-8 horas
 
 ---
 
-## ✅ CHECKLIST GENERAL v1.0.7
+## ✅ CHECKLIST GENERAL v0.3.0
 
 ### Pre-Release
-- [x] v1.0.6 multi-instance architecture completada
-- [ ] Milestone v1.0.7 creado en GitHub
+- [x] v0.2.2 multi-instance architecture completada
+- [ ] Milestone v0.3.0 creado en GitHub
 - [ ] Issues creados para tareas pendientes
 
 ### Desarrollo
@@ -2695,21 +2695,21 @@ Publicar trabajo completado en v2.2.0 y planificar releases futuras.
 - [ ] Feature tests - PENDIENTE
 
 ### Documentation
-- [ ] CHANGELOG.md actualizado con v1.0.7
-- [ ] README.md refleja v1.0.7
+- [ ] CHANGELOG.md actualizado con v0.3.0
+- [ ] README.md refleja v0.3.0
 - [ ] docs/STREAMING.md creado
 - [ ] DESIGN-SPECS.md creado (Quick Chat)
 - [x] 30+ commits con mensajes descriptivos ✅
 
 ### Release
-- [ ] Git tag v1.0.7 creado
+- [ ] Git tag v0.3.0 creado
 - [ ] GitHub Release publicado
 - [ ] Release notes completas
 - [ ] Push de 30+ commits pendientes
 
 ---
 
-## 📈 MÉTRICAS DE ÉXITO v1.0.7 (ACTUALIZADO)
+## 📈 MÉTRICAS DE ÉXITO v0.3.0 (ACTUALIZADO)
 
 | Métrica | Objetivo | Estado Actual | Progreso |
 |---------|----------|---------------|----------|
@@ -2743,7 +2743,7 @@ Una tarea se considera completada cuando:
 ## 📝 NOTAS IMPORTANTES
 
 ### Dependencias entre tareas
-- **Testing Suite** debe completarse antes de release v1.0.7
+- **Testing Suite** debe completarse antes de release v0.3.0
 - **Streaming Documentation** puede hacerse en paralelo
 - **GitHub Release** es el paso final después de testing
 
@@ -2761,15 +2761,15 @@ Una tarea se considera completada cuando:
 ## 🔄 VERSIONADO
 
 ### Semantic Versioning
-- **v1.0.7** = Patch release (nuevas features backward compatible)
-- **v1.0.8** = Patch release (bugfixes)
+- **v0.3.0** = Patch release (nuevas features backward compatible)
+- **v0.4.0** = Patch release (bugfixes)
 - **v1.1.0** = Minor release (features significativas, backward compatible)
 - **v2.0.0** = Major release (breaking changes)
 
 ### Qué incluye cada versión
-- **v1.0.6** (actual): Multi-instance + Legacy cleanup
-- **v1.0.7** (objetivo): Quick Chat + Monitor v2.0 + Provider Connection + UI/UX
-- **v1.0.8** (futuro): Unit tests + Dual-Select Model Picker
+- **v0.2.2** (actual): Multi-instance + Legacy cleanup
+- **v0.3.0** (objetivo): Quick Chat + Monitor v2.0 + Provider Connection + UI/UX
+- **v0.4.0** (futuro): Unit tests + Dual-Select Model Picker
 - **v1.1.0** (futuro): Statistics Dashboard, Workflow Builder UI
 
 ---
@@ -2778,7 +2778,7 @@ Una tarea se considera completada cuando:
 
 **Documentos relacionados:**
 - `plans/QUICK-CHAT-IMPLEMENTATION-PLAN.md` - Plan detallado Quick Chat (100% completado)
-- `plans/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md` - Handoff documentation (78% completado)
+- `plans/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md` - Handoff documentation (78% completado)
 - `plans/completed/` - 6 planes completados (FIX-PROVIDERS, ACTIVITY-LOG, etc.)
 - `PENDIENTES.md` - Tareas pendientes actualizadas (8 dic 2025)
 - `CHANGELOG.md` - Historial de versiones
@@ -2802,7 +2802,7 @@ Una tarea se considera completada cuando:
 
 ---
 
-**Estado Actual:** Plan v1.0.7 - 85% COMPLETADO (110+ commits realizados)  
+**Estado Actual:** Plan v0.3.0 - 85% COMPLETADO (110+ commits realizados)  
 **Próximo Paso:** Completar Testing Suite y Streaming Documentation  
 **Bloqueadores:** Testing Suite (prerequisito para release)  
 **ETA Release:** 5-7 horas de trabajo restantes
@@ -2838,7 +2838,7 @@ Una tarea se considera completada cuando:
 - ✅ Token breakdown en tiempo real
 - ✅ Session management por ID
 - ✅ localStorage persistence
-- ✅ Multi-instance architecture (v1.0.6)
+- ✅ Multi-instance architecture (v0.2.2)
 - ✅ Multi-layout support (sidebar, split-horizontal)
 - ✅ Hybrid Adapter Pattern (Alpine.js + vanilla JS)
 - ✅ Asset publishing system
@@ -2859,12 +2859,12 @@ Una tarea se considera completada cuando:
 - ⏳ Testing Suite (4-5h) - CRÍTICO para release (solo streaming/permissions, tests de config system ya completos)
 - ⏳ UI/UX finishing touches (1-2h) - Typewriter effect, keyboard shortcuts
 - ⏳ Streaming Documentation (1.5h)
-- ⏳ GitHub Release v1.0.7 (1h)
+- ⏳ GitHub Release v0.3.0 (1h)
 
 **Features Completadas NO Planeadas:**
 - ✅ Monitor System v2.0 (8-10h trabajo adicional)
 - ✅ Provider Connection Service Layer (4-5h trabajo adicional)
-- ✅ **Chat Workspace Configuration System (12-15h)** - Sistema de configuración granular para componentes reutilizables (Ver [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md))
+- ✅ **Chat Workspace Configuration System (12-15h)** - Sistema de configuración granular para componentes reutilizables (Ver [PLAN-v0.3.0-chat-config-options.md](./PLAN-v0.3.0-chat-config-options.md))
 
 **Planes Completados y Archivados:**
 1. FIX-PROVIDERS-CONNECTION-SERVICE-LAYER.md (496 líneas)
@@ -2873,13 +2873,13 @@ Una tarea se considera completada cuando:
 4. DATABASE-LOGS-CONSOLIDATION-PLAN.md
 5. CHAT-MONITOR-ENHANCEMENT-PLAN.md
 6. MONITOR-SYSTEM-v2.0-IMPLEMENTATION.md
-7. **PLAN-v1.0.7-chat-config-options.md** (1083 líneas) - ✅ 97% COMPLETADO
+7. **PLAN-v0.3.0-chat-config-options.md** (1083 líneas) - ✅ 97% COMPLETADO
 
 ---
 
 ## 📊 CHAT WORKSPACE CONFIGURATION SYSTEM (COMPLETADO 97%)
 
-**Archivo del Plan:** [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md)
+**Archivo del Plan:** [PLAN-v0.3.0-chat-config-options.md](./PLAN-v0.3.0-chat-config-options.md)
 
 ### Resumen Ejecutivo
 Sistema de configuración granular que transforma el componente `Workspace.php` de **8 props individuales** a **1 config array**, permitiendo reutilización en diferentes contextos (Quick Chat, Conversations, extensiones).
@@ -2997,15 +2997,15 @@ $config = ['features' => ['monitor' => ['enabled' => false]], 'ui' => ['mode' =>
 ```
 
 ### Detalles Completos
-Ver [PLAN-v1.0.7-chat-config-options.md](./PLAN-v1.0.7-chat-config-options.md) para:
+Ver [PLAN-v0.3.0-chat-config-options.md](./PLAN-v0.3.0-chat-config-options.md) para:
 - Arquitectura completa
 - Ejemplos de uso
 - Migration guide
 - Troubleshooting
 
 **Planes Activos (Pendientes de Implementación):**
-1. **PLAN-v1.0.7-chat-config-options.md** (1000+ líneas) - Sistema de configuración granular para Chat Workspace Component (array asociativo, validation, Settings UI panel, conditional resource loading, backward compatibility)
+1. **PLAN-v0.3.0-chat-config-options.md** (1000+ líneas) - Sistema de configuración granular para Chat Workspace Component (array asociativo, validation, Settings UI panel, conditional resource loading, backward compatibility)
 
 ---
 
-_Este documento consolida el contenido de QUICK-CHAT-IMPLEMENTATION-PLAN.md y PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md en un único plan maestro. Última actualización: 9 de diciembre de 2025._
+_Este documento consolida el contenido de QUICK-CHAT-IMPLEMENTATION-PLAN.md y PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md en un único plan maestro. Última actualización: 9 de diciembre de 2025._

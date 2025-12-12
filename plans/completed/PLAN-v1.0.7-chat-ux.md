@@ -1,8 +1,8 @@
-# LLM Manager Extension - PLAN v1.0.7 (Chat UX Improvements)
+# LLM Manager Extension - PLAN v0.3.0 (Chat UX Improvements)
 
 **Fecha de Creación:** 9 de diciembre de 2025  
 **Última Actualización:** 10 de diciembre de 2025, 23:45  
-**Plan Padre:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
+**Plan Padre:** [PLAN-v0.3.0.md](./PLAN-v0.3.0.md)  
 **Estado:** ✅ **COMPLETADO** (Monitor Export Feature implementado)  
 **Prioridad:** Medium  
 **Progreso:** 100% (21/21 items completados) ✅  
@@ -13,12 +13,12 @@
 
 ## 📋 DESCRIPCIÓN
 
-Plan anexo dedicado a mejoras visuales y de experiencia de usuario (UX) en el componente Quick Chat. Este plan extiende el PLAN-v1.0.7.md para incluir nuevas ideas y corregir bugs UX detectados después de la implementación del Quick Chat Feature y el Smart Auto-Scroll System.
+Plan anexo dedicado a mejoras visuales y de experiencia de usuario (UX) en el componente Quick Chat. Este plan extiende el PLAN-v0.3.0.md para incluir nuevas ideas y corregir bugs UX detectados después de la implementación del Quick Chat Feature y el Smart Auto-Scroll System.
 
 **ACTUALIZACIÓN 10 dic 2025:** Plan completado al 100%. Última feature implementada: **Monitor Export Feature** (Export CSV/JSON/SQL para Activity Logs del Monitor con filtros de sesión).
 
 **Relación con Plan Padre:**
-- El PLAN v1.0.7 (sección 2) implementó el Quick Chat Feature básico con streaming, monitor, copy/paste, etc.
+- El PLAN v0.3.0 (sección 2) implementó el Quick Chat Feature básico con streaming, monitor, copy/paste, etc.
 - Este plan se enfoca en polish, interactividad, y UX avanzado (notificaciones, keyboard shortcuts, indicadores visuales, exports, etc.)
 
 ---
@@ -1487,8 +1487,8 @@ textarea.addEventListener('keydown', (e) => {
 ## 🔗 REFERENCIAS
 
 **Documentación Relacionada:**
-- [PLAN-v1.0.7.md](./PLAN-v1.0.7.md) - Plan padre
-- [PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md](./archive/PLAN-v1.0.7-HANDOFF-TO-NEXT-COPILOT.md) - Context handoff
+- [PLAN-v0.3.0.md](./PLAN-v0.3.0.md) - Plan padre
+- [PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md](./archive/PLAN-v0.3.0-HANDOFF-TO-NEXT-COPILOT.md) - Context handoff
 - [STREAMING-SYSTEM-DOCUMENTATION.md](/Users/madniatik/CODE/LARAVEL/BITHOVEN/EXTENSIONS/bithoven-extension-llm-manager/docs/STREAMING-SYSTEM-DOCUMENTATION.md) - Arquitectura streaming
 - [SESSION-VALIDATION-COMPLETE.md](/Users/madniatik/CODE/LARAVEL/BITHOVEN/CPANEL/dev/copilot/sessions/README.md) - Session achievements
 
@@ -1503,7 +1503,7 @@ textarea.addEventListener('keydown', (e) => {
 ## 📝 COMMITS DE IMPLEMENTACIÓN
 
 ### FASE 1: Bug Fixes (9 dic 2025)
-1. **849c50f** - docs: add Chat UX Improvements plan + handoff document (v1.0.7 annex, 12 pending items)
+1. **849c50f** - docs: add Chat UX Improvements plan + handoff document (v0.3.0 annex, 12 pending items)
 2. **e59259b** - fix: reset textarea height after send using Metronic autosize.update() (BUG-2)
 3. **64c0518** - fix: show Copy button in user bubbles, Raw only in assistant (BUG-3)
 4. **54b6554** - fix: invisible initial scroll - instant behavior + 50ms timeout (BUG-1)
@@ -1544,7 +1544,7 @@ textarea.addEventListener('keydown', (e) => {
 31. **a951d41** - fix(chat): BUG-6 - warn user about active streaming before creating new chat, reuse stop button protocol, single modal approach (Opción A)
 
 ### FASE 5: New UX Enhancements (10 dic 2025)
-32. **c7ef53b** - docs(plan): add 4 new UX features to PLAN-v1.0.7-chat-ux.md (Resend, Numbering, Context Indicator, Inspector Persistence)
+32. **c7ef53b** - docs(plan): add 4 new UX features to PLAN-v0.3.0-chat-ux.md (Resend, Numbering, Context Indicator, Inspector Persistence)
 33. **2bd4769** - feat(chat): implement 4 new UX features - Resend Button, Bubble Numbering (Opción A), Context Indicator (Opción A), Inspector Persistence (Opción A)
 
 **Total:** 33 commits, 6 bug fixes + 1 config + 10 features completados (95% completo - solo Hover Effects opcional pendiente)
@@ -1680,7 +1680,7 @@ resources/views/admin/activity/index.blade.php
 ### Estado
 ✅ **100% COMPLETADO** (10 dic 2025, 23:45)
 
-### Próximas Mejoras (Opcional - PLAN-v1.0.8)
+### Próximas Mejoras (Opcional - PLAN-v0.4.0)
 Ver sección "NUEVAS MEJORAS DETECTADAS - Monitor UX" abajo para 6 items adicionales (~10h estimadas).
 
 ---
@@ -1922,14 +1922,14 @@ $('#monitor-fullscreen-btn').on('click', function() {
 5. Item #3 (Fullscreen) - Feature independiente
 6. Item #6 (Hover colors) - Polish final
 
-**NOTA:** Estos 6 items se consideran **fuera del scope** de PLAN-v1.0.7-chat-ux.md. Deben ser movidos a un plan futuro (PLAN-v1.0.8.md o similar) para mantener enfoque en Chat UX completado.
+**NOTA:** Estos 6 items se consideran **fuera del scope** de PLAN-v0.3.0-chat-ux.md. Deben ser movidos a un plan futuro (PLAN-v0.4.0.md o similar) para mantener enfoque en Chat UX completado.
 
 ---
 
 ## 📝 COMMITS DE IMPLEMENTACIÓN
 
 ### FASE 1: Bug Fixes (9 dic 2025)
-1. **849c50f** - docs: add Chat UX Improvements plan + handoff document (v1.0.7 annex, 12 pending items)
+1. **849c50f** - docs: add Chat UX Improvements plan + handoff document (v0.3.0 annex, 12 pending items)
 2. **e59259b** - fix: reset textarea height after send using Metronic autosize.update() (BUG-2)
 3. **64c0518** - fix: show Copy button in user bubbles, Raw only in assistant (BUG-3)
 4. **54b6554** - fix: invisible initial scroll - instant behavior + 50ms timeout (BUG-1)
@@ -1970,7 +1970,7 @@ $('#monitor-fullscreen-btn').on('click', function() {
 31. **a951d41** - fix(chat): BUG-6 - warn user about active streaming before creating new chat, reuse stop button protocol, single modal approach (Opción A)
 
 ### FASE 5: New UX Enhancements (10 dic 2025)
-32. **c7ef53b** - docs(plan): add 4 new UX features to PLAN-v1.0.7-chat-ux.md (Resend, Numbering, Context Indicator, Inspector Persistence)
+32. **c7ef53b** - docs(plan): add 4 new UX features to PLAN-v0.3.0-chat-ux.md (Resend, Numbering, Context Indicator, Inspector Persistence)
 33. **2bd4769** - feat(chat): implement 4 new UX features - Resend Button, Bubble Numbering (Opción A), Context Indicator (Opción A), Inspector Persistence (Opción A)
 
 ### FASE 6: Monitor Export Feature (10 dic 2025) ✅
@@ -1994,8 +1994,8 @@ $('#monitor-fullscreen-btn').on('click', function() {
 - ⏸️ 6 items futuros detectados (ver sección "NUEVAS MEJORAS") - FUERA DE SCOPE
 
 **Próximos Pasos:**
-- Crear PLAN-v1.0.8.md para mejoras Monitor UX (6 items, ~10h)
-- Actualizar documentación padre (PLAN-v1.0.7.md)
+- Crear PLAN-v0.4.0.md para mejoras Monitor UX (6 items, ~10h)
+- Actualizar documentación padre (PLAN-v0.3.0.md)
 - Actualizar CHANGELOG.md con todas las features
 - Cerrar plan actual y archivar
 

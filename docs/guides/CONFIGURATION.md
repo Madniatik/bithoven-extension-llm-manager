@@ -626,4 +626,4 @@ LLM_MCP_AUTO_START=false
 ---
 
 **Last Updated:** 18 de noviembre de 2025  
-**Version:** 1.0.0
+**Version:** 0.1.0

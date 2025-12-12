@@ -1,9 +1,9 @@
 # Chat Workspace Component - Configuration System Plan
 
-**Parent Plan:** [PLAN-v1.0.7.md](./PLAN-v1.0.7.md)  
+**Parent Plan:** [PLAN-v0.3.0.md](./PLAN-v0.3.0.md)  
 **Fecha de Creación:** 9 de diciembre de 2025, 09:00  
 **Última Actualización:** 9 de diciembre de 2025, 14:45  
-**Versión Objetivo:** v1.0.7 (feature adicional)  
+**Versión Objetivo:** v0.3.0 (feature adicional)  
 **Estimación Inicial:** 12-15 horas  
 **Estimación Final:** 17.3 horas (implementación completa)  
 **Prioridad:** MEDIA (extensibilidad futura)  
@@ -1036,7 +1036,7 @@ public function isMonitorTabEnabled(string $tab): bool
 - `docs/components/CHAT-WORKSPACE.md` (documentación actual)
 
 **Documentación Relacionada:**
-- [PLAN-v1.0.7.md](./PLAN-v1.0.7.md) - Plan principal
+- [PLAN-v0.3.0.md](./PLAN-v0.3.0.md) - Plan principal
 - [CHANGELOG.md](../CHANGELOG.md) - Historial de cambios
 - Laravel Blade Components: https://laravel.com/docs/11.x/blade#components
 - Alpine.js Documentation: https://alpinejs.dev/
@@ -1047,7 +1047,7 @@ public function isMonitorTabEnabled(string $tab): bool
 
 **ANTES de empezar:**
 - [x] Leer COMPLETO este plan ✅
-- [x] Leer [PLAN-v1.0.7.md](./PLAN-v1.0.7.md) Lesson #16 (análisis arquitectural) ✅
+- [x] Leer [PLAN-v0.3.0.md](./PLAN-v0.3.0.md) Lesson #16 (análisis arquitectural) ✅
 - [x] Analizar `Workspace.php` completo (261 líneas) ✅
 - [x] Analizar `ChatWorkspace.php` completo (204 líneas) ✅
 - [x] Analizar invocaciones actuales del componente ✅
@@ -1064,7 +1064,7 @@ public function isMonitorTabEnabled(string $tab): bool
 - [ ] Run full test suite (`php artisan test`) ⏳
 - [x] Manual testing en Quick Chat ✅
 - [ ] Verificar bundle size reduction ⏳
-- [ ] Update PLAN-v1.0.7.md progress ⏳
+- [ ] Update PLAN-v0.3.0.md progress ⏳
 - [ ] Update CHANGELOG.md ⏳
 
 ---

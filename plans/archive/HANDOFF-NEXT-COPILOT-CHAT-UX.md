@@ -3,8 +3,8 @@
 **Fecha de Creación:** 9 de diciembre de 2025  
 **AI Agent Actual:** Claude (Claude Sonnet, 4.5, Anthropic)  
 **Sesión Origen:** 20251209-session (Smart Auto-Scroll System session)  
-**Plan Relacionado:** [PLAN-v1.0.7-chat-ux.md](../PLAN-v1.0.7-chat-ux.md)  
-**Plan Padre:** [PLAN-v1.0.7.md](../PLAN-v1.0.7.md)  
+**Plan Relacionado:** [PLAN-v0.3.0-chat-ux.md](../PLAN-v0.3.0-chat-ux.md)  
+**Plan Padre:** [PLAN-v0.3.0.md](../PLAN-v0.3.0.md)  
 **Repositorio:** bithoven-extension-llm-manager  
 **Rama:** stable/ultra-stable-point  
 **Estado:** Ready to Start (0% completado)
@@ -46,7 +46,7 @@ Implementar **12 items de Chat UX Improvements**:
 ### Configuración (1)
 1. Chat Administration - 3 nuevos settings (animations, sounds, keyboard)
 
-**Plan Completo:** Ver [PLAN-v1.0.7-chat-ux.md](../PLAN-v1.0.7-chat-ux.md) (530+ líneas)
+**Plan Completo:** Ver [PLAN-v0.3.0-chat-ux.md](../PLAN-v0.3.0-chat-ux.md) (530+ líneas)
 
 ---
 
@@ -839,7 +839,7 @@ async function deleteMessage(sessionId, messageId) {
 ### Decisión 5: Eliminar "Transiciones Suaves" del Plan
 **Timestamp:** 9 dic 2025, 14:15  
 **Razón:** Feature demasiado compleja para poco valor. Mejor enfocarse en features funcionales.  
-**Implementación:** Reducir scope de 16 a 15 items en PLAN v1.0.7  
+**Implementación:** Reducir scope de 16 a 15 items en PLAN v0.3.0  
 **Impact:** Low
 
 ---
@@ -998,7 +998,7 @@ Hola, voy a trabajar en el plan CHAT UX IMPROVEMENTS para la extensión llm-mana
 Contexto:
 - Repositorio: bithoven-extension-llm-manager
 - Rama: stable/ultra-stable-point
-- Plan: plans/PLAN-v1.0.7-chat-ux.md
+- Plan: plans/PLAN-v0.3.0-chat-ux.md
 - Handoff: plans/archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md
 
 Estado actual:
@@ -1007,7 +1007,7 @@ Estado actual:
 - Ahora necesito implementar 12 items pendientes (4 bugs + 7 features + 1 config)
 
 Por favor:
-1. Lee plans/PLAN-v1.0.7-chat-ux.md (plan completo con arquitectura y specs)
+1. Lee plans/PLAN-v0.3.0-chat-ux.md (plan completo con arquitectura y specs)
 2. Lee plans/archive/HANDOFF-NEXT-COPILOT-CHAT-UX.md (contexto de sesión anterior)
 3. Confirma que entiendes el alcance y arquitectura actual
 
@@ -1038,7 +1038,7 @@ Luego pregúntame por dónde quieres empezar. Recomiendo Fase 1 (Bug Fixes) para
    - `split-horizontal-layout.blade.php` (scroll button HTML)
    - `split-horizontal.blade.php` (CSS animations)
    - `chat-card.blade.php` (scroll button HTML)
-   - `PLAN-v1.0.7.md` (progress updates)
+   - `PLAN-v0.3.0.md` (progress updates)
 
 ---
 
@@ -1046,7 +1046,7 @@ Luego pregúntame por dónde quieres empezar. Recomiendo Fase 1 (Bug Fixes) para
 
 **Confirma estos puntos antes de implementar:**
 
-- [ ] Leído PLAN-v1.0.7-chat-ux.md completo
+- [ ] Leído PLAN-v0.3.0-chat-ux.md completo
 - [ ] Leído este HANDOFF-NEXT-COPILOT-CHAT-UX.md completo
 - [ ] Entendido arquitectura actual (event-handlers, scroll system, badge logic)
 - [ ] Revisado archivos clave (event-handlers.blade.php, message-bubble.blade.php)

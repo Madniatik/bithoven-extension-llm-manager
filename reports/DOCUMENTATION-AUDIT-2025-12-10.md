@@ -2,7 +2,7 @@
 
 **Date:** 10 de diciembre de 2025, 23:50  
 **Scope:** All documentation, plans, reports, and changelog files  
-**Trigger:** Completion of Monitor Export Feature (PLAN-v1.0.7-chat-ux.md 100%)  
+**Trigger:** Completion of Monitor Export Feature (PLAN-v0.3.0-chat-ux.md 100%)  
 **Purpose:** Consolidate, update, and remove obsolete documentation
 
 ---
@@ -30,11 +30,11 @@
 
 ### 1. CHANGELOG.md ✅ UPDATED
 **Location:** `/CHANGELOG.md`  
-**Status:** Updated with v1.0.7 Monitor Export Feature  
+**Status:** Updated with v0.3.0 Monitor Export Feature  
 **Changes:**
 - Added Monitor Export section (CSV/JSON/SQL)
 - Updated Unreleased version to include all Chat UX features
-- Consolidated 34 commits from PLAN-v1.0.7-chat-ux.md
+- Consolidated 34 commits from PLAN-v0.3.0-chat-ux.md
 - Added session-aware filtering details
 - Export feature specification (3 formats, dynamic filenames, security)
 
@@ -45,9 +45,9 @@
 
 ### 2. README.md ✅ UPDATED
 **Location:** `/README.md`  
-**Status:** Updated with v1.0.7 features and Monitor Export  
+**Status:** Updated with v0.3.0 features and Monitor Export  
 **Changes:**
-- Updated version badge to v1.0.7-dev
+- Updated version badge to v0.3.0-dev
 - Added Monitor Export to Advanced Features section
 - Updated Activity Monitoring description (database-driven + exports)
 - Added export formats to feature list
@@ -58,14 +58,14 @@
 
 ---
 
-### 3. PLAN-v1.0.7.md (Parent Plan) ✅ UPDATED
-**Location:** `/plans/PLAN-v1.0.7.md`  
+### 3. PLAN-v0.3.0.md (Parent Plan) ✅ UPDATED
+**Location:** `/plans/PLAN-v0.3.0.md`  
 **Status:** Marked Chat UX annex as 100% complete  
 **Changes:**
 - Section 2 (Quick Chat Feature): Mark Chat UX improvements as complete
-- Add reference to PLAN-v1.0.7-chat-ux.md final status
+- Add reference to PLAN-v0.3.0-chat-ux.md final status
 - Update progress: Monitor Export feature completed
-- Add note about 6 future Monitor UX items (out of scope v1.0.7)
+- Add note about 6 future Monitor UX items (out of scope v0.3.0)
 - Overall plan status: 92% → 95% (Monitor Export added)
 
 **Lines Modified:** ~40 lines
@@ -77,7 +77,7 @@
 **Status:** Updated with Monitor Export files and report  
 **Changes:**
 - Added `reports/MONITOR-EXPORT-ANALYSIS-2025-12-10.md` (428 lines)
-- Updated `plans/PLAN-v1.0.7-chat-ux.md` metadata (100% complete)
+- Updated `plans/PLAN-v0.3.0-chat-ux.md` metadata (100% complete)
 - Added `reports/MONITOR-BUTTONS-ANALYSIS-2025-12-10.md` reference
 - Updated totalFiles count: +3 new files
 - Version bumped: 1.1.0 → 1.1.1
@@ -88,11 +88,11 @@
 
 ### 5. PROJECT-STATUS.md ✅ UPDATED
 **Location:** `/PROJECT-STATUS.md`  
-**Status:** Progress updated to reflect v1.0.7 completion nearing  
+**Status:** Progress updated to reflect v0.3.0 completion nearing  
 **Changes:**
 - Updated completion: 82% → 88% (Chat UX + Monitor Export done)
 - Added Monitor Export to completed features list
-- Moved 6 Monitor UX items to v1.0.8 roadmap
+- Moved 6 Monitor UX items to v0.4.0 roadmap
 - Updated "What's Next" section
 - Recent achievements: +1 (Monitor Export Feature)
 
@@ -104,7 +104,7 @@
 **Location:** `/plans/README.md`  
 **Status:** Index updated with completed plans  
 **Changes:**
-- PLAN-v1.0.7-chat-ux.md: Status changed to ✅ COMPLETADO
+- PLAN-v0.3.0-chat-ux.md: Status changed to ✅ COMPLETADO
 - Added Monitor Export as final feature (21/21 items)
 - Updated time tracking: 22h → 24h (includes export feature)
 - Added note about 6 future Monitor UX improvements
@@ -154,8 +154,8 @@ Moved to `/plans/archived/` or `/plans/completed/`:
 3. **MESSAGE-REFACTOR-COMPLETE.md** → `completed/`  
    Reason: Feature complete, historical reference only
 
-4. **PLAN-v1.0.7-chat-config-options.md** → `archive/`  
-   Reason: Merged into main PLAN-v1.0.7.md, redundant
+4. **PLAN-v0.3.0-chat-config-options.md** → `archive/`  
+   Reason: Merged into main PLAN-v0.3.0.md, redundant
 
 ### Reports Archive
 Moved to `/reports/archived/`:
@@ -227,17 +227,17 @@ Moved to `/docs/archived/`:
 ## 📋 PLAN STATUS SUMMARY
 
 ### Active Plans (In Development)
-1. **PLAN-v1.0.7.md** - Main development plan (95% complete)
-2. **PLAN-v1.0.7-chat-ux.md** - ✅ 100% COMPLETE (21/21 items)
+1. **PLAN-v0.3.0.md** - Main development plan (95% complete)
+2. **PLAN-v0.3.0-chat-ux.md** - ✅ 100% COMPLETE (21/21 items)
 
 ### Completed Plans (Archived)
-3. **PLAN-v1.0.6.md** - Streaming system + Monitor v2.0
-4. **PLAN-v1.0.5.md** - RAG system implementation
-5. **PLAN-v1.0.4.md** - Multi-provider support
-6. **PLAN-v1.0.3.md** - Basic LLM integration
+3. **PLAN-v0.2.2.md** - Streaming system + Monitor v2.0
+4. **PLAN-v0.2.1.md** - RAG system implementation
+5. **PLAN-v0.2.0.md** - Multi-provider support
+6. **PLAN-v0.1.3.md** - Basic LLM integration
 
 ### Future Plans (Not Started)
-7. **PLAN-v1.0.8.md** - Monitor UX Improvements (6 items, ~10h)
+7. **PLAN-v0.4.0.md** - Monitor UX Improvements (6 items, ~10h)
 8. **PLAN-v1.2.0.md** - Hybrid Tools System (MCP + Function Calling)
 
 ---
@@ -271,8 +271,8 @@ Moved to `/docs/archived/`:
 
 ### Short Term (This Session)
 1. ✅ Update CHANGELOG.md with Monitor Export
-2. ✅ Update README.md with v1.0.7 features
-3. ✅ Update PLAN-v1.0.7.md parent plan
+2. ✅ Update README.md with v0.3.0 features
+3. ✅ Update PLAN-v0.3.0.md parent plan
 4. ✅ Update QUICK-INDEX.json
 5. ✅ Archive completed plan files
 6. ✅ Update all README indexes (plans/, reports/, docs/)
@@ -316,9 +316,9 @@ Moved to `/docs/archived/`:
 ## ✅ AUDIT COMPLETION CHECKLIST
 
 ### Phase 1: Critical Updates ✅
-- [x] CHANGELOG.md updated with v1.0.7 Monitor Export
+- [x] CHANGELOG.md updated with v0.3.0 Monitor Export
 - [x] README.md updated with export features
-- [x] PLAN-v1.0.7.md marked Chat UX as complete
+- [x] PLAN-v0.3.0.md marked Chat UX as complete
 - [x] QUICK-INDEX.json updated with new files
 - [x] PROJECT-STATUS.md progress updated (88%)
 
@@ -343,7 +343,7 @@ Moved to `/docs/archived/`:
 ## 🎯 NEXT STEPS
 
 1. **Commit Changes** - All updated files in single comprehensive commit
-2. **Create PLAN-v1.0.8.md** - Monitor UX improvements (6 items from Chat UX plan)
+2. **Create PLAN-v0.4.0.md** - Monitor UX improvements (6 items from Chat UX plan)
 3. **Review Flagged Files** - Manual decisions on 7 items
 4. **Fix Broken Links** - Update 3 archived file references
 5. **Consolidate Examples** - Merge duplicate EXAMPLES.md files

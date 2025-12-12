@@ -512,7 +512,7 @@ If applicable, add screenshots.
 - OS: [e.g., macOS 14.0]
 - PHP: [e.g., 8.2.12]
 - Laravel: [e.g., 11.0]
-- LLM Manager: [e.g., 1.0.0]
+- LLM Manager: [e.g., 0.1.0]
 
 **Additional context**
 Any other context about the problem.

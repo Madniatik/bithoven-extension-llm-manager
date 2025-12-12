@@ -1,6 +1,6 @@
 # Chat Workspace Component - Guía de Uso
 
-**Versión:** 1.0.7-dev  
+**Versión:** 0.3.0-dev  
 **Estado:** ✅ Producción (75% complete)  
 **Última actualización:** 6 diciembre 2025
 

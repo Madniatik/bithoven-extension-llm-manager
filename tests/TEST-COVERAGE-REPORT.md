@@ -1,6 +1,6 @@
 # LLM Manager Extension - Test Coverage Report
 
-**Versión:** v1.0.0  
+**Versión:** v0.1.0  
 **Fecha:** 18 de noviembre de 2025  
 **AI Agent:** Claude (Claude Sonnet, 4.5, Anthropic)
 
@@ -286,7 +286,7 @@
 
 ## 📝 Casos NO Cubiertos (Opcionales)
 
-### Fuera de Scope para v1.0.0
+### Fuera de Scope para v0.1.0
 
 ❌ **OpenAI API Real Integration**
 - Requiere API keys reales

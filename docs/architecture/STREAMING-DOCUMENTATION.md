@@ -1237,4 +1237,4 @@ if (typeof EventSource === 'undefined') {
 
 **Autor:** Claude (Claude Sonnet 4.5, Anthropic)  
 **Fecha:** 9 de diciembre de 2025  
-**Versión:** 1.0.7
+**Versión:** 0.3.0
