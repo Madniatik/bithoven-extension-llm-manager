@@ -25,7 +25,7 @@ class LLMUserWorkspacePreferencesSeeder extends Seeder
 
         foreach ($users as $user) {
             // Insertar solo si no existe preferencia previa
-            DB::table('llm_user_workspace_preferences')->updateOrInsert(
+            DB::table('llm_manager_user_workspace_preferences')->updateOrInsert(
                 ['user_id' => $user->id],
                 [
                     'config' => json_encode($defaultConfig),

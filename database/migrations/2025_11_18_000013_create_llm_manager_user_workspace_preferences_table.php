@@ -9,14 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * Crea la tabla llm_user_workspace_preferences para almacenar
+     * Crea la tabla llm_manager_user_workspace_preferences para almacenar
      * la configuración personalizada de cada usuario en el workspace LLM.
      *
      * @return void
      */
     public function up(): void
     {
-        Schema::create('llm_user_workspace_preferences', function (Blueprint $table) {
+        Schema::create('llm_manager_user_workspace_preferences', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->json('config');
@@ -36,12 +36,12 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      *
-     * Elimina la tabla llm_user_workspace_preferences.
+     * Elimina la tabla llm_manager_user_workspace_preferences.
      *
      * @return void
      */
     public function down(): void
     {
-        Schema::dropIfExists('llm_user_workspace_preferences');
+        Schema::dropIfExists('llm_manager_user_workspace_preferences');
     }
 };

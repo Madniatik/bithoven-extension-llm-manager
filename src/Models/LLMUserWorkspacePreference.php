@@ -13,7 +13,7 @@ class LLMUserWorkspacePreference extends Model
      *
      * @var string
      */
-    protected $table = 'llm_user_workspace_preferences';
+    protected $table = 'llm_manager_user_workspace_preferences';
 
     /**
      * The attributes that are mass assignable.
