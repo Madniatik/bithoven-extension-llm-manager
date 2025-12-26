@@ -294,23 +294,24 @@ $stream->stream($configId, 'Your prompt', function($chunk) {
 
 ## 🗄️ Database Schema
 
-**16 migrations creating comprehensive LLM infrastructure:**
+**14 migrations creating comprehensive LLM infrastructure:**
 
 | Table | Purpose | Key Features |
 |-------|---------|--------------|
-| `llm_manager_configurations` | Provider configs | Multi-provider, encrypted keys, per-extension |
+| `llm_manager_providers` | Provider registry | Provider definitions, capabilities |
+| `llm_manager_provider_configurations` | Provider configs | Multi-provider, encrypted keys, per-extension |
 | `llm_manager_usage_logs` | Usage tracking | Tokens, cost, duration, status |
 | `llm_manager_custom_metrics` | Extension metrics | Numerical + JSON data, aggregation |
-| `llm_manager_parameter_overrides` | Runtime params | Temperature, max_tokens, etc. |
 | `llm_manager_prompt_templates` | Reusable prompts | Variable substitution, versioning |
 | `llm_manager_conversation_sessions` | Chat sessions | Context management, history |
 | `llm_manager_conversation_messages` | Chat messages | Role, content, timestamps |
-| `llm_manager_conversation_logs` | Audit logs | Debugging, compliance |
 | `llm_manager_document_knowledge_base` | RAG documents | Chunking, embeddings, search |
 | `llm_manager_mcp_connectors` | MCP registry | Server configs, health checks |
 | `llm_manager_agent_workflows` | Orchestration | State machine, multi-agent |
 | `llm_manager_tool_definitions` | Tools registry | Schemas, handlers, validation |
 | `llm_manager_tool_executions` | Tool tracking | Execution history, results |
+| `llm_manager_user_workspace_preferences` | User prefs | Workspace UI configuration per user |
+| `llm_manager_parameter_overrides` | Runtime params | Temperature, max_tokens, etc. |
 
 **Naming Convention:** All tables use `llm_manager_*` prefix for clean namespace separation.
 

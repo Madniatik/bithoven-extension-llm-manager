@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - Work in Progress Towards v0.4.0
 
+### 🔧 Database Naming Consistency (26 diciembre 2025)
+
+**Table naming standardized to follow `llm_manager_*` prefix pattern** ✅
+
+**What Changed:**
+- ✅ Renamed table `llm_user_workspace_preferences` → `llm_manager_user_workspace_preferences`
+- ✅ Updated migration file name to match table name
+- ✅ Updated seeder `DB::table()` reference
+- ✅ Updated model `$table` property
+
+**Files Modified:**
+```
+database/migrations/2025_11_18_000013_create_llm_manager_user_workspace_preferences_table.php (renamed + content)
+database/seeders/LLMUserWorkspacePreferencesSeeder.php
+src/Models/LLMUserWorkspacePreference.php
+```
+
+**Why:** All 14 tables now follow consistent `llm_manager_*` naming convention for clean namespace separation.
+
+---
+
 ### 🎉 FASE 2: Provider Repositories - Core Import System (11 diciembre 2025)
 
 **Provider configuration packages ecosystem with import/export commands** ✅

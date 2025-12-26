@@ -10,7 +10,7 @@ Sistema de persistencia de preferencias de usuario en base de datos.
 use Bithoven\LLMManager\Models\LLMUserWorkspacePreference;
 
 // Schema
-Schema::create('llm_user_workspace_preferences', function (Blueprint $table) {
+Schema::create('llm_manager_user_workspace_preferences', function (Blueprint $table) {
     $table->id();
     $table->foreignId('user_id')->constrained()->onDelete('cascade');
     $table->json('config');

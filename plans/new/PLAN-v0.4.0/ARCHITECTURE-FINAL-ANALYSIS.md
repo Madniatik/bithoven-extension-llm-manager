@@ -153,7 +153,7 @@ database/migrations/
 ├── 2025_11_18_000010_create_llm_manager_agent_workflows_table.php              ← 10º
 ├── 2025_11_18_000011_create_llm_manager_tool_definitions_table.php             ← 11º (con campos consolidados)
 ├── 2025_11_18_000012_create_llm_manager_tool_executions_table.php              ← 12º
-├── 2025_11_18_000013_create_llm_user_workspace_preferences_table.php           ← 13º
+├── 2025_11_18_000013_create_llm_manager_user_workspace_preferences_table.php   ← 13º
 └── 2025_11_18_000014_create_llm_manager_parameter_overrides_table.php          ← 14º
 ```
 
