@@ -302,7 +302,7 @@ ALTER TABLE llm_manager_usage_logs
 - **Plan Document:** `plans/DELETE-MESSAGE-REFACTOR-PLAN.md`
 - **Summary Document:** `plans/DELETE-MESSAGE-REFACTOR-SUMMARY.md`
 - **Database:** `bithoven_laravel.llm_manager_usage_logs`
-- **Testing Endpoint:** http://localhost:8001/admin/llm/chat
+- **Testing Endpoint:** http://localhost:8000/admin/llm/chat
 
 ---
 
